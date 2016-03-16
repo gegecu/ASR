@@ -65,7 +65,7 @@ public class AbstractStoryRepresentation {
 		
 		if(event.isValidEvent()) {
 			
-			if(event.getLocation() == null) 
+			if(this.getCurrentEvent() != null && event.getLocation() == null) 
 				event.setLocation(this.getCurrentEvent().getLocation());
 			
 			events.add(event);
@@ -98,6 +98,9 @@ public class AbstractStoryRepresentation {
 	
 	public Event getCurrentEvent() {
 		List<Event> events = this.events.get(partOfStory);
+		if(events == null) {
+			return null;
+		}
 		return events.get(events.size()-1);
 	}
 	

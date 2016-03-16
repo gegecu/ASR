@@ -20,7 +20,7 @@ public class Driver {
 		
 		AbstractStoryRepresentation asr = new AbstractStoryRepresentation();
 		
-		String sentence = "John went to the park. He brought a ball. He is handsome. He gave Gege a bath. John killed his friend.";
+		String sentence = "Moira ate banana and drank water.";
 		
 		TextUnderstanding tu = new TextUnderstanding();
 		
