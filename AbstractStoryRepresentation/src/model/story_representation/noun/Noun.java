@@ -1,4 +1,4 @@
-package noun;
+package model.story_representation.noun;
 
 import java.util.ArrayList;
 import java.util.HashMap;

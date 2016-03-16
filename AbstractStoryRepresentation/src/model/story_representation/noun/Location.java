@@ -1,4 +1,4 @@
-package noun;
+package model.story_representation.noun;
 
 public class Location extends Noun{
 
