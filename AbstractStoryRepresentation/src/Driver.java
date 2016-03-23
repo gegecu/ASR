@@ -20,7 +20,7 @@ public class Driver {
 		
 		AbstractStoryRepresentation asr = new AbstractStoryRepresentation();
 		
-		String sentence = "The late train was late.";
+		String sentence = "Moira went to bed. Moira experienced a nightmare.";
 		
 		TextUnderstanding tu = new TextUnderstanding();
 		
@@ -98,6 +98,42 @@ public class Driver {
 			}
 			
 			System.out.println("polarity: " + conflict.getPolarity());
+			System.out.println();
+		}
+		
+		Event resolution = asr.getResolution();
+		
+		if(resolution != null) {
+			System.out.println("Resolution: ");
+			
+			if(conflict.getLocation() != null)
+				System.out.println("location: " + resolution.getLocation().getId());
+			
+			System.out.println("doers: ");
+			for(Map.Entry<String, Noun> entry: resolution.getManyDoers().entrySet()) {
+				System.out.println(entry.getValue().getId());
+				
+				System.out.println("doers' attributes: ");
+				for(Map.Entry<String, List<String>> entry2: entry.getValue().getAttributes().entrySet()) {
+					System.out.print(entry2.getValue() + " ");
+				}
+				System.out.println();
+			}
+			
+			System.out.println("predicates: ");
+			for(Map.Entry<String, Predicate> entry: resolution.getManyPredicates().entrySet()) {
+				System.out.println("action: " + entry.getValue().getAction());
+				System.out.println("receivers: ");
+				for(Map.Entry<String, Noun> entry2: entry.getValue().getReceivers().entrySet()) {
+					System.out.println(entry2.getValue().getId());
+				}
+				System.out.println("dobj: ");
+				for(Map.Entry<String, Noun> entry3: entry.getValue().getDirectObjects().entrySet()) {
+					System.out.println(entry3.getValue().getId());
+				}
+			}
+			
+			System.out.println("polarity: " + resolution.getPolarity());
 			System.out.println();
 		}
 	}

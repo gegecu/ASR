@@ -5,8 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import model.knowledge_base.conceptnet.ConceptNetDAO;
 import model.story_representation.noun.Location;
 import model.story_representation.noun.Noun;
+import model.story_representation.noun.Character;
 
 public class AbstractStoryRepresentation {
 	
@@ -37,7 +39,7 @@ public class AbstractStoryRepresentation {
 		}
 		
 		else {
-			if(conflict.getPolarity() <= this.conflict.getPolarity()) {
+			if(conflict.getPolarity() < this.conflict.getPolarity()) {
 				this.conflict = conflict;
 			}
 		}
@@ -48,7 +50,69 @@ public class AbstractStoryRepresentation {
 	}
 	
 	public void setResolution(Event resolution) {
-		this.resolution = resolution;
+		System.out.println("resolution");
+		String expectedResolutionAction = null;
+		
+		while(expectedResolutionAction == null) {
+			//System.out.println("trap");
+			System.out.println(this.conflict.getConcepts());
+			for(String concept: this.conflict.getConcepts()) {
+				System.out.println(expectedResolutionAction);
+				List<String> path = ConceptNetDAO.getExpectedResolution(concept);
+				expectedResolutionAction = path.get(path.size()-1);
+				System.out.println(expectedResolutionAction);
+			}
+		}
+		
+		
+		
+		if(resolution.getConcepts().contains(expectedResolutionAction)) {
+			System.out.println("a");
+			List<Character> charsInResolution = new ArrayList();
+			for(Noun doer: resolution.getManyDoers().values()) {
+				if(doer instanceof Character) {
+					charsInResolution.add((Character)doer);
+				}
+			}
+			for(Predicate predicate: resolution.getManyPredicates().values()) {
+				for(Noun receiver: predicate.getReceivers().values()) {
+					if(receiver instanceof Character) {
+						charsInResolution.add((Character)receiver);
+					}
+				}
+				for(Noun dobj: predicate.getDirectObjects().values()) {
+					if(dobj instanceof Character) {
+						charsInResolution.add((Character)dobj);
+					}
+				}
+			}
+			
+			List<Character> charsInConflict = new ArrayList();
+			for(Noun doer: conflict.getManyDoers().values()) {
+				if(doer instanceof Character) {
+					charsInConflict.add((Character)doer);
+				}
+			}
+			for(Predicate predicate: resolution.getManyPredicates().values()) {
+				for(Noun receiver: predicate.getReceivers().values()) {
+					if(receiver instanceof Character) {
+						charsInConflict.add((Character)receiver);
+					}
+				}
+				for(Noun dobj: predicate.getDirectObjects().values()) {
+					if(dobj instanceof Character) {
+						charsInConflict.add((Character)dobj);
+					}
+				}
+			}
+			
+			//if there is at least 1 char in conflict that is mentioned in resolution
+			charsInResolution.retainAll(charsInConflict);
+			if(charsInResolution.size() > 0) {
+				this.resolution = resolution;
+			}
+			
+		}
 	}
 	
 	public Event getResolution() {
@@ -73,6 +137,9 @@ public class AbstractStoryRepresentation {
 
 			if(event.getPolarity() < 0)
 				this.setConflict(event);
+			
+			if(this.conflict != null)
+				this.setResolution(event);
 		}
 		
 //		this.nouns.putAll(event.getManyDoers());
@@ -138,7 +205,5 @@ public class AbstractStoryRepresentation {
 	public void setPartOfStory(String partOfStory) {
 		this.partOfStory = partOfStory;
 	}
-	
-	
 	
 }

@@ -1,5 +1,6 @@
 package model.story_representation;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,12 +14,14 @@ public class Event {
 	private Map<String, Predicate> predicates;
 	private Location location;	
 	private float polarity;
+	private List<String> concepts;
 	
 	public Event() {
 		this.doers = new HashMap<String, Noun>();
 		this.predicates = new HashMap<String, Predicate>();
 		this.location = null;
 		this.polarity = 0;
+		this.concepts = new ArrayList();
 	}
 	
 	public void addDoer(String id, Noun noun) {
@@ -62,12 +65,24 @@ public class Event {
 	}
 	
 	public boolean isValidEvent() {
-//		if(this.doers.size() >= 1 && this.predicates.size() >= 1) {
-//			return true;
-//		}
-//		return false;
-		return true;
+		if(this.doers.size() >= 1 && this.predicates.size() >= 1) {
+			return true;
+		}
+		return false;
+//		return true;
 	}
 	
+	public void addConcept(String concept) {
+		this.concepts.add(concept);
+	}
+	
+	public void setConcept(List<String> concepts) {
+		System.out.println(concepts);
+		this.concepts.addAll(concepts);
+	}
+	
+	public List<String> getConcepts() {
+		return this.concepts;
+	}
 }
 

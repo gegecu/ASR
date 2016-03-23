@@ -70,7 +70,9 @@ public class Extractor {
 			for (TypedDependency td : dependencies.typedDependencies()) {
 				extractDependency(td, asr, event);
 			}
-			event.setPolarity(this.getPolarityOfEvent(sentence.toString()));
+			event.setConcept(this.cp.getConcepts(sentence.toString()));
+			event.addConcept("nightmare");
+			event.setPolarity(this.getPolarityOfEvent(event));
 			
 			asr.addEvent(event);
 			
@@ -126,26 +128,29 @@ public class Extractor {
 					if(tdGovTag.equals("JJ")) {
 						
 						noun.addAttribute("HasProperty", td.gov().originalText());
-						event.addDoer(td.dep().originalText(), noun); //made states into events	
+						//event.addDoer(td.dep().originalText(), noun); //made states into events	
 						System.out.println(noun.getId() + " hasProperty " + td.gov().originalText());
 					}
 					
 					else if(tdGovTag.contains("VB")) {
 						
-						if(!dictionary.copulas.contains(td.gov().lemma())) {
+						boolean hasARelation = td.gov().lemma().equals("has") || td.gov().lemma().equals("have");
+						
+						if(!dictionary.copulas.contains(td.gov().lemma()) && !hasARelation) {
 							noun.addAttribute("CapableOf", td.gov().lemma());
 							System.out.println(noun.getId() + " capable of " + td.gov().lemma());
+						
+						
+							event.addDoer(td.dep().originalText(), noun);
+							
+							Predicate predicate = event.getPredicate(td.gov().lemma());
+							
+							if(predicate == null) {
+								predicate = new Predicate(td.gov().lemma());
+							}
+							
+							event.addPredicate(predicate);
 						}
-						
-						event.addDoer(td.dep().originalText(), noun);
-						
-						Predicate predicate = event.getPredicate(td.gov().lemma());
-						
-						if(predicate == null) {
-							predicate = new Predicate(td.gov().lemma());
-						}
-						
-						event.addPredicate(predicate);
 						//unsure if verb for event or capableOf
 					}
 				}
@@ -206,6 +211,14 @@ public class Extractor {
 					}
 					predicate.addDirectObject(td.dep().originalText(), noun);
 					event.addPredicate(predicate);
+					
+					if(td.gov().lemma().equals("has") || td.gov().lemma().equals("have")) {
+						for(Noun n: event.getManyDoers().values()) {
+							if (tdDepTag.contains("NN")) {
+								n.addReference("HasA", noun);
+							}
+						}
+					}
 					
 					System.out.println("dobj: " + event.getPredicate(td.gov().lemma()).getDirectObject(td.dep().originalText()).getId());
 				}
@@ -379,9 +392,13 @@ public class Extractor {
 		return "UNKNOWN";
 	}
 	
-	private float getPolarityOfEvent(String sentence) {
-		List<String> concepts = cp.getConcepts(sentence);
-		//System.out.println(concepts);
+	private float getPolarityOfEvent(Event event) {
+		List<String> concepts = event.getConcepts();
+		System.out.println(concepts);
+		if(concepts == null) {
+			return (float)-0.5;
+		}
+		System.out.println(concepts);
 		float worstPolarity = snp.getPolarity(concepts.remove(0).replace(" ", "_"));
 		float polarity = 0;
 		while(!concepts.isEmpty()) {
@@ -390,6 +407,6 @@ public class Extractor {
 				worstPolarity = polarity;
 			}
 		}
-		return worstPolarity;
+		return (float)-0.5;
 	}
 }
