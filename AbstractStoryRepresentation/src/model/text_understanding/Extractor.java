@@ -1,4 +1,4 @@
-package model.text_understanding.preprocessing;
+package model.text_understanding;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -19,6 +19,7 @@ import model.story_representation.noun.Location;
 import model.story_representation.noun.Noun;
 import model.story_representation.noun.Object;
 import model.story_representation.noun.Unknown;
+import edu.stanford.nlp.dcoref.Dictionaries;
 import edu.stanford.nlp.ie.AbstractSequenceClassifier;
 import edu.stanford.nlp.ie.crf.CRFClassifier;
 import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
@@ -37,12 +38,7 @@ public class Extractor {
 	private AbstractSequenceClassifier classifier;
 	private ConceptParser cp;
 	private SenticNetParser snp;
-
-	private String prevDep;
-	private String prevDepTag;
-	private String prevGov;
-	private String prevGovTag;
-	private String prevReln;
+	private Dictionaries dictionary;
 	
 	public Extractor(Properties properties, StanfordCoreNLP pipeline) {
 		this.properties = properties;
@@ -50,6 +46,7 @@ public class Extractor {
 		this.classifier = CRFClassifier.getDefaultClassifier();
 		this.cp = new ConceptParser();
 		this.snp = new SenticNetParser();
+		this.dictionary = new Dictionaries();
 	}
 
 	public void extract(String text, AbstractStoryRepresentation asr) {
@@ -83,6 +80,7 @@ public class Extractor {
 	
 	private void extractDependency(TypedDependency td, AbstractStoryRepresentation asr, Event event) {
 		try {
+			
 				String tdDepTag = td.dep().tag();
 				String tdGovTag = td.gov().tag();
 				String tdReln = td.reln().toString();
@@ -127,14 +125,18 @@ public class Extractor {
 					
 					if(tdGovTag.equals("JJ")) {
 						
-						noun.addAttribute("hasProperty", td.gov().originalText());
-						//event.addDoer(td.dep().originalText(), noun);
+						noun.addAttribute("HasProperty", td.gov().originalText());
+						event.addDoer(td.dep().originalText(), noun); //made states into events	
 						System.out.println(noun.getId() + " hasProperty " + td.gov().originalText());
 					}
 					
 					else if(tdGovTag.contains("VB")) {
 						
-						noun.addAttribute("capableOf", td.gov().lemma());
+						if(!dictionary.copulas.contains(td.gov().lemma())) {
+							noun.addAttribute("CapableOf", td.gov().lemma());
+							System.out.println(noun.getId() + " capable of " + td.gov().lemma());
+						}
+						
 						event.addDoer(td.dep().originalText(), noun);
 						
 						Predicate predicate = event.getPredicate(td.gov().lemma());
@@ -144,7 +146,6 @@ public class Extractor {
 						}
 						
 						event.addPredicate(predicate);
-						System.out.println(noun.getId() + " capable of " + td.gov().lemma());
 						//unsure if verb for event or capableOf
 					}
 				}
@@ -209,14 +210,43 @@ public class Extractor {
 					System.out.println("dobj: " + event.getPredicate(td.gov().lemma()).getDirectObject(td.dep().originalText()).getId());
 				}
 				
-//				else if (tdReln.equals("ccomp")) {
-//
-//					if(tdDepTag.equals("VBN")
-//						&& tdGovTag.equals("VBD")) {
-//						System.out.println("CREATE 2 EVENTS");
-//					}
-//
-//				}
+				else if (tdReln.equals("xcomp") && dictionary.copulas.contains(td.gov().lemma())) {
+
+					for(Noun n: event.getManyDoers().values()) {
+						if(tdDepTag.equals("JJ")) {
+							n.addAttribute("HasProperty", td.dep().originalText());
+						}
+						else if (tdDepTag.contains("NN")) {
+							n.addAttribute("IsA", td.dep().lemma());
+						}
+					}
+				}
+				
+				else if (tdReln.equals("amod")) {
+					Noun noun = asr.getNoun(td.gov().originalText());
+					
+					if(noun == null) {
+						if (tdGovTag.equals("NNP")) {
+							noun = this.extractCategory(this.getNER(td.dep().originalText()), td.dep().originalText());
+						}
+						else if (tdGovTag.contains("NN")) {
+							noun = this.extractCategory(this.getSRL(td.dep().originalText()), td.dep().originalText());
+						}
+						
+						asr.addNoun(td.dep().originalText(), noun);
+					}
+					
+					noun.addAttribute("HasProperty", td.dep().originalText());
+					
+				}
+				
+				else if (tdReln.equals("advmod") && dictionary.copulas.contains(td.gov().lemma())) {
+					for(Noun n: event.getManyDoers().values()) {
+						if(tdDepTag.equals("RB")) {
+							n.addAttribute("HasProperty", td.dep().originalText());
+						}
+					}
+				}
 
 //				else if (tdReln.equals("advcl")) {
 //

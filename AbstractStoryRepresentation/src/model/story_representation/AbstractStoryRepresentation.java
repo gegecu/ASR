@@ -108,6 +108,10 @@ public class AbstractStoryRepresentation {
 		return this.events;
 	}
 	
+	public List<Event> getManyEventsBasedOnPart(String partOfStory) {
+		return this.events.get(partOfStory);
+	}
+	
 	public void addNoun(String key, Noun noun) {
 		this.nouns.put(key, noun);
 	}

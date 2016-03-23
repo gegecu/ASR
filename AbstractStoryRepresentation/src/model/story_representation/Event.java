@@ -62,10 +62,11 @@ public class Event {
 	}
 	
 	public boolean isValidEvent() {
-		if(this.doers.size() >= 1 && this.predicates.size() >= 1) {
-			return true;
-		}
-		return false;
+//		if(this.doers.size() >= 1 && this.predicates.size() >= 1) {
+//			return true;
+//		}
+//		return false;
+		return true;
 	}
 	
 }

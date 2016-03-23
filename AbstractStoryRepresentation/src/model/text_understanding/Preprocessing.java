@@ -1,4 +1,4 @@
-package model.text_understanding.preprocessing;
+package model.text_understanding;
 
 import java.io.IOException;
 import java.util.ArrayList;
