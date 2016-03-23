@@ -12,13 +12,15 @@ import model.knowledge_base.conceptnet.ConceptNetDAO;
 import model.knowledge_base.senticnet.ConceptParser;
 import model.knowledge_base.senticnet.SenticNetParser;
 import model.story_representation.AbstractStoryRepresentation;
-import model.story_representation.Event;
 import model.story_representation.Predicate;
 import model.story_representation.noun.Character;
 import model.story_representation.noun.Location;
 import model.story_representation.noun.Noun;
 import model.story_representation.noun.Object;
 import model.story_representation.noun.Unknown;
+import model.story_representation.story_sentence.Event;
+import model.story_representation.story_sentence.State;
+import model.story_representation.story_sentence.StorySentence;
 import edu.stanford.nlp.dcoref.Dictionaries;
 import edu.stanford.nlp.ie.AbstractSequenceClassifier;
 import edu.stanford.nlp.ie.crf.CRFClassifier;
@@ -66,19 +68,29 @@ public class Extractor {
 
 			System.out.println(sentence.toString());
 			
-			Event event = new Event();
+			StorySentence storySentence = new Event();
 			for (TypedDependency td : dependencies.typedDependencies()) {
-				extractDependency(td, asr, event);
+				extractDependency(td, asr, storySentence);
 			}
-			event.setPolarity(this.getPolarityOfEvent(sentence.toString()));
 			
-			asr.addEvent(event);
+			if (!((Event)storySentence).isValidEvent()) {
+				storySentence = new State();
+			}
+			
+			for (TypedDependency td : dependencies.typedDependencies()) {
+				extractDependency(td, asr, storySentence);
+			}
+			
+			
+			storySentence.setPolarity(this.getPolarityOfEvent(sentence.toString()));
+
+			asr.addStorySentence(storySentence);
 			
 			//System.out.println(sentence.toString() + ", " + this.getPolarityOfEvent(sentence.toString()));
 		}
 	}
 	
-	private void extractDependency(TypedDependency td, AbstractStoryRepresentation asr, Event event) {
+	private void extractDependency(TypedDependency td, AbstractStoryRepresentation asr, StorySentence storySentence) {
 		try {
 			
 				String tdDepTag = td.dep().tag();
@@ -126,7 +138,11 @@ public class Extractor {
 					if(tdGovTag.equals("JJ")) {
 						
 						noun.addAttribute("HasProperty", td.gov().originalText());
-						event.addDoer(td.dep().originalText(), noun); //made states into events	
+						if(storySentence instanceof State) {
+							((State) storySentence).addSubject(td.dep().originalText(), noun);
+							((State) storySentence).setState(td.gov().originalText());
+						}
+						//event.addDoer(td.dep().originalText(), noun); //made states into events	
 						System.out.println(noun.getId() + " hasProperty " + td.gov().originalText());
 					}
 					
@@ -135,17 +151,21 @@ public class Extractor {
 						if(!dictionary.copulas.contains(td.gov().lemma())) {
 							noun.addAttribute("CapableOf", td.gov().lemma());
 							System.out.println(noun.getId() + " capable of " + td.gov().lemma());
+						
+							if(storySentence instanceof Event) {
+								((Event)storySentence).addDoer(td.dep().originalText(), noun);
+							}
+							
+							if(!td.gov().lemma().equals("have") || !td.gov().lemma().equals("has")) {
+								Predicate predicate = ((Event)storySentence).getPredicate(td.gov().lemma());
+								
+								if(predicate == null) {
+									predicate = new Predicate(td.gov().lemma());
+								}
+								
+								((Event)storySentence).addPredicate(predicate);
+							}
 						}
-						
-						event.addDoer(td.dep().originalText(), noun);
-						
-						Predicate predicate = event.getPredicate(td.gov().lemma());
-						
-						if(predicate == null) {
-							predicate = new Predicate(td.gov().lemma());
-						}
-						
-						event.addPredicate(predicate);
 						//unsure if verb for event or capableOf
 					}
 				}
@@ -166,13 +186,13 @@ public class Extractor {
 							asr.addNoun(td.dep().originalText(), noun);
 						}
 						
-						Predicate predicate = event.getPredicate(td.gov().lemma());
+						Predicate predicate = ((Event)storySentence).getPredicate(td.gov().lemma());
 						
 						if(predicate == null) {
 							predicate = new Predicate(td.gov().lemma());
 						}
 						predicate.addReceiver(td.dep().originalText(), noun);
-						event.addPredicate(predicate);
+						((Event)storySentence).addPredicate(predicate);
 						
 						//event.getPredicate(td.gov().lemma()).addReceiver(td.dep().originalText(), noun);
 
@@ -199,20 +219,29 @@ public class Extractor {
 						asr.addNoun(td.dep().originalText(), noun);
 					}
 					
-					Predicate predicate = event.getPredicate(td.gov().lemma());
+					Predicate predicate = ((Event)storySentence).getPredicate(td.gov().lemma());
 					
 					if(predicate == null) {
 						predicate = new Predicate(td.gov().lemma());
 					}
-					predicate.addDirectObject(td.dep().originalText(), noun);
-					event.addPredicate(predicate);
 					
-					System.out.println("dobj: " + event.getPredicate(td.gov().lemma()).getDirectObject(td.dep().originalText()).getId());
+					predicate.addDirectObject(td.dep().originalText(), noun);
+					((Event)storySentence).addPredicate(predicate);
+					
+					if(td.gov().lemma().equals("has") || td.gov().lemma().equals("have")) {
+						for(Noun n: ((Event)storySentence).getManyDoers().values()) {
+							if (tdDepTag.contains("NN")) {
+								n.addReference("HasA", noun);
+							}
+						}
+					}
+					
+					System.out.println("dobj: " + ((Event)storySentence).getPredicate(td.gov().lemma()).getDirectObject(td.dep().originalText()).getId());
 				}
 				
 				else if (tdReln.equals("xcomp") && dictionary.copulas.contains(td.gov().lemma())) {
 
-					for(Noun n: event.getManyDoers().values()) {
+					for(Noun n: ((Event)storySentence).getManyDoers().values()) {
 						if(tdDepTag.equals("JJ")) {
 							n.addAttribute("HasProperty", td.dep().originalText());
 						}
@@ -241,7 +270,7 @@ public class Extractor {
 				}
 				
 				else if (tdReln.equals("advmod") && dictionary.copulas.contains(td.gov().lemma())) {
-					for(Noun n: event.getManyDoers().values()) {
+					for(Noun n: ((Event)storySentence).getManyDoers().values()) {
 						if(tdDepTag.equals("RB")) {
 							n.addAttribute("HasProperty", td.dep().originalText());
 						}
@@ -287,7 +316,7 @@ public class Extractor {
 					}
 					
 					if(noun instanceof Location) {
-						event.setLocation((Location) noun);
+						storySentence.setLocation((Location) noun);
 					}
 
 					System.out.println("Location: " + td.dep().originalText());

@@ -7,30 +7,33 @@ import java.util.Map;
 
 import model.story_representation.noun.Location;
 import model.story_representation.noun.Noun;
+import model.story_representation.story_sentence.Event;
+import model.story_representation.story_sentence.State;
+import model.story_representation.story_sentence.StorySentence;
 
 public class AbstractStoryRepresentation {
 	
-	private Map<String, List<Event>> events;
+	private Map<String, List<StorySentence>> storySentences;
 	
 	private Map<String, Noun> nouns;
 	
-	private Event conflict;
+	private StorySentence conflict;
 	
-	private Event resolution;
+	private StorySentence resolution;
 	
 	private Checklist checklist;
 	
 	private String partOfStory;
 	
 	public AbstractStoryRepresentation() {
-		this.events = new HashMap<String, List<Event>>();
+		this.storySentences = new HashMap<String, List<StorySentence>>();
 		this.nouns = new HashMap<String, Noun>();
 		this.conflict = null;
 		this.checklist = new Checklist(this);
 		this.partOfStory = "start";
 	}
 	
-	public void setConflict(Event conflict) {
+	public void setConflict(StorySentence conflict) {
 		
 		if(this.conflict == null) {
 			this.conflict = conflict;
@@ -43,7 +46,7 @@ public class AbstractStoryRepresentation {
 		}
 	}
 	
-	public Event getConflict() {
+	public StorySentence getConflict() {
 		return this.conflict;
 	}
 	
@@ -51,29 +54,27 @@ public class AbstractStoryRepresentation {
 		this.resolution = resolution;
 	}
 	
-	public Event getResolution() {
+	public StorySentence getResolution() {
 		return this.resolution;
 	}
 	
-	public void addEvent(Event event) {
+	public void addStorySentence(StorySentence storySentence) {
 		
-		List<Event> events = this.events.get(partOfStory);
+		List<StorySentence> storySentences = this.storySentences.get(this.partOfStory);
 		
-		if(events == null) {
-			events = new ArrayList();
+		if(storySentences == null) {
+			storySentences = new ArrayList();
 		}
-		
-		if(event.isValidEvent()) {
 			
-			if(this.getCurrentEvent() != null && event.getLocation() == null) 
-				event.setLocation(this.getCurrentEvent().getLocation());
+		if(this.getCurrentStorySentence() != null && storySentence.getLocation() == null) 
+			storySentence.setLocation(this.getCurrentStorySentence().getLocation());
 			
-			events.add(event);
-			this.events.put(partOfStory, events);
+		storySentences.add(storySentence);
+		this.storySentences.put(partOfStory, storySentences);
 
-			if(event.getPolarity() < 0)
-				this.setConflict(event);
-		}
+		if(storySentence.getPolarity() < 0)
+			this.setConflict(storySentence);
+		
 		
 //		this.nouns.putAll(event.getManyDoers());
 //		this.nouns.putAll(event.getManyReceivers());
@@ -96,20 +97,50 @@ public class AbstractStoryRepresentation {
 //		}
 //	}
 	
-	public Event getCurrentEvent() {
-		List<Event> events = this.events.get(partOfStory);
-		if(events == null) {
+	public StorySentence getCurrentStorySentence() {
+		List<StorySentence> storySentences = this.storySentences.get(partOfStory);
+		if(storySentences == null) {
 			return null;
 		}
-		return events.get(events.size()-1);
+		return storySentences.get(storySentences.size()-1);
 	}
 	
-	public Map<String, List<Event>> getManyEvents() {
-		return this.events;
+	public Event getLatestEvent() {
+		List<StorySentence> storySentences = this.storySentences.get(partOfStory);
+		if(storySentences == null) {
+			return null;
+		}
+		else {
+			for(int i = storySentences.size() - 1; i >= 0; i--) {
+				if(storySentences.get(i) instanceof Event) {
+					return (Event) storySentences.get(i);
+				}
+			}
+		}
+		return null;
 	}
 	
-	public List<Event> getManyEventsBasedOnPart(String partOfStory) {
-		return this.events.get(partOfStory);
+	public State getLatestState() {
+		List<StorySentence> storySentences = this.storySentences.get(partOfStory);
+		if(storySentences == null) {
+			return null;
+		}
+		else {
+			for(int i = storySentences.size() - 1; i >= 0; i--) {
+				if(storySentences.get(i) instanceof State) {
+					return (State) storySentences.get(i);
+				}
+			}
+		}
+		return null;
+	}
+	
+	public Map<String, List<StorySentence>> getManyStorySentences() {
+		return this.storySentences;
+	}
+	
+	public List<StorySentence> getManyStorySentencesBasedOnPart(String partOfStory) {
+		return this.storySentences.get(partOfStory);
 	}
 	
 	public void addNoun(String key, Noun noun) {
@@ -138,7 +169,4 @@ public class AbstractStoryRepresentation {
 	public void setPartOfStory(String partOfStory) {
 		this.partOfStory = partOfStory;
 	}
-	
-	
-	
 }
