@@ -126,7 +126,7 @@ public class Extractor {
 					if(tdGovTag.equals("JJ")) {
 						
 						noun.addAttribute("HasProperty", td.gov().originalText());
-						event.addDoer(td.dep().originalText(), noun); //made states into events	
+						//event.addDoer(td.dep().originalText(), noun); //made states into events	
 						System.out.println(noun.getId() + " hasProperty " + td.gov().originalText());
 					}
 					
@@ -135,17 +135,18 @@ public class Extractor {
 						if(!dictionary.copulas.contains(td.gov().lemma())) {
 							noun.addAttribute("CapableOf", td.gov().lemma());
 							System.out.println(noun.getId() + " capable of " + td.gov().lemma());
+						
+						
+							event.addDoer(td.dep().originalText(), noun);
+							
+							Predicate predicate = event.getPredicate(td.gov().lemma());
+							
+							if(predicate == null) {
+								predicate = new Predicate(td.gov().lemma());
+							}
+							
+							event.addPredicate(predicate);
 						}
-						
-						event.addDoer(td.dep().originalText(), noun);
-						
-						Predicate predicate = event.getPredicate(td.gov().lemma());
-						
-						if(predicate == null) {
-							predicate = new Predicate(td.gov().lemma());
-						}
-						
-						event.addPredicate(predicate);
 						//unsure if verb for event or capableOf
 					}
 				}
@@ -206,6 +207,14 @@ public class Extractor {
 					}
 					predicate.addDirectObject(td.dep().originalText(), noun);
 					event.addPredicate(predicate);
+					
+					if(td.gov().lemma().equals("has") || td.gov().lemma().equals("have")) {
+						for(Noun n: event.getManyDoers().values()) {
+							if (tdDepTag.contains("NN")) {
+								n.addReference("HasA", noun);
+							}
+						}
+					}
 					
 					System.out.println("dobj: " + event.getPredicate(td.gov().lemma()).getDirectObject(td.dep().originalText()).getId());
 				}

@@ -20,7 +20,7 @@ public class Driver {
 		
 		AbstractStoryRepresentation asr = new AbstractStoryRepresentation();
 		
-		String sentence = "The late train was late.";
+		String sentence = "Geraldine went to the train station. She waited for the train. The late train was late.";
 		
 		TextUnderstanding tu = new TextUnderstanding();
 		
