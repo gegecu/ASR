@@ -21,7 +21,7 @@ public class Event {
 		this.predicates = new HashMap<String, Predicate>();
 		this.location = null;
 		this.polarity = 0;
-		this.concepts = new ArrayList();
+		this.concepts = null;
 	}
 	
 	public void addDoer(String id, Noun noun) {
@@ -72,13 +72,8 @@ public class Event {
 //		return true;
 	}
 	
-	public void addConcept(String concept) {
-		this.concepts.add(concept);
-	}
-	
 	public void setConcept(List<String> concepts) {
-		System.out.println(concepts);
-		this.concepts.addAll(concepts);
+		this.concepts = concepts;
 	}
 	
 	public List<String> getConcepts() {

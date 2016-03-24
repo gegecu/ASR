@@ -74,9 +74,12 @@ public class ConceptNetDAO{
 			rs = ps.executeQuery();
 			
 			while(rs.next()){
-				//concepts.add(rs.getString(5));
+				concepts.add(rs.getString(5));
 			}
-			concepts.add("nightmare");
+			
+//			concepts.add("nightmare");
+//			
+//			System.out.println(concepts);
 			
 		} catch (SQLException e) {
 		   e.printStackTrace();

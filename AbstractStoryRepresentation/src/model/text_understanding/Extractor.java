@@ -71,7 +71,6 @@ public class Extractor {
 				extractDependency(td, asr, event);
 			}
 			event.setConcept(this.cp.getConcepts(sentence.toString()));
-			event.addConcept("nightmare");
 			event.setPolarity(this.getPolarityOfEvent(event));
 			
 			asr.addEvent(event);
@@ -394,19 +393,20 @@ public class Extractor {
 	
 	private float getPolarityOfEvent(Event event) {
 		List<String> concepts = event.getConcepts();
-		System.out.println(concepts);
+		
 		if(concepts == null) {
-			return (float)-0.5;
+			return (float) -0.5;
 		}
-		System.out.println(concepts);
-		float worstPolarity = snp.getPolarity(concepts.remove(0).replace(" ", "_"));
+
+		float worstPolarity = snp.getPolarity(concepts.get(0).replace(" ", "_"));
 		float polarity = 0;
-		while(!concepts.isEmpty()) {
-			polarity = snp.getPolarity(concepts.remove(0).replace(" ", "_"));
+		for(int i = 1; i < concepts.size(); i++) {
+			polarity = snp.getPolarity(concepts.get(i).replace(" ", "_"));
 			if(polarity < worstPolarity) {
 				worstPolarity = polarity;
 			}
 		}
-		return (float)-0.5;
+
+		return (float) -0.5;
 	}
 }

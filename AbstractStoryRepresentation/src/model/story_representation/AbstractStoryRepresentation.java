@@ -54,20 +54,24 @@ public class AbstractStoryRepresentation {
 		String expectedResolutionAction = null;
 		
 		while(expectedResolutionAction == null) {
-			//System.out.println("trap");
-			System.out.println(this.conflict.getConcepts());
+			
+			//System.out.println(this.conflict.getConcepts());
+			
+			if(this.conflict == null || this.conflict.getConcepts().isEmpty()) {
+				break;
+			}
+			
 			for(String concept: this.conflict.getConcepts()) {
-				System.out.println(expectedResolutionAction);
 				List<String> path = ConceptNetDAO.getExpectedResolution(concept);
 				expectedResolutionAction = path.get(path.size()-1);
-				System.out.println(expectedResolutionAction);
 			}
+			//if after getting all conflict concepts and database found nothing. just stop. think of another way
+			break;
 		}
 		
 		
 		
 		if(resolution.getConcepts().contains(expectedResolutionAction)) {
-			System.out.println("a");
 			List<Character> charsInResolution = new ArrayList();
 			for(Noun doer: resolution.getManyDoers().values()) {
 				if(doer instanceof Character) {
@@ -138,7 +142,11 @@ public class AbstractStoryRepresentation {
 			if(event.getPolarity() < 0)
 				this.setConflict(event);
 			
-			if(this.conflict != null)
+//			if(this.conflict != null) {
+//				this.partOfStory = "end";
+//			}
+			
+			if(this.conflict != null && this.partOfStory.equals("end"))
 				this.setResolution(event);
 		}
 		
