@@ -97,14 +97,21 @@ public class Extractor {
 					boolean commonNouns = tdDepTag.equals("NN") && tdGovTag.contains("NN");
 					String name = td.dep().originalText() + " " + td.gov().originalText();
 					
-					if(asr.getNoun(td.gov().originalText()) == null) {
+					Noun noun = asr.getNoun(td.gov().originalText());
+					
+					if(noun == null) {
 						if(properNouns) {
-							asr.addNoun(td.gov().originalText(), this.extractCategory(this.getNER(name), name));
+							noun = this.extractCategory(this.getNER(name), name);
 						}
 						else if(commonNouns) {
-							asr.addNoun(td.gov().originalText(), this.extractCategory(this.getSRL(name), name));
+							noun = this.extractCategory(this.getSRL(name), name);
 						}
 					}
+					else {
+						noun.setId(name);
+					}
+					
+					asr.addNoun(td.gov().originalText(), noun);
 					
 					System.out.println("compound: " + asr.getNoun(td.gov().originalText()).getId());
 				}
@@ -300,9 +307,10 @@ public class Extractor {
 					
 					if(noun instanceof Location) {
 						event.setLocation((Location) noun);
+
+						System.out.println("Location: " + td.dep().originalText());
 					}
 
-					System.out.println("Location: " + td.dep().originalText());
 				}
 //				else if (!(tdReln.equals("nmod:near") || tdReln.equals("nmod:at") || tdReln.equals("nmod:in")
 //								|| tdReln.equals("nmod:on") || tdReln.equals("nmod:to")
@@ -336,7 +344,7 @@ public class Extractor {
 				return new Character(word);
 		case "ORGANIZATION" :
 				return new Location(word);
-			case "LOCATION" :
+			case "PLACE" :
 				return new Location(word);
 			case "OBJECT" :
 				return new Object(word);
@@ -348,7 +356,7 @@ public class Extractor {
 	}
 	
 	private String getSRL(String text) {
-		String[] ENTITY_LIST = { "person", "location", "object"};
+		String[] ENTITY_LIST = { "person", "place", "object"};
 		
 		for (String entityValue : ENTITY_LIST) {
 			
