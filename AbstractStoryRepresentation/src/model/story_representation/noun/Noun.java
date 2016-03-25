@@ -7,6 +7,7 @@ import java.util.Map;
 
 public abstract class Noun {
 	protected String id;
+	protected boolean isCommon;
 	protected Map<String, List<String>> attributes;
 	protected Map<String, List<Noun>> references;
 	
@@ -14,6 +15,7 @@ public abstract class Noun {
 		this.id = id;
 		this.attributes = new HashMap<String, List<String>>();
 		this.references = new HashMap<String, List<Noun>>();
+		this.isCommon = true;
 	}
 	
 	public void setId(String id) {
@@ -38,6 +40,10 @@ public abstract class Noun {
 		return this.attributes;
 	}
 	
+	public List<String> getAttribute(String key) {
+		return this.attributes.get(key);
+	}
+	
 	public void addReference(String key, Noun reference) {
 		List<Noun> temp = this.references.get(key);
 		
@@ -51,4 +57,13 @@ public abstract class Noun {
 	public Map<String, List<Noun>> getReferences() {
 		return this.references;
 	}
+	
+	public void setProper() {
+		this.isCommon = false;
+	}
+	
+	public boolean getIsCommon() {
+		return this.isCommon;
+	}
 }
+

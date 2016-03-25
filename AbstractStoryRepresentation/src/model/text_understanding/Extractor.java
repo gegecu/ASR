@@ -97,14 +97,22 @@ public class Extractor {
 					boolean commonNouns = tdDepTag.equals("NN") && tdGovTag.contains("NN");
 					String name = td.dep().originalText() + " " + td.gov().originalText();
 					
-					if(asr.getNoun(td.gov().originalText()) == null) {
+					Noun noun = asr.getNoun(td.gov().originalText());
+					
+					if(noun == null) {
 						if(properNouns) {
-							asr.addNoun(td.gov().originalText(), this.extractCategory(this.getNER(name), name));
+							noun = this.extractCategory(this.getNER(name), name);
+							noun.setProper();
 						}
 						else if(commonNouns) {
-							asr.addNoun(td.gov().originalText(), this.extractCategory(this.getSRL(name), name));
+							noun = this.extractCategory(this.getSRL(name), name);
 						}
 					}
+					else {
+						noun.setId(name);
+					}
+					
+					asr.addNoun(td.gov().originalText(), noun);
 					
 					System.out.println("compound: " + asr.getNoun(td.gov().originalText()).getId());
 				}
@@ -116,6 +124,7 @@ public class Extractor {
 					if(noun == null) {
 						if (tdDepTag.equals("NNP")) {
 							noun = this.extractCategory(this.getNER(td.dep().originalText()), td.dep().originalText());
+							noun.setProper();
 						}
 						else if (tdDepTag.contains("NN")) {
 							noun = this.extractCategory(this.getSRL(td.dep().originalText()), td.dep().originalText());
@@ -162,6 +171,7 @@ public class Extractor {
 						if(noun == null) {
 							if (tdDepTag.equals("NNP")) {
 								noun = this.extractCategory(this.getNER(td.dep().originalText()), td.dep().originalText());
+								noun.setProper();
 							}
 							else if (tdDepTag.contains("NN")) {
 								noun = this.extractCategory(this.getSRL(td.dep().originalText()), td.dep().originalText());
@@ -195,6 +205,7 @@ public class Extractor {
 					if(noun == null) {
 						if (tdDepTag.equals("NNP")) {
 							noun = this.extractCategory(this.getNER(td.dep().originalText()), td.dep().originalText());
+							noun.setProper();
 						}
 						else if (tdDepTag.contains("NN")) {
 							noun = this.extractCategory(this.getSRL(td.dep().originalText()), td.dep().originalText());
@@ -240,6 +251,7 @@ public class Extractor {
 					if(noun == null) {
 						if (tdGovTag.equals("NNP")) {
 							noun = this.extractCategory(this.getNER(td.dep().originalText()), td.dep().originalText());
+							noun.setProper();
 						}
 						else if (tdGovTag.contains("NN")) {
 							noun = this.extractCategory(this.getSRL(td.dep().originalText()), td.dep().originalText());
@@ -290,6 +302,7 @@ public class Extractor {
 					if(noun == null) {
 						if (tdDepTag.equals("NNP")) {
 							noun = this.extractCategory(this.getNER(td.dep().originalText()), td.dep().originalText());
+							noun.setProper();
 						}
 						else if (tdDepTag.contains("NN")) {
 							noun = this.extractCategory(this.getSRL(td.dep().originalText()), td.dep().originalText());
@@ -334,9 +347,11 @@ public class Extractor {
 		switch (category) {
 			case "PERSON" :
 				return new Character(word);
-		case "ORGANIZATION" :
+			case "ORGANIZATION" :
 				return new Location(word);
 			case "LOCATION" :
+				return new Location(word);
+			case "PLACE" :
 				return new Location(word);
 			case "OBJECT" :
 				return new Object(word);
@@ -348,7 +363,7 @@ public class Extractor {
 	}
 	
 	private String getSRL(String text) {
-		String[] ENTITY_LIST = { "person", "location", "object"};
+		String[] ENTITY_LIST = { "person", "place", "object"};
 		
 		for (String entityValue : ENTITY_LIST) {
 			
@@ -395,7 +410,7 @@ public class Extractor {
 		List<String> concepts = event.getConcepts();
 		
 		if(concepts == null) {
-			return (float) -0.5;
+			return (float) 0;
 		}
 
 		float worstPolarity = snp.getPolarity(concepts.get(0).replace(" ", "_"));
@@ -407,6 +422,6 @@ public class Extractor {
 			}
 		}
 
-		return (float) -0.5;
+		return worstPolarity;
 	}
 }
