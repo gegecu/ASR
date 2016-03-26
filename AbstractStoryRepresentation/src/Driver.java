@@ -74,7 +74,7 @@ public class Driver {
 					}
 					
 					System.out.println("doers' references: ");
-					for(Map.Entry<String, List<String>> entry2: entry.getValue().getAttributes().entrySet()) {
+					for(Map.Entry<String, List<Noun>> entry2: entry.getValue().getReferences().entrySet()) {
 						System.out.print(entry2.getKey() + " ");
 						System.out.print(entry2.getValue());
 						System.out.println();
@@ -129,7 +129,7 @@ public class Driver {
 				}
 				System.out.println();
 				System.out.println("polarity: " + e.getPolarity());
-				System.out.println("concepts: " + e.getConcepts().toArray());
+				System.out.println("concepts: " + e.getConcepts());
 				System.out.println();
 			}
 			

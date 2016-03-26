@@ -36,9 +36,9 @@ public class Preprocessing {
 	public String preprocess(String text) {
 		String result = text;
 		
-		result = normalize(result);
+		//result = normalize(result);
 		result = coreference(result);
-		result = normalize(result);
+		//result = normalize(result);
 		
 		System.out.println(result);
 		return result;
