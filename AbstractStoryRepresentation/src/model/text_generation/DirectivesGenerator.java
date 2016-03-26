@@ -47,17 +47,19 @@ public class DirectivesGenerator extends TextGeneration{
 			nouns.addAll(predicate.getReceivers().values());
 		}
 		
-		int randomNoun = Randomizer.random(1, nouns.size());
-		int randomNounDirective = Randomizer.random(1, this.nounDirective.length);
-
-		Noun noun = nouns.get(randomNoun-1);
-		if(noun.getIsCommon()) {
-			String directive = this.nounDirective[randomNounDirective-1];
-			directive = directive.replace("<noun>", "the " + noun.getId());
-		}
-		else {
-			String directive = this.nounDirective[randomNounDirective-1];
-			directive = directive.replace("<noun>", noun.getId());
+		if(!nouns.isEmpty()) {
+			int randomNoun = Randomizer.random(1, nouns.size());
+			int randomNounDirective = Randomizer.random(1, this.nounDirective.length);
+	
+			Noun noun = nouns.get(randomNoun-1);
+			if(noun.getIsCommon()) {
+				String directive = this.nounDirective[randomNounDirective-1];
+				directive = directive.replace("<noun>", "the " + noun.getId());
+			}
+			else {
+				String directive = this.nounDirective[randomNounDirective-1];
+				directive = directive.replace("<noun>", noun.getId());
+			}
 		}
 		
 		return null;

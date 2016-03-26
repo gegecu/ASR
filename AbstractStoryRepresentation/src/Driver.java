@@ -52,7 +52,7 @@ public class Driver {
 			
 			story += " " + sentence;
 			
-			tu.processInput(story);
+			tu.processInput(sentence);
 		
 		
 			for(Event e: asr.getManyEventsBasedOnCurrentPart()) {

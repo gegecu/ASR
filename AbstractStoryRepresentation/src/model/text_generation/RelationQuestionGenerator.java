@@ -41,58 +41,61 @@ public class RelationQuestionGenerator extends TextGeneration{
 		
 		List<Noun> nouns = this.getAllNounsBasedOnRelation("HasProperty");
 		
-		int randomNoun = Randomizer.random(1, nouns.size());
-		int randomHasPropertyQuestion = Randomizer.random(1, this.hasPropertyQuestions.length);
-		
-		if(!nouns.isEmpty()) {
-			String question = this.hasPropertyQuestions[randomHasPropertyQuestion-1];
-			Noun noun = nouns.get(randomNoun-1);
-			List<String> properties = noun.getAttribute("HasProperty");
-			int randomProperty = Randomizer.random(1, properties.size());
+		if(nouns != null && !nouns.isEmpty()) {
+			int randomNoun = Randomizer.random(1, nouns.size());
+			int randomHasPropertyQuestion = Randomizer.random(1, this.hasPropertyQuestions.length);
 			
-			if(noun.getIsCommon()) {
-				question = question.replace("<noun>", "the " + noun.getId());
+			if(!nouns.isEmpty()) {
+				String question = this.hasPropertyQuestions[randomHasPropertyQuestion-1];
+				Noun noun = nouns.get(randomNoun-1);
+				List<String> properties = noun.getAttribute("HasProperty");
+				int randomProperty = Randomizer.random(1, properties.size());
+				
+				if(noun.getIsCommon()) {
+					question = question.replace("<noun>", "the " + noun.getId());
+				}
+				else {
+					question = question.replace("<noun>", noun.getId());
+				}
+				
+				question = question.replace("<property>", properties.get(randomProperty-1));
+				return question;
 			}
-			else {
-				question = question.replace("<noun>", noun.getId());
-			}
-			
-			question = question.replace("<property>", properties.get(randomProperty-1));
-			return question;
 		}
 		
 		return null;
 	}
 	
 	private String capableOf() {
-		Event event = asr.getCurrentEvent();
 		List<Noun> nouns = this.getAllNounsBasedOnRelation("CapableOf");
 		
-		int randomNoun = Randomizer.random(1, nouns.size());
-		int randomCapableOfQuestion = Randomizer.random(1, this.capableOfQuestions.length);
-		
-		if(!nouns.isEmpty()) {
-			String question = this.capableOfQuestions[randomCapableOfQuestion-1];
-			Noun noun = nouns.get(randomNoun-1);
-			List<String> capableOf = noun.getAttribute("CapableOf");
-			int randomCapableOf = Randomizer.random(1, capableOf.size());
+		if(nouns != null && !nouns.isEmpty()) {
+			int randomNoun = Randomizer.random(1, nouns.size());
+			int randomCapableOfQuestion = Randomizer.random(1, this.capableOfQuestions.length);
 			
-			if(noun.getIsCommon()) {
-				question = question.replace("<noun>", "the " + noun.getId());
+			if(!nouns.isEmpty()) {
+				String question = this.capableOfQuestions[randomCapableOfQuestion-1];
+				Noun noun = nouns.get(randomNoun-1);
+				List<String> capableOf = noun.getAttribute("CapableOf");
+				int randomCapableOf = Randomizer.random(1, capableOf.size());
+				
+				if(noun.getIsCommon()) {
+					question = question.replace("<noun>", "the " + noun.getId());
+				}
+				else {
+					question = question.replace("<noun>", noun.getId());
+				}
+				
+				if(randomCapableOfQuestion == 1) {
+					VPPhraseSpec verb = nlgFactory.createVerbPhrase(capableOf.get(randomCapableOf-1));
+			        verb.setFeature(Feature.FORM, Form.GERUND);
+					question = question.replace("<action>", realiser.realise(verb).toString());
+				}
+				else {
+					question = question.replace("<action>", capableOf.get(randomCapableOf-1));
+				}
+				return question;
 			}
-			else {
-				question = question.replace("<noun>", noun.getId());
-			}
-			
-			if(randomCapableOfQuestion == 1) {
-				VPPhraseSpec verb = nlgFactory.createVerbPhrase(capableOf.get(randomCapableOf-1));
-		        verb.setFeature(Feature.FORM, Form.GERUND);
-				question = question.replace("<action>", realiser.realise(verb).toString());
-			}
-			else {
-				question = question.replace("<action>", capableOf.get(randomCapableOf-1));
-			}
-			return question;
 		}
 		
 		return null;

@@ -420,6 +420,7 @@ public class Extractor {
 			if(polarity < worstPolarity) {
 				worstPolarity = polarity;
 			}
+			System.out.println(worstPolarity);
 		}
 
 		return worstPolarity;

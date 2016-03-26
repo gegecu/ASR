@@ -18,8 +18,10 @@ public class SenticNetParser {
 		Resource title = m.getResource("http://sentic.net/api/en/concept/" + concept);
 		Property contains = m.getProperty("http://sentic.net/apipolarity");
 		try {
+			System.out.println("senticPolar" + title.getProperty(contains).getFloat());
 			return title.getProperty(contains).getFloat();
 		}catch(NullPointerException e) {
+			//e.printStackTrace();
 			return 0;
 		}
 	}

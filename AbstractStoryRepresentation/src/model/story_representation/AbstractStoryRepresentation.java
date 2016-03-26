@@ -35,6 +35,7 @@ public class AbstractStoryRepresentation {
 		this.expectedResolutionConcept = null;
 	}
 	
+	
 	public void setConflict(Event conflict) {
 		
 		if(this.conflict == null) {
@@ -235,7 +236,8 @@ public class AbstractStoryRepresentation {
 		
 		for(String concept: this.conflict.getConcepts()) {
 			List<String> path = ConceptNetDAO.getExpectedResolution(concept);
-			expectedResolutionConcept = path.get(path.size()-1);
+			if(!path.isEmpty())
+				expectedResolutionConcept = path.get(path.size()-1);
 		}
 		//if after getting all conflict concepts and database found nothing. just stop. think of another way
 		break;
