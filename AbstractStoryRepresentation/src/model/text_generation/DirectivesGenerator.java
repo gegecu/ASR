@@ -55,10 +55,12 @@ public class DirectivesGenerator extends TextGeneration{
 			if(noun.getIsCommon()) {
 				String directive = this.nounDirective[randomNounDirective-1];
 				directive = directive.replace("<noun>", "the " + noun.getId());
+				return directive;
 			}
 			else {
 				String directive = this.nounDirective[randomNounDirective-1];
 				directive = directive.replace("<noun>", noun.getId());
+				return directive;
 			}
 		}
 		
