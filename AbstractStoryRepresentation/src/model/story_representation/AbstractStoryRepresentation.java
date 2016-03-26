@@ -20,6 +20,8 @@ public class AbstractStoryRepresentation {
 	
 	private Event resolution;
 	
+	private String expectedResolutionConcept;
+	
 	private Checklist checklist;
 	
 	private String partOfStory;
@@ -30,6 +32,7 @@ public class AbstractStoryRepresentation {
 		this.conflict = null;
 		this.checklist = new Checklist(this);
 		this.partOfStory = "start";
+		this.expectedResolutionConcept = null;
 	}
 	
 	public void setConflict(Event conflict) {
@@ -50,28 +53,26 @@ public class AbstractStoryRepresentation {
 	}
 	
 	public void setResolution(Event resolution) {
-		System.out.println("resolution");
-		String expectedResolutionAction = null;
+		//System.out.println("resolution");
+//		String expectedResolutionAction = null;
+//		
+//		while(expectedResolutionAction == null) {
+//			
+//			//System.out.println(this.conflict.getConcepts());
+//			
+//			if(this.conflict == null || this.conflict.getConcepts().isEmpty()) {
+//				break;
+//			}
+//			
+//			for(String concept: this.conflict.getConcepts()) {
+//				List<String> path = ConceptNetDAO.getExpectedResolution(concept);
+//				expectedResolutionAction = path.get(path.size()-1);
+//			}
+//			//if after getting all conflict concepts and database found nothing. just stop. think of another way
+//			break;
+//		}
 		
-		while(expectedResolutionAction == null) {
-			
-			//System.out.println(this.conflict.getConcepts());
-			
-			if(this.conflict == null || this.conflict.getConcepts().isEmpty()) {
-				break;
-			}
-			
-			for(String concept: this.conflict.getConcepts()) {
-				List<String> path = ConceptNetDAO.getExpectedResolution(concept);
-				expectedResolutionAction = path.get(path.size()-1);
-			}
-			//if after getting all conflict concepts and database found nothing. just stop. think of another way
-			break;
-		}
-		
-		
-		
-		if(resolution.getConcepts().contains(expectedResolutionAction)) {
+		if(resolution.getConcepts().contains(this.expectedResolutionConcept)) {
 			List<Character> charsInResolution = new ArrayList();
 			for(Noun doer: resolution.getManyDoers().values()) {
 				if(doer instanceof Character) {
@@ -117,6 +118,7 @@ public class AbstractStoryRepresentation {
 			}
 			
 		}
+
 	}
 	
 	public Event getResolution() {
@@ -146,8 +148,12 @@ public class AbstractStoryRepresentation {
 //				this.partOfStory = "end";
 //			}
 			
-			if(this.conflict != null && this.partOfStory.equals("end"))
+			if(this.conflict != null && this.expectedResolutionConcept == null)
+				this.setExpectedResolution();
+			
+			if(this.conflict != null && this.partOfStory.equals("end") && this.resolution == null && this.expectedResolutionConcept != null) {
 				this.setResolution(event);
+			}
 		}
 		
 //		this.nouns.putAll(event.getManyDoers());
@@ -187,6 +193,10 @@ public class AbstractStoryRepresentation {
 		return this.events.get(partOfStory);
 	}
 	
+	public List<Event> getManyEventsBasedOnCurrentPart() {
+		return this.events.get(this.partOfStory);
+	}
+	
 	public void addNoun(String key, Noun noun) {
 		this.nouns.put(key, noun);
 	}
@@ -212,6 +222,29 @@ public class AbstractStoryRepresentation {
 
 	public void setPartOfStory(String partOfStory) {
 		this.partOfStory = partOfStory;
+	}
+	
+	private void setExpectedResolution() {
+		while(this.expectedResolutionConcept == null) {
+		
+		//System.out.println(this.conflict.getConcepts());
+		
+		if(this.conflict == null || this.conflict.getConcepts().isEmpty()) {
+			break;
+		}
+		
+		for(String concept: this.conflict.getConcepts()) {
+			List<String> path = ConceptNetDAO.getExpectedResolution(concept);
+			expectedResolutionConcept = path.get(path.size()-1);
+		}
+		//if after getting all conflict concepts and database found nothing. just stop. think of another way
+		break;
+	
+		}
+	}
+	
+	public String getExpectedResolution() {
+		return this.expectedResolutionConcept;
 	}
 	
 }

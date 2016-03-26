@@ -11,6 +11,7 @@ import model.story_representation.AbstractStoryRepresentation;
 import model.story_representation.Event;
 import model.story_representation.Predicate;
 import model.story_representation.noun.Noun;
+import model.utility.Randomizer;
 
 public class RelationQuestionGenerator extends TextGeneration{
 	
@@ -24,21 +25,30 @@ public class RelationQuestionGenerator extends TextGeneration{
 	@Override
 	public String generateText() {
 		// TODO Auto-generated method stub
-		return capableOf();
+		int random = Randomizer.random(1, 2);
+		
+		switch(random) {
+			case 1:
+				return hasProperty();
+			case 2:
+				return capableOf();
+			default:
+				return null;
+		}
 	}
 	
 	private String hasProperty() {
 		
 		List<Noun> nouns = this.getAllNounsBasedOnRelation("HasProperty");
 		
-		int randomNoun = this.randomizer(1, nouns.size());
-		int randomHasPropertyQuestion = this.randomizer(1, this.hasPropertyQuestions.length);
+		int randomNoun = Randomizer.random(1, nouns.size());
+		int randomHasPropertyQuestion = Randomizer.random(1, this.hasPropertyQuestions.length);
 		
 		if(!nouns.isEmpty()) {
 			String question = this.hasPropertyQuestions[randomHasPropertyQuestion-1];
 			Noun noun = nouns.get(randomNoun-1);
 			List<String> properties = noun.getAttribute("HasProperty");
-			int randomProperty = this.randomizer(1, properties.size());
+			int randomProperty = Randomizer.random(1, properties.size());
 			
 			if(noun.getIsCommon()) {
 				question = question.replace("<noun>", "the " + noun.getId());
@@ -58,14 +68,14 @@ public class RelationQuestionGenerator extends TextGeneration{
 		Event event = asr.getCurrentEvent();
 		List<Noun> nouns = this.getAllNounsBasedOnRelation("CapableOf");
 		
-		int randomNoun = this.randomizer(1, nouns.size());
-		int randomCapableOfQuestion = this.randomizer(1, this.capableOfQuestions.length);
+		int randomNoun = Randomizer.random(1, nouns.size());
+		int randomCapableOfQuestion = Randomizer.random(1, this.capableOfQuestions.length);
 		
 		if(!nouns.isEmpty()) {
 			String question = this.capableOfQuestions[randomCapableOfQuestion-1];
 			Noun noun = nouns.get(randomNoun-1);
 			List<String> capableOf = noun.getAttribute("CapableOf");
-			int randomCapableOf = this.randomizer(1, capableOf.size());
+			int randomCapableOf = Randomizer.random(1, capableOf.size());
 			
 			if(noun.getIsCommon()) {
 				question = question.replace("<noun>", "the " + noun.getId());

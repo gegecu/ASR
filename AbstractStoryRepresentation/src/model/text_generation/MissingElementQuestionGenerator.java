@@ -14,6 +14,7 @@ import model.story_representation.AbstractStoryRepresentation;
 import model.story_representation.Event;
 import model.story_representation.Predicate;
 import model.story_representation.noun.Noun;
+import model.utility.Randomizer;
 
 public class MissingElementQuestionGenerator extends TextGeneration{
 	
@@ -29,7 +30,7 @@ public class MissingElementQuestionGenerator extends TextGeneration{
 	public String generateText() {
 		this.setSentenceElements();
 		
-		int randomNum = this.randomizer(1, 2);
+		int randomNum = Randomizer.random(1, 2);
 		String output = null;
 		
 		switch (randomNum) {
@@ -49,7 +50,7 @@ public class MissingElementQuestionGenerator extends TextGeneration{
 	
 	private String askAboutIndirectObject() {
 
-		int randomNum = this.randomizer(1, indirectQuestions.length);
+		int randomNum = Randomizer.random(1, indirectQuestions.length);
 		if(this.phraseElement.getIndirectObject() == null) {
 			this.phraseElement.setFeature(Feature.INTERROGATIVE_TYPE, indirectQuestions[randomNum-1]);
 			return this.realiser.realiseSentence(phraseElement);
@@ -59,7 +60,7 @@ public class MissingElementQuestionGenerator extends TextGeneration{
 	
 	private String askAboutDirectObject() {
 		
-		int randomNum = this.randomizer(1, directQuestions.length); //why, who, how, where
+		int randomNum = Randomizer.random(1, directQuestions.length); //why, who, how, where
 		if(this.phraseElement.getObject() == null) {
 			this.phraseElement.setFeature(Feature.INTERROGATIVE_TYPE, directQuestions[randomNum-1]);
 			return this.realiser.realiseSentence(phraseElement);
@@ -81,7 +82,7 @@ public class MissingElementQuestionGenerator extends TextGeneration{
 		
 		//randomly choose a predicate
 		List<Predicate> predicates = new ArrayList(event.getManyPredicates().values());
-		int randomNum = this.randomizer(1, predicates.size());
+		int randomNum = Randomizer.random(1, predicates.size());
 		
 		//verb
 		this.phraseElement.setVerb(predicates.get(randomNum-1).getAction());

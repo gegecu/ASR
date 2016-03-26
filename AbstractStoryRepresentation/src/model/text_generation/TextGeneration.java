@@ -1,8 +1,10 @@
 package model.text_generation;
 
+import java.util.List;
 import java.util.Random;
 
 import model.story_representation.AbstractStoryRepresentation;
+import model.story_representation.noun.Noun;
 import simplenlg.framework.NLGFactory;
 import simplenlg.lexicon.Lexicon;
 import simplenlg.phrasespec.SPhraseSpec;
@@ -26,9 +28,34 @@ public abstract class TextGeneration {
 	
 	public abstract String generateText();
 	
-	protected int randomizer(int min, int max) {
-		Random rand = new Random();
-		return rand.nextInt((max - min) + 1) + min;
+
+	
+	protected String determinerFixer(String word) {
+		String temp = word.toLowerCase();
+		if(temp.startsWith("a") || temp.startsWith("e") || temp.startsWith("i")
+				|| temp.startsWith("o") || temp.startsWith("u")) {
+			return "an " + temp;
+		}
+		else {
+			return "a " + temp;
+		}
+	}
+	
+	protected String wordsConjunction(List<Noun> nouns) {
+		String characters = "";
+		for(int i = 0 ; i < nouns.size(); i++) {
+			if(i < nouns.size()-2) {
+				characters += nouns.get(i).getId() + ", ";
+			}
+			else if (i < nouns.size() - 1) {
+				characters += nouns.get(i).getId() + " and ";
+			}
+			else {
+				characters += nouns.get(i).getId();
+			}
+		}
+		
+		return characters;
 	}
 
 }

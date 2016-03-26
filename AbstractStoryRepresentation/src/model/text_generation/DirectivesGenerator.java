@@ -9,12 +9,14 @@ import model.story_representation.Predicate;
 import model.story_representation.noun.Location;
 import model.story_representation.noun.Noun;
 import model.story_representation.noun.Character;
+import model.utility.Randomizer;
 
 public class DirectivesGenerator extends TextGeneration{
 	
 	private String[] nounDirective = {"Describe <noun>.", "Tell me more about <noun>.", "Write more about <noun>."};
-	private String[] locationDirective = {"What did <doer> see in <location>?", "What happened in <location>?"
+	private String[] locationDirective = {"What happened in <location>?", "What did <doer> see in <location>?"
 			, "What is <doer> doing in <location>"};
+	
 
 	public DirectivesGenerator(AbstractStoryRepresentation asr) {
 		super(asr);
@@ -22,7 +24,7 @@ public class DirectivesGenerator extends TextGeneration{
 
 	@Override
 	public String generateText() {
-		int random = this.randomizer(1, 2);
+		int random = Randomizer.random(1, 2);
 		
 		switch(random) {
 			case 1:
@@ -45,8 +47,8 @@ public class DirectivesGenerator extends TextGeneration{
 			nouns.addAll(predicate.getReceivers().values());
 		}
 		
-		int randomNoun = this.randomizer(1, nouns.size());
-		int randomNounDirective = this.randomizer(1, this.nounDirective.length);
+		int randomNoun = Randomizer.random(1, nouns.size());
+		int randomNounDirective = Randomizer.random(1, this.nounDirective.length);
 
 		Noun noun = nouns.get(randomNoun-1);
 		if(noun.getIsCommon()) {
@@ -64,40 +66,35 @@ public class DirectivesGenerator extends TextGeneration{
 	private String locationDirective() {
 		Event event = asr.getCurrentEvent();
 		
-		List<Character> doers = new ArrayList();
+		List<Noun> doers = new ArrayList();
 		for(Noun noun: event.getManyDoers().values()) {
 			if(noun instanceof Character) {
 				doers.add((Character)noun);
 			}
 		}
 		
-		String characters = "";
-		for(int i = 0 ; i < doers.size(); i++) {
-			if(i < doers.size()-2) {
-				characters += doers.get(i).getId() + ", ";
-			}
-			else if (i < doers.size() - 1) {
-				characters += doers.get(i).getId() + " and ";
-			}
-			else {
-				characters += doers.get(i).getId();
-			}
-		}
-		
-		
+		String characters = this.wordsConjunction(doers);
+
 		Location location = event.getLocation();
-		int randomLocationDirective = this.randomizer(1, this.locationDirective.length);
 		
 		if(location != null) {
+			int randomLocationDirective = Randomizer.random(1, locationDirective.length);
+			
+			if(characters.isEmpty()) {
+				randomLocationDirective = Randomizer.random(1, locationDirective.length-2);
+			}
+			
 			String directive = this.locationDirective[randomLocationDirective-1];
+			
 			directive = directive.replace("<doer>", characters);
 			if(location.getIsCommon())
 				directive = directive.replace("<location>", "the " + location.getId());
 			else 
 				directive = directive.replace("<location>", location.getId());
-			
+				
 			return directive;
 		}
+	
 		
 		return null;
 	}
