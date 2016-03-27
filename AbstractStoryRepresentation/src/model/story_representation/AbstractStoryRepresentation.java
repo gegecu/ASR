@@ -44,8 +44,7 @@ public class AbstractStoryRepresentation {
 			
 			//check event
 			if(((Event)possibleConflict).getPolarity() <= -0.5) {
-				this.setExpectedResolution(possibleConflict);
-				if(this.expectedResolutionConcept != null) {
+				if(this.setExpectedResolution(possibleConflict)) {
 					this.conflict = possibleConflict;
 				}
 			}
@@ -66,8 +65,7 @@ public class AbstractStoryRepresentation {
 			//check current event
 			if(possibleConflict instanceof Event && this.conflict instanceof Event) {
 				if(((Event)possibleConflict).getPolarity() < ((Event)this.conflict).getPolarity()) {
-					this.setExpectedResolution(possibleConflict);
-					if(this.expectedResolutionConcept != null) {
+					if(this.setExpectedResolution(possibleConflict)) {
 						this.conflict = possibleConflict;
 					}
 				}
@@ -230,31 +228,27 @@ public class AbstractStoryRepresentation {
 		this.partOfStory = partOfStory;
 	}
 	
-	private void setExpectedResolution(Event conflict) {
+	private boolean setExpectedResolution(Event conflict) {
 
-		if(conflict instanceof Event) {
-			while(this.expectedResolutionConcept == null) {
 			
-			//System.out.println(this.conflict.getConcepts());
+		if(conflict.getConcepts().isEmpty()) {
+			return false;
+		}
 			
-			if(conflict.getConcepts().isEmpty()) {
-				break;
-			}
-			
-			for(String concept: conflict.getConcepts()) {
-				List<String> path = ConceptNetDAO.getExpectedResolution(concept);
+		for(String concept: conflict.getConcepts()) {
+			List<String> path = ConceptNetDAO.getExpectedResolution(concept);
 				
-				if(!path.isEmpty()) {
-					expectedResolutionConcept = path.get(path.size()-1);
-					break;
-				}
-			}
-			//if after getting all conflict concepts and database found nothing. just stop. think of another way
-			break;
-		
+			if(!path.isEmpty()) {
+				expectedResolutionConcept = path.get(path.size()-1);
+				return true;
 			}
 		}
+		//if after getting all conflict concepts and database found nothing. just stop. think of another way
+		return false;
+		
 	}
+	
+	
 	
 	public String getExpectedResolution() {
 		return this.expectedResolutionConcept;
