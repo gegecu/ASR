@@ -39,12 +39,16 @@ public class AbstractStoryRepresentation {
 	public void setConflict(Event conflict) {
 		
 		if(this.conflict == null) {
-			this.conflict = conflict;
+			if(this.setExpectedResolution(conflict)) {
+				this.conflict = conflict;
+			}
 		}
 		
 		else {
 			if(conflict.getPolarity() < this.conflict.getPolarity()) {
-				this.conflict = conflict;
+				if(this.setExpectedResolution(conflict)) {
+					this.conflict = conflict;
+				}
 			}
 		}
 	}
@@ -54,25 +58,7 @@ public class AbstractStoryRepresentation {
 	}
 	
 	public void setResolution(Event resolution) {
-		//System.out.println("resolution");
-//		String expectedResolutionAction = null;
-//		
-//		while(expectedResolutionAction == null) {
-//			
-//			//System.out.println(this.conflict.getConcepts());
-//			
-//			if(this.conflict == null || this.conflict.getConcepts().isEmpty()) {
-//				break;
-//			}
-//			
-//			for(String concept: this.conflict.getConcepts()) {
-//				List<String> path = ConceptNetDAO.getExpectedResolution(concept);
-//				expectedResolutionAction = path.get(path.size()-1);
-//			}
-//			//if after getting all conflict concepts and database found nothing. just stop. think of another way
-//			break;
-//		}
-		
+
 		if(resolution.getConcepts().contains(this.expectedResolutionConcept)) {
 			List<Character> charsInResolution = new ArrayList();
 			for(Noun doer: resolution.getManyDoers().values()) {
@@ -149,9 +135,7 @@ public class AbstractStoryRepresentation {
 //				this.partOfStory = "end";
 //			}
 			
-			if(this.conflict != null && this.expectedResolutionConcept == null)
-				this.setExpectedResolution();
-			
+
 			if(this.conflict != null && this.partOfStory.equals("end") && this.resolution == null && this.expectedResolutionConcept != null) {
 				this.setResolution(event);
 			}
@@ -225,24 +209,24 @@ public class AbstractStoryRepresentation {
 		this.partOfStory = partOfStory;
 	}
 	
-	private void setExpectedResolution() {
-		while(this.expectedResolutionConcept == null) {
+	private boolean setExpectedResolution(Event possibleConflict) {
 		
 		//System.out.println(this.conflict.getConcepts());
 		
-		if(this.conflict == null || this.conflict.getConcepts().isEmpty()) {
-			break;
+		if(possibleConflict == null || possibleConflict.getConcepts().isEmpty()) {
+			return false;
 		}
 		
-		for(String concept: this.conflict.getConcepts()) {
+		for(String concept: possibleConflict.getConcepts()) {
 			List<String> path = ConceptNetDAO.getExpectedResolution(concept);
-			if(!path.isEmpty())
+			if(!path.isEmpty()) {
 				expectedResolutionConcept = path.get(path.size()-1);
+				return true;
+			}
 		}
 		//if after getting all conflict concepts and database found nothing. just stop. think of another way
-		break;
-	
-		}
+		return false;
+
 	}
 	
 	public String getExpectedResolution() {
