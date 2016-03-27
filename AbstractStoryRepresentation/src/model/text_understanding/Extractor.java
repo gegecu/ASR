@@ -19,6 +19,7 @@ import model.story_representation.noun.Location;
 import model.story_representation.noun.Noun;
 import model.story_representation.noun.Object;
 import model.story_representation.noun.Unknown;
+import model.utility.States;
 import edu.stanford.nlp.dcoref.Dictionaries;
 import edu.stanford.nlp.ie.AbstractSequenceClassifier;
 import edu.stanford.nlp.ie.crf.CRFClassifier;
@@ -117,7 +118,7 @@ public class Extractor {
 					System.out.println("compound: " + asr.getNoun(td.gov().originalText()).getId());
 				}
 				
-				else if(tdReln.equals("nsubj")) {
+				else if(tdReln.contains("nsubj")) {
 					
 					Noun noun = asr.getNoun(td.dep().originalText());
 					
@@ -134,8 +135,13 @@ public class Extractor {
 					}
 					
 					if(tdGovTag.equals("JJ")) {
-						
-						noun.addAttribute("HasProperty", td.gov().originalText());
+
+						if(States.STATES.contains(td.gov().lemma())) {
+							if(noun instanceof Character) {
+								((Character) noun).addState(td.gov().lemma());
+							}
+						}
+						noun.addAttribute("HasProperty", td.gov().lemma());
 						//event.addDoer(td.dep().originalText(), noun); //made states into events	
 						System.out.println(noun.getId() + " hasProperty " + td.gov().originalText());
 					}
@@ -237,7 +243,7 @@ public class Extractor {
 
 					for(Noun n: event.getManyDoers().values()) {
 						if(tdDepTag.equals("JJ")) {
-							n.addAttribute("HasProperty", td.dep().originalText());
+							n.addAttribute("HasProperty", td.dep().lemma());
 						}
 						else if (tdDepTag.contains("NN")) {
 							n.addAttribute("IsA", td.dep().lemma());
@@ -260,14 +266,14 @@ public class Extractor {
 						asr.addNoun(td.dep().originalText(), noun);
 					}
 					
-					noun.addAttribute("HasProperty", td.dep().originalText());
+					noun.addAttribute("HasProperty", td.dep().lemma());
 					
 				}
 				
 				else if (tdReln.equals("advmod") && dictionary.copulas.contains(td.gov().lemma())) {
 					for(Noun n: event.getManyDoers().values()) {
 						if(tdDepTag.equals("RB")) {
-							n.addAttribute("HasProperty", td.dep().originalText());
+							n.addAttribute("HasProperty", td.dep().lemma());
 						}
 					}
 				}

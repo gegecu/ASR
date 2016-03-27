@@ -64,6 +64,9 @@ public class Driver {
 				System.out.println("doers: ");
 				for(Map.Entry<String, Noun> entry: e.getManyDoers().entrySet()) {
 					System.out.println("id: " + entry.getValue().getId());
+					if(entry.getValue() instanceof Character) {
+						System.out.println("states: " + ((Character)entry.getValue()).getStates());
+					}
 					System.out.println("common noun? " + entry.getValue().getIsCommon());
 					
 					System.out.println("doers' attributes: ");
@@ -90,6 +93,9 @@ public class Driver {
 					System.out.println("receivers: ");
 					for(Map.Entry<String, Noun> entry2: entry.getValue().getReceivers().entrySet()) {
 						System.out.println("id: " + entry2.getValue().getId());
+						if(entry2.getValue() instanceof Character) {
+							System.out.println("states: " + ((Character)entry2.getValue()).getStates());
+						}
 						System.out.println("common noun? " + entry2.getValue().getIsCommon());
 						
 						System.out.println("receiver's attributes");
@@ -110,6 +116,9 @@ public class Driver {
 					System.out.println("dobjs: ");
 					for(Map.Entry<String, Noun> entry3: entry.getValue().getDirectObjects().entrySet()) {
 						System.out.println("id: " + entry3.getValue().getId());
+						if(entry3.getValue() instanceof Character) {
+							System.out.println("state: " + ((Character)entry3.getValue()).getStates());
+						}
 						System.out.println("common noun? " + entry3.getValue().getIsCommon());
 			
 						System.out.println("dobj's attributes ");
@@ -145,7 +154,7 @@ public class Driver {
 				int random = Randomizer.random(1, tg.size());
 				String generated = tg.get(random-1).generateText();
 				if(generated == null) {
-					generated = tg.get(1).generateText();
+					generated = "Tell me more.";
 				}
 				
 				System.out.println(generated);

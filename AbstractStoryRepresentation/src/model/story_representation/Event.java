@@ -8,7 +8,7 @@ import java.util.Map;
 import model.story_representation.noun.Location;
 import model.story_representation.noun.Noun;
 
-public class Event {
+public class Event extends StoryElement{
 	
 	private Map<String, Noun> doers;
 	private Map<String, Predicate> predicates;

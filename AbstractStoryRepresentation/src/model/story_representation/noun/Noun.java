@@ -5,7 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class Noun {
+import model.story_representation.StoryElement;
+
+public abstract class Noun extends StoryElement{
 	protected String id;
 	protected boolean isCommon;
 	protected Map<String, List<String>> attributes;

@@ -9,6 +9,7 @@ import model.knowledge_base.conceptnet.ConceptNetDAO;
 import model.story_representation.noun.Location;
 import model.story_representation.noun.Noun;
 import model.story_representation.noun.Character;
+import model.utility.States;
 
 public class AbstractStoryRepresentation {
 	
@@ -16,9 +17,9 @@ public class AbstractStoryRepresentation {
 	
 	private Map<String, Noun> nouns;
 	
-	private Event conflict;
+	private StoryElement conflict;
 	
-	private Event resolution;
+	private StoryElement resolution;
 	
 	private String expectedResolutionConcept;
 	
@@ -36,93 +37,113 @@ public class AbstractStoryRepresentation {
 	}
 	
 	
-	public void setConflict(Event conflict) {
+	public void setConflict() {
 		
+		Event possibleConflict = this.getCurrentEvent();
 		if(this.conflict == null) {
-			this.conflict = conflict;
+			
+			//check event
+			if(((Event)possibleConflict).getPolarity() <= -0.5) {
+				this.setExpectedResolution(possibleConflict);
+				if(this.expectedResolutionConcept != null) {
+					this.conflict = possibleConflict;
+				}
+			}
+
+			//if still null
+			if(this.conflict == null) {
+				for(Noun noun: this.nouns.values()) {
+					if(noun instanceof Character) {
+						if(((Character) noun).getFirstConflictState() != null) {
+							this.conflict = noun;
+						}
+					}
+				}	
+			}
 		}
 		
 		else {
-			if(conflict.getPolarity() < this.conflict.getPolarity()) {
-				this.conflict = conflict;
+			//check current event
+			if(possibleConflict instanceof Event && this.conflict instanceof Event) {
+				if(((Event)possibleConflict).getPolarity() < ((Event)this.conflict).getPolarity()) {
+					this.setExpectedResolution(possibleConflict);
+					if(this.expectedResolutionConcept != null) {
+						this.conflict = possibleConflict;
+					}
+				}
+			}
+			else if(conflict instanceof Character && this.conflict instanceof Character) {
+				
 			}
 		}
 	}
 	
-	public Event getConflict() {
+	public StoryElement getConflict() {
 		return this.conflict;
 	}
 	
-	public void setResolution(Event resolution) {
-		//System.out.println("resolution");
-//		String expectedResolutionAction = null;
-//		
-//		while(expectedResolutionAction == null) {
-//			
-//			//System.out.println(this.conflict.getConcepts());
-//			
-//			if(this.conflict == null || this.conflict.getConcepts().isEmpty()) {
-//				break;
-//			}
-//			
-//			for(String concept: this.conflict.getConcepts()) {
-//				List<String> path = ConceptNetDAO.getExpectedResolution(concept);
-//				expectedResolutionAction = path.get(path.size()-1);
-//			}
-//			//if after getting all conflict concepts and database found nothing. just stop. think of another way
-//			break;
-//		}
+	public void setResolution() {
+		//possibleResolution
+		Event possibleResolution = this.getCurrentEvent();
 		
-		if(resolution.getConcepts().contains(this.expectedResolutionConcept)) {
-			List<Character> charsInResolution = new ArrayList();
-			for(Noun doer: resolution.getManyDoers().values()) {
-				if(doer instanceof Character) {
-					charsInResolution.add((Character)doer);
-				}
-			}
-			for(Predicate predicate: resolution.getManyPredicates().values()) {
-				for(Noun receiver: predicate.getReceivers().values()) {
-					if(receiver instanceof Character) {
-						charsInResolution.add((Character)receiver);
+		if(possibleResolution instanceof Event && this.conflict instanceof Event) {
+			if(((Event)possibleResolution).getConcepts().contains(this.expectedResolutionConcept)) {
+				List<Character> charsInResolution = new ArrayList();
+				for(Noun doer: ((Event)possibleResolution).getManyDoers().values()) {
+					if(doer instanceof Character) {
+						charsInResolution.add((Character)doer);
 					}
 				}
-				for(Noun dobj: predicate.getDirectObjects().values()) {
-					if(dobj instanceof Character) {
-						charsInResolution.add((Character)dobj);
+				for(Predicate predicate: ((Event)possibleResolution).getManyPredicates().values()) {
+					for(Noun receiver: predicate.getReceivers().values()) {
+						if(receiver instanceof Character) {
+							charsInResolution.add((Character)receiver);
+						}
+					}
+					for(Noun dobj: predicate.getDirectObjects().values()) {
+						if(dobj instanceof Character) {
+							charsInResolution.add((Character)dobj);
+						}
 					}
 				}
-			}
-			
-			List<Character> charsInConflict = new ArrayList();
-			for(Noun doer: conflict.getManyDoers().values()) {
-				if(doer instanceof Character) {
-					charsInConflict.add((Character)doer);
-				}
-			}
-			for(Predicate predicate: resolution.getManyPredicates().values()) {
-				for(Noun receiver: predicate.getReceivers().values()) {
-					if(receiver instanceof Character) {
-						charsInConflict.add((Character)receiver);
+				
+				List<Character> charsInConflict = new ArrayList();
+				for(Noun doer: ((Event)possibleResolution).getManyDoers().values()) {
+					if(doer instanceof Character) {
+						charsInConflict.add((Character)doer);
 					}
 				}
-				for(Noun dobj: predicate.getDirectObjects().values()) {
-					if(dobj instanceof Character) {
-						charsInConflict.add((Character)dobj);
+				for(Predicate predicate: ((Event)possibleResolution).getManyPredicates().values()) {
+					for(Noun receiver: predicate.getReceivers().values()) {
+						if(receiver instanceof Character) {
+							charsInConflict.add((Character)receiver);
+						}
+					}
+					for(Noun dobj: predicate.getDirectObjects().values()) {
+						if(dobj instanceof Character) {
+							charsInConflict.add((Character)dobj);
+						}
 					}
 				}
+				
+				//if there is at least 1 char in conflict that is mentioned in resolution
+				charsInResolution.retainAll(charsInConflict);
+				if(charsInResolution.size() > 0) {
+					this.resolution = possibleResolution;
+				}
+				
 			}
-			
-			//if there is at least 1 char in conflict that is mentioned in resolution
-			charsInResolution.retainAll(charsInConflict);
-			if(charsInResolution.size() > 0) {
-				this.resolution = resolution;
+		}
+		
+		else if (this.conflict instanceof Character) {
+			if(States.CONFLICT_RESOLUTION.get(((Character) conflict).getFirstConflictState()).equals(((Character) conflict).getCurrentState())) {
+				this.resolution = conflict;
 			}
-			
 		}
 
 	}
 	
-	public Event getResolution() {
+	public StoryElement getResolution() {
 		return this.resolution;
 	}
 	
@@ -135,38 +156,21 @@ public class AbstractStoryRepresentation {
 		}
 		
 		if(event.isValidEvent()) {
-			
 			if(this.getCurrentEvent() != null && event.getLocation() == null) 
 				event.setLocation(this.getCurrentEvent().getLocation());
 			
 			events.add(event);
-			this.events.put(partOfStory, events);
-
-			if(event.getPolarity() < 0)
-				this.setConflict(event);
+			this.events.put(partOfStory, events);	
 			
-//			if(this.conflict != null) {
-//				this.partOfStory = "end";
-//			}
-			
-			if(this.conflict != null && this.expectedResolutionConcept == null)
-				this.setExpectedResolution();
-			
-			if(this.conflict != null && this.partOfStory.equals("end") && this.resolution == null && this.expectedResolutionConcept != null) {
-				this.setResolution(event);
-			}
 		}
 		
-//		this.nouns.putAll(event.getManyDoers());
-//		this.nouns.putAll(event.getManyReceivers());
-//		this.nouns.putAll(event.getManyDirectObjects());
-//		
-//		Location location = event.getLocation();
-//		if(location != null) {
-//			this.nouns.put(location.getId(), location);
-//		}
+		if(this.partOfStory.equals("start"))
+			this.setConflict();
 		
-		
+		else if(this.partOfStory.equals("end")) {
+			this.setResolution();
+		}
+
 	}
 	
 //	public Event getEvent(int index) {
@@ -191,6 +195,7 @@ public class AbstractStoryRepresentation {
 	}
 	
 	public List<Event> getManyEventsBasedOnPart(String partOfStory) {
+		System.out.println(partOfStory);
 		return this.events.get(partOfStory);
 	}
 	
@@ -225,23 +230,29 @@ public class AbstractStoryRepresentation {
 		this.partOfStory = partOfStory;
 	}
 	
-	private void setExpectedResolution() {
-		while(this.expectedResolutionConcept == null) {
-		
-		//System.out.println(this.conflict.getConcepts());
-		
-		if(this.conflict == null || this.conflict.getConcepts().isEmpty()) {
+	private void setExpectedResolution(Event conflict) {
+
+		if(conflict instanceof Event) {
+			while(this.expectedResolutionConcept == null) {
+			
+			//System.out.println(this.conflict.getConcepts());
+			
+			if(conflict.getConcepts().isEmpty()) {
+				break;
+			}
+			
+			for(String concept: conflict.getConcepts()) {
+				List<String> path = ConceptNetDAO.getExpectedResolution(concept);
+				
+				if(!path.isEmpty()) {
+					expectedResolutionConcept = path.get(path.size()-1);
+					break;
+				}
+			}
+			//if after getting all conflict concepts and database found nothing. just stop. think of another way
 			break;
-		}
 		
-		for(String concept: this.conflict.getConcepts()) {
-			List<String> path = ConceptNetDAO.getExpectedResolution(concept);
-			if(!path.isEmpty())
-				expectedResolutionConcept = path.get(path.size()-1);
-		}
-		//if after getting all conflict concepts and database found nothing. just stop. think of another way
-		break;
-	
+			}
 		}
 	}
 	
