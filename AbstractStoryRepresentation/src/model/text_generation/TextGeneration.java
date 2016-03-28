@@ -23,7 +23,6 @@ public abstract class TextGeneration {
 		this.nlgFactory = new NLGFactory(lexicon);
 		this.realiser = new Realiser(lexicon);
 		this.asr = asr;
-		//this.phraseElement = nlgFactory.createClause();
 	}
 	
 	public abstract String generateText();

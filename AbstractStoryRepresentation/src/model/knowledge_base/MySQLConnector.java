@@ -8,7 +8,7 @@ import com.mysql.jdbc.Statement;
 
 public class MySQLConnector {
 	private String url= "jdbc:mysql://localhost:3306/";
-	private String dbName = "alice";
+	private String dbName = "alice?autoReconnect=true&useSSL=false";
 	private String driver = "com.mysql.jdbc.Driver";
 	private String userName = "root";
 	private String password = "1234";

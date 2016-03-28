@@ -41,9 +41,9 @@ public class AbstractStoryRepresentation {
 		
 		Event possibleConflict = this.getCurrentEvent();
 		if(this.conflict == null) {
-			
+			System.out.println("Polarity:" + possibleConflict.getPolarity());
 			//check event
-			if(((Event)possibleConflict).getPolarity() <= -0.5) {
+			if(possibleConflict.getPolarity() <= -0.5) {
 				if(this.setExpectedResolution(possibleConflict)) {
 					this.conflict = possibleConflict;
 				}

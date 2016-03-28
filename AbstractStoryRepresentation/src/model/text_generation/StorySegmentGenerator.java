@@ -14,9 +14,14 @@ import model.utility.Randomizer;
 
 public class StorySegmentGenerator extends TextGeneration{
 	
-	private String[] atLocationStorySegment = {"There is <start> in <end>.", "<end> has <start>.", "<doer> saw <start> in <end>."};
+	private String[] atLocationStorySegment = {"There is <start> in <end>."
+												, "<end> has <start>."
+												, "<doer> saw <start> in <end>."};
+	
 	private String[] hasAStorySegment = {"<start> has <end>."};
+	
 	private String[] isAStorySegment = {"<start> is <end>."};
+	
 	private String[] hasPropertyStorySegment = {"<start> can be <end>."};
 	
 	private List<Integer> history; 

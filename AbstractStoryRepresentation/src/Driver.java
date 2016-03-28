@@ -33,11 +33,11 @@ public class Driver {
 		
 		List<TextGeneration> tg = new ArrayList();
 		
-		tg.add(new StorySegmentGenerator(asr));
-				
-		tg.add(new DirectivesGenerator(asr));
-		
-		tg.add(new RelationQuestionGenerator(asr));
+//		tg.add(new StorySegmentGenerator(asr));
+//				
+//		tg.add(new DirectivesGenerator(asr));
+//		
+//		tg.add(new RelationQuestionGenerator(asr));
 		
 		System.out.println("Loading finish!");
 		
@@ -151,14 +151,47 @@ public class Driver {
 			System.out.println("Generation? [1] yes [2] no");
 			int yesNo = sc.nextInt();
 			if(yesNo == 1) {
-				int random = Randomizer.random(1, tg.size());
-				String generated = tg.get(random-1).generateText();
+				System.out.println("[1] Directives   [2] Prompts   [3] Story Segment");
+				int typeToGen = sc.nextInt();
+				int random = 0;
+				
+				String generated = "";
+				
+				for (int i = 0; i < tg.size(); i++) {
+					tg.remove(i);
+				}
+				
+				switch(typeToGen) {
+					case 1:
+						tg.add(new DirectivesGenerator(asr));
+						break;
+					case 2:
+						tg.add(new RelationQuestionGenerator(asr));
+						break;
+					case 3:
+						tg.add(new StorySegmentGenerator(asr));
+						break;
+				}
+				
+				random = Randomizer.random(1, tg.size());
+				generated = tg.get(random-1).generateText();
+				
 				if(generated == null) {
 					generated = "Tell me more.";
 				}
 				
 				System.out.println(generated);
 			}
+			
+//			if(yesNo == 1) {
+//				int random = Randomizer.random(1, tg.size());
+//				String generated = tg.get(random-1).generateText();
+//				if(generated == null) {
+//					generated = "Tell me more.";
+//				}
+//				
+//				System.out.println(generated);
+//			}
 			
 			System.out.println("start? middle? end?");
 			asr.setPartOfStory(sc.nextLine());

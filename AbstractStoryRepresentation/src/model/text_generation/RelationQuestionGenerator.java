@@ -1,6 +1,7 @@
 package model.text_generation;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import simplenlg.features.Feature;
@@ -10,14 +11,38 @@ import simplenlg.phrasespec.VPPhraseSpec;
 import model.story_representation.AbstractStoryRepresentation;
 import model.story_representation.Event;
 import model.story_representation.Predicate;
+import model.story_representation.noun.Character;
+import model.story_representation.noun.Location;
 import model.story_representation.noun.Noun;
 import model.utility.Randomizer;
 
 public class RelationQuestionGenerator extends TextGeneration{
 	
-	private String[] hasPropertyQuestions = {"Why is <noun> <property>?", "How <property> is <noun>?"};
-	private String[] capableOfQuestions = {"Why is <noun> <action>?" , "How did <noun> <action>?"};
+	private String[] hasPropertyStartQuestions = {"Where can you find <noun>?"
+													, "Now that <noun> is <property>. What else can you say about <noun>?"
+													, "How <property> is <noun>?" };
+	
+	private String[] hasPropertyMidEndQuestions = {"Why is <noun> <property>?"
+													, "Why did you say that <noun> is <property>?"
+													, "How did <noun> become <property>?"};
 
+	private String[] capableOfQuestions = {"Why is <noun> <action>?" 
+											, "How did <noun> <action>?"
+											, "What does <noun> use to <action>?"
+											, "What is <noun> <action>?"};
+	
+	private String[] locationStartQuestions = {"What did <doer> see in <location>?"
+												, "What can you say about <location>?"
+												, "Describe <location>."
+												, "Can you say something about <location>."
+												, "Tell me more about <location>."
+												, "Write more about <location>."};
+	
+	private String[] locationMidEndQuestions = {"What happened to <doer> in <location>?"
+												, "What is <doer> doing in <location>?"
+												, "Why did <doer> go to <location>?"
+												, "What else did <doer> do in <location>?"};
+										
 	public RelationQuestionGenerator(AbstractStoryRepresentation asr) {
 		super(asr);
 	}
@@ -25,13 +50,15 @@ public class RelationQuestionGenerator extends TextGeneration{
 	@Override
 	public String generateText() {
 		// TODO Auto-generated method stub
-		int random = Randomizer.random(1, 2);
+		int random = Randomizer.random(1, 3);
 		
 		switch(random) {
 			case 1:
 				return hasProperty();
 			case 2:
 				return capableOf();
+			case 3:
+				return locationQuestions();
 			default:
 				return null;
 		}
@@ -39,14 +66,25 @@ public class RelationQuestionGenerator extends TextGeneration{
 	
 	private String hasProperty() {
 		
+		String[] questions;
+		
+		if(asr.getPartOfStory().equals("start")) {
+			questions = new String[this.hasPropertyStartQuestions.length];
+			questions = Arrays.copyOf(this.hasPropertyStartQuestions, this.hasPropertyStartQuestions.length);
+		}
+		else {
+			questions = new String[this.hasPropertyMidEndQuestions.length];
+			questions = Arrays.copyOf(this.hasPropertyMidEndQuestions, this.hasPropertyMidEndQuestions.length);
+		}			
+			
 		List<Noun> nouns = this.getAllNounsBasedOnRelation("HasProperty");
 		
 		if(nouns != null && !nouns.isEmpty()) {
 			int randomNoun = Randomizer.random(1, nouns.size());
-			int randomHasPropertyQuestion = Randomizer.random(1, this.hasPropertyQuestions.length);
+			int randomHasPropertyQuestion = Randomizer.random(1, questions.length);
 			
 			if(!nouns.isEmpty()) {
-				String question = this.hasPropertyQuestions[randomHasPropertyQuestion-1];
+				String question = questions[randomHasPropertyQuestion-1];
 				Noun noun = nouns.get(randomNoun-1);
 				List<String> properties = noun.getAttribute("HasProperty");
 				int randomProperty = Randomizer.random(1, properties.size());
@@ -130,4 +168,51 @@ public class RelationQuestionGenerator extends TextGeneration{
 	//hasA
 	
 	//isA
+	
+	private String locationQuestions() {
+		Event event = asr.getCurrentEvent();
+		
+		List<Noun> doers = new ArrayList();
+		for(Noun noun: event.getManyDoers().values()) {
+			if(noun instanceof Character) {
+				doers.add((Character)noun);
+			}
+		}
+		
+		String characters = this.wordsConjunction(doers);
+
+		Location location = event.getLocation();
+		
+		String[] questions;
+		
+		if(asr.getPartOfStory().equals("start")) {
+			questions = new String[this.locationStartQuestions.length];
+			questions = Arrays.copyOf(this.locationStartQuestions, this.locationStartQuestions.length);
+		}
+		else {
+			questions = new String[this.locationMidEndQuestions.length];
+			questions = Arrays.copyOf(this.locationMidEndQuestions, this.locationMidEndQuestions.length);
+		}	
+		
+		if(location != null) {
+			int randomLocationDirective = Randomizer.random(1, questions.length);
+			
+			if(characters.isEmpty()) {
+				randomLocationDirective = Randomizer.random(1, questions.length-2);
+			}
+			
+			String directive = questions[randomLocationDirective-1];
+			
+			directive = directive.replace("<doer>", characters);
+			if(location.getIsCommon())
+				directive = directive.replace("<location>", "the " + location.getId());
+			else 
+				directive = directive.replace("<location>", location.getId());
+				
+			return directive;
+		}
+	
+		
+		return null;
+	}
 }
