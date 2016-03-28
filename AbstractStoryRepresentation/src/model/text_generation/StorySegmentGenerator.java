@@ -191,8 +191,8 @@ public class StorySegmentGenerator extends TextGeneration{
 						}
 					}
 					else {
-						for(Set<Noun> ns: noun.getReferences().values()) {
-							for(Noun n: ns) {
+						if(noun.getReference("HasA") != null) {
+							for(Noun n: noun.getReference("HasA")) {
 								if(n.getId().equals(concept.getEnd())) {
 									continue;
 								}
@@ -270,8 +270,8 @@ public class StorySegmentGenerator extends TextGeneration{
 						}
 					}
 					else {
-						for(Set<Noun> ns: noun.getReferences().values()) {
-							for(Noun n: ns) {
+						if(noun.getReference("IsA") != null) {
+							for(Noun n: noun.getReference("IsA")) {
 								if(n.getId().equals(concept.getEnd())) {
 									continue;
 								}
@@ -355,8 +355,8 @@ public class StorySegmentGenerator extends TextGeneration{
 						}
 					}
 					else {
-						for(Set<Noun> ns: noun.getReferences().values()) {
-							for(Noun n: ns) {
+						if(noun.getReference("HasProperty") != null) {
+							for(Noun n: noun.getReference("HasProperty")) {
 								if(n.getId().equals(concept.getEnd())) {
 									continue;
 								}

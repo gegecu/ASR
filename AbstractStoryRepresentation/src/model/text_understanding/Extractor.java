@@ -167,6 +167,23 @@ public class Extractor {
 						}
 						//unsure if verb for event or capableOf
 					}
+					
+					else if(tdGovTag.contains("NN")) {
+						Noun noun2 = asr.getNoun(td.gov().originalText());
+						if(noun2 == null) {
+							if (tdGovTag.equals("NNP")) {
+								noun2 = this.extractCategory(this.getNER(td.gov().originalText()), td.gov().originalText());
+								noun2.setProper();
+							}
+							else if (tdGovTag.contains("NN")) {
+								noun2 = this.extractCategory(this.getSRL(td.gov().originalText()), td.gov().originalText());
+							}
+							
+							asr.addNoun(td.gov().originalText(), noun2);
+						}
+						
+						noun.addReference("IsA", noun2);
+					}
 				}
 				
 				else if(tdReln.equals("iobj")) {
@@ -246,7 +263,21 @@ public class Extractor {
 							n.addAttribute("HasProperty", td.dep().lemma());
 						}
 						else if (tdDepTag.contains("NN")) {
-							n.addAttribute("IsA", td.dep().lemma());
+//							n.addAttribute("IsA", td.dep().lemma());
+							Noun noun2 = asr.getNoun(td.dep().originalText());
+							if(noun2 == null) {
+								if (tdDepTag.equals("NNP")) {
+									noun2 = this.extractCategory(this.getNER(td.dep().originalText()), td.dep().originalText());
+									noun2.setProper();
+								}
+								else if (tdDepTag.contains("NN")) {
+									noun2 = this.extractCategory(this.getSRL(td.dep().originalText()), td.dep().originalText());
+								}
+								
+								asr.addNoun(td.dep().originalText(), noun2);
+							}
+							
+							n.addReference("IsA", noun2);
 						}
 					}
 				}
