@@ -1,9 +1,9 @@
-package model.story_representation;
+package model.story_representation.story_element.event;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import model.story_representation.noun.Noun;
+import model.story_representation.story_element.noun.Noun;
 
 public class Predicate {
 	

@@ -2,13 +2,18 @@ package model.story_representation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import model.knowledge_base.conceptnet.ConceptNetDAO;
-import model.story_representation.noun.Location;
-import model.story_representation.noun.Noun;
-import model.story_representation.noun.Character;
+import model.story_representation.story_element.StoryElement;
+import model.story_representation.story_element.event.Event;
+import model.story_representation.story_element.event.Predicate;
+import model.story_representation.story_element.noun.Character;
+import model.story_representation.story_element.noun.Location;
+import model.story_representation.story_element.noun.Noun;
 import model.utility.States;
 
 public class AbstractStoryRepresentation {
@@ -40,38 +45,60 @@ public class AbstractStoryRepresentation {
 	public void setConflict() {
 		
 		Event possibleConflict = this.getCurrentEvent();
-		if(this.conflict == null) {
-			System.out.println("Polarity:" + possibleConflict.getPolarity());
-			//check event
-			if(possibleConflict.getPolarity() <= -0.5) {
-				if(this.setExpectedResolution(possibleConflict)) {
-					this.conflict = possibleConflict;
-				}
-			}
-
-			//if still null
-			if(this.conflict == null) {
-				for(Noun noun: this.nouns.values()) {
-					if(noun instanceof Character) {
-						if(((Character) noun).getFirstConflictState() != null) {
-							this.conflict = noun;
-						}
-					}
-				}	
-			}
-		}
 		
-		else {
-			//check current event
-			if(possibleConflict instanceof Event && this.conflict instanceof Event) {
-				if(((Event)possibleConflict).getPolarity() < ((Event)this.conflict).getPolarity()) {
+		if(possibleConflict != null) {
+			if(this.conflict == null) {
+				if(possibleConflict.getPolarity() <= -0.5) {
 					if(this.setExpectedResolution(possibleConflict)) {
+						System.out.println("a");
 						this.conflict = possibleConflict;
 					}
 				}
+				else {
+					for(Noun noun: this.nouns.values()) {
+						if(noun instanceof Character) {
+							if(((Character) noun).hasConflict()) {
+								this.conflict = noun;
+							}
+						}
+					}
+				}
 			}
-			else if(conflict instanceof Character && this.conflict instanceof Character) {
-				
+			else {
+				if(this.conflict instanceof Event) {
+					if(possibleConflict.getPolarity() < ((Event)this.conflict).getPolarity()) {
+						if(this.setExpectedResolution(possibleConflict)) {
+							this.conflict = possibleConflict;
+						}
+					}
+					else {
+						if(possibleConflict.getConcepts().contains(this.expectedResolutionConcept)) {
+							this.conflict = null;
+							this.expectedResolutionConcept = null;
+						}
+					}
+				}
+				else {
+					if(!((Character) this.conflict).hasConflict()) {
+						this.conflict = null;
+					}
+				}
+			}
+		}
+		else {
+			if(this.conflict == null) {
+				for(Noun noun: this.nouns.values()) {
+					if(noun instanceof Character) {
+						if(((Character) noun).hasConflict()) {
+							this.conflict = noun;
+						}
+					}
+				}
+			}
+			else {
+				if(!((Character) this.conflict).hasConflict()) {
+					this.conflict = null;
+				}
 			}
 		}
 	}
@@ -134,7 +161,7 @@ public class AbstractStoryRepresentation {
 		}
 		
 		else if (this.conflict instanceof Character) {
-			if(States.CONFLICT_RESOLUTION.get(((Character) conflict).getFirstConflictState()).equals(((Character) conflict).getCurrentState())) {
+			if(!((Character)this.conflict).hasConflict()) {
 				this.resolution = conflict;
 			}
 		}
@@ -162,8 +189,10 @@ public class AbstractStoryRepresentation {
 			
 		}
 		
-		if(this.partOfStory.equals("start"))
+		if(this.partOfStory.equals("start")) {
+			System.out.println("a");
 			this.setConflict();
+		}
 		
 		else if(this.partOfStory.equals("end")) {
 			this.setResolution();
@@ -229,7 +258,7 @@ public class AbstractStoryRepresentation {
 	}
 	
 	private boolean setExpectedResolution(Event conflict) {
-
+		System.out.println("a");
 			
 		if(conflict.getConcepts().isEmpty()) {
 			return false;
@@ -252,6 +281,42 @@ public class AbstractStoryRepresentation {
 	
 	public String getExpectedResolution() {
 		return this.expectedResolutionConcept;
+	}
+	
+	public List<Noun> getAllNounsBasedOnRelation(String relation) {
+		Event event = getCurrentEvent();
+		List<Noun> nouns = null;
+		
+		if(event != null) {
+			nouns = event.getAllNounsInEventBasedOnRelation(relation);
+		}
+		else {
+			Set<Noun> temp = new HashSet();
+			for(Noun noun: this.nouns.values()) {
+				if(noun.getAttribute(relation) != null) {
+					temp.add(noun);
+				}
+				if(noun.getReference(relation) != null) {
+					temp.add(noun);
+				}
+			}
+			nouns = new ArrayList(temp);
+		}
+		
+		return nouns;
+	}
+	
+	public List<Noun> getAllNounsInCurrentEvent() {
+		Event event = getCurrentEvent();
+		List<Noun> nouns = null;
+		if(event != null) {
+			nouns = event.getAllNounsInEvent();
+		}
+		else {
+			nouns = new ArrayList(getManyNouns().values());
+		}
+		
+		return nouns;
 	}
 	
 }

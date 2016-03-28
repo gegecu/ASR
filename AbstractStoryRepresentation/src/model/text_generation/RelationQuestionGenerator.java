@@ -2,18 +2,20 @@ package model.text_generation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import simplenlg.features.Feature;
 import simplenlg.features.Form;
 import simplenlg.lexicon.Lexicon;
 import simplenlg.phrasespec.VPPhraseSpec;
 import model.story_representation.AbstractStoryRepresentation;
-import model.story_representation.Event;
-import model.story_representation.Predicate;
-import model.story_representation.noun.Character;
-import model.story_representation.noun.Location;
-import model.story_representation.noun.Noun;
+import model.story_representation.story_element.event.Event;
+import model.story_representation.story_element.event.Predicate;
+import model.story_representation.story_element.noun.Character;
+import model.story_representation.story_element.noun.Location;
+import model.story_representation.story_element.noun.Noun;
 import model.utility.Randomizer;
 
 public class RelationQuestionGenerator extends TextGeneration{
@@ -42,25 +44,40 @@ public class RelationQuestionGenerator extends TextGeneration{
 												, "What is <doer> doing in <location>?"
 												, "Why did <doer> go to <location>?"
 												, "What else did <doer> do in <location>?"};
+	private Set<String> history;
 										
 	public RelationQuestionGenerator(AbstractStoryRepresentation asr) {
 		super(asr);
+		history = new HashSet();
 	}
 
 	@Override
 	public String generateText() {
 		// TODO Auto-generated method stub
-		int random = Randomizer.random(1, 3);
+		Set<String> response = new HashSet();
 		
-		switch(random) {
-			case 1:
-				return hasProperty();
-			case 2:
-				return capableOf();
-			case 3:
-				return locationQuestions();
-			default:
-				return null;
+		String hasProperty = hasProperty();
+		if(hasProperty != null) {
+			response.add(hasProperty);
+		}
+		
+		String capableOf = capableOf();
+		if(capableOf != null) {
+			response.add(capableOf);
+		}
+		
+		String locationQuestion = locationQuestions();
+		if(locationQuestion != null) {
+			response.add(locationQuestion);
+		}
+		
+		if(!response.isEmpty()) {
+			response.removeAll(history);
+			int random = Randomizer.random(1, response.size());
+			return (String)response.toArray()[random-1];
+		}
+		else {
+			return null;
 		}
 	}
 	
@@ -77,7 +94,7 @@ public class RelationQuestionGenerator extends TextGeneration{
 			questions = Arrays.copyOf(this.hasPropertyMidEndQuestions, this.hasPropertyMidEndQuestions.length);
 		}			
 			
-		List<Noun> nouns = this.getAllNounsBasedOnRelation("HasProperty");
+		List<Noun> nouns = asr.getAllNounsBasedOnRelation("HasProperty");
 		
 		if(nouns != null && !nouns.isEmpty()) {
 			int randomNoun = Randomizer.random(1, nouns.size());
@@ -105,7 +122,7 @@ public class RelationQuestionGenerator extends TextGeneration{
 	}
 	
 	private String capableOf() {
-		List<Noun> nouns = this.getAllNounsBasedOnRelation("CapableOf");
+		List<Noun> nouns = asr.getAllNounsBasedOnRelation("CapableOf");
 		
 		if(nouns != null && !nouns.isEmpty()) {
 			int randomNoun = Randomizer.random(1, nouns.size());
@@ -139,32 +156,6 @@ public class RelationQuestionGenerator extends TextGeneration{
 		return null;
 	}
 	
-	private List<Noun> getAllNounsBasedOnRelation(String relation) {
-		Event event = asr.getCurrentEvent();
-		List<Noun> nouns = new ArrayList();
-		
-		for(Noun noun: event.getManyDoers().values()) {
-			if(noun.getAttributes().containsKey(relation)) {
-				nouns.add(noun);
-			}
-		}
-		
-		for(Predicate predicate: event.getManyPredicates().values()) {
-			for(Noun noun: predicate.getReceivers().values()) {
-				if(noun.getAttributes().containsKey(relation)) {
-					nouns.add(noun);
-				}
-			}
-			for(Noun noun: predicate.getDirectObjects().values()) {
-				if(noun.getAttributes().containsKey(relation)) {
-					nouns.add(noun);
-				}
-			}
-		}
-		
-		return nouns;
-	}
-	
 	//hasA
 	
 	//isA
@@ -172,46 +163,50 @@ public class RelationQuestionGenerator extends TextGeneration{
 	private String locationQuestions() {
 		Event event = asr.getCurrentEvent();
 		
-		List<Noun> doers = new ArrayList();
-		for(Noun noun: event.getManyDoers().values()) {
-			if(noun instanceof Character) {
-				doers.add((Character)noun);
-			}
-		}
+		if(event != null) {
+			Location location = event.getLocation();
 		
-		String characters = this.wordsConjunction(doers);
-
-		Location location = event.getLocation();
-		
-		String[] questions;
-		
-		if(asr.getPartOfStory().equals("start")) {
-			questions = new String[this.locationStartQuestions.length];
-			questions = Arrays.copyOf(this.locationStartQuestions, this.locationStartQuestions.length);
-		}
-		else {
-			questions = new String[this.locationMidEndQuestions.length];
-			questions = Arrays.copyOf(this.locationMidEndQuestions, this.locationMidEndQuestions.length);
-		}	
-		
-		if(location != null) {
-			int randomLocationDirective = Randomizer.random(1, questions.length);
-			
-			if(characters.isEmpty()) {
-				randomLocationDirective = Randomizer.random(1, questions.length-2);
-			}
-			
-			String directive = questions[randomLocationDirective-1];
-			
-			directive = directive.replace("<doer>", characters);
-			if(location.getIsCommon())
-				directive = directive.replace("<location>", "the " + location.getId());
-			else 
-				directive = directive.replace("<location>", location.getId());
+			if(location != null) {
+				List<Noun> doers = new ArrayList();
+				for(Noun noun: event.getManyDoers().values()) {
+					if(noun instanceof Character) {
+						doers.add((Character)noun);
+					}
+				}
 				
-			return directive;
+				String characters = this.wordsConjunction(doers);
+		
+				
+				
+				String[] questions;
+				
+				if(asr.getPartOfStory().equals("start")) {
+					questions = new String[this.locationStartQuestions.length];
+					questions = Arrays.copyOf(this.locationStartQuestions, this.locationStartQuestions.length);
+				}
+				else {
+					questions = new String[this.locationMidEndQuestions.length];
+					questions = Arrays.copyOf(this.locationMidEndQuestions, this.locationMidEndQuestions.length);
+				}	
+			
+			
+				int randomLocationDirective = Randomizer.random(1, questions.length);
+				
+				if(characters.isEmpty()) {
+					randomLocationDirective = Randomizer.random(1, questions.length-2);
+				}
+				
+				String directive = questions[randomLocationDirective-1];
+				
+				directive = directive.replace("<doer>", characters);
+				if(location.getIsCommon())
+					directive = directive.replace("<location>", "the " + location.getId());
+				else 
+					directive = directive.replace("<location>", location.getId());
+					
+				return directive;
+			}
 		}
-	
 		
 		return null;
 	}

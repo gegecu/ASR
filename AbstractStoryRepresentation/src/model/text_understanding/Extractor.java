@@ -12,13 +12,13 @@ import model.knowledge_base.conceptnet.ConceptNetDAO;
 import model.knowledge_base.senticnet.ConceptParser;
 import model.knowledge_base.senticnet.SenticNetParser;
 import model.story_representation.AbstractStoryRepresentation;
-import model.story_representation.Event;
-import model.story_representation.Predicate;
-import model.story_representation.noun.Character;
-import model.story_representation.noun.Location;
-import model.story_representation.noun.Noun;
-import model.story_representation.noun.Object;
-import model.story_representation.noun.Unknown;
+import model.story_representation.story_element.event.Event;
+import model.story_representation.story_element.event.Predicate;
+import model.story_representation.story_element.noun.Character;
+import model.story_representation.story_element.noun.Location;
+import model.story_representation.story_element.noun.Noun;
+import model.story_representation.story_element.noun.Object;
+import model.story_representation.story_element.noun.Unknown;
 import model.utility.States;
 import edu.stanford.nlp.dcoref.Dictionaries;
 import edu.stanford.nlp.ie.AbstractSequenceClassifier;
@@ -138,7 +138,7 @@ public class Extractor {
 
 						if(States.STATES.contains(td.gov().lemma())) {
 							if(noun instanceof Character) {
-								((Character) noun).addState(td.gov().lemma());
+								((Character) noun).setState(td.gov().lemma());
 							}
 						}
 						noun.addAttribute("HasProperty", td.gov().lemma());

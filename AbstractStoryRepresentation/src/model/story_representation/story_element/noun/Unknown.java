@@ -1,4 +1,4 @@
-package model.story_representation.noun;
+package model.story_representation.story_element.noun;
 
 public class Unknown extends Noun{
 

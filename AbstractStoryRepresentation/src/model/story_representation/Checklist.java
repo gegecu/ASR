@@ -1,9 +1,9 @@
 package model.story_representation;
 import java.util.Map.Entry;
 
-import model.story_representation.noun.Character;
-import model.story_representation.noun.Location;
-import model.story_representation.noun.Noun;
+import model.story_representation.story_element.noun.Character;
+import model.story_representation.story_element.noun.Location;
+import model.story_representation.story_element.noun.Noun;
 
 public class Checklist {
 	

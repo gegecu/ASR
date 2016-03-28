@@ -3,16 +3,36 @@ package model.knowledge_base.conceptnet;
 public class Concept {
 	private int id;
 	private String start;
+	private String startPOS;
 	private String relation;
 	private String end;
+	private String endPOS;
 	
-	public Concept(int id, String start, String relation, String end) {
+	public Concept(int id, String start, String startPOS, String relation, String end, String endPOS) {
 		this.id = id;
 		this.start = start;
+		this.startPOS = startPOS;
 		this.relation = relation;
 		this.end = end;
+		this.endPOS = endPOS;
 	}
 	
+	public String getStartPOS() {
+		return startPOS;
+	}
+
+	public void setStartPOS(String startPOS) {
+		this.startPOS = startPOS;
+	}
+
+	public String getEndPOS() {
+		return endPOS;
+	}
+
+	public void setEndPOS(String endPOS) {
+		this.endPOS = endPOS;
+	}
+
 	public String getStart() {
 		return start;
 	}

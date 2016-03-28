@@ -11,9 +11,9 @@ import simplenlg.framework.CoordinatedPhraseElement;
 import simplenlg.phrasespec.NPPhraseSpec;
 import simplenlg.phrasespec.SPhraseSpec;
 import model.story_representation.AbstractStoryRepresentation;
-import model.story_representation.Event;
-import model.story_representation.Predicate;
-import model.story_representation.noun.Noun;
+import model.story_representation.story_element.event.Event;
+import model.story_representation.story_element.event.Predicate;
+import model.story_representation.story_element.noun.Noun;
 import model.utility.Randomizer;
 
 public class MissingElementQuestionGenerator extends TextGeneration{

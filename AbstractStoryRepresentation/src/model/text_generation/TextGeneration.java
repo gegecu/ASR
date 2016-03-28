@@ -1,10 +1,13 @@
 package model.text_generation;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 import model.story_representation.AbstractStoryRepresentation;
-import model.story_representation.noun.Noun;
+import model.story_representation.story_element.event.Event;
+import model.story_representation.story_element.event.Predicate;
+import model.story_representation.story_element.noun.Noun;
 import simplenlg.framework.NLGFactory;
 import simplenlg.lexicon.Lexicon;
 import simplenlg.phrasespec.SPhraseSpec;
@@ -56,5 +59,7 @@ public abstract class TextGeneration {
 		
 		return characters;
 	}
+	
+	
 
 }
