@@ -12,7 +12,7 @@ import simplenlg.phrasespec.VPPhraseSpec;
 import model.knowledge_base.conceptnet.Concept;
 import model.knowledge_base.conceptnet.ConceptNetDAO;
 import model.story_representation.AbstractStoryRepresentation;
-import model.story_representation.story_element.event.Event;
+import model.story_representation.story_element.event.StorySentence;
 import model.story_representation.story_element.event.Predicate;
 import model.story_representation.story_element.noun.Character;
 import model.story_representation.story_element.noun.Noun;
@@ -89,7 +89,7 @@ public class StorySegmentGenerator extends TextGeneration{
 		
 	
 	private String atLocation() {
-		Event event = asr.getCurrentEvent();
+		StorySentence event = asr.getCurrentEvent();
 		if(event != null) {
 			if(event.getLocation() != null) {
 				String[] words = event.getLocation().getId().split(" ");
@@ -407,7 +407,7 @@ public class StorySegmentGenerator extends TextGeneration{
 	}
 	
 	private String causes() {
-		Event event = asr.getCurrentEvent();
+		StorySentence event = asr.getCurrentEvent();
 		Set<Concept> temp = new HashSet();
 		if(event != null) {
 

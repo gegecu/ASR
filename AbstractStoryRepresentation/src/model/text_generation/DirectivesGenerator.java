@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import model.story_representation.AbstractStoryRepresentation;
-import model.story_representation.story_element.event.Event;
+import model.story_representation.story_element.event.StorySentence;
 import model.story_representation.story_element.event.Predicate;
 import model.story_representation.story_element.noun.Character;
 import model.story_representation.story_element.noun.Location;
@@ -140,7 +140,7 @@ public class DirectivesGenerator extends TextGeneration{
 	}
 	
 	private String locationDirective() {
-		Event event = asr.getCurrentEvent();
+		StorySentence event = asr.getCurrentEvent();
 		
 		if(event != null) {
 			List<Noun> doers = new ArrayList();

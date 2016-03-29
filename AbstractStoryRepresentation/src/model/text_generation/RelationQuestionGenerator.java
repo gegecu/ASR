@@ -11,7 +11,7 @@ import simplenlg.features.Form;
 import simplenlg.lexicon.Lexicon;
 import simplenlg.phrasespec.VPPhraseSpec;
 import model.story_representation.AbstractStoryRepresentation;
-import model.story_representation.story_element.event.Event;
+import model.story_representation.story_element.event.StorySentence;
 import model.story_representation.story_element.event.Predicate;
 import model.story_representation.story_element.noun.Character;
 import model.story_representation.story_element.noun.Location;
@@ -161,7 +161,7 @@ public class RelationQuestionGenerator extends TextGeneration{
 	//isA
 	
 	private String locationQuestions() {
-		Event event = asr.getCurrentEvent();
+		StorySentence event = asr.getCurrentEvent();
 		
 		if(event != null) {
 			Location location = event.getLocation();

@@ -1,6 +1,7 @@
 package model.story_representation;
 import java.util.Map.Entry;
 
+import model.story_representation.story_element.event.StorySentence;
 import model.story_representation.story_element.noun.Character;
 import model.story_representation.story_element.noun.Location;
 import model.story_representation.story_element.noun.Noun;
@@ -73,7 +74,13 @@ public class Checklist {
 	
 	private void seriesActionExist() {
 		if(!this.isSeriesActionExist) {
-			this.isSeriesActionExist = this.asr.getManyEventsBasedOnPart("middle").size() >= 2;
+			int nEvents = 0;
+			for(StorySentence ss: this.asr.getManyEventsBasedOnPart("middle")) {
+				if(ss.isValidEvent()) {
+					nEvents++;
+				}
+			}
+			this.isSeriesActionExist = nEvents >= 2;
 		}
 	}
 	

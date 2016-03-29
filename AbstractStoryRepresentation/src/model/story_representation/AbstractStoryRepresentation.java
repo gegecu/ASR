@@ -9,7 +9,7 @@ import java.util.Set;
 
 import model.knowledge_base.conceptnet.ConceptNetDAO;
 import model.story_representation.story_element.StoryElement;
-import model.story_representation.story_element.event.Event;
+import model.story_representation.story_element.event.StorySentence;
 import model.story_representation.story_element.event.Predicate;
 import model.story_representation.story_element.noun.Character;
 import model.story_representation.story_element.noun.Location;
@@ -18,7 +18,7 @@ import model.utility.States;
 
 public class AbstractStoryRepresentation {
 	
-	private Map<String, List<Event>> events;
+	private Map<String, List<StorySentence>> events;
 	
 	private Map<String, Noun> nouns;
 	
@@ -33,7 +33,7 @@ public class AbstractStoryRepresentation {
 	private String partOfStory;
 	
 	public AbstractStoryRepresentation() {
-		this.events = new HashMap<String, List<Event>>();
+		this.events = new HashMap<String, List<StorySentence>>();
 		this.nouns = new HashMap<String, Noun>();
 		this.conflict = null;
 		this.checklist = new Checklist(this);
@@ -44,7 +44,7 @@ public class AbstractStoryRepresentation {
 	
 	public void setConflict() {
 		
-		Event possibleConflict = this.getCurrentEvent();
+		StorySentence possibleConflict = this.getCurrentEvent();
 		
 		if(possibleConflict != null) {
 			if(this.conflict == null) {
@@ -65,8 +65,8 @@ public class AbstractStoryRepresentation {
 				}
 			}
 			else {
-				if(this.conflict instanceof Event) {
-					if(possibleConflict.getPolarity() < ((Event)this.conflict).getPolarity()) {
+				if(this.conflict instanceof StorySentence) {
+					if(possibleConflict.getPolarity() < ((StorySentence)this.conflict).getPolarity()) {
 						if(this.setExpectedResolution(possibleConflict)) {
 							this.conflict = possibleConflict;
 						}
@@ -109,17 +109,17 @@ public class AbstractStoryRepresentation {
 	
 	public void setResolution() {
 		//possibleResolution
-		Event possibleResolution = this.getCurrentEvent();
+		StorySentence possibleResolution = this.getCurrentEvent();
 		
-		if(possibleResolution instanceof Event && this.conflict instanceof Event) {
-			if(((Event)possibleResolution).getConcepts().contains(this.expectedResolutionConcept)) {
+		if(possibleResolution instanceof StorySentence && this.conflict instanceof StorySentence) {
+			if(((StorySentence)possibleResolution).getConcepts().contains(this.expectedResolutionConcept)) {
 				List<Character> charsInResolution = new ArrayList();
-				for(Noun doer: ((Event)possibleResolution).getManyDoers().values()) {
+				for(Noun doer: ((StorySentence)possibleResolution).getManyDoers().values()) {
 					if(doer instanceof Character) {
 						charsInResolution.add((Character)doer);
 					}
 				}
-				for(Predicate predicate: ((Event)possibleResolution).getManyPredicates().values()) {
+				for(Predicate predicate: ((StorySentence)possibleResolution).getManyPredicates().values()) {
 					for(Noun receiver: predicate.getReceivers().values()) {
 						if(receiver instanceof Character) {
 							charsInResolution.add((Character)receiver);
@@ -133,12 +133,12 @@ public class AbstractStoryRepresentation {
 				}
 				
 				List<Character> charsInConflict = new ArrayList();
-				for(Noun doer: ((Event)possibleResolution).getManyDoers().values()) {
+				for(Noun doer: ((StorySentence)possibleResolution).getManyDoers().values()) {
 					if(doer instanceof Character) {
 						charsInConflict.add((Character)doer);
 					}
 				}
-				for(Predicate predicate: ((Event)possibleResolution).getManyPredicates().values()) {
+				for(Predicate predicate: ((StorySentence)possibleResolution).getManyPredicates().values()) {
 					for(Noun receiver: predicate.getReceivers().values()) {
 						if(receiver instanceof Character) {
 							charsInConflict.add((Character)receiver);
@@ -172,22 +172,22 @@ public class AbstractStoryRepresentation {
 		return this.resolution;
 	}
 	
-	public void addEvent(Event event) {
+	public void addEvent(StorySentence event) {
 		
-		List<Event> events = this.events.get(partOfStory);
+		List<StorySentence> events = this.events.get(partOfStory);
 		
 		if(events == null) {
 			events = new ArrayList();
 		}
 		
-		if(event.isValidEvent()) {
-			if(this.getCurrentEvent() != null && event.getLocation() == null) 
-				event.setLocation(this.getCurrentEvent().getLocation());
+
+		if(this.getCurrentEvent() != null && event.getLocation() == null) 
+			event.setLocation(this.getCurrentEvent().getLocation());
 			
-			events.add(event);
-			this.events.put(partOfStory, events);	
+		events.add(event);
+		this.events.put(partOfStory, events);	
 			
-		}
+		
 		
 		if(this.partOfStory.equals("start")) {
 			System.out.println("a");
@@ -209,24 +209,24 @@ public class AbstractStoryRepresentation {
 //		}
 //	}
 	
-	public Event getCurrentEvent() {
-		List<Event> events = this.events.get(partOfStory);
+	public StorySentence getCurrentEvent() {
+		List<StorySentence> events = this.events.get(partOfStory);
 		if(events == null) {
 			return null;
 		}
 		return events.get(events.size()-1);
 	}
 	
-	public Map<String, List<Event>> getManyEvents() {
+	public Map<String, List<StorySentence>> getManyEvents() {
 		return this.events;
 	}
 	
-	public List<Event> getManyEventsBasedOnPart(String partOfStory) {
+	public List<StorySentence> getManyEventsBasedOnPart(String partOfStory) {
 		System.out.println(partOfStory);
 		return this.events.get(partOfStory);
 	}
 	
-	public List<Event> getManyEventsBasedOnCurrentPart() {
+	public List<StorySentence> getManyEventsBasedOnCurrentPart() {
 		return this.events.get(this.partOfStory);
 	}
 	
@@ -257,7 +257,7 @@ public class AbstractStoryRepresentation {
 		this.partOfStory = partOfStory;
 	}
 	
-	private boolean setExpectedResolution(Event conflict) {
+	private boolean setExpectedResolution(StorySentence conflict) {
 		System.out.println("a");
 			
 		if(conflict.getConcepts().isEmpty()) {
@@ -284,7 +284,7 @@ public class AbstractStoryRepresentation {
 	}
 	
 	public List<Noun> getAllNounsBasedOnRelation(String relation) {
-		Event event = getCurrentEvent();
+		StorySentence event = getCurrentEvent();
 		List<Noun> nouns = null;
 		
 		if(event != null) {
@@ -307,7 +307,7 @@ public class AbstractStoryRepresentation {
 	}
 	
 	public List<Noun> getAllNounsInCurrentEvent() {
-		Event event = getCurrentEvent();
+		StorySentence event = getCurrentEvent();
 		List<Noun> nouns = null;
 		if(event != null) {
 			nouns = event.getAllNounsInEvent();

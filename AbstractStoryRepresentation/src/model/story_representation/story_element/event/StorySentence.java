@@ -12,20 +12,34 @@ import model.story_representation.story_element.StoryElement;
 import model.story_representation.story_element.noun.Location;
 import model.story_representation.story_element.noun.Noun;
 
-public class Event extends StoryElement{
+public class StorySentence extends StoryElement{
 	
 	private Map<String, Noun> doers;
 	private Map<String, Predicate> predicates;
+	private Description description;
 	private Location location;	
 	private float polarity;
 	private List<String> concepts;
 	
-	public Event() {
+	public StorySentence() {
 		this.doers = new HashMap<String, Noun>();
 		this.predicates = new HashMap<String, Predicate>();
 		this.location = null;
 		this.polarity = 0;
 		this.concepts = null;
+		this.description = new Description();
+	}
+	
+	public void addAttribute(String key, String value) {
+		this.description.addAttribute(key, value);
+	}
+	
+	public void addReferences(String key, Noun value) {
+		this.description.addReference(key, value);
+	}
+	
+	public Description getDescription() {
+		return this.description;
 	}
 	
 	public void addDoer(String id, Noun noun) {

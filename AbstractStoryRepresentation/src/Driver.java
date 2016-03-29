@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -8,7 +9,7 @@ import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 
 import model.story_representation.AbstractStoryRepresentation;
-import model.story_representation.story_element.event.Event;
+import model.story_representation.story_element.event.StorySentence;
 import model.story_representation.story_element.event.Predicate;
 import model.story_representation.story_element.noun.Character;
 import model.story_representation.story_element.noun.Location;
@@ -57,8 +58,10 @@ public class Driver {
 		
 		
 			try{
-				for(Event e: asr.getManyEventsBasedOnCurrentPart()) {
+				for(StorySentence e: asr.getManyEventsBasedOnCurrentPart()) {
 					System.out.println("event's address: "+ e);
+					
+					System.out.println("is valid event? " + e.isValidEvent());
 					
 					if(e.getLocation() != null)
 						System.out.println("location: " + e.getLocation().getId());
@@ -138,6 +141,21 @@ public class Driver {
 							}
 						}
 					}
+					
+					System.out.println("descriptions ");
+					
+					System.out.println("attributes ");
+					for(Entry<String, Set<String>> entry: e.getDescription().getAttributes().entrySet()) {
+						System.out.print(entry.getKey());
+						System.out.println(entry.getValue());
+					}
+					
+					System.out.println("references ");
+					for(Entry<String, Set<Noun>> entry: e.getDescription().getReferences().entrySet()) {
+						System.out.print(entry.getKey());
+						System.out.println(entry.getValue());
+					}
+					
 					System.out.println();
 					System.out.println("polarity: " + e.getPolarity());
 					System.out.println("concepts: " + e.getConcepts());
