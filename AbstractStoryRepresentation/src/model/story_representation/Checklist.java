@@ -1,10 +1,10 @@
 package model.story_representation;
 import java.util.Map.Entry;
 
-import model.story_representation.story_element.event.StorySentence;
 import model.story_representation.story_element.noun.Character;
 import model.story_representation.story_element.noun.Location;
 import model.story_representation.story_element.noun.Noun;
+import model.story_representation.story_element.story_sentence.StorySentence;
 
 public class Checklist {
 	
@@ -49,10 +49,12 @@ public class Checklist {
 	private void locationExist() {
 		if(!this.isLocationExist) {
 			for(Entry<String, Noun> entry: this.asr.getManyNouns().entrySet()) {
-				if(entry.getValue() instanceof Location) {
-					this.isLocationExist = true;
+				if(entry.getValue() instanceof Character) {
+					if(entry.getValue().getReference("AtLocation") == null 
+							|| entry.getValue().getReference("AtLocation").isEmpty())
 					break;
 				}
+				this.isLocationExist = true;
 			}
  		}
 	}
@@ -75,7 +77,7 @@ public class Checklist {
 	private void seriesActionExist() {
 		if(!this.isSeriesActionExist) {
 			int nEvents = 0;
-			for(StorySentence ss: this.asr.getManyEventsBasedOnPart("middle")) {
+			for(StorySentence ss: this.asr.getManyStorySentencesBasedOnPart("middle")) {
 				if(ss.isValidEvent()) {
 					nEvents++;
 				}

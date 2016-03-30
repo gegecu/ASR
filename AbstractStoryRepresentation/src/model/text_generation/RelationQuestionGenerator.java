@@ -11,11 +11,11 @@ import simplenlg.features.Form;
 import simplenlg.lexicon.Lexicon;
 import simplenlg.phrasespec.VPPhraseSpec;
 import model.story_representation.AbstractStoryRepresentation;
-import model.story_representation.story_element.event.StorySentence;
-import model.story_representation.story_element.event.Predicate;
 import model.story_representation.story_element.noun.Character;
 import model.story_representation.story_element.noun.Location;
 import model.story_representation.story_element.noun.Noun;
+import model.story_representation.story_element.story_sentence.Predicate;
+import model.story_representation.story_element.story_sentence.StorySentence;
 import model.utility.Randomizer;
 
 public class RelationQuestionGenerator extends TextGeneration{

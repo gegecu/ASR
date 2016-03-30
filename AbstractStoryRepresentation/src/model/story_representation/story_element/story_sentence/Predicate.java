@@ -1,4 +1,4 @@
-package model.story_representation.story_element.event;
+package model.story_representation.story_element.story_sentence;
 
 import java.util.HashMap;
 import java.util.Map;

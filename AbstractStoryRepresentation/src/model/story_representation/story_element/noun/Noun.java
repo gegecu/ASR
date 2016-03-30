@@ -8,22 +8,21 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
-import model.story_representation.story_element.StoryElement;
 import model.utility.States;
 
-public abstract class Noun extends StoryElement{
+public abstract class Noun{
 	protected String id;
 	protected boolean isCommon;
 	protected Map<String, Set<String>> attributes;
 	protected Map<String, Set<Noun>> references;
-	protected Stack<String> states;
+//	protected Stack<String> states;
 	
 	public Noun(String id) {
 		this.id = id;
 		this.attributes = new HashMap<String, Set<String>>();
 		this.references = new HashMap<String, Set<Noun>>();
 		this.isCommon = true;
-		states = new Stack();
+		//states = new Stack();
 	}
 	
 	public void setId(String id) {
@@ -83,24 +82,26 @@ public abstract class Noun extends StoryElement{
 	public boolean getIsCommon() {
 		return this.isCommon;
 	}
-	
-	public void setState(String state) {
-		if(States.CONFLICT_RESOLUTION.containsKey(state))
-			states.push(state);
-		else {
-			String temp = states.peek();
-			if(temp != null && States.CONFLICT_RESOLUTION.get(temp).equals(state)) {
-				states.pop();
-			}
-		}
-	}
-	
-	public Stack getStates() {
-		return this.states;
-	}
-
-	public boolean hasConflict() {
-		return !this.states.isEmpty();
-	}
+//	
+//	public void setState(String state) {
+//		if(States.CONFLICT_RESOLUTION.containsKey(state))
+//			states.push(state);
+//		else {
+//			if(!this.states.isEmpty()) {
+//				String temp = states.peek();
+//				if(temp != null && States.CONFLICT_RESOLUTION.get(temp).equals(state)) {
+//					states.pop();
+//				}
+//			}
+//		}
+//	}
+//	
+//	public Stack getStates() {
+//		return this.states;
+//	}
+//
+//	public boolean hasConflict() {
+//		return !this.states.isEmpty();
+//	}
 }
 

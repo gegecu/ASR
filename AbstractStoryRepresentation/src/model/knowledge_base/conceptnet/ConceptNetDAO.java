@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import model.knowledge_base.MySQLConnector;
-import model.story_representation.story_element.event.StorySentence;
+import model.story_representation.story_element.story_sentence.StorySentence;
 
 import com.mysql.jdbc.Connection;
 

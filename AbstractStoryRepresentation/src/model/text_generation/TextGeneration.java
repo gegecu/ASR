@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.Random;
 
 import model.story_representation.AbstractStoryRepresentation;
-import model.story_representation.story_element.event.StorySentence;
-import model.story_representation.story_element.event.Predicate;
 import model.story_representation.story_element.noun.Noun;
+import model.story_representation.story_element.story_sentence.Predicate;
+import model.story_representation.story_element.story_sentence.StorySentence;
 import simplenlg.framework.NLGFactory;
 import simplenlg.lexicon.Lexicon;
 import simplenlg.phrasespec.SPhraseSpec;

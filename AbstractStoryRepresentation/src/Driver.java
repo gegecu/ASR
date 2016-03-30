@@ -9,12 +9,12 @@ import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 
 import model.story_representation.AbstractStoryRepresentation;
-import model.story_representation.story_element.event.StorySentence;
-import model.story_representation.story_element.event.Predicate;
 import model.story_representation.story_element.noun.Character;
 import model.story_representation.story_element.noun.Location;
 import model.story_representation.story_element.noun.Noun;
 import model.story_representation.story_element.noun.Object;
+import model.story_representation.story_element.story_sentence.Predicate;
+import model.story_representation.story_element.story_sentence.StorySentence;
 import model.text_generation.DirectivesGenerator;
 import model.text_generation.RelationQuestionGenerator;
 import model.text_generation.StorySegmentGenerator;
@@ -58,20 +58,20 @@ public class Driver {
 		
 		
 			try{
-				for(StorySentence e: asr.getManyEventsBasedOnCurrentPart()) {
+				for(StorySentence e: asr.getManyStorySentencesBasedOnCurrentPart()) {
 					System.out.println("event's address: "+ e);
 					
 					System.out.println("is valid event? " + e.isValidEvent());
 					
-					if(e.getLocation() != null)
-						System.out.println("location: " + e.getLocation().getId());
+//					if(e.getLocation() != null)
+					System.out.println("location: " + e.getLocations());
 					
 					System.out.println("doers: ");
 					for(Map.Entry<String, Noun> entry: e.getManyDoers().entrySet()) {
 						System.out.println("id: " + entry.getValue().getId());
-						if(entry.getValue() instanceof Character) {
-							System.out.println("states: " + ((Character)entry.getValue()).getStates());
-						}
+//						if(entry.getValue() instanceof Character) {
+//							System.out.println("states: " + ((Character)entry.getValue()).getStates());
+//						}
 						System.out.println("common noun? " + entry.getValue().getIsCommon());
 						
 						System.out.println("doers' attributes: ");
@@ -98,9 +98,9 @@ public class Driver {
 						System.out.println("receivers: ");
 						for(Map.Entry<String, Noun> entry2: entry.getValue().getReceivers().entrySet()) {
 							System.out.println("id: " + entry2.getValue().getId());
-							if(entry2.getValue() instanceof Character) {
-								System.out.println("states: " + ((Character)entry2.getValue()).getStates());
-							}
+//							if(entry2.getValue() instanceof Character) {
+//								System.out.println("states: " + ((Character)entry2.getValue()).getStates());
+//							}
 							System.out.println("common noun? " + entry2.getValue().getIsCommon());
 							
 							System.out.println("receiver's attributes");
@@ -121,9 +121,9 @@ public class Driver {
 						System.out.println("dobjs: ");
 						for(Map.Entry<String, Noun> entry3: entry.getValue().getDirectObjects().entrySet()) {
 							System.out.println("id: " + entry3.getValue().getId());
-							if(entry3.getValue() instanceof Character) {
-								System.out.println("state: " + ((Character)entry3.getValue()).getStates());
-							}
+//							if(entry3.getValue() instanceof Character) {
+//								System.out.println("state: " + ((Character)entry3.getValue()).getStates());
+//							}
 							System.out.println("common noun? " + entry3.getValue().getIsCommon());
 				
 							System.out.println("dobj's attributes ");
@@ -170,42 +170,42 @@ public class Driver {
 			System.out.println("resolution's address: " + asr.getResolution());
 			
 			//gen
-			System.out.println();
-			System.out.println("Generation? [1] yes [2] no");
-			int yesNo = sc.nextInt();
-			if(yesNo == 1) {
-				System.out.println("[1] Directives   [2] Prompts   [3] Story Segment");
-				int typeToGen = sc.nextInt();
-				int random = 0;
-				
-				String generated = "";
-				
-				for (int i = 0; i < tg.size(); i++) {
-					tg.remove(i);
-				}
-				
-				switch(typeToGen) {
-					case 1:
-						tg.add(new DirectivesGenerator(asr));
-						break;
-					case 2:
-						tg.add(new RelationQuestionGenerator(asr));
-						break;
-					case 3:
-						tg.add(new StorySegmentGenerator(asr));
-						break;
-				}
-				
-				random = Randomizer.random(1, tg.size());
-				generated = tg.get(random-1).generateText();
-				
-				if(generated == null) {
-					generated = "Tell me more.";
-				}
-				
-				System.out.println(generated);
-			}
-			
+//			System.out.println();
+//			System.out.println("Generation? [1] yes [2] no");
+//			int yesNo = sc.nextInt();
+//			if(yesNo == 1) {
+//				System.out.println("[1] Directives   [2] Prompts   [3] Story Segment");
+//				int typeToGen = sc.nextInt();
+//				int random = 0;
+//				
+//				String generated = "";
+//				
+//				for (int i = 0; i < tg.size(); i++) {
+//					tg.remove(i);
+//				}
+//				
+//				switch(typeToGen) {
+//					case 1:
+//						tg.add(new DirectivesGenerator(asr));
+//						break;
+//					case 2:
+//						tg.add(new RelationQuestionGenerator(asr));
+//						break;
+//					case 3:
+//						tg.add(new StorySegmentGenerator(asr));
+//						break;
+//				}
+//				
+//				random = Randomizer.random(1, tg.size());
+//				generated = tg.get(random-1).generateText();
+//				
+//				if(generated == null) {
+//					generated = "Tell me more.";
+//				}
+//				
+//				System.out.println(generated);
+//			}
+//			
 //			if(yesNo == 1) {
 //				int random = Randomizer.random(1, tg.size());
 //				String generated = tg.get(random-1).generateText();
