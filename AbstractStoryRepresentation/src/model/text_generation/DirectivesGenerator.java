@@ -67,7 +67,7 @@ public class DirectivesGenerator extends TextGeneration{
 				response.add(directiveCapableOf);
 			}
 		}
-		response.removeAll(history);
+		//response.removeAll(history);
 		if(!response.isEmpty()) {
 			int random = Randomizer.random(1, response.size());
 			history.add((String)response.toArray()[random-1]);
@@ -82,13 +82,14 @@ public class DirectivesGenerator extends TextGeneration{
 		//nouns
 		StorySentence storySentence = asr.getCurrentStorySentence();
 		List<String> nounId = storySentence.getAllNounsInStorySentence();
+		List<String> directives = new ArrayList(Arrays.asList(this.nounStartDirective));
+		String directive = null;
 		
 		while(!nounId.isEmpty() && storySentence != null) {
 			int threshold = 0;
 			
 			int randomNoun = Randomizer.random(1, nounId.size());
-			int randomNounDirective = Randomizer.random(1, this.nounStartDirective.length);
-			Noun noun = asr.getNoun(nounId.get(randomNoun-1));
+			Noun noun = asr.getNoun(nounId.remove(randomNoun-1));
 			
 			for(Set<String> attributes: noun.getAttributes().values()){
 				threshold += attributes.size();
@@ -101,28 +102,39 @@ public class DirectivesGenerator extends TextGeneration{
 			if(threshold >= descriptionThreshold) {
 				continue;
 			}
-			
-			if(noun.getIsCommon()) {
-				String directive = this.nounStartDirective[randomNounDirective-1];
-				directive = directive.replace("<noun>", "the " + noun.getId());
-				return directive;
-			}
-			else {
-				String directive = this.nounStartDirective[randomNounDirective-1];
-				directive = directive.replace("<noun>", noun.getId());
-				return directive;
+
+			while(!directives.isEmpty()) {
+				int randomNounDirective = Randomizer.random(1, directives.size());
+				directive = directives.remove(randomNounDirective-1);
+
+				if(noun.getIsCommon()) {
+					
+					directive = directive.replace("<noun>", "the " + noun.getId());
+				}
+				else {
+					directive = directive.replace("<noun>", noun.getId());
+				}
+				
+				if(history.contains(directive)) {
+					continue;
+				}
 			}
 		}
 		
-		if(nounId.isEmpty() && storySentence != null) {
+		if(history.contains(directive)) {
+			directive = null;
+		}
+		
+		if(directive == null && storySentence != null) {
 			nounId = new ArrayList(asr.getManyNouns().keySet());
 			nounId.removeAll(storySentence.getAllNounsInStorySentence());
+			directives = new ArrayList(Arrays.asList(this.nounStartDirectiveAlternative));
 			while(!nounId.isEmpty()) {
 				int threshold = 0;
 				
 				int randomNoun = Randomizer.random(1, nounId.size());
-				int randomNounDirective = Randomizer.random(1, this.nounStartDirectiveAlternative.length);
-				Noun noun = asr.getNoun(nounId.get(randomNoun-1));
+				
+				Noun noun = asr.getNoun(nounId.remove(randomNoun-1));
 				
 				for(Set<String> attributes: noun.getAttributes().values()){
 					threshold += attributes.size();
@@ -135,50 +147,72 @@ public class DirectivesGenerator extends TextGeneration{
 				if(threshold >= descriptionThreshold) {
 					continue;
 				}
+				while(!directives.isEmpty()) {
+					int randomNounDirective = Randomizer.random(1, directives.size());
+					directive = directives.remove(randomNounDirective-1);
+					if(noun.getIsCommon()) {
+						
+						directive = directive.replace("<noun>", "the " + noun.getId());
+					}
+					else {
+						directive = directive.replace("<noun>", noun.getId());
+					}
+					
+					if(history.contains(directive)) {
+						continue;
+					}
+				}
 				
-				if(noun.getIsCommon()) {
-					String directive = this.nounStartDirectiveAlternative[randomNounDirective-1];
-					directive = directive.replace("<noun>", "the " + noun.getId());
-					return directive;
-				}
-				else {
-					String directive = this.nounStartDirectiveAlternative[randomNounDirective-1];
-					directive = directive.replace("<noun>", noun.getId());
-					return directive;
-				}
 			}
 			descriptionThreshold+=2;
 		}
 		
-		
-		return null;
+		if(history.contains(directive)) {
+			directive = null;
+		}
+
+		return directive;	
 	}
 	
 	private String capableOf() {
 		StorySentence storySentence = asr.getCurrentStorySentence();
 		List<Predicate> predicates = new ArrayList(storySentence.getManyPredicates().values());
+		List<String> directives = new ArrayList(Arrays.asList(this.causeEffectDirective));
+		String directive = null;
 		
-		if(!predicates.isEmpty()) {
+		while(!predicates.isEmpty()) {
 			int randomPredicate = Randomizer.random(1, predicates.size());
-			int randomCapableOfQuestion = Randomizer.random(1, this.causeEffectDirective.length);
-			
-			Predicate predicate = predicates.get(randomPredicate);
-			String directive = this.causeEffectDirective[randomCapableOfQuestion-1];
-			
-			List<Noun> doers = new ArrayList(predicate.getManyDoers().values());
-			
-			directive = directive.replace("<noun>", this.wordsConjunction(doers));
 
-			VPPhraseSpec verb = nlgFactory.createVerbPhrase(predicate.getAction());
-		    verb.setFeature(Feature.PERFECT, Tense.PRESENT);
-		    directive = directive.replace("<action>", realiser.realise(verb).toString());
-		    return directive;
-
+			Predicate predicate = predicates.remove(randomPredicate);
+			
+			while(!directives.isEmpty()) {
+				int randomCapableOfQuestion = Randomizer.random(1, directives.size());
+				directive = directives.remove(randomCapableOfQuestion-1);
+				
+				List<Noun> doers = new ArrayList(predicate.getManyDoers().values());
+				
+				directive = directive.replace("<noun>", this.wordsConjunction(doers));
+	
+				VPPhraseSpec verb = nlgFactory.createVerbPhrase(predicate.getAction());
+			    verb.setFeature(Feature.PERFECT, Tense.PRESENT);
+			    directive = directive.replace("<action>", realiser.realise(verb).toString());
+			    
+			    if(history.contains(directive)) {
+			    	continue;
+			    }
+			}
 		}
-		else {
+		
+		if(history.contains(directive)) {
+			directive = null;
+		}
+		
+		if (predicates.isEmpty() && directive == null) {
 			int randomCapableOfQuestion = Randomizer.random(1, this.causeEffectDirective.length);
-			return this.causeEffectAlternative[randomCapableOfQuestion];
+			directive = this.causeEffectAlternative[randomCapableOfQuestion];
 		}
+		
+		return directive;
 	}
 	
 //	private String locationDirective() {

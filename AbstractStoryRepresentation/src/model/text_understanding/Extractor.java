@@ -407,6 +407,7 @@ public class Extractor {
 						storySentence.addReferences(n.getId(), "AtLocation", noun);
 					}
 					
+					
 					Predicate predicate = storySentence.getPredicate(td.gov().index());
 
 					if (predicate == null) {
