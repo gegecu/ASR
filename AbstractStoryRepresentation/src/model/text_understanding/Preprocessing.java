@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import model.story_representation.AbstractStoryRepresentation;
+
 import org.languagetool.JLanguageTool;
 import org.languagetool.language.BritishEnglish;
 import org.languagetool.rules.RuleMatch;
@@ -33,11 +35,11 @@ public class Preprocessing {
 		this.pipeline = pipeline;
 	}
 
-	public String preprocess(String text) {
+	public String preprocess(String text, AbstractStoryRepresentation asr) {
 		String result = text;
 		
 		//result = normalize(result);
-		result = coreference(result);
+		result = coreference(result, asr);
 		//result = normalize(result);
 		
 		System.out.println(result);
@@ -64,7 +66,7 @@ public class Preprocessing {
 		return input;
 	}
 
-	private String coreference(String text) {
+	private String coreference(String text, AbstractStoryRepresentation asr) {
 		String output = "";
 		Annotation document = new Annotation(text);
 		pipeline.annotate(document);
@@ -84,10 +86,19 @@ public class Preprocessing {
 				// this is the NER label of the token
 				// String ne = token.get(NamedEntityTagAnnotation.class);
 
-				Word w = new Word();
-				w.addInfo("text", word);
-				w.addInfo("pos", pos);
-				s.addWord(token.index(), w);
+				if(pos.equals("PRP") && word.equals("I")) {
+					Word w = new Word();
+					w.addInfo("text", asr.getUser());
+					w.addInfo("pos", "NNP");
+					s.addWord(token.index(), w);
+				}
+				else {
+					Word w = new Word();
+					w.addInfo("text", word);
+					w.addInfo("pos", pos);
+					s.addWord(token.index(), w);
+				}
+				
 			}
 			sens.add(s);
 

@@ -106,18 +106,25 @@ public class StorySentence {
 		return this.concepts;
 	}
 
-//	public List<Noun> getAllNounsInEvent() {
-//		Set<Noun> nouns = new HashSet();
-//		nouns.addAll(this.doers.values());
-//		for (Predicate predicate : this.getManyPredicates().values()) {
-//			nouns.addAll(predicate.getDirectObjects().values());
-//			nouns.addAll(predicate.getReceivers().values());
-//		}
-//		
-//		nouns.addAll(this.locations);
-//		
-//		return new ArrayList(nouns);
-//	}
+	public List<String> getAllNounsInStorySentence() {
+		Set<String> nounId = new HashSet();
+		for (Predicate predicate : this.getManyPredicates().values()) {
+			nounId.addAll(predicate.getManyDoers().keySet());
+			nounId.addAll(predicate.getDirectObjects().keySet());
+			nounId.addAll(predicate.getReceivers().keySet());
+		}
+		
+		nounId.addAll(this.description.keySet());
+		for(Description d: this.description.values()) {
+			for(Set<Noun> referred: d.getReferences().values()) {
+				for(Noun n: referred) {
+					nounId.add(n.getId());
+				}
+			}
+		}
+		
+		return new ArrayList(nounId);
+	}
 //
 //	public List<Noun> getAllNounsInEventBasedOnRelation(String relation) {
 //		Set<Noun> nouns = new HashSet();

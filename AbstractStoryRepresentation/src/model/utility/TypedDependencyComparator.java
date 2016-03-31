@@ -9,6 +9,12 @@ public class TypedDependencyComparator implements Comparator<TypedDependency>{
 	@Override
 	public int compare(TypedDependency arg0, TypedDependency arg1) {
 		// TODO Auto-generated method stub
+//		if(arg0.reln().toString().equals("nmod:poss")) {
+//			return -1;
+//		}
+//		else if(arg1.reln().toString().equals("nmod:poss")) {
+//			return 1;
+//		}
 		if(arg0.reln().toString().equals("nsubj")) {
 			return -1;
 		}

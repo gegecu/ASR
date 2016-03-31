@@ -16,6 +16,8 @@ import model.story_representation.story_element.story_sentence.StorySentence;
 import model.utility.States;
 
 public class AbstractStoryRepresentation {
+	
+	private String user;
 
 	private Map<String, List<StorySentence>> storySentences;
 
@@ -32,6 +34,7 @@ public class AbstractStoryRepresentation {
 	private String partOfStory;
 
 	public AbstractStoryRepresentation() {
+		this.user = "Geraldine";
 		this.storySentences = new HashMap<String, List<StorySentence>>();
 		this.nouns = new HashMap<String, Noun>();
 		this.conflict = null;
@@ -210,6 +213,14 @@ public class AbstractStoryRepresentation {
 
 	public String getExpectedResolution() {
 		return this.expectedResolutionConcept;
+	}
+	
+	public void setUser(String name) {
+		this.user = name;
+	}
+	
+	public String getUser() {
+		return this.user;
 	}
 
 //	public List<Noun> getAllNounsBasedOnRelation(String relation) {

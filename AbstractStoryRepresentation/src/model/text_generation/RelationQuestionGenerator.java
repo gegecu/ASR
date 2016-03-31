@@ -20,9 +20,9 @@ import model.utility.Randomizer;
 
 public class RelationQuestionGenerator extends TextGeneration{
 	
-	private String[] hasPropertyStartQuestions = {"Where can you find <noun>?"
-													, "Now that <noun> is <property>. What else can you say about <noun>?"
-													, "How <property> is <noun>?" };
+//	private String[] hasPropertyStartQuestions = {"Where can you find <noun>?"
+//													, "Now that <noun> is <property>. What else can you say about <noun>?"
+//													, "How <property> is <noun>?" };
 	
 	private String[] hasPropertyMidEndQuestions = {"Why is <noun> <property>?"
 													, "Why did you say that <noun> is <property>?"

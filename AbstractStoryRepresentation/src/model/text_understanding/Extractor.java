@@ -419,7 +419,9 @@ public class Extractor {
 			}
 
 //			else if (tdReln.equals("nmod:poss")) {
-//
+//				//Moira's ball is blue
+//				//nmod:poss ( ball-3 , Moira-1 ) Moira is dep, ball is gov
+//				
 //				if (tdDepTag.contains("NN") && tdGovTag.contains("NN")) {
 //					Noun noun = asr.getNoun(td.dep().lemma());
 //
@@ -445,9 +447,31 @@ public class Extractor {
 //
 //						asr.addNoun(td.gov().lemma(), noun2);
 //					}
-//
-//					noun.addReference("HasA", noun2);
-//					storySentence.addReferences(noun.getId(), "HasA", noun2);
+//					
+//					Noun temp = null;
+//					if(noun.getReference("HasA") != null) {
+//						for(Noun n: noun.getReference("HasA")) {
+//							if(n.getId().equals(td.gov().lemma())) {
+//								temp = n;
+//							}
+//						}
+//					}
+//					
+//					if (temp == null) {
+//						if (tdGovTag.equals("NNP")) {
+//							temp = this.extractCategory(this.getNER(td.gov().lemma()), td.gov().lemma());
+//							temp.setProper();
+//						} else if (tdGovTag.contains("NN")) {
+//							temp = this.extractCategory(this.getSRL(td.gov().lemma()), td.gov().lemma());
+//						}
+//					}
+//					
+//					if(temp != null && noun != null && noun2 != null) {
+//						System.out.println("possesive");
+//						temp.addReference("IsA", noun2);
+//						noun.addReference("HasA", temp);
+//						storySentence.addReferences(noun.getId(), "HasA", temp);
+//					}
 //
 //				}
 //

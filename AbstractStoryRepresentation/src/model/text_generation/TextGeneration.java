@@ -46,6 +46,9 @@ public abstract class TextGeneration {
 	protected String wordsConjunction(List<Noun> nouns) {
 		String characters = "";
 		for(int i = 0 ; i < nouns.size(); i++) {
+			if(nouns.get(i).getIsCommon()) {
+				characters += "the ";
+			}
 			if(i < nouns.size()-2) {
 				characters += nouns.get(i).getId() + ", ";
 			}

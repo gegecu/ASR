@@ -10,7 +10,7 @@ import java.util.Stack;
 
 import model.utility.States;
 
-public abstract class Noun{
+public abstract class Noun {
 	protected String id;
 	protected boolean isCommon;
 	protected Map<String, Set<String>> attributes;
