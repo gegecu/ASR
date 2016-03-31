@@ -38,7 +38,7 @@ public class Driver {
 		
 //		tg.add(new StorySegmentGenerator(asr));
 //				
-//		tg.add(new DirectivesGenerator(asr));
+		tg.add(new DirectivesGenerator(asr));
 //		
 //		tg.add(new RelationQuestionGenerator(asr));
 		
@@ -171,10 +171,12 @@ public class Driver {
 			System.out.println("resolution's address: " + asr.getResolution());
 			
 			//gen
-//			System.out.println();
-//			System.out.println("Generation? [1] yes [2] no");
-//			int yesNo = sc.nextInt();
-//			if(yesNo == 1) {
+			System.out.println();
+			System.out.println("Generation? [1] yes [2] no");
+			int yesNo = sc.nextInt();
+			if(yesNo == 1) {
+				System.out.println(tg.get(0).generateText());
+			}
 //				System.out.println("[1] Directives   [2] Prompts   [3] Story Segment");
 //				int typeToGen = sc.nextInt();
 //				int random = 0;

@@ -404,6 +404,7 @@ public class Extractor {
 				if (noun != null && noun instanceof Location) {
 					for (Noun n : storySentence.getPredicate(td.gov().index()).getManyDoers().values()) {
 						n.addReference("AtLocation", noun);
+						storySentence.addReferences(n.getId(), "AtLocation", noun);
 					}
 					
 					Predicate predicate = storySentence.getPredicate(td.gov().index());

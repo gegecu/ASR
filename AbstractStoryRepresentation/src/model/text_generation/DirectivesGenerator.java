@@ -70,6 +70,7 @@ public class DirectivesGenerator extends TextGeneration{
 		response.removeAll(history);
 		if(!response.isEmpty()) {
 			int random = Randomizer.random(1, response.size());
+			history.add((String)response.toArray()[random-1]);
 			return (String)response.toArray()[random-1];
 		}
 		else {
