@@ -64,7 +64,13 @@ public class Driver {
 					System.out.println("is valid event? " + e.isValidEvent());
 					
 //					if(e.getLocation() != null)
-					System.out.println("location: " + e.getLocations());
+					System.out.println("locations: ");
+					for(Location location: e.getLocations()) {
+						System.out.print(location.getId() + " ");
+					}
+					
+					System.out.println();
+					
 					
 					System.out.println("doers: ");
 					for(Map.Entry<String, Noun> entry: e.getManyDoers().entrySet()) {
@@ -84,7 +90,9 @@ public class Driver {
 						System.out.println("doers' references: ");
 						for(Map.Entry<String, Set<Noun>> entry2: entry.getValue().getReferences().entrySet()) {
 							System.out.print(entry2.getKey() + " ");
-							System.out.print(entry2.getValue());
+							for(Noun n: entry2.getValue()) {
+								System.out.print(n.getId() + " ");
+							}
 							System.out.println();
 						}
 						
@@ -113,7 +121,9 @@ public class Driver {
 							System.out.println("receiver's references");
 							for(Map.Entry<String, Set<Noun>> entry3: entry2.getValue().getReferences().entrySet()) {
 								System.out.print(entry3.getKey() + " ");
-								System.out.print(entry3.getValue() + " ");
+								for(Noun n: entry3.getValue()) {
+									System.out.print(n.getId() + " ");
+								}
 								System.out.println();
 							}
 						}
@@ -136,7 +146,9 @@ public class Driver {
 							System.out.println("dobj's references ");
 							for(Map.Entry<String, Set<Noun>> entry4: entry3.getValue().getReferences().entrySet()) {
 								System.out.print(entry4.getKey() + " ");
-								System.out.print(entry4.getValue() + " ");
+								for(Noun n: entry4.getValue()) {
+									System.out.print(n.getId() + " ");
+								}
 								System.out.println();
 							}
 						}
@@ -152,8 +164,10 @@ public class Driver {
 					
 					System.out.println("references ");
 					for(Entry<String, Set<Noun>> entry: e.getDescription().getReferences().entrySet()) {
-						System.out.print(entry.getKey());
-						System.out.println(entry.getValue());
+						System.out.print(entry.getKey() + " ");
+						for(Noun n: entry.getValue()) {
+							System.out.print(n.getId() + " ");
+						}
 					}
 					
 					System.out.println();
@@ -163,6 +177,7 @@ public class Driver {
 				}
 			}catch(NullPointerException e) {
 				//asr has no events but has so many descriptions for nouns
+				e.printStackTrace();
 			}
 			
 			System.out.println("conflict's address: " + asr.getConflict());
