@@ -2,6 +2,8 @@ package model.text_understanding;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import java.util.regex.Matcher;
@@ -20,6 +22,7 @@ import model.story_representation.story_element.noun.Unknown;
 import model.story_representation.story_element.story_sentence.Predicate;
 import model.story_representation.story_element.story_sentence.StorySentence;
 import model.utility.States;
+import model.utility.TypedDependencyComparator;
 import edu.stanford.nlp.dcoref.Dictionaries;
 import edu.stanford.nlp.ie.AbstractSequenceClassifier;
 import edu.stanford.nlp.ie.crf.CRFClassifier;
@@ -63,7 +66,9 @@ public class Extractor {
 			System.out.println(sentence.toString());
 
 			StorySentence storySentence = new StorySentence();
-			for (TypedDependency td : dependencies.typedDependencies()) {
+			List<TypedDependency> listDependencies = new ArrayList(dependencies.typedDependencies());
+			Collections.sort(listDependencies, new TypedDependencyComparator());
+			for (TypedDependency td : listDependencies) {
 				extractDependency(td, asr, storySentence);
 			}
 			storySentence.setConcept(this.cp.getConcepts(sentence.toString()));
@@ -100,7 +105,8 @@ public class Extractor {
 					noun.setId(name);
 				}
 
-				asr.addNoun(td.gov().lemma(), noun);
+				if(noun != null)
+					asr.addNoun(td.gov().lemma(), noun);
 
 				System.out.println("compound: " + asr.getNoun(td.gov().lemma()).getId());
 			}
@@ -117,59 +123,62 @@ public class Extractor {
 						noun = this.extractCategory(this.getSRL(td.dep().lemma()), td.dep().lemma());
 					}
 
+					if(noun != null)
 					asr.addNoun(td.dep().lemma(), noun);
 				}
-
-				if (tdGovTag.equals("JJ")) {
-
-					// if(States.STATES.contains(td.gov().lemma())) {
-					// if(noun instanceof Character) {
-					// ((Character) noun).setState(td.gov().lemma());
-					// }
-					// }
-					noun.addAttribute("HasProperty", td.gov().lemma());
-					storySentence.addAttribute("HasProperty", td.gov().lemma());
-					System.out.println(noun.getId() + " hasProperty " + td.gov().lemma());
-				}
-
-				else if (tdGovTag.contains("VB")) {
-
-					boolean hasARelation = td.gov().lemma().equals("has") || td.gov().lemma().equals("have");
-
-					if (!dictionary.copulas.contains(td.gov().lemma())) {
-						if (!hasARelation) {
-							noun.addAttribute("CapableOf", td.gov().lemma());
-							System.out.println(noun.getId() + " capable of " + td.gov().lemma());
-						}
-
-						storySentence.addDoer(td.dep().lemma(), noun);
-
-						Predicate predicate = storySentence.getPredicate(td.gov().lemma());
-
-						if (predicate == null) {
-							predicate = new Predicate(td.gov().lemma());
-						}
-
-						storySentence.addPredicate(predicate);
+				
+				if(noun != null) {
+					storySentence.addDoer(td.dep().lemma(), noun);
+	
+					if (tdGovTag.equals("JJ")) {
+	
+						// if(States.STATES.contains(td.gov().lemma())) {
+						// if(noun instanceof Character) {
+						// ((Character) noun).setState(td.gov().lemma());
+						// }
+						// }
+						noun.addAttribute("HasProperty", td.gov().lemma());
+						storySentence.addAttribute("HasProperty", td.gov().lemma());
+						System.out.println(noun.getId() + " hasProperty " + td.gov().lemma());
 					}
-					// unsure if verb for event or capableOf
-				}
-
-				else if (tdGovTag.contains("NN")) {
-					Noun noun2 = asr.getNoun(td.gov().lemma());
-					if (noun2 == null) {
-						if (tdGovTag.equals("NNP")) {
-							noun2 = this.extractCategory(this.getNER(td.gov().lemma()), td.gov().lemma());
-							noun2.setProper();
-						} else if (tdGovTag.contains("NN")) {
-							noun2 = this.extractCategory(this.getSRL(td.gov().lemma()), td.gov().lemma());
+	
+					else if (tdGovTag.contains("VB")) {
+	
+						boolean hasARelation = td.gov().lemma().equals("has") || td.gov().lemma().equals("have");
+	
+						if (!dictionary.copulas.contains(td.gov().lemma())) {
+							if (!hasARelation) {
+								noun.addAttribute("CapableOf", td.gov().lemma());
+								System.out.println(noun.getId() + " capable of " + td.gov().lemma());
+							}
+	
+							Predicate predicate = storySentence.getPredicate(td.gov().lemma());
+	
+							if (predicate == null) {
+								predicate = new Predicate(td.gov().lemma());
+							}
+	
+							storySentence.addPredicate(predicate);
 						}
-
-						asr.addNoun(td.gov().lemma(), noun2);
+						// unsure if verb for event or capableOf
 					}
-
-					noun.addReference("IsA", noun2);
-					storySentence.addReferences("IsA", noun2);
+	
+					else if (tdGovTag.contains("NN")) {
+						Noun noun2 = asr.getNoun(td.gov().lemma());
+						if (noun2 == null) {
+							if (tdGovTag.equals("NNP")) {
+								noun2 = this.extractCategory(this.getNER(td.gov().lemma()), td.gov().lemma());
+								noun2.setProper();
+							} else if (tdGovTag.contains("NN")) {
+								noun2 = this.extractCategory(this.getSRL(td.gov().lemma()), td.gov().lemma());
+							}
+	
+							asr.addNoun(td.gov().lemma(), noun2);
+						}
+	
+						noun.addReference("IsA", noun2);
+						storySentence.addReferences("IsA", noun2);
+					}
 				}
 			}
 
@@ -204,7 +213,8 @@ public class Extractor {
 				}
 			}
 
-			else if (tdReln.equals("dobj") || tdReln.equals("nmod:for")) {
+			else if (tdReln.equals("dobj") || tdReln.equals("nmod:for") || tdReln.equals("nmod:agent") ||
+					tdReln.equals("nmod:of")) {
 				// object?
 				// Mary and Samantha took the bus.
 				// dobj ( took-4 , bus-6 )
@@ -228,7 +238,11 @@ public class Extractor {
 				if (predicate == null) {
 					predicate = new Predicate(td.gov().lemma());
 				}
-				predicate.addDirectObject(td.dep().lemma(), noun);
+				
+				if(tdDepTag.contains("NN"))
+					predicate.addDirectObject(td.dep().lemma(), noun);
+					
+				
 				storySentence.addPredicate(predicate);
 
 				if (td.gov().lemma().equals("has") || td.gov().lemma().equals("have")) {
