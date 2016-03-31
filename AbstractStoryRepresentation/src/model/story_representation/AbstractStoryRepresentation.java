@@ -45,7 +45,7 @@ public class AbstractStoryRepresentation {
 		StorySentence possibleConflict = this.getCurrentStorySentence();
 
 		if (possibleConflict != null) {
-			if (possibleConflict.getPolarity() <= -0.5) {
+			if (possibleConflict.getPolarity() <= -0.2) {
 				if (this.setExpectedResolution(possibleConflict)) {
 					// System.out.println("a");
 					this.conflict = possibleConflict;
@@ -125,6 +125,8 @@ public class AbstractStoryRepresentation {
 
 		events.add(event);
 		this.storySentences.put(partOfStory, events);
+		
+		System.out.println("add");
 
 		if (this.partOfStory.equals("start")) {
 			//System.out.println("a");
