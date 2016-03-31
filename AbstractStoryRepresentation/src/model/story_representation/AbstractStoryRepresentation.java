@@ -64,15 +64,16 @@ public class AbstractStoryRepresentation {
 
 		if (((StorySentence) possibleResolution).getConcepts().contains(this.expectedResolutionConcept)) {
 			List<Character> charsInResolution = new ArrayList();
-			for (Noun doer : ((StorySentence) possibleResolution).getManyDoers().values()) {
-				if (doer instanceof Character) {
-					charsInResolution.add((Character) doer);
-				}
-			}
 			for (Predicate predicate : ((StorySentence) possibleResolution).getManyPredicates().values()) {
-					for (Noun receiver : predicate.getReceivers().values()) {
-						if (receiver instanceof Character) {
-							charsInResolution.add((Character) receiver);
+				for(Noun doer : predicate.getManyDoers().values()) {
+					if (doer instanceof Character) {
+						charsInResolution.add((Character) doer);
+					}
+				}
+				
+				for (Noun receiver : predicate.getReceivers().values()) {
+					if (receiver instanceof Character) {
+						charsInResolution.add((Character) receiver);
 					}
 				}
 				for (Noun dobj : predicate.getDirectObjects().values()) {
@@ -82,13 +83,14 @@ public class AbstractStoryRepresentation {
 				}			
 			}
 			List<Character> charsInConflict = new ArrayList();
-			for (Noun doer : ((StorySentence) possibleResolution).getManyDoers().values()) {
-				if (doer instanceof Character) {
-					charsInConflict.add((Character) doer);
-				}
-			}
 			
 			for (Predicate predicate : ((StorySentence) possibleResolution).getManyPredicates().values()) {
+				for(Noun doer : predicate.getManyDoers().values()) {
+					if (doer instanceof Character) {
+						charsInResolution.add((Character) doer);
+					}
+				}
+				
 				for (Noun receiver : predicate.getReceivers().values()) {
 					if (receiver instanceof Character) {
 						charsInConflict.add((Character) receiver);

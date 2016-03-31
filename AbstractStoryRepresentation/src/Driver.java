@@ -13,6 +13,7 @@ import model.story_representation.story_element.noun.Character;
 import model.story_representation.story_element.noun.Location;
 import model.story_representation.story_element.noun.Noun;
 import model.story_representation.story_element.noun.Object;
+import model.story_representation.story_element.story_sentence.Description;
 import model.story_representation.story_element.story_sentence.Predicate;
 import model.story_representation.story_element.story_sentence.StorySentence;
 import model.text_generation.DirectivesGenerator;
@@ -63,44 +64,34 @@ public class Driver {
 					
 					System.out.println("is valid event? " + e.isValidEvent());
 					
-//					if(e.getLocation() != null)
-					System.out.println("location: " + e.getLocations());
-					
-					System.out.println("doers: ");
-					for(Map.Entry<String, Noun> entry: e.getManyDoers().entrySet()) {
-						System.out.println("id: " + entry.getValue().getId());
-//						if(entry.getValue() instanceof Character) {
-//							System.out.println("states: " + ((Character)entry.getValue()).getStates());
-//						}
-						System.out.println("common noun? " + entry.getValue().getIsCommon());
+					for(Predicate p: e.getManyPredicates().values()) {
+						System.out.println("doers: ");
+						for(Map.Entry<String, Noun> entry: p.getManyDoers().entrySet()) {
+							System.out.println("id: " + entry.getValue().getId());
+							System.out.println("common noun? " + entry.getValue().getIsCommon());
 						
-						System.out.println("doers' attributes: ");
-						for(Map.Entry<String, Set<String>> entry2: entry.getValue().getAttributes().entrySet()) {
-							System.out.print(entry2.getKey() + " ");
-							System.out.print(entry2.getValue());
-							System.out.println();
-						}
+							System.out.println("doers' attributes: ");
+							for(Map.Entry<String, Set<String>> entry2: entry.getValue().getAttributes().entrySet()) {
+								System.out.print(entry2.getKey() + " ");
+								System.out.print(entry2.getValue());
+								System.out.println();
+							}
+							
+							System.out.println("doers' references: ");
+							for(Map.Entry<String, Set<Noun>> entry2: entry.getValue().getReferences().entrySet()) {
+								System.out.print(entry2.getKey() + " ");
+								for(Noun n: entry2.getValue()) {
+									System.out.print(n.getId() + " ");
+								}
+								System.out.println();
+							}
+						}	
 						
-						System.out.println("doers' references: ");
-						for(Map.Entry<String, Set<Noun>> entry2: entry.getValue().getReferences().entrySet()) {
-							System.out.print(entry2.getKey() + " ");
-							System.out.print(entry2.getValue());
-							System.out.println();
-						}
-						
-						System.out.println();
-					}
-					
-					System.out.println("predicates: ");
-					for(Map.Entry<String, Predicate> entry: e.getManyPredicates().entrySet()) {
-						System.out.println("action: " + entry.getValue().getAction());
+						System.out.println("action: " + p.getAction());
 						
 						System.out.println("receivers: ");
-						for(Map.Entry<String, Noun> entry2: entry.getValue().getReceivers().entrySet()) {
+						for(Map.Entry<String, Noun> entry2: p.getReceivers().entrySet()) {
 							System.out.println("id: " + entry2.getValue().getId());
-//							if(entry2.getValue() instanceof Character) {
-//								System.out.println("states: " + ((Character)entry2.getValue()).getStates());
-//							}
 							System.out.println("common noun? " + entry2.getValue().getIsCommon());
 							
 							System.out.println("receiver's attributes");
@@ -113,17 +104,16 @@ public class Driver {
 							System.out.println("receiver's references");
 							for(Map.Entry<String, Set<Noun>> entry3: entry2.getValue().getReferences().entrySet()) {
 								System.out.print(entry3.getKey() + " ");
-								System.out.print(entry3.getValue() + " ");
+								for(Noun n: entry3.getValue()) {
+									System.out.print(n.getId() + " ");
+								}
 								System.out.println();
 							}
 						}
 						
 						System.out.println("dobjs: ");
-						for(Map.Entry<String, Noun> entry3: entry.getValue().getDirectObjects().entrySet()) {
+						for(Map.Entry<String, Noun> entry3: p.getDirectObjects().entrySet()) {
 							System.out.println("id: " + entry3.getValue().getId());
-//							if(entry3.getValue() instanceof Character) {
-//								System.out.println("state: " + ((Character)entry3.getValue()).getStates());
-//							}
 							System.out.println("common noun? " + entry3.getValue().getIsCommon());
 				
 							System.out.println("dobj's attributes ");
@@ -136,31 +126,42 @@ public class Driver {
 							System.out.println("dobj's references ");
 							for(Map.Entry<String, Set<Noun>> entry4: entry3.getValue().getReferences().entrySet()) {
 								System.out.print(entry4.getKey() + " ");
-								System.out.print(entry4.getValue() + " ");
+								for(Noun n: entry4.getValue()) {
+									System.out.print(n.getId() + " ");
+								}
 								System.out.println();
 							}
 						}
-					}
+					}	
 					
 					System.out.println("descriptions ");
 					
-					System.out.println("attributes ");
-					for(Entry<String, Set<String>> entry: e.getDescription().getAttributes().entrySet()) {
-						System.out.print(entry.getKey());
-						System.out.println(entry.getValue());
-					}
 					
-					System.out.println("references ");
-					for(Entry<String, Set<Noun>> entry: e.getDescription().getReferences().entrySet()) {
-						System.out.print(entry.getKey());
-						System.out.println(entry.getValue());
+					for(Entry<String, Description> entry: e.getManyDescriptions().entrySet()) {
+						System.out.println(entry.getKey());
+						System.out.println("attributes ");
+						
+						for(Entry<String, Set<String>> entry2: entry.getValue().getAttributes().entrySet()) {
+							System.out.print(entry2.getKey() + " ");
+							System.out.println(entry2.getValue() + " ");
+						}
+						
+						System.out.println("references ");
+						for(Entry<String, Set<Noun>> entry2: entry.getValue().getReferences().entrySet()) {
+							System.out.print(entry2.getKey() + " ");
+							for(Noun n: entry2.getValue()) {
+								System.out.print(n.getId() + " ");
+							}
+							System.out.println();
+						}
 					}
-					
+
 					System.out.println();
 					System.out.println("polarity: " + e.getPolarity());
 					System.out.println("concepts: " + e.getConcepts());
 					System.out.println();
 				}
+
 			}catch(NullPointerException e) {
 				//asr has no events but has so many descriptions for nouns
 			}

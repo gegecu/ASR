@@ -109,7 +109,7 @@ public class Preprocessing {
 				String refFound = c1.mentionSpan;
 				// System.out.println(c1.mentionType.representativeness);
 				Sentence newSen = sens.get(c1.sentNum - 1);
-				if (num != c1.sentNum && type.representativeness > c1.mentionType.representativeness) {
+				if (type.representativeness > c1.mentionType.representativeness) {
 					if (newSen.getWord(c1.startIndex).getInfo("pos").equals("PRP$")) {
 						newSen.getWord(c1.startIndex).addInfo("text", mainRef + "'s");
 					} else {

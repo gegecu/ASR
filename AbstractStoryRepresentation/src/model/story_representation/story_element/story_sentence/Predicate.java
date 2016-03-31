@@ -1,20 +1,48 @@
 package model.story_representation.story_element.story_sentence;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import model.story_representation.story_element.noun.Noun;
 
 public class Predicate {
 	
+	private Map<String, Noun> doers;
 	private String action;
+	private Set<String> adverbs;
 	private Map<String, Noun> receivers;
 	private Map<String, Noun> directObjects;
 
 	public Predicate(String action) {
+		this.adverbs = new HashSet();
+		this.doers = new HashMap<String, Noun>();
 		this.action = action;
 		this.receivers = new HashMap<String, Noun>();
 		this.directObjects = new HashMap<String, Noun>();
+	}
+	
+	public void addAdverb(String adverb) {
+		this.adverbs.add(adverb);
+	}
+	
+	public List<String> getAdverbs() {
+		return new ArrayList(this.adverbs);
+	}
+	
+	public void addDoer(String id, Noun noun) {
+		this.doers.put(id, noun);
+	}
+
+	public Noun getDoer(String id) {
+		return this.doers.get(id);
+	}
+
+	public Map<String, Noun> getManyDoers() {
+		return this.doers;
 	}
 
 	public String getAction() {

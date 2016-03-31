@@ -60,6 +60,13 @@ public abstract class Noun{
 		if(temp == null) {
 			temp = new HashSet<Noun> ();
 		}
+		
+		if(!temp.isEmpty()) {
+			if(key.equals("AtLocation")) {
+				temp.remove(reference);
+			}
+		}
+		
 		temp.add(reference);
 		this.references.put(key, temp);	
 	}

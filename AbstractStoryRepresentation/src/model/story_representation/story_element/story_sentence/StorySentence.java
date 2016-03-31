@@ -12,65 +12,75 @@ import model.story_representation.story_element.noun.Noun;
 
 public class StorySentence {
 
-	private Map<String, Noun> doers;
-	private Map<String, Predicate> predicates;
-	private Description description;
-	private Set<Location> locations;
+	private Map<Integer, Predicate> predicates;
+	private Map<String, Description> description;
+//	private Map<String, List<Location>> locations;
 	private float polarity;
 	private List<String> concepts;
 
 	public StorySentence() {
-		this.doers = new HashMap<String, Noun>();
-		this.predicates = new HashMap<String, Predicate>();
-		this.locations = new HashSet();
+		this.predicates = new HashMap<Integer, Predicate>();
+		//this.locations = new HashMap<String, List<Location>>();
 		this.polarity = 0;
 		this.concepts = null;
-		this.description = new Description();
+		this.description = new HashMap<String, Description>();
 	}
 
-	public void addAttribute(String key, String value) {
-		this.description.addAttribute(key, value);
+	public void addAttribute(String nounId, String key, String value) {
+		
+		Description description = this.description.get(nounId);
+		if(description == null) {
+			description = new Description();
+		}
+		description.addAttribute(key, value);
+		this.description.put(nounId, description);
 	}
 
-	public void addReferences(String key, Noun value) {
-		this.description.addReference(key, value);
+	public void addReferences(String nounId, String key, Noun value) {
+		Description description = this.description.get(nounId);
+		if(description == null) {
+			description = new Description();
+		}
+		description.addReference(key, value);
+		this.description.put(nounId, description);
 	}
 
-	public Description getDescription() {
+	public Description getDescription(String nounId) {
+		return this.description.get(nounId);
+	}
+	
+	public Map<String, Description> getManyDescriptions() {
 		return this.description;
 	}
 
-	public void addDoer(String id, Noun noun) {
-		this.doers.put(id, noun);
+	public void addPredicate(Integer id, Predicate predicate) {
+		this.predicates.put(id, predicate);
 	}
 
-	public Noun getDoer(String id) {
-		return this.doers.get(id);
+	public Predicate getPredicate(Integer id) {
+		return this.predicates.get(id);
 	}
 
-	public Map<String, Noun> getManyDoers() {
-		return this.doers;
-	}
-
-	public void addPredicate(Predicate predicate) {
-		this.predicates.put(predicate.getAction(), predicate);
-	}
-
-	public Predicate getPredicate(String action) {
-		return this.predicates.get(action);
-	}
-
-	public Map<String, Predicate> getManyPredicates() {
+	public Map<Integer, Predicate> getManyPredicates() {
 		return this.predicates;
 	}
 
-	public void addLocation(Location location) {
-		this.locations.add(location);
-	}
-
-	public List<Location> getLocations() {
-		return new ArrayList(this.locations);
-	}
+//	public void addLocation(String nounId, Location location) {
+//		List<Location> locations = this.locations.get(nounId);
+//		if(locations == null) {
+//			locations = new ArrayList();
+//		}
+//		locations.add(location);
+//		this.locations.put(nounId, locations);
+//	}
+//
+//	public List<Location> getLocations(String nounId) {
+//		return this.locations.get(nounId);
+//	}
+//	
+//	public Map<String, List<Location>> getManyLocations() {
+//		return this.locations;
+//	}
 
 	public void setPolarity(float polarity) {
 		this.polarity = polarity;
@@ -81,7 +91,7 @@ public class StorySentence {
 	}
 
 	public boolean isValidEvent() {
-		if (this.doers.size() >= 1 && this.predicates.size() >= 1) {
+		if (this.predicates.size() >= 1) {
 			return true;
 		}
 		return false;
@@ -96,56 +106,56 @@ public class StorySentence {
 		return this.concepts;
 	}
 
-	public List<Noun> getAllNounsInEvent() {
-		Set<Noun> nouns = new HashSet();
-		nouns.addAll(this.doers.values());
-		for (Predicate predicate : this.getManyPredicates().values()) {
-			nouns.addAll(predicate.getDirectObjects().values());
-			nouns.addAll(predicate.getReceivers().values());
-		}
-		
-		nouns.addAll(this.locations);
-		
-		return new ArrayList(nouns);
-	}
-
-	public List<Noun> getAllNounsInEventBasedOnRelation(String relation) {
-		Set<Noun> nouns = new HashSet();
-		for (Noun noun : this.doers.values()) {
-			if (noun.getAttribute(relation) != null) {
-				nouns.add(noun);
-			}
-			if (noun.getReference(relation) != null) {
-				nouns.add(noun);
-			}
-		}
-
-		for (Predicate predicate : this.predicates.values()) {
-			for (Noun noun : predicate.getReceivers().values()) {
-				if (noun.getAttribute(relation) != null) {
-					nouns.add(noun);
-				}
-				if (noun.getReference(relation) != null) {
-					nouns.add(noun);
-				}
-			}
-			for (Noun noun : predicate.getDirectObjects().values()) {
-				if (noun.getAttribute(relation) != null) {
-					nouns.add(noun);
-				}
-				if (noun.getReference(relation) != null) {
-					nouns.add(noun);
-				}
-			}
-		}
-		
-		for(Location location: this.locations) {
-			if (location.getAttribute(relation) != null)
-				nouns.add(location);
-			if (location.getReference(relation) != null)
-				nouns.add(location);
-		}
-		
-		return new ArrayList(nouns);
-	}
+//	public List<Noun> getAllNounsInEvent() {
+//		Set<Noun> nouns = new HashSet();
+//		nouns.addAll(this.doers.values());
+//		for (Predicate predicate : this.getManyPredicates().values()) {
+//			nouns.addAll(predicate.getDirectObjects().values());
+//			nouns.addAll(predicate.getReceivers().values());
+//		}
+//		
+//		nouns.addAll(this.locations);
+//		
+//		return new ArrayList(nouns);
+//	}
+//
+//	public List<Noun> getAllNounsInEventBasedOnRelation(String relation) {
+//		Set<Noun> nouns = new HashSet();
+//		for (Noun noun : this.doers.values()) {
+//			if (noun.getAttribute(relation) != null) {
+//				nouns.add(noun);
+//			}
+//			if (noun.getReference(relation) != null) {
+//				nouns.add(noun);
+//			}
+//		}
+//
+//		for (Predicate predicate : this.predicates.values()) {
+//			for (Noun noun : predicate.getReceivers().values()) {
+//				if (noun.getAttribute(relation) != null) {
+//					nouns.add(noun);
+//				}
+//				if (noun.getReference(relation) != null) {
+//					nouns.add(noun);
+//				}
+//			}
+//			for (Noun noun : predicate.getDirectObjects().values()) {
+//				if (noun.getAttribute(relation) != null) {
+//					nouns.add(noun);
+//				}
+//				if (noun.getReference(relation) != null) {
+//					nouns.add(noun);
+//				}
+//			}
+//		}
+//		
+//		for(Location location: this.locations) {
+//			if (location.getAttribute(relation) != null)
+//				nouns.add(location);
+//			if (location.getReference(relation) != null)
+//				nouns.add(location);
+//		}
+//		
+//		return new ArrayList(nouns);
+//	}
 }
