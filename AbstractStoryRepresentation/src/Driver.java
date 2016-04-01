@@ -36,9 +36,9 @@ public class Driver {
 		
 		List<TextGeneration> tg = new ArrayList();
 		
-//		tg.add(new StorySegmentGenerator(asr));
+		tg.add(new StorySegmentGenerator(asr));
 //				
-		tg.add(new DirectivesGenerator(asr));
+//		tg.add(new DirectivesGenerator(asr));
 //		
 //		tg.add(new RelationQuestionGenerator(asr));
 		
@@ -71,14 +71,14 @@ public class Driver {
 							System.out.println("common noun? " + entry.getValue().getIsCommon());
 						
 							System.out.println("doers' attributes: ");
-							for(Map.Entry<String, Set<String>> entry2: entry.getValue().getAttributes().entrySet()) {
+							for(Map.Entry<String, List<String>> entry2: entry.getValue().getAttributes().entrySet()) {
 								System.out.print(entry2.getKey() + " ");
 								System.out.print(entry2.getValue());
 								System.out.println();
 							}
 							
 							System.out.println("doers' references: ");
-							for(Map.Entry<String, Set<Noun>> entry2: entry.getValue().getReferences().entrySet()) {
+							for(Map.Entry<String, List<Noun>> entry2: entry.getValue().getReferences().entrySet()) {
 								System.out.print(entry2.getKey() + " ");
 								for(Noun n: entry2.getValue()) {
 									System.out.print(n.getId() + " ");
@@ -95,14 +95,14 @@ public class Driver {
 							System.out.println("common noun? " + entry2.getValue().getIsCommon());
 							
 							System.out.println("receiver's attributes");
-							for(Map.Entry<String, Set<String>> entry3: entry2.getValue().getAttributes().entrySet()) {
+							for(Map.Entry<String, List<String>> entry3: entry2.getValue().getAttributes().entrySet()) {
 								System.out.print(entry3.getKey() + " ");
 								System.out.print(entry3.getValue() + " ");
 								System.out.println();
 							}
 							
 							System.out.println("receiver's references");
-							for(Map.Entry<String, Set<Noun>> entry3: entry2.getValue().getReferences().entrySet()) {
+							for(Map.Entry<String, List<Noun>> entry3: entry2.getValue().getReferences().entrySet()) {
 								System.out.print(entry3.getKey() + " ");
 								for(Noun n: entry3.getValue()) {
 									System.out.print(n.getId() + " ");
@@ -117,14 +117,14 @@ public class Driver {
 							System.out.println("common noun? " + entry3.getValue().getIsCommon());
 				
 							System.out.println("dobj's attributes ");
-							for(Map.Entry<String, Set<String>> entry4: entry3.getValue().getAttributes().entrySet()) {
+							for(Map.Entry<String, List<String>> entry4: entry3.getValue().getAttributes().entrySet()) {
 								System.out.print(entry4.getKey() + " ");
 								System.out.print(entry4.getValue() + " ");
 								System.out.println();
 							}
 							
 							System.out.println("dobj's references ");
-							for(Map.Entry<String, Set<Noun>> entry4: entry3.getValue().getReferences().entrySet()) {
+							for(Map.Entry<String, List<Noun>> entry4: entry3.getValue().getReferences().entrySet()) {
 								System.out.print(entry4.getKey() + " ");
 								for(Noun n: entry4.getValue()) {
 									System.out.print(n.getId() + " ");
@@ -141,13 +141,13 @@ public class Driver {
 						System.out.println(entry.getKey());
 						System.out.println("attributes ");
 						
-						for(Entry<String, Set<String>> entry2: entry.getValue().getAttributes().entrySet()) {
+						for(Entry<String, List<String>> entry2: entry.getValue().getAttributes().entrySet()) {
 							System.out.print(entry2.getKey() + " ");
 							System.out.println(entry2.getValue() + " ");
 						}
 						
 						System.out.println("references ");
-						for(Entry<String, Set<Noun>> entry2: entry.getValue().getReferences().entrySet()) {
+						for(Entry<String, List<Noun>> entry2: entry.getValue().getReferences().entrySet()) {
 							System.out.print(entry2.getKey() + " ");
 							for(Noun n: entry2.getValue()) {
 								System.out.print(n.getId() + " ");

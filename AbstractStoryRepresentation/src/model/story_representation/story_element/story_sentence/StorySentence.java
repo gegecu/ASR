@@ -116,7 +116,7 @@ public class StorySentence {
 		
 		nounId.addAll(this.description.keySet());
 		for(Description d: this.description.values()) {
-			for(Set<Noun> referred: d.getReferences().values()) {
+			for(List<Noun> referred: d.getReferences().values()) {
 				for(Noun n: referred) {
 					nounId.add(n.getId());
 				}

@@ -13,14 +13,14 @@ import model.utility.States;
 public abstract class Noun {
 	protected String id;
 	protected boolean isCommon;
-	protected Map<String, Set<String>> attributes;
-	protected Map<String, Set<Noun>> references;
+	protected Map<String, List<String>> attributes;
+	protected Map<String, List<Noun>> references;
 //	protected Stack<String> states;
 	
 	public Noun(String id) {
 		this.id = id;
-		this.attributes = new HashMap<String, Set<String>>();
-		this.references = new HashMap<String, Set<Noun>>();
+		this.attributes = new HashMap<String, List<String>>();
+		this.references = new HashMap<String, List<Noun>>();
 		this.isCommon = true;
 		//states = new Stack();
 	}
@@ -34,50 +34,46 @@ public abstract class Noun {
 	}
 	
 	public void addAttribute(String key, String attribute) {
-		Set<String> temp = this.attributes.get(key);
+		List<String> temp = this.attributes.get(key);
 		
 		if(temp == null) {
-			temp = new HashSet<String>();
+			temp = new ArrayList<String>();
 		}
+		temp.remove(attribute);
 		temp.add(attribute);
 		this.attributes.put(key, temp);	
 	}
 	
-	public Map<String, Set<String>> getAttributes() {
+	public Map<String, List<String>> getAttributes() {
 		return this.attributes;
 	}
 	
 	public List<String> getAttribute(String key) {
 		if(attributes.get(key) != null) {
-			return new ArrayList(attributes.get(key));
+			return attributes.get(key);
 		}
 		return null;
 	}
 	
 	public void addReference(String key, Noun reference) {
-		Set<Noun> temp = this.references.get(key);
+		List<Noun> temp = this.references.get(key);
 		
 		if(temp == null) {
-			temp = new HashSet<Noun> ();
+			temp = new ArrayList<Noun> ();
 		}
 		
-		if(!temp.isEmpty()) {
-			if(key.equals("AtLocation")) {
-				temp.remove(reference);
-			}
-		}
-		
+		temp.remove(reference);
 		temp.add(reference);
 		this.references.put(key, temp);	
 	}
 	
-	public Map<String, Set<Noun>> getReferences() {
+	public Map<String, List<Noun>> getReferences() {
 		return this.references;
 	}
 	
 	public List<Noun> getReference(String key) {
 		if(references.get(key) != null) {
-			return new ArrayList(references.get(key));
+			return references.get(key);
 		}
 		return null;
 	}

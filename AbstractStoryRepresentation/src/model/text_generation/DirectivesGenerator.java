@@ -129,8 +129,8 @@ public class DirectivesGenerator extends TextGeneration {
 			int randomNoun = Randomizer.random(1, nounId.size());
 			Noun noun = asr.getNoun(nounId.remove(randomNoun - 1));
 
-			threshold += countSets(noun.getAttributes().values());
-			threshold += countSets(noun.getReferences().values());
+			threshold += countLists(noun.getAttributes().values());
+			threshold += countLists(noun.getReferences().values());
 
 			// find other noun if the number of properties of the current
 			// noun is greater than descriptionThreshold
@@ -148,10 +148,10 @@ public class DirectivesGenerator extends TextGeneration {
 
 	}
 
-	private <T> int countSets(Collection<Set<T>> collection) {
+	private <T> int countLists(Collection<List<T>> collection) {
 		int count = 0;
-		for (Set<T> set : collection) {
-			count += set.size();
+		for (List<T> list : collection) {
+			count += list.size();
 		}
 		return count;
 	}
@@ -178,7 +178,7 @@ public class DirectivesGenerator extends TextGeneration {
 				directive = directive.replace("<noun>", this.wordsConjunction(doers));
 
 				VPPhraseSpec verb = nlgFactory.createVerbPhrase(predicate.getAction());
-				verb.setFeature(Feature.PERFECT, Tense.PRESENT);
+				verb.setFeature(Feature.TENSE, Tense.PAST);
 				directive = directive.replace("<action>", realiser.realise(verb).toString());
 
 			}
