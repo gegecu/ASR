@@ -19,5 +19,6 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="ConceptParser"/>
 	<classpathentry exported="true" kind="lib" path="lib/simplenlg-4.4.3.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Moi/Personal/Thesis/External Libs/mysql-connector-java-5.1.38/mysql-connector-java-5.1.38/mysql-connector-java-5.1.38-bin.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
