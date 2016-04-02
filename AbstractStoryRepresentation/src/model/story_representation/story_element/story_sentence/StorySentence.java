@@ -16,15 +16,11 @@ public class StorySentence {
 	private Map<String, Description> description;
 //	private Map<String, List<Location>> locations;
 	private float polarity;
-	private List<String> adjectiveConcepts;
-	private List<String> verbConcepts;
 
 	public StorySentence() {
 		this.predicates = new HashMap<Integer, Predicate>();
 		//this.locations = new HashMap<String, List<Location>>();
 		this.polarity = 0;
-		this.adjectiveConcepts = null;
-		this.verbConcepts = null;
 		this.description = new HashMap<String, Description>();
 	}
 
@@ -100,18 +96,12 @@ public class StorySentence {
 		// return true;
 	}
 
-	public void setAdjectiveConcepts(List<String> concepts) {
-		this.adjectiveConcepts = concepts;
-	}
-
-	public void setVerbConcepts(List<String> concepts) {
-		this.verbConcepts = concepts;
-	}
-
 	public List<String> getConcepts(){
 		List<String> concepts = new ArrayList<String>();
-		concepts.addAll(adjectiveConcepts);
-		concepts.addAll(verbConcepts);
+		for(Predicate predicate: this.getManyPredicates().values()){
+			concepts.addAll(predicate.getAdjectiveConcepts());
+			concepts.addAll(predicate.getVerbConcepts());
+		}
 		if(concepts.isEmpty())
 			return null;
 		return concepts;

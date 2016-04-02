@@ -16,17 +16,38 @@ public class Predicate { //clause
 	private Set<String> adverbs;
 	private Map<String, Noun> receivers;
 	private Map<String, Noun> directObjects;
-	
-	//private Map<String, List<String>> concepts;
+	private List<String> adjectiveConcepts;
+	private List<String> verbConcepts;
 
 	public Predicate(String action) {
 		this.adverbs = new HashSet();
 		this.doers = new HashMap<String, Noun>();
 		this.action = action;
+		this.adjectiveConcepts = new ArrayList<String>();
+		this.verbConcepts = new ArrayList<String>();;
 		this.receivers = new HashMap<String, Noun>();
 		this.directObjects = new HashMap<String, Noun>();
 	}
 	
+	/** code for concepts **/
+	public void addAdjectiveConcept(String concept){
+		adjectiveConcepts.add(concept);
+	}
+	public void addVerbConcept(String concept){
+		verbConcepts.add(concept);
+	}
+	public List<String> getAdjectiveConcepts(){
+		return this.adjectiveConcepts;
+	}
+	public List<String> getVerbConcepts(){
+		return this.verbConcepts;
+	}
+	public List<String> getConcepts(){
+		List<String> concepts = new ArrayList<String>();
+		concepts.addAll(adjectiveConcepts);
+		concepts.addAll(verbConcepts);
+		return concepts;
+	}
 	public void addAdverb(String adverb) {
 		this.adverbs.add(adverb);
 	}
