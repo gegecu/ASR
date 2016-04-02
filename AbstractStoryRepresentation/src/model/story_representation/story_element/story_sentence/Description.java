@@ -9,7 +9,7 @@ import java.util.Set;
 
 import model.story_representation.story_element.noun.Noun;
 
-public class Description {
+public class Description extends Clause{
 	private Map<String, List<String>> attributes;
 	private Map<String, List<Noun>> references;
 	private List<String> concepts;
@@ -18,11 +18,12 @@ public class Description {
 		this.attributes = new HashMap<String, List<String>>();
 		this.references = new HashMap<String, List<Noun>>();
 		this.concepts = new ArrayList<String>();
+		this.polarity = 0;
 	}
 	public void addConcept(String concept){
 		this.concepts.add(concept);
 	}
-	public List<String> getNounSpecificConcepts(){
+	public List<String> getConcepts(){
 		return this.concepts;
 	}
 	

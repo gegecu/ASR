@@ -14,7 +14,7 @@ import model.story_representation.story_element.noun.Location;
 import model.story_representation.story_element.noun.Noun;
 import model.story_representation.story_element.noun.Object;
 import model.story_representation.story_element.story_sentence.Description;
-import model.story_representation.story_element.story_sentence.Predicate;
+import model.story_representation.story_element.story_sentence.Event;
 import model.story_representation.story_element.story_sentence.StorySentence;
 import model.text_generation.DirectivesGenerator;
 import model.text_generation.RelationQuestionGenerator;
@@ -64,7 +64,7 @@ public class Driver {
 					
 					System.out.println("is valid event? " + e.isValidEvent());
 					
-					for(Predicate p: e.getManyPredicates().values()) {
+					for(Event p: e.getManyPredicates().values()) {
 						System.out.println("doers: ");
 						for(Map.Entry<String, Noun> entry: p.getManyDoers().entrySet()) {
 							System.out.println("id: " + entry.getValue().getId());
@@ -157,12 +157,16 @@ public class Driver {
 					}
 
 					System.out.println();
-					System.out.println("polarity: " + e.getPolarity());
+					//System.out.println("polarity: " + e.getPolarity());
 					System.out.println("concepts per predicate");
-					for(Predicate predicate: e.getManyPredicates().values())
-						System.out.println("p_concepts: " + predicate.getVerbConcepts());
-					for(Description description: e.getManyDescriptions().values())
-						System.out.println("n_concepts: " + description.getNounSpecificConcepts());
+					for(Event predicate: e.getManyPredicates().values()){
+						System.out.print("p_concepts: " + predicate.getConcepts());
+						System.out.println(" polarity: " + predicate.getPolarity());
+					}
+					for(Description description: e.getManyDescriptions().values()) {
+						System.out.print("n_concepts: " + description.getConcepts());
+						System.out.println(" polarity: " + description.getPolarity());
+					}
 					System.out.println();
 				}
 

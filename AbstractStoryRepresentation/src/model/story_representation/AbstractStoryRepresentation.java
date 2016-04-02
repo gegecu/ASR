@@ -11,7 +11,7 @@ import model.knowledge_base.conceptnet.ConceptNetDAO;
 import model.story_representation.story_element.noun.Character;
 import model.story_representation.story_element.noun.Location;
 import model.story_representation.story_element.noun.Noun;
-import model.story_representation.story_element.story_sentence.Predicate;
+import model.story_representation.story_element.story_sentence.Event;
 import model.story_representation.story_element.story_sentence.StorySentence;
 import model.utility.States;
 
@@ -45,16 +45,18 @@ public class AbstractStoryRepresentation {
 
 	public void setConflict() {
 
-		StorySentence possibleConflict = this.getCurrentStorySentence();
-
-		if (possibleConflict != null) {
-			if (possibleConflict.getPolarity() <= -0.2) {
-				if (this.setExpectedResolution(possibleConflict)) {
-					// System.out.println("a");
-					this.conflict = possibleConflict;
-				}
-			}
-		}
+		//NOTE: update implementation because of changes in ASR
+		
+//		StorySentence possibleConflict = this.getCurrentStorySentence();
+//
+//		if (possibleConflict != null) {
+//			if (possibleConflict.getPolarity() <= -0.2) {
+//				if (this.setExpectedResolution(possibleConflict)) {
+//					// System.out.println("a");
+//					this.conflict = possibleConflict;
+//				}
+//			}
+//		}
 	}
 
 	public StorySentence getConflict() {
@@ -67,7 +69,7 @@ public class AbstractStoryRepresentation {
 
 		if (((StorySentence) possibleResolution).getConcepts().contains(this.expectedResolutionConcept)) {
 			List<Character> charsInResolution = new ArrayList<>();
-			for (Predicate predicate : ((StorySentence) possibleResolution).getManyPredicates().values()) {
+			for (Event predicate : ((StorySentence) possibleResolution).getManyPredicates().values()) {
 				for (Noun doer : predicate.getManyDoers().values()) {
 					if (doer instanceof Character) {
 						charsInResolution.add((Character) doer);
@@ -88,7 +90,7 @@ public class AbstractStoryRepresentation {
 
 			List<Character> charsInConflict = new ArrayList<>();
 
-			for (Predicate predicate : ((StorySentence) possibleResolution).getManyPredicates().values()) {
+			for (Event predicate : ((StorySentence) possibleResolution).getManyPredicates().values()) {
 
 				for (Noun doer : predicate.getManyDoers().values()) {
 					if (doer instanceof Character) {

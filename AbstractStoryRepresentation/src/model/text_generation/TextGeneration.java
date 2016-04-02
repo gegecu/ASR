@@ -6,7 +6,7 @@ import java.util.Random;
 
 import model.story_representation.AbstractStoryRepresentation;
 import model.story_representation.story_element.noun.Noun;
-import model.story_representation.story_element.story_sentence.Predicate;
+import model.story_representation.story_element.story_sentence.Event;
 import model.story_representation.story_element.story_sentence.StorySentence;
 import simplenlg.framework.NLGFactory;
 import simplenlg.lexicon.Lexicon;

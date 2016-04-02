@@ -12,15 +12,15 @@ import model.story_representation.story_element.noun.Noun;
 
 public class StorySentence {
 
-	private Map<Integer, Predicate> predicates;
+	private Map<Integer, Event> predicates;
 	private Map<String, Description> description;
 //	private Map<String, List<Location>> locations;
-	private float polarity;
+	//private float polarity;
 
 	public StorySentence() {
-		this.predicates = new HashMap<Integer, Predicate>();
+		this.predicates = new HashMap<Integer, Event>();
 		//this.locations = new HashMap<String, List<Location>>();
-		this.polarity = 0;
+		//this.polarity = 0;
 		this.description = new HashMap<String, Description>();
 	}
 
@@ -58,15 +58,15 @@ public class StorySentence {
 		return this.description;
 	}
 
-	public void addPredicate(Integer id, Predicate predicate) {
+	public void addPredicate(Integer id, Event predicate) {
 		this.predicates.put(id, predicate);
 	}
 
-	public Predicate getPredicate(Integer id) {
+	public Event getPredicate(Integer id) {
 		return this.predicates.get(id);
 	}
 
-	public Map<Integer, Predicate> getManyPredicates() {
+	public Map<Integer, Event> getManyPredicates() {
 		return this.predicates;
 	}
 
@@ -87,14 +87,6 @@ public class StorySentence {
 //		return this.locations;
 //	}
 
-	public void setPolarity(float polarity) {
-		this.polarity = polarity;
-	}
-
-	public float getPolarity() {
-		return this.polarity;
-	}
-
 	public boolean isValidEvent() {
 		if (this.predicates.size() >= 1) {
 			return true;
@@ -106,11 +98,11 @@ public class StorySentence {
 	//returns all concepts (predicate concepts + noun specific concepts)
 	public List<String> getConcepts(){
 		List<String> concepts = new ArrayList<String>();
-		for(Predicate predicate: this.getManyPredicates().values()){
-			concepts.addAll(predicate.getVerbConcepts());
+		for(Event predicate: this.getManyPredicates().values()){
+			concepts.addAll(predicate.getConcepts());
 		}
 		for(Description description: description.values()){
-			concepts.addAll(description.getNounSpecificConcepts());
+			concepts.addAll(description.getConcepts());
 		}
 		if(concepts.isEmpty())
 			return null;
@@ -119,7 +111,7 @@ public class StorySentence {
 	
 	public List<String> getAllNounsInStorySentence() {
 		Set<String> nounId = new HashSet();
-		for (Predicate predicate : this.getManyPredicates().values()) {
+		for (Event predicate : this.getManyPredicates().values()) {
 			nounId.addAll(predicate.getManyDoers().keySet());
 			nounId.addAll(predicate.getDirectObjects().keySet());
 			nounId.addAll(predicate.getReceivers().keySet());

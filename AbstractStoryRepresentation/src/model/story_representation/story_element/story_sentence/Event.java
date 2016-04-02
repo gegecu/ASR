@@ -9,7 +9,7 @@ import java.util.Set;
 
 import model.story_representation.story_element.noun.Noun;
 
-public class Predicate { //clause
+public class Event extends Clause{ 
 	
 	private Map<String, Noun> doers;
 	private String action;
@@ -18,13 +18,14 @@ public class Predicate { //clause
 	private Map<String, Noun> directObjects;
 	private List<String> verbConcepts;
 
-	public Predicate(String action) {
+	public Event(String action) {
 		this.adverbs = new HashSet();
 		this.doers = new HashMap<String, Noun>();
 		this.action = action;
 		this.verbConcepts = new ArrayList<String>();;
 		this.receivers = new HashMap<String, Noun>();
 		this.directObjects = new HashMap<String, Noun>();
+		this.polarity = 0;
 	}
 	
 	/** code for concepts **/
@@ -33,7 +34,7 @@ public class Predicate { //clause
 		verbConcepts.add(concept);
 	}
 	
-	public List<String> getVerbConcepts(){
+	public List<String> getConcepts(){
 		return this.verbConcepts;
 	}
 	

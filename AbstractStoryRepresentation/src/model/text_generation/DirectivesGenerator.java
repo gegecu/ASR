@@ -11,7 +11,7 @@ import java.util.Set;
 
 import model.story_representation.AbstractStoryRepresentation;
 import model.story_representation.story_element.noun.Noun;
-import model.story_representation.story_element.story_sentence.Predicate;
+import model.story_representation.story_element.story_sentence.Event;
 import model.story_representation.story_element.story_sentence.StorySentence;
 import model.utility.Randomizer;
 import simplenlg.features.Feature;
@@ -159,14 +159,14 @@ public class DirectivesGenerator extends TextGeneration {
 	private String capableOf() {
 
 		StorySentence storySentence = asr.getCurrentStorySentence();
-		List<Predicate> predicates = new ArrayList<>(storySentence.getManyPredicates().values());
+		List<Event> predicates = new ArrayList<>(storySentence.getManyPredicates().values());
 		List<String> directives = new ArrayList<>(Arrays.asList(this.causeEffectDirective));
 		String directive = null;
 
 		while (!predicates.isEmpty() && (directive == null || (directive != null && history.contains(directive)))) {
 
 			int randomPredicate = Randomizer.random(1, predicates.size());
-			Predicate predicate = predicates.remove(randomPredicate - 1);
+			Event predicate = predicates.remove(randomPredicate - 1);
 
 			while (!directives.isEmpty()) {
 

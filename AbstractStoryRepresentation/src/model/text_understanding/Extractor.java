@@ -20,7 +20,9 @@ import model.story_representation.story_element.noun.Location;
 import model.story_representation.story_element.noun.Noun;
 import model.story_representation.story_element.noun.Object;
 import model.story_representation.story_element.noun.Unknown;
-import model.story_representation.story_element.story_sentence.Predicate;
+import model.story_representation.story_element.story_sentence.Clause;
+import model.story_representation.story_element.story_sentence.Description;
+import model.story_representation.story_element.story_sentence.Event;
 import model.story_representation.story_element.story_sentence.StorySentence;
 import model.utility.States;
 import model.utility.TypedDependencyComparator;
@@ -77,8 +79,16 @@ public class Extractor {
 			//storySentence.setConcept(this.cp.getConcepts(sentence.toString())); //change to manual concept parsing
 			//storySentence.setVerbConcepts(conceptParser.getVerbConcepts()); //extract concepts from conceptParser
 			//storySentence.setAdjectiveConcepts(conceptParser.getAdjectiveConcepts());
-			storySentence.setPolarity(this.getPolarityOfEvent(storySentence));
-
+			//storySentence.setPolarity(this.getPolarityOfEvent(storySentence));
+			
+			//set polarity of clauses
+			for(Event event: storySentence.getManyPredicates().values()){
+				event.setPolarity(getPolarityOfEvent(event));
+			}
+			for(Description description: storySentence.getManyDescriptions().values()){
+				description.setPolarity(getPolarityOfEvent(description));
+			}
+			
 			asr.addEvent(storySentence);
 		}
 	}
@@ -162,10 +172,10 @@ public class Extractor {
 							System.out.println(noun.getId() + " capable of " + td.gov().lemma());
 						}
 	
-						Predicate predicate = storySentence.getPredicate(td.gov().index());
+						Event predicate = storySentence.getPredicate(td.gov().index());
 
 						if (predicate == null) {
-							predicate = new Predicate(td.gov().lemma());
+							predicate = new Event(td.gov().lemma());
 						}
 						predicate.addDoer(td.dep().lemma(), noun);
 						storySentence.addPredicate(td.gov().index(), predicate);
@@ -212,10 +222,10 @@ public class Extractor {
 						asr.addNoun(td.dep().lemma(), noun);
 					}
 
-					Predicate predicate = storySentence.getPredicate(td.gov().index());
+					Event predicate = storySentence.getPredicate(td.gov().index());
 
 					if (predicate == null) {
-						predicate = new Predicate(td.gov().lemma());
+						predicate = new Event(td.gov().lemma());
 					}
 					predicate.addReceiver(td.dep().lemma(), noun);
 					storySentence.addPredicate(td.gov().index(), predicate);
@@ -280,10 +290,10 @@ public class Extractor {
 					asr.addNoun(td.dep().lemma(), noun);
 				}
 
-				Predicate predicate = storySentence.getPredicate(td.gov().index());
+				Event predicate = storySentence.getPredicate(td.gov().index());
 
 				if (predicate == null) {
-					predicate = new Predicate(td.gov().lemma());
+					predicate = new Event(td.gov().lemma());
 				}
 				
 				if(noun != null)
@@ -384,10 +394,10 @@ public class Extractor {
 						}	
 					}
 					else {
-						Predicate predicate = storySentence.getPredicate(td.gov().index());
+						Event predicate = storySentence.getPredicate(td.gov().index());
 
 						if (predicate == null) {
-							predicate = new Predicate(td.gov().lemma());
+							predicate = new Event(td.gov().lemma());
 						}
 						
 						predicate.addAdverb(td.dep().lemma());
@@ -440,10 +450,10 @@ public class Extractor {
 					}
 					
 					
-					Predicate predicate = storySentence.getPredicate(td.gov().index());
+					Event predicate = storySentence.getPredicate(td.gov().index());
 
 					if (predicate == null) {
-						predicate = new Predicate(td.gov().lemma());
+						predicate = new Event(td.gov().lemma());
 					}
 					
 					predicate.addDirectObject(noun.getId(), noun);
@@ -452,9 +462,9 @@ public class Extractor {
 				System.out.println("Location: " + td.dep().lemma());
 				if(tdReln.equals("nmod:to") && tdGovTag.contains("VB")){
 					//create concept
-					Predicate predicate = storySentence.getPredicate(td.gov().index());
+					Event predicate = storySentence.getPredicate(td.gov().index());
 					if (predicate == null) {
-						predicate = new Predicate(td.gov().lemma());
+						predicate = new Event(td.gov().lemma());
 						storySentence.addPredicate(td.gov().index(), predicate);
 					}
 					predicate.addVerbConcept(conceptParser.createConceptAsInfinitive(td.gov().lemma(),td.dep().lemma()));
@@ -611,8 +621,8 @@ public class Extractor {
 		return "UNKNOWN";
 	}
 
-	private float getPolarityOfEvent(StorySentence event) {
-		List<String> concepts = event.getConcepts();
+	private float getPolarityOfEvent(Clause clause) {
+		List<String> concepts = clause.getConcepts();
 
 		if (concepts == null) {
 			return (float) 0;

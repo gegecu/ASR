@@ -20,7 +20,7 @@ import model.story_representation.story_element.noun.Character;
 import model.story_representation.story_element.noun.Location;
 import model.story_representation.story_element.noun.Noun;
 import model.story_representation.story_element.story_sentence.Description;
-import model.story_representation.story_element.story_sentence.Predicate;
+import model.story_representation.story_element.story_sentence.Event;
 import model.story_representation.story_element.story_sentence.StorySentence;
 import model.utility.Randomizer;
 
@@ -427,12 +427,12 @@ public class StorySegmentGenerator extends TextGeneration{
 	
 	private String causes() {
 		StorySentence storySentence = asr.getCurrentStorySentence();
-		List<Predicate> predicates = new ArrayList<>(storySentence.getManyPredicates().values());
+		List<Event> predicates = new ArrayList<>(storySentence.getManyPredicates().values());
 		Set<Concept> temp = new HashSet();
 		if(!predicates.isEmpty()) {
 			
 			int randomPredicate = Randomizer.random(1, predicates.size());
-			Predicate predicate = predicates.remove(randomPredicate - 1);
+			Event predicate = predicates.remove(randomPredicate - 1);
 			
 			List<Noun> doers = new ArrayList();
 			for(Noun noun: predicate.getManyDoers().values()) {
