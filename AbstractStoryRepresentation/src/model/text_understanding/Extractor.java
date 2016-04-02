@@ -342,6 +342,9 @@ public class Extractor {
 						predicate.addConcept(conceptParser.createConceptWithDirectObject(td.gov().lemma(), object));
 						predicate.addConcept(td.dep().lemma());
 					}
+					if(tdReln.equals("nsubjpass")){
+						predicate.addConcept(td.gov().lemma());
+					}
 				}
 				
 				
