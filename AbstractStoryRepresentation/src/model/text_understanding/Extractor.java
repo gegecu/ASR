@@ -111,7 +111,7 @@ public class Extractor {
 				System.out.println("compound: " + asr.getNoun(td.gov().lemma()).getId());
 			}
 			
-			else if (tdReln.contains("nsubj")) {
+			else if (tdReln.equals("nsubj") || tdReln.equals("nmod:agent")) {
 
 				Noun noun = asr.getNoun(td.dep().lemma());
 
@@ -200,7 +200,18 @@ public class Extractor {
 				}
 			}
 		
-
+			else if (tdReln.equals("auxpass")){ /** to create get + verb concepts **/		
+				if(td.dep().lemma().equals("get")){
+					//create concept
+					Event event = storySentence.getPredicate(td.gov().index());
+					if (event == null) {
+						event = new Event(td.gov().lemma());
+						storySentence.addPredicate(td.gov().index(), event);
+					}
+					event.addConcept(conceptParser.createConceptWithDirectObject(td.dep().lemma(), td.gov().originalText()));
+				}
+			}
+			
 			else if (tdReln.equals("iobj")) { /**indirect object**/
 				if (tdDepTag.contains("NN") && tdGovTag.contains("VB")) {
 
@@ -229,7 +240,7 @@ public class Extractor {
 				}
 			}
 
-			else if (tdReln.equals("dobj") || tdReln.equals("nmod:for") || tdReln.equals("nmod:agent")) {
+			else if (tdReln.equals("dobj") || tdReln.equals("nmod:for") || tdReln.equals("nsubjpass")) {
 
 				Noun noun = asr.getNoun(td.dep().lemma());
 
@@ -265,6 +276,7 @@ public class Extractor {
 								description.addDoer(n.getId(), n);
 								description.addReference("HasA", noun);
 								description.addConcept(conceptParser.createConceptWithDirectObject(td.gov().lemma(), td.dep().lemma()));
+								description.addConcept(td.dep().lemma());
 							}
 						}
 						storySentence.addDescription(td.dep().lemma(), description);
@@ -280,8 +292,11 @@ public class Extractor {
 							event.addConcept(conceptParser.createConceptWithDirectObject(td.gov().lemma(), "someone"));
 						else {
 							event.addConcept(conceptParser.createConceptWithDirectObject(td.gov().lemma(), object));
+							event.addConcept(td.dep().lemma());
 						}
-						
+						if(tdReln.equals("nsubjpass")){
+							event.addConcept(td.gov().lemma());
+						}
 						System.out.println("dobj: "
 								+ storySentence.getPredicate(td.gov().index()).getDirectObject(td.dep().lemma()).getId());
 					}
