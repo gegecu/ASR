@@ -35,6 +35,8 @@ public class Event extends Clause{
 	}
 	
 	public List<String> getConcepts(){
+		if(this.verbConcepts.isEmpty())
+			return null;
 		return this.verbConcepts;
 	}
 	

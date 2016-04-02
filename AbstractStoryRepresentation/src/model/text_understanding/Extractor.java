@@ -313,19 +313,25 @@ public class Extractor {
 						}
 					}
 					storySentence.getManyPredicates().remove(td.gov().index());
+					//create concept
+					storySentence.addNounSpecificConcept(noun.getId(), conceptParser.createConceptWithDirectObject(td.gov().lemma(), td.dep().lemma()));
 					
 				} else {
 					System.out.println("dobj: "
 							+ storySentence.getPredicate(td.gov().index()).getDirectObject(td.dep().lemma()).getId());
+					//create concept
+					String object = td.dep().lemma();				
+					if(noun instanceof Character) //if direct object is a person, change to someone
+						predicate.addVerbConcept(conceptParser.createConceptWithDirectObject(td.gov().lemma(), "someone"));
+					else {
+						//System.out.println("test: " + conceptParser.createConceptWithDirectObject(td.gov().lemma(), object));
+						predicate.addVerbConcept(conceptParser.createConceptWithDirectObject(td.gov().lemma(), object));
+					}
 				}
 				
-				//create concept
-				String object = td.dep().lemma();				
-				if(noun instanceof Character) //if direct object is a person, change to someone
-					predicate.addVerbConcept(conceptParser.createConceptWithDirectObject(td.gov().lemma(), "someone"));
-				else {
-					predicate.addVerbConcept(conceptParser.createConceptWithDirectObject(td.gov().lemma(), object));
-				}
+				
+				
+				
 			}
 
 			else if (tdReln.equals("xcomp") && dictionary.copulas.contains(td.gov().lemma())) {

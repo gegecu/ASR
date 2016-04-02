@@ -24,6 +24,9 @@ public class Description extends Clause{
 		this.concepts.add(concept);
 	}
 	public List<String> getConcepts(){
+		if(this.concepts.isEmpty()){
+			return null;
+		}
 		return this.concepts;
 	}
 	
