@@ -12,10 +12,18 @@ import model.story_representation.story_element.noun.Noun;
 public class Description {
 	private Map<String, List<String>> attributes;
 	private Map<String, List<Noun>> references;
+	private List<String> concepts;
 	
 	public Description() {
 		this.attributes = new HashMap<String, List<String>>();
 		this.references = new HashMap<String, List<Noun>>();
+		this.concepts = new ArrayList<String>();
+	}
+	public void addConcept(String concept){
+		this.concepts.add(concept);
+	}
+	public List<String> getNounSpecificConcepts(){
+		return this.concepts;
 	}
 	
 	public void addAttribute(String key, String attribute) {

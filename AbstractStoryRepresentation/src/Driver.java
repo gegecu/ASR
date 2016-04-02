@@ -160,8 +160,9 @@ public class Driver {
 					System.out.println("polarity: " + e.getPolarity());
 					System.out.println("concepts per predicate");
 					for(Predicate predicate: e.getManyPredicates().values())
-						System.out.println("concepts: " + predicate.getConcepts());
-					//System.out.println("concepts: " + e.getPredicate(1).getVerbConcepts());
+						System.out.println("p_concepts: " + predicate.getVerbConcepts());
+					for(Description description: e.getManyDescriptions().values())
+						System.out.println("n_concepts: " + description.getNounSpecificConcepts());
 					System.out.println();
 				}
 

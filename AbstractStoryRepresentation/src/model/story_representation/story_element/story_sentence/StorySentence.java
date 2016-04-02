@@ -33,7 +33,14 @@ public class StorySentence {
 		description.addAttribute(key, value);
 		this.description.put(nounId, description);
 	}
-
+	public void addNounSpecificConcept(String nounId, String concept){
+		Description description = this.description.get(nounId);
+		if(description == null) {
+			description = new Description();
+			this.description.put(nounId, description);
+		}
+		description.addConcept(concept);
+	}
 	public void addReferences(String nounId, String key, Noun value) {
 		Description description = this.description.get(nounId);
 		if(description == null) {
@@ -96,11 +103,14 @@ public class StorySentence {
 		// return true;
 	}
 
+	//returns all concepts (predicate concepts + noun specific concepts)
 	public List<String> getConcepts(){
 		List<String> concepts = new ArrayList<String>();
 		for(Predicate predicate: this.getManyPredicates().values()){
-			concepts.addAll(predicate.getAdjectiveConcepts());
 			concepts.addAll(predicate.getVerbConcepts());
+		}
+		for(Description description: description.values()){
+			concepts.addAll(description.getNounSpecificConcepts());
 		}
 		if(concepts.isEmpty())
 			return null;
