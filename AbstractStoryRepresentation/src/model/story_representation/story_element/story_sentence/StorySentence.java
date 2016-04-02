@@ -16,13 +16,15 @@ public class StorySentence {
 	private Map<String, Description> description;
 //	private Map<String, List<Location>> locations;
 	private float polarity;
-	private List<String> concepts;
+	private List<String> adjectiveConcepts;
+	private List<String> verbConcepts;
 
 	public StorySentence() {
 		this.predicates = new HashMap<Integer, Predicate>();
 		//this.locations = new HashMap<String, List<Location>>();
 		this.polarity = 0;
-		this.concepts = null;
+		this.adjectiveConcepts = null;
+		this.verbConcepts = null;
 		this.description = new HashMap<String, Description>();
 	}
 
@@ -98,14 +100,23 @@ public class StorySentence {
 		// return true;
 	}
 
-	public void setConcept(List<String> concepts) {
-		this.concepts = concepts;
+	public void setAdjectiveConcepts(List<String> concepts) {
+		this.adjectiveConcepts = concepts;
 	}
 
-	public List<String> getConcepts() {
-		return this.concepts;
+	public void setVerbConcepts(List<String> concepts) {
+		this.verbConcepts = concepts;
 	}
 
+	public List<String> getConcepts(){
+		List<String> concepts = new ArrayList<String>();
+		concepts.addAll(adjectiveConcepts);
+		concepts.addAll(verbConcepts);
+		if(concepts.isEmpty())
+			return null;
+		return concepts;
+	}
+	
 	public List<String> getAllNounsInStorySentence() {
 		Set<String> nounId = new HashSet();
 		for (Predicate predicate : this.getManyPredicates().values()) {

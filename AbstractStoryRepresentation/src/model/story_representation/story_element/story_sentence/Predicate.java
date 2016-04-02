@@ -9,13 +9,15 @@ import java.util.Set;
 
 import model.story_representation.story_element.noun.Noun;
 
-public class Predicate {
+public class Predicate { //clause
 	
 	private Map<String, Noun> doers;
 	private String action;
 	private Set<String> adverbs;
 	private Map<String, Noun> receivers;
 	private Map<String, Noun> directObjects;
+	
+	//private Map<String, List<String>> concepts;
 
 	public Predicate(String action) {
 		this.adverbs = new HashSet();

@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 import semantic_parser.concept_parser;
 import model.knowledge_base.conceptnet.ConceptNetDAO;
 import model.knowledge_base.senticnet.ConceptParser;
+import model.knowledge_base.senticnet.ManualConceptParser;
 import model.knowledge_base.senticnet.SenticNetParser;
 import model.story_representation.AbstractStoryRepresentation;
 import model.story_representation.story_element.noun.Character;
@@ -68,23 +69,28 @@ public class Extractor {
 			StorySentence storySentence = new StorySentence();
 			List<TypedDependency> listDependencies = new ArrayList(dependencies.typedDependencies());
 			Collections.sort(listDependencies, new TypedDependencyComparator());
-			for (TypedDependency td : listDependencies) {
-				extractDependency(td, asr, storySentence);
+			
+			ManualConceptParser conceptParser = new ManualConceptParser();//builds a new conceptParser for each sentence
+			for (TypedDependency td : listDependencies) { 
+				extractDependency(td, asr, storySentence, conceptParser);//extract based on dependency
 			}
-			storySentence.setConcept(this.cp.getConcepts(sentence.toString()));
+			//storySentence.setConcept(this.cp.getConcepts(sentence.toString())); //change to manual concept parsing
+			storySentence.setVerbConcepts(conceptParser.getVerbConcepts()); //extract concepts from conceptParser
+			storySentence.setAdjectiveConcepts(conceptParser.getAdjectiveConcepts());
 			storySentence.setPolarity(this.getPolarityOfEvent(storySentence));
 
 			asr.addEvent(storySentence);
 		}
 	}
 
-	private void extractDependency(TypedDependency td, AbstractStoryRepresentation asr, StorySentence storySentence) {
+	//private void 
+	private void extractDependency(TypedDependency td, AbstractStoryRepresentation asr, StorySentence storySentence, ManualConceptParser conceptParser) {
 		try {
 			String tdDepTag = td.dep().tag();
 			String tdGovTag = td.gov().tag();
 			String tdReln = td.reln().toString();
 
-			System.out.println(td.dep().originalText() + ":" + tdDepTag + ", " + td.gov().originalText() + ":"
+			System.out.println("extracting:..." + td.dep().originalText() + ":" + tdDepTag + ", " + td.gov().originalText() + ":"
 					+ tdGovTag + ",  " + tdReln);
 
 			if (tdReln.equals("compound")) {
@@ -110,12 +116,12 @@ public class Extractor {
 
 				System.out.println("compound: " + asr.getNoun(td.gov().lemma()).getId());
 			}
-
+			
 			else if (tdReln.contains("nsubj")) {
 
 				Noun noun = asr.getNoun(td.dep().lemma());
 
-				if (noun == null) {
+				if (noun == null) { 
 					if (tdDepTag.equals("NNP")) {
 						noun = this.extractCategory(this.getNER(td.dep().lemma()), td.dep().lemma());
 						noun.setProper();
@@ -127,10 +133,10 @@ public class Extractor {
 					asr.addNoun(td.dep().lemma(), noun);
 				}
 				
-				if(noun != null) {
+				if(noun != null) { /**if noun exists**/
 					//storySentence.addDoer(td.dep().lemma(), noun);
 	
-					if (tdGovTag.equals("JJ")) {
+					if (tdGovTag.equals("JJ")) { /**if 'noun is a adjective' format**/
 	
 						// if(States.STATES.contains(td.gov().lemma())) {
 						// if(noun instanceof Character) {
@@ -139,10 +145,13 @@ public class Extractor {
 						// }
 						noun.addAttribute("HasProperty", td.gov().lemma());
 						storySentence.addAttribute(noun.getId(), "HasProperty", td.gov().lemma());
+						
+						//create concept
+						conceptParser.createConceptsFromAdjective(td.gov().lemma());
 						System.out.println(noun.getId() + " hasProperty " + td.gov().lemma());
 					}
 	
-					else if (tdGovTag.contains("VB")) {
+					else if (tdGovTag.contains("VB")) { /**if verb**/
 	
 						boolean hasARelation = td.gov().lemma().equals("has") || td.gov().lemma().equals("have");
 	
@@ -158,11 +167,14 @@ public class Extractor {
 						}
 						predicate.addDoer(td.dep().lemma(), noun);
 						storySentence.addPredicate(td.gov().index(), predicate);
+						
+						//create concept
+						conceptParser.createConceptAsVerb(td.gov().lemma());
 					}						
 					// unsure if verb for event or capableOf
 				}
 	
-				else if (tdGovTag.contains("NN")) {
+				else if (tdGovTag.contains("NN")) { /**for isA type relation**/
 					Noun noun2 = asr.getNoun(td.gov().lemma());
 					if (noun2 == null) {
 						if (tdGovTag.equals("NNP")) {
@@ -181,12 +193,12 @@ public class Extractor {
 			}
 		
 
-			else if (tdReln.equals("iobj")) {
+			else if (tdReln.equals("iobj")) { /**indirect object**/
 				if (tdDepTag.contains("NN") && tdGovTag.contains("VB")) {
 
 					Noun noun = asr.getNoun(td.dep().lemma());
 
-					if (noun == null) {
+					if (noun == null) { 
 						if (tdDepTag.equals("NNP")) {
 							noun = this.extractCategory(this.getNER(td.dep().lemma()), td.dep().lemma());
 							noun.setProper();
@@ -212,7 +224,7 @@ public class Extractor {
 				}
 			}
 			
-			else if (tdReln.equals("nmod:of")) {
+			else if (tdReln.equals("nmod:of")) { /** hasA relation **/
 				
 				Noun noun = asr.getNoun(td.dep().lemma());
 
@@ -293,6 +305,9 @@ public class Extractor {
 					System.out.println("dobj: "
 							+ storySentence.getPredicate(td.gov().index()).getDirectObject(td.dep().lemma()).getId());
 				}
+				
+				//create concept
+				conceptParser.createConceptWithDirectObject(td.gov().lemma(), td.dep().lemma());
 			}
 
 			else if (tdReln.equals("xcomp") && dictionary.copulas.contains(td.gov().lemma())) {
@@ -301,6 +316,9 @@ public class Extractor {
 					if (tdDepTag.equals("JJ")) {
 						n.addAttribute("HasProperty", td.dep().lemma());
 						storySentence.addAttribute(n.getId(), "HasProperty", td.dep().lemma());
+						
+						//create concept
+						conceptParser.createConceptsFromAdjective(td.dep().lemma());
 					} else if (tdDepTag.contains("NN")) {
 						// n.addAttribute("IsA", td.dep().lemma());
 						Noun noun2 = asr.getNoun(td.dep().lemma());
@@ -324,7 +342,7 @@ public class Extractor {
 				storySentence.getManyPredicates().remove(td.gov().index());
 			}
 
-			else if (tdReln.equals("amod")) {
+			else if (tdReln.equals("amod")) { /** 'adjective noun' format **/
 				Noun noun = asr.getNoun(td.gov().lemma());
 
 				if (noun == null) {
@@ -341,6 +359,9 @@ public class Extractor {
 				noun.addAttribute("HasProperty", td.dep().lemma());
 				System.out.println("amod " + noun.getId());
 				storySentence.addAttribute(noun.getId(), "HasProperty", td.dep().lemma());
+				
+				//create concept
+				conceptParser.createConceptsFromAdjective(td.dep().lemma());
 
 			}
 
@@ -364,6 +385,7 @@ public class Extractor {
 					}
 					
 				}
+				
 			}
 
 			// else if (tdReln.equals("advcl")) {
@@ -387,7 +409,7 @@ public class Extractor {
 			// }
 			else if (tdReln.equals("nmod:at") || tdReln.equals("nmod:near") || tdReln.equals("nmod:to")
 					|| tdReln.equals("nmod:in") || tdReln.equals("nmod:on")) {
-
+				System.out.println("");
 				Noun noun = asr.getNoun(td.dep().lemma());
 
 				if (noun == null) {
@@ -416,8 +438,14 @@ public class Extractor {
 					
 					predicate.addDirectObject(noun.getId(), noun);
 				}
-
+				
 				System.out.println("Location: " + td.dep().lemma());
+				if(tdReln.equals("nmod:to") && tdGovTag.contains("VB")){
+					//create concept
+					conceptParser.createConceptAsInfinitive(td.gov().lemma(),td.dep().lemma());
+				}
+				
+				
 			}
 
 //			else if (tdReln.equals("nmod:poss")) {
