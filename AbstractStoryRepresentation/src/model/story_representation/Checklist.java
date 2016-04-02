@@ -1,13 +1,12 @@
 package model.story_representation;
+
 import java.util.Map.Entry;
 
 import model.story_representation.story_element.noun.Character;
-import model.story_representation.story_element.noun.Location;
 import model.story_representation.story_element.noun.Noun;
 import model.story_representation.story_element.story_sentence.StorySentence;
 
 public class Checklist {
-	
 	private AbstractStoryRepresentation asr;
 	private boolean isCharacterExist;
 	private boolean isLocationExist;
@@ -110,5 +109,4 @@ public class Checklist {
 		return this.isResolutionExist;
 	}
 
-	
 }

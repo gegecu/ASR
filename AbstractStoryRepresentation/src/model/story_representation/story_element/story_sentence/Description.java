@@ -2,61 +2,57 @@ package model.story_representation.story_element.story_sentence;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import model.story_representation.story_element.noun.Noun;
 
-public class Description {
-	private Map<String, Set<String>> attributes;
-	private Map<String, Set<Noun>> references;
+
+public class Description extends Clause{
+	private Map<String, List<String>> attributes;
+	private Map<String, List<Noun>> references;
 	
 	public Description() {
-		this.attributes = new HashMap<String, Set<String>>();
-		this.references = new HashMap<String, Set<Noun>>();
+		this.attributes = new HashMap<String, List<String>>();
+		this.references = new HashMap<String, List<Noun>>();
 	}
-	
+
 	public void addAttribute(String key, String attribute) {
-		Set<String> temp = this.attributes.get(key);
+		List<String> temp = this.attributes.get(key);
 		
 		if(temp == null) {
-			temp = new HashSet<String>();
+			temp = new ArrayList<String>();
 		}
+		temp.remove(attribute);
 		temp.add(attribute);
 		this.attributes.put(key, temp);	
 	}
 	
-	public Map<String, Set<String>> getAttributes() {
+	public Map<String, List<String>> getAttributes() {
 		return this.attributes;
 	}
 	
 	public List<String> getAttribute(String key) {
-		if(attributes.get(key) != null) {
-			return new ArrayList(attributes.get(key));
-		}
-		return null;
+		return this.attributes.get(key);
 	}
 	
 	public void addReference(String key, Noun reference) {
-		Set<Noun> temp = this.references.get(key);
+		List<Noun> temp = this.references.get(key);
 		
 		if(temp == null) {
-			temp = new HashSet<Noun> ();
+			temp = new ArrayList<Noun>();
 		}
+		
+		temp.remove(reference);
 		temp.add(reference);
 		this.references.put(key, temp);	
 	}
 	
-	public Map<String, Set<Noun>> getReferences() {
+	public Map<String, List<Noun>> getReferences() {
 		return this.references;
 	}
 	
 	public List<Noun> getReference(String key) {
-		if(references.get(key) != null) {
-			return new ArrayList(references.get(key));
-		}
-		return null;
+		return this.references.get(key);
 	}
 }

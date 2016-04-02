@@ -1,24 +1,33 @@
 package model.knowledge_base.senticnet;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import semantic_parser.concept_parser;
-
+/**
+ * Builds two lists of concepts: verb type concepts and adjective type concepts
+ */
 public class ConceptParser {
-	private concept_parser cp;
-	
-	public ConceptParser() {
-		cp = new concept_parser();
+
+	public String createConceptAsVerb(String verb) {
+		return(verb);
+	}
+	public String createConceptWithDirectObject(String verb, String dobj){
+		return(verb + " " + dobj);
 	}
 	
-	public List<String> getConcepts(String text) {
-		try {
-			return cp.get_concepts(text);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return null;
+	/** creates a concept in the format 'verb + to + location' **/
+	public String createConceptAsInfinitive(String verb, String location) {
+		return(verb + " to " + location);
 	}
+	
+	/** creates a concept in the format 'be + adjective' **/
+	public String createConceptAsPredicativeAdjective(String adj) {
+		return("be " + adj);
+	}
+
+	public String createConceptAsAdjective(String adj) {
+		return(adj);
+	}
+	
+	public String createConceptAsRole(String role) {
+		return(role);
+	}
+	
 }

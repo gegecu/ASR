@@ -15,8 +15,8 @@ public class TextUnderstanding {
 		props.put("annotators",
 				"tokenize, ssplit, pos, lemma, ner, parse, dcoref");
 		StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
-		preprocessingModule = new Preprocessing(props, pipeline);
-		extractionModule = new Extractor(props, pipeline);
+		preprocessingModule = new Preprocessing(pipeline);
+		extractionModule = new Extractor(pipeline);
 		this.asr = asr;
 	}
 	

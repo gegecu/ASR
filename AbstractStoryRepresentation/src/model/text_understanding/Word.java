@@ -8,7 +8,7 @@ public class Word {
 	private Map<String, String> info;
 
 	public Word() {
-		info = new HashMap();
+		info = new HashMap<String, String>();
 	}
 
 	public void addInfo(String key, String value) {

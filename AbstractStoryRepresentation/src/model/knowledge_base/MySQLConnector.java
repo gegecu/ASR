@@ -4,7 +4,6 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import com.mysql.jdbc.Connection;
-import com.mysql.jdbc.Statement;
 
 public class MySQLConnector {
 	private String url= "jdbc:mysql://localhost:3306/";

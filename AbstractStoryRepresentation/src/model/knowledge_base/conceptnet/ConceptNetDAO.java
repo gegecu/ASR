@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import model.knowledge_base.MySQLConnector;
-import model.story_representation.story_element.story_sentence.StorySentence;
 
 import com.mysql.jdbc.Connection;
 
@@ -67,7 +66,7 @@ public class ConceptNetDAO{
 		List<String> concepts = null;
 		
 		try {
-			concepts = new ArrayList();
+			concepts = new ArrayList<String>();
 			connection = MySQLConnector.getInstance().getConnection();
 			ps = connection.prepareStatement(query);
 			ps.setString(1, start);
@@ -76,10 +75,6 @@ public class ConceptNetDAO{
 			while(rs.next()){
 				concepts.add(rs.getString(5));
 			}
-			
-//			concepts.add("nightmare");
-//			
-//			System.out.println(concepts);
 			
 		} catch (SQLException e) {
 		   e.printStackTrace();
@@ -99,12 +94,7 @@ public class ConceptNetDAO{
 	}
 	
 	public static List<Concept> getConceptFrom(String end, String relation) {
-//		String query = "select `concept_relations`.`id`, `conceptsFrom`.`concept`, `relations`.`relation`, `conceptsTo`.`concept` "
-//				+ "from (select `id`, `concept` from `concepts`) as `conceptsFrom`,`relations` as `relations`, `concept_relations` as `concept_relations` "
-//				+ "left join `concepts` as `conceptsTo` on `concept_relations`.`toID` = `conceptsTo`.`id` " 
-//				+ "where `concept_relations`.`fromID` = `conceptsFrom`.`id` and `concept_relations`.`relationID` = `relations`.`id` "
-//				+ "and `conceptsTo`.`concept` = ? and `relations`.`relation` = ?" ;
-		
+
 		String query = "select `concept_relations`.`id`, `conceptsFrom`.`concept`, `conceptsFromPOS`.`partOfSpeech`,  `relations`.`relation`,  `conceptsTo`.`concept`, `conceptsToPOS`.`partOfSpeech` "
 				+ "FROM (SELECT  `id`, `concept`, `posID` FROM `concepts`) AS `conceptsFrom` LEFT JOIN `part_of_speeches` AS `conceptsFromPOS` ON `conceptsFrom`.`posID` = `conceptsFromPOS`.`id`, "
 				+ "`concept_relations` AS `concept_relations` LEFT JOIN `concepts` AS `conceptsTo` ON `concept_relations`.`toID` = `conceptsTo`.`id` "
@@ -112,16 +102,14 @@ public class ConceptNetDAO{
 				+ "LEFT JOIN `part_of_speeches` AS `conceptsToPOS` ON `conceptsTo`.`posID` = `conceptsToPOS`.`id` "
 				+ "WHERE `concept_relations`.`fromID` = `conceptsFrom`.`id` "
 				+ "and `conceptsTo`.`concept` = ? and `relations`.`relation` = ?";
-		
 
-		
 		Connection connection = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		List<Concept> concepts = null;
 		
 		try {
-			concepts = new ArrayList();
+			concepts = new ArrayList<Concept>();
 			connection = MySQLConnector.getInstance().getConnection();
 			ps = connection.prepareStatement(query);
 			ps.setString(1, end);
@@ -151,11 +139,6 @@ public class ConceptNetDAO{
 	}
 	
 	public static List<Concept> getConceptTo(String start, String relation) {
-//		String query = "select `concept_relations`.`id`, `conceptsFrom`.`concept`, `relations`.`relation`, `conceptsTo`.`concept` "
-//				+ "from (select `id`, `concept` from `concepts`) as `conceptsFrom`,`relations` as `relations`, `concept_relations` as `concept_relations` "
-//				+ "left join `concepts` as `conceptsTo` on `concept_relations`.`toID` = `conceptsTo`.`id` " 
-//				+ "where `concept_relations`.`fromID` = `conceptsFrom`.`id` and `concept_relations`.`relationID` = `relations`.`id` "
-//				+ "and `conceptsFrom`.`concept` = ? and `relations`.`relation` = ?" ;
 		
 		String query = "select `concept_relations`.`id`, `conceptsFrom`.`concept`, `conceptsFromPOS`.`partOfSpeech`,  `relations`.`relation`,  `conceptsTo`.`concept`, `conceptsToPOS`.`partOfSpeech` "
 				+ "FROM (SELECT  `id`, `concept`, `posID` FROM `concepts`) AS `conceptsFrom` LEFT JOIN `part_of_speeches` AS `conceptsFromPOS` ON `conceptsFrom`.`posID` = `conceptsFromPOS`.`id`, "
@@ -171,7 +154,7 @@ public class ConceptNetDAO{
 		List<Concept> concepts = null;
 		
 		try {
-			concepts = new ArrayList();
+			concepts = new ArrayList<Concept>();
 			connection = MySQLConnector.getInstance().getConnection();
 			ps = connection.prepareStatement(query);
 			ps.setString(1, start);

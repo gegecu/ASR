@@ -7,7 +7,7 @@ public class Sentence {
 	private Map<Integer, Word> words;
 
 	public Sentence() {
-		words = new TreeMap();
+		words = new TreeMap<Integer, Word>();
 	}
 
 	public void addWord(Integer key, Word value) {

@@ -11,9 +11,10 @@ import java.util.Set;
 
 import model.story_representation.AbstractStoryRepresentation;
 import model.story_representation.story_element.noun.Noun;
-import model.story_representation.story_element.story_sentence.Predicate;
+import model.story_representation.story_element.story_sentence.Event;
 import model.story_representation.story_element.story_sentence.StorySentence;
 import model.utility.Randomizer;
+import model.utility.SurfaceRealizer;
 import simplenlg.features.Feature;
 import simplenlg.features.Tense;
 import simplenlg.phrasespec.VPPhraseSpec;
@@ -32,9 +33,6 @@ public class DirectivesGenerator extends TextGeneration {
 			"Write more about why <noun> <action>.", "Write the reason why <noun> <action>." };
 
 	private String[] causeEffectAlternative = { "Tell me more what happened." };
-
-	private String[] locationDirective = { "Describe <location>.", "Can you say something about <location>.",
-			"Tell me more about <location>.", "Write more about <location>." };
 
 	private int descriptionThreshold = 7;
 
@@ -129,8 +127,8 @@ public class DirectivesGenerator extends TextGeneration {
 			int randomNoun = Randomizer.random(1, nounId.size());
 			Noun noun = asr.getNoun(nounId.remove(randomNoun - 1));
 
-			threshold += countSets(noun.getAttributes().values());
-			threshold += countSets(noun.getReferences().values());
+			threshold += countLists(noun.getAttributes().values());
+			threshold += countLists(noun.getReferences().values());
 
 			// find other noun if the number of properties of the current
 			// noun is greater than descriptionThreshold
@@ -148,10 +146,10 @@ public class DirectivesGenerator extends TextGeneration {
 
 	}
 
-	private <T> int countSets(Collection<Set<T>> collection) {
+	private <T> int countLists(Collection<List<T>> collection) {
 		int count = 0;
-		for (Set<T> set : collection) {
-			count += set.size();
+		for (List<T> list : collection) {
+			count += list.size();
 		}
 		return count;
 	}
@@ -159,14 +157,14 @@ public class DirectivesGenerator extends TextGeneration {
 	private String capableOf() {
 
 		StorySentence storySentence = asr.getCurrentStorySentence();
-		List<Predicate> predicates = new ArrayList<>(storySentence.getManyPredicates().values());
+		List<Event> predicates = new ArrayList<>(storySentence.getManyPredicates().values());
 		List<String> directives = new ArrayList<>(Arrays.asList(this.causeEffectDirective));
 		String directive = null;
 
 		while (!predicates.isEmpty() && (directive == null || (directive != null && history.contains(directive)))) {
 
 			int randomPredicate = Randomizer.random(1, predicates.size());
-			Predicate predicate = predicates.remove(randomPredicate - 1);
+			Event predicate = predicates.remove(randomPredicate - 1);
 
 			while (!directives.isEmpty()) {
 
@@ -175,10 +173,10 @@ public class DirectivesGenerator extends TextGeneration {
 
 				List<Noun> doers = new ArrayList<>(predicate.getManyDoers().values());
 
-				directive = directive.replace("<noun>", this.wordsConjunction(doers));
+				directive = directive.replace("<noun>", SurfaceRealizer.wordsConjunction(doers));
 
 				VPPhraseSpec verb = nlgFactory.createVerbPhrase(predicate.getAction());
-				verb.setFeature(Feature.PERFECT, Tense.PRESENT);
+				verb.setFeature(Feature.TENSE, Tense.PAST);
 				directive = directive.replace("<action>", realiser.realise(verb).toString());
 
 			}
@@ -196,44 +194,5 @@ public class DirectivesGenerator extends TextGeneration {
 
 		return directive;
 	}
-
-	// private String locationDirective() {
-	// StorySentence event = asr.getCurrentEvent();
-	//
-	// if(event != null) {
-	// List<Noun> doers = new ArrayList();
-	// for(Noun noun: event.getManyDoers().values()) {
-	// if(noun instanceof Character) {
-	// doers.add((Character)noun);
-	// }
-	// }
-	//
-	// String characters = this.wordsConjunction(doers);
-	//
-	// Location location = event.getLocation();
-	//
-	// if(location != null) {
-	// int randomLocationDirective = Randomizer.random(1,
-	// locationDirective.length);
-	//
-	// if(characters.isEmpty()) {
-	// randomLocationDirective = Randomizer.random(1,
-	// locationDirective.length-2);
-	// }
-	//
-	// String directive = this.locationDirective[randomLocationDirective-1];
-	//
-	// directive = directive.replace("<doer>", characters);
-	// if(location.getIsCommon())
-	// directive = directive.replace("<location>", "the " + location.getId());
-	// else
-	// directive = directive.replace("<location>", location.getId());
-	//
-	// return directive;
-	// }
-	// }
-	//
-	// return null;
-	// }
 
 }

@@ -2,7 +2,6 @@ package model.utility;
 
 import java.util.Random;
 
-
 public class Randomizer {
 	public static int random(int min, int max) {
 		Random rand = new Random();
