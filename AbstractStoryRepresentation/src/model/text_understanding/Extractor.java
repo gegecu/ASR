@@ -127,7 +127,7 @@ public class Extractor {
 				System.out.println("compound: " + asr.getNoun(td.gov().lemma()).getId());
 			}
 			
-			else if (tdReln.contains("nsubj")) {
+			else if (tdReln.equals("nsubj") || tdReln.equals("nmod:agent")) {
 
 				Noun noun = asr.getNoun(td.dep().lemma());
 
@@ -181,7 +181,7 @@ public class Extractor {
 						storySentence.addPredicate(td.gov().index(), predicate);
 						
 						//create concept
-						predicate.addVerbConcept(conceptParser.createConceptAsVerb(td.gov().lemma()));
+						predicate.addConcept(conceptParser.createConceptAsVerb(td.gov().lemma()));
 						
 					}						
 					// unsure if verb for event or capableOf
@@ -202,6 +202,18 @@ public class Extractor {
 	
 					noun.addReference("IsA", noun2);
 					storySentence.addReferences(noun.getId(), "IsA", noun2);
+				}
+			}
+			
+			else if (tdReln.equals("auxpass")){ /** to create get + verb concepts **/		
+				if(td.dep().lemma().equals("get")){
+					//create concept
+					Event predicate = storySentence.getPredicate(td.gov().index());
+					if (predicate == null) {
+						predicate = new Event(td.gov().lemma());
+						storySentence.addPredicate(td.gov().index(), predicate);
+					}
+					predicate.addConcept(conceptParser.createConceptWithDirectObject(td.dep().lemma(), td.gov().originalText()));
 				}
 			}
 		
@@ -271,7 +283,7 @@ public class Extractor {
 				}
 			}
 
-			else if (tdReln.equals("dobj") || tdReln.equals("nmod:for") || tdReln.equals("nmod:agent")) {
+			else if (tdReln.equals("dobj") || tdReln.equals("nmod:for") || tdReln.equals("nsubjpass")) {
 				// object?
 				// Mary and Samantha took the bus.
 				// dobj ( took-4 , bus-6 )
@@ -310,11 +322,13 @@ public class Extractor {
 						if (noun != null) {
 							n.addReference("HasA", noun);
 							storySentence.addReferences(n.getId(), "HasA", noun);
+							//create concept
+							storySentence.addNounSpecificConcept(n.getId(), conceptParser.createConceptWithDirectObject(td.gov().lemma(), td.dep().lemma()));
+							storySentence.addNounSpecificConcept(n.getId(), td.dep().lemma());
 						}
 					}
 					storySentence.getManyPredicates().remove(td.gov().index());
-					//create concept
-					storySentence.addNounSpecificConcept(noun.getId(), conceptParser.createConceptWithDirectObject(td.gov().lemma(), td.dep().lemma()));
+					
 					
 				} else {
 					System.out.println("dobj: "
@@ -322,12 +336,14 @@ public class Extractor {
 					//create concept
 					String object = td.dep().lemma();				
 					if(noun instanceof Character) //if direct object is a person, change to someone
-						predicate.addVerbConcept(conceptParser.createConceptWithDirectObject(td.gov().lemma(), "someone"));
+						predicate.addConcept(conceptParser.createConceptWithDirectObject(td.gov().lemma(), "someone"));
 					else {
 						//System.out.println("test: " + conceptParser.createConceptWithDirectObject(td.gov().lemma(), object));
-						predicate.addVerbConcept(conceptParser.createConceptWithDirectObject(td.gov().lemma(), object));
+						predicate.addConcept(conceptParser.createConceptWithDirectObject(td.gov().lemma(), object));
+						predicate.addConcept(td.dep().lemma());
 					}
 				}
+				
 				
 				
 				
@@ -473,7 +489,7 @@ public class Extractor {
 						predicate = new Event(td.gov().lemma());
 						storySentence.addPredicate(td.gov().index(), predicate);
 					}
-					predicate.addVerbConcept(conceptParser.createConceptAsInfinitive(td.gov().lemma(),td.dep().lemma()));
+					predicate.addConcept(conceptParser.createConceptAsInfinitive(td.gov().lemma(),td.dep().lemma()));
 					
 				}
 				

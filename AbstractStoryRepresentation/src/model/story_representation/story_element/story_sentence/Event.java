@@ -30,7 +30,7 @@ public class Event extends Clause{
 	
 	/** code for concepts **/
 	
-	public void addVerbConcept(String concept){
+	public void addConcept(String concept){
 		verbConcepts.add(concept);
 	}
 	
