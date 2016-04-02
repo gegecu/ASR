@@ -47,5 +47,10 @@ public class Event extends Clause {
 	public void addDirectObject(String id, Noun noun) {
 		this.directObjects.put(id, noun);
 	}
-
+	public Noun removeDirectObject(String id){
+		return this.directObjects.remove(id);
+	}
+	public void removeConcept(String concept){
+		this.concepts.remove(concept);
+	}
 }
