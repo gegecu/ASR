@@ -501,6 +501,7 @@ public class StorySegmentGenerator extends TextGeneration{
 					continue;
 				}
 				
+				
 				storySegment = storySegment.substring(0, 1).toUpperCase() + storySegment.substring(1);
 				
 				this.history.add(concept.getId());
