@@ -10,6 +10,8 @@ import java.util.Queue;
 import java.util.Set;
 
 import model.story_representation.AbstractStoryRepresentation;
+import model.story_representation.story_element.noun.Character;
+import model.story_representation.story_element.noun.Location;
 import model.story_representation.story_element.noun.Noun;
 import model.story_representation.story_element.story_sentence.Event;
 import model.story_representation.story_element.story_sentence.StorySentence;
@@ -177,7 +179,20 @@ public class DirectivesGenerator extends TextGeneration {
 
 				VPPhraseSpec verb = nlgFactory.createVerbPhrase(predicate.getAction());
 				verb.setFeature(Feature.TENSE, Tense.PAST);
-				directive = directive.replace("<action>", realiser.realise(verb).toString());
+				String action = realiser.realise(verb).toString();
+				
+				Collection<Noun> directObjects = predicate.getDirectObjects().values();
+				if (predicate.getDirectObjects().size() > 0) {
+					Noun noun = directObjects.iterator().next();
+					if (noun instanceof Location) {
+						action += " to " + noun.getId();
+					} else if (noun instanceof Character && !noun.getIsCommon()) {
+						action += " " + noun.getId();
+					} else {
+						action += " " + SurfaceRealizer.determinerFixer(noun.getId());
+					}
+				}
+				directive = directive.replace("<action>", action);
 
 			}
 
@@ -189,7 +204,7 @@ public class DirectivesGenerator extends TextGeneration {
 
 		if (predicates.isEmpty() && directive == null) {
 			int randomCapableOfQuestion = Randomizer.random(1, this.causeEffectDirective.length);
-			directive = this.causeEffectAlternative[randomCapableOfQuestion];
+			directive = this.causeEffectAlternative[randomCapableOfQuestion-1];
 		}
 
 		return directive;

@@ -14,6 +14,7 @@ import model.story_representation.story_element.noun.Noun;
 import model.story_representation.story_element.story_sentence.Description;
 import model.story_representation.story_element.story_sentence.StorySentence;
 import model.utility.Randomizer;
+import model.utility.SurfaceRealizer;
 import simplenlg.features.Feature;
 import simplenlg.features.Tense;
 import simplenlg.phrasespec.VPPhraseSpec;
@@ -44,7 +45,7 @@ public class StorySegmentGenerator extends TextGeneration {
 
 	@Override
 	public String generateText() {
-
+		
 		Set<String> response = new HashSet<>();
 
 		if (asr.getPartOfStory().equals("start")) {
@@ -102,7 +103,7 @@ public class StorySegmentGenerator extends TextGeneration {
 				List<Concept> concepts = ConceptNetDAO.getConceptFrom(word, "AtLocation");
 
 				List<Noun> doers = Utilities.getDoers(storySentence);
-				String characters = this.wordsConjunction(doers);
+				String characters = SurfaceRealizer.wordsConjunction(doers);
 
 				if (concepts != null) {
 
@@ -124,7 +125,7 @@ public class StorySegmentGenerator extends TextGeneration {
 						String start = concept.getStart();
 						start = concept.getStartPOS().equals("proper noun")
 								? (start.substring(0, 1).toUpperCase() + start.substring(1))
-								: this.determinerFixer(start);
+								: SurfaceRealizer.determinerFixer(start);
 						String end = (location.getIsCommon() ? "the " : "") + location.getId();
 
 						storySegment = storySegment.replace("<start>", start);
@@ -192,10 +193,10 @@ public class StorySegmentGenerator extends TextGeneration {
 
 					int randomSentence = Randomizer.random(1, this.hasAStorySegment.length);
 					String storySegment = this.hasAStorySegment[randomSentence - 1];
-					String start = noun.getIsCommon() ? this.determinerFixer(noun.getId()) : noun.getId();
+					String start = noun.getIsCommon() ? SurfaceRealizer.determinerFixer(noun.getId()) : noun.getId();
 					String end = concept.getEnd();
 					end = concept.getEndPOS().equals("proper noun")
-							? (end.substring(0, 1).toUpperCase() + end.substring(1)) : this.determinerFixer(end);
+							? (end.substring(0, 1).toUpperCase() + end.substring(1)) : SurfaceRealizer.determinerFixer(end);
 
 					storySegment = storySegment.replace("<start>", start);
 					storySegment = storySegment.replace("<end>", end);
@@ -261,10 +262,10 @@ public class StorySegmentGenerator extends TextGeneration {
 
 					int randomSentence = Randomizer.random(1, this.isAStorySegment.length);
 					String storySegment = this.isAStorySegment[randomSentence - 1];
-					String start = noun.getIsCommon() ? this.determinerFixer(noun.getId()) : noun.getId();
+					String start = noun.getIsCommon() ? SurfaceRealizer.determinerFixer(noun.getId()) : noun.getId();
 					String end = concept.getEnd();
 					end = concept.getEndPOS().equals("proper noun")
-							? (end.substring(0, 1).toUpperCase() + end.substring(1)) : this.determinerFixer(end);
+							? (end.substring(0, 1).toUpperCase() + end.substring(1)) : SurfaceRealizer.determinerFixer(end);
 
 					storySegment = storySegment.replace("<start>", start);
 					storySegment = storySegment.replace("<end>", end);
@@ -329,7 +330,7 @@ public class StorySegmentGenerator extends TextGeneration {
 
 					int randomSentence = Randomizer.random(1, this.hasPropertyStorySegment.length);
 					String storySegment = this.hasPropertyStorySegment[randomSentence - 1];
-					String start = noun.getIsCommon() ? this.determinerFixer(noun.getId()) : noun.getId();
+					String start = noun.getIsCommon() ? SurfaceRealizer.determinerFixer(noun.getId()) : noun.getId();
 					String end = concept.getEnd();
 
 					switch (concept.getEndPOS()) {
@@ -340,7 +341,7 @@ public class StorySegmentGenerator extends TextGeneration {
 					case "adjective phrase":
 						break;
 					default:
-						end = this.determinerFixer(end);
+						end = SurfaceRealizer.determinerFixer(end);
 						break;
 					}
 
@@ -370,7 +371,7 @@ public class StorySegmentGenerator extends TextGeneration {
 		if (storySentence != null) {
 
 			List<Noun> doers = Utilities.getDoers(storySentence);
-			String characters = this.wordsConjunction(doers);
+			String characters = SurfaceRealizer.wordsConjunction(doers);
 
 			for (Description description : storySentence.getManyDescriptions().values()) {
 				for (String concept : description.getConcepts()) {
@@ -439,19 +440,6 @@ public class StorySegmentGenerator extends TextGeneration {
 
 	}
 
-	private String determinerFixer(String start) {
-		switch (start.charAt(0)) {
-		case 'a':
-		case 'e':
-		case 'i':
-		case 'o':
-		case 'u':
-			return "an " + start;
-		default:
-			return "a " + start;
-		}
-	}
-
 	// if (endPOS.equals("noun") || endPOS.equals("proper noun")) {
 	// randomSentence = Randomizer.random(1, this.causesNoun.length);
 	// storySegment = causesNoun[randomSentence - 1];
@@ -472,21 +460,5 @@ public class StorySegmentGenerator extends TextGeneration {
 	// storySegment = storySegment.replace("<doer>", characters);
 	// storySegment = storySegment.replace("<end>", concept.getEnd());
 	// }
-
-	private String wordsConjunction(List<Noun> nouns) {
-		String result = null;
-		if (nouns.size() > 0) {
-			result = "";
-			for (int i = 0, j = nouns.size() - 1; i < j; i++) {
-				if (i > 0)
-					result += ", ";
-				result += nouns.get(i).getId();
-			}
-			if (!result.equals(""))
-				result += " and ";
-			result += nouns.get(nouns.size() - 1).getId();
-		}
-		return result;
-	}
 
 }
