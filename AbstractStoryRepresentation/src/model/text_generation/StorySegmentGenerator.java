@@ -49,46 +49,48 @@ public class StorySegmentGenerator extends TextGeneration{
 			
 	public StorySegmentGenerator(AbstractStoryRepresentation asr) {
 		super(asr);
-		this.history = new HashSet();
+		this.history = new HashSet<Integer>();
 	}
 
 	@Override
 	public String generateText() {
 		// TODO Auto-generated method stub
 		
-		Set<String> response = new HashSet();
-		
+		Map<Integer, String> response = new HashMap();
+
 		if(asr.getPartOfStory().equals("start")) {
-			String atLocation = atLocationStart();
+			Map<Integer, String> atLocation = atLocation();
 			if(atLocation != null) {
-				response.add(atLocation);
+				response.putAll(atLocation);
 			}
 			
-			String hasA = hasA();
+			Map<Integer, String> hasA = hasA();
 			if(hasA != null) {
-				response.add(hasA);
+				response.putAll(hasA);
 			}
 			
-			String isA = isA();
+			Map<Integer, String> isA = isA();
 			if(isA != null) {
-				response.add(isA);
+				response.putAll(isA);
 			}
 			
-			String hasProperty = hasProperty();
+			Map<Integer, String> hasProperty = hasProperty();
 			if(hasProperty != null) {
-				response.add(hasProperty);
+				response.putAll(hasProperty);
 			}
 		}
 		else {
-			String causes = causes();
+			Map<Integer, String> causes = causes();
 			if(causes != null) {
-				response.add(causes);
+				response.putAll(causes);
 			}
 		}
 		
 		if(!response.isEmpty()) {
-			int random = Randomizer.random(1, response.size());
-			return (String)response.toArray()[random-1];
+			List<Integer> keys = new ArrayList(response.keySet());			
+			int random = Randomizer.random(1, keys.size());
+			history.add(keys.get(random-1));
+			return response.get(keys.get(random-1));
 		}
 		else {
 			return null;
@@ -111,350 +113,298 @@ public class StorySegmentGenerator extends TextGeneration{
 	possible storySegment
 	There is a chair in room.
 	***/
-	private String atLocationStart() {
-		StorySentence storySentence = asr.getCurrentStorySentence();
-		Map<String, Description> descriptions = getNeededDescription("AtLocation", storySentence.getManyDescriptions());
-		List<String> keys = new ArrayList(descriptions.keySet());
+	private Map<Integer, String> atLocation() {
 		
-		while(!keys.isEmpty()) {
-			int randomKey = Randomizer.random(1, keys.size());
-			List<Noun> locations = descriptions.get(keys.get(randomKey-1)).getReference("AtLocation");
-			
-			while(!locations.isEmpty()) {
-				int randomLocation = Randomizer.random(1, locations.size());
-				Location location = (Location) locations.get(randomLocation-1);
-				
+		Map<Integer, String> output = new HashMap();
+
+		StorySentence storySentence = asr.getCurrentStorySentence();
+
+		if (storySentence != null) {
+
+			Location location = Utilities.getLocation(storySentence, asr);
+
+			if (location != null) {
+
 				String[] words = location.getId().split(" ");
-				String word = words[words.length-1];
+				String word = words[words.length - 1];
 				List<Concept> concepts = ConceptNetDAO.getConceptFrom(word, "AtLocation");
-				
-				if(concepts == null || concepts.isEmpty()) {
-					continue;
-				}
-				
-				int randomConcept = Randomizer.random(1, concepts.size());
-				Concept concept = concepts.remove(randomConcept-1);
-				
-				if(history.contains(concept.getId())) {
-					continue;
-				}
 
-				int randomSentence = Randomizer.random(1, this.atLocationStorySegmentStart.length);
-				
-				String storySegment = this.atLocationStorySegmentStart[randomSentence-1];
-				
-				if(location.getIsCommon()) {
-					storySegment = storySegment.replace("<end>", "the " + location.getId());
-				}
-				else {
-					storySegment = storySegment.replace("<end>", location.getId());
-				}
-				
-				String start = concept.getStart();
-				String startPOS = concept.getStartPOS();
-				
-				if(startPOS.equals("proper noun")) {
-					start = start.substring(0, 1).toUpperCase() + start.substring(1);
-					storySegment = storySegment.replace("<start>", start);
-				}
-				else {
-					storySegment = storySegment.replace("<start>", SurfaceRealizer.determinerFixer(start));
-				}
-				
-				storySegment = storySegment.substring(0, 1).toUpperCase() + storySegment.substring(1);
-			
-				this.history.add(concept.getId());
-				
-				return storySegment;
-			}	
-		}
-		return null;
-	}
-	
-	private String hasA() {
-		StorySentence storySentence = asr.getCurrentStorySentence();
-		List<String> nounId = storySentence.getAllNounsInStorySentence();
-		
-		boolean found = false;
+				List<Noun> doers = Utilities.getDoers(storySentence);
+				String characters = SurfaceRealizer.wordsConjunction(doers);
 
-		/* loop all nouns in current story sentence, 
-		 * already checks if history got concept extracted from db, 
-		 * already checks if noun already has that from text understand
-		 * but no check consecutive same template*/
-		
-		while(!nounId.isEmpty() && !found) {
-			int randomNoun = Randomizer.random(1, nounId.size());
-			Noun noun = asr.getNoun(nounId.remove(randomNoun-1));
-			
-			List<Concept> concepts = null;
-			
-			//proper noun character ie. John, Gege
-			if(noun instanceof Character && !noun.getIsCommon()) {
-				concepts = ConceptNetDAO.getConceptTo("person", "HasA");
+				if (concepts != null) {
+
+					while (!concepts.isEmpty()) {
+
+						int randomConcept = Randomizer.random(1, concepts.size());
+						Concept concept = concepts.remove(randomConcept - 1);
+
+						if (history.contains(concept.getId())) {
+							continue;
+						}
+
+						int randomSentence = Randomizer.random(1, this.atLocationStorySegmentStart.length);
+						if (characters.isEmpty()) {
+							randomSentence = Randomizer.random(1, this.atLocationStorySegmentStart.length - 1);
+						}
+
+						String storySegment = this.atLocationStorySegmentStart[randomSentence - 1];
+						String start = concept.getStart();
+						start = concept.getStartPOS().equals("proper noun")
+								? (start.substring(0, 1).toUpperCase() + start.substring(1))
+								: SurfaceRealizer.determinerFixer(start);
+						String end = (location.getIsCommon() ? "the " : "") + location.getId();
+
+						storySegment = storySegment.replace("<start>", start);
+						storySegment = storySegment.replace("<doer>", characters);
+						storySegment = storySegment.replace("<end>", end);
+						storySegment = storySegment.substring(0, 1).toUpperCase() + storySegment.substring(1);
+
+						//this.history.add(concept.getId());
+
+						output.put(concept.getId(), storySegment);
+						return output;
+
+					}
+				}
 			}
-			else {
+		}
+
+		return null;
+
+	}
+
+	private Map<Integer, String> hasA() {
+
+		Map<Integer, String> output = new HashMap();
+		
+		List<String> listOfNouns = asr.getCurrentStorySentence().getAllNounsInStorySentence();
+
+		while (!listOfNouns.isEmpty()) {
+
+			int randomNoun = Randomizer.random(1, listOfNouns.size());
+			Noun noun = asr.getNoun(listOfNouns.remove(randomNoun - 1));
+			List<Concept> concepts = null;
+
+			if (noun instanceof Character && !noun.getIsCommon()) {
+				concepts = ConceptNetDAO.getConceptTo("person", "HasA");
+			} else {
 				concepts = ConceptNetDAO.getConceptTo(noun.getId(), "HasA");
 			}
-			if(concepts == null || concepts.isEmpty()) {
-				continue;
-			}
-			else {
-				while(!concepts.isEmpty() && !found) {
+
+			if (concepts != null) {
+
+				while (!concepts.isEmpty()) {
+
 					int randomConcept = Randomizer.random(1, concepts.size());
-					Concept concept = concepts.remove(randomConcept-1);
-					
-					boolean already_input = false;
-					
-					if(noun.getAttribute("HasA") != null) {
-						if(noun.getAttribute("HasA").contains(concept.getEnd())){
-							already_input = true;
-						}
-					}
-					else {
-						
-						if(noun.getReference("HasA") != null) {
-							for(Noun n: noun.getReference("HasA")) {
-								if(n.getId().equals(concept.getEnd())) {
-									already_input = true;
-									break;
-								}
+					Concept concept = concepts.remove(randomConcept - 1);
+
+					List<String> hasAAttributes = noun.getAttribute("HasA");
+					List<Noun> hasAReferences = noun.getReference("HasA");
+
+					if (hasAAttributes != null && hasAAttributes.contains(concept.getEnd())) {
+						continue;
+					} else if (hasAReferences != null) {
+						boolean contains = false;
+						for (Noun n : hasAReferences) {
+							if (n.getId().equals(concept.getEnd())) {
+								contains = true;
+								break;
 							}
 						}
+						if (contains) {
+							continue;
+						}
 					}
-					
-					if(already_input) {
+
+					if (history.contains(concept.getId())) {
 						continue;
 					}
-					
+
 					int randomSentence = Randomizer.random(1, this.hasAStorySegment.length);
-					
-					if(history.contains(concept.getId())) {
-						continue;
-					}
-					
-					String storySegment = this.hasAStorySegment[randomSentence-1];
-					
-					if(noun.getIsCommon())
-						storySegment = storySegment.replace("<start>", SurfaceRealizer.determinerFixer(noun.getId()));
-					else 
-						storySegment = storySegment.replace("<start>", noun.getId());
-					
+					String storySegment = this.hasAStorySegment[randomSentence - 1];
+					String start = noun.getIsCommon() ? SurfaceRealizer.determinerFixer(noun.getId()) : noun.getId();
 					String end = concept.getEnd();
-					String endPOS = concept.getEndPOS();
-					
-					if(endPOS.equals("proper noun")) {
-						end = end.substring(0, 1).toUpperCase() + end.substring(1);
-						storySegment = storySegment.replace("<end>", end);
-					}
-					else {
-						storySegment = storySegment.replace("<end>", SurfaceRealizer.determinerFixer(end));
-					}
+					end = concept.getEndPOS().equals("proper noun")
+							? (end.substring(0, 1).toUpperCase() + end.substring(1)) : SurfaceRealizer.determinerFixer(end);
 
+					storySegment = storySegment.replace("<start>", start);
+					storySegment = storySegment.replace("<end>", end);
 					storySegment = storySegment.substring(0, 1).toUpperCase() + storySegment.substring(1);
-					
-					this.history.add(concept.getId());
-					found = true;
-					
-					return storySegment;
-				}
-			}
-			
-		}
-		
-		return null;
-	}
-	
-	/* loop all nouns in current story sentence, 
-	 * already checks if history got concept extracted from db, 
-	 * already checks if noun already has that from text understand
-	 * but no check consecutive same template*/
-	private String isA() {
-		StorySentence storySentence = asr.getCurrentStorySentence();
-		List<String> nounId = storySentence.getAllNounsInStorySentence();
-		
-		boolean found = false;
 
-		while(!nounId.isEmpty() && !found) {
-			int randomNoun = Randomizer.random(1, nounId.size());
-			Noun noun = asr.getNoun(nounId.remove(randomNoun-1));
-			List<Concept> concepts = null;
-			
-			//Gege, John (character and proper noun)
-			if(noun instanceof Character && !noun.getIsCommon()) {
-				concepts = ConceptNetDAO.getConceptTo("person", "IsA");
+					//this.history.add(concept.getId());
+
+					output.put(concept.getId(), storySegment);
+					return output;
+
+				}
+
 			}
-			else {
+		}
+
+		return null;
+
+	}
+
+	private Map<Integer, String> isA() {
+
+		Map<Integer, String> output = new HashMap();
+		
+		List<String> listOfNouns = asr.getCurrentStorySentence().getAllNounsInStorySentence();
+
+		while (!listOfNouns.isEmpty()) {
+
+			int randomNoun = Randomizer.random(1, listOfNouns.size());
+			Noun noun = asr.getNoun(listOfNouns.remove(randomNoun - 1));
+			List<Concept> concepts = null;
+
+			if (noun instanceof Character && !noun.getIsCommon()) {
+				concepts = ConceptNetDAO.getConceptTo("person", "IsA");
+			} else {
 				concepts = ConceptNetDAO.getConceptTo(noun.getId(), "IsA");
 			}
-			if(concepts == null || concepts.isEmpty()) {
-				continue;
-			}
-			else {
-				while(!concepts.isEmpty() && !found) {
+
+			if (concepts != null) {
+
+				while (!concepts.isEmpty()) {
+
 					int randomConcept = Randomizer.random(1, concepts.size());
-					Concept concept = concepts.remove(randomConcept-1);
-					
-					boolean already_input = false;
-					
-					if(noun.getAttribute("IsA") != null) {
-						if(noun.getAttribute("IsA").contains(concept.getEnd())){
-							already_input = true;
-						}
-					}
-					else {
-						
-						if(noun.getReference("IsA") != null) {
-							for(Noun n: noun.getReference("IsA")) {
-								if(n.getId().equals(concept.getEnd())) {
-									already_input = true;
-									break;
-								}
+					Concept concept = concepts.remove(randomConcept - 1);
+
+					List<String> isAAttributes = noun.getAttribute("IsA");
+					List<Noun> isAReferences = noun.getReference("IsA");
+
+					if (isAAttributes != null && isAAttributes.contains(concept.getEnd())) {
+						continue;
+					} else if (isAReferences != null) {
+						boolean contains = false;
+						for (Noun n : isAReferences) {
+							if (n.getId().equals(concept.getEnd())) {
+								contains = true;
+								break;
 							}
 						}
+						if (contains) {
+							continue;
+						}
 					}
-					
-					if(already_input) {
+
+					if (history.contains(concept.getId())) {
 						continue;
 					}
-					
-					
+
 					int randomSentence = Randomizer.random(1, this.isAStorySegment.length);
-					
-					if(history.contains(concept.getId())) {
-						continue;
-					}
-					
-					String storySegment = this.isAStorySegment[randomSentence-1];
-					
-					if(noun.getIsCommon())
-						storySegment = storySegment.replace("<start>", SurfaceRealizer.determinerFixer(noun.getId()));
-					else 
-						storySegment = storySegment.replace("<start>", noun.getId());
-					
-					
+					String storySegment = this.isAStorySegment[randomSentence - 1];
+					String start = noun.getIsCommon() ? SurfaceRealizer.determinerFixer(noun.getId()) : noun.getId();
 					String end = concept.getEnd();
-					String endPOS = concept.getEndPOS();
-					
-					if(endPOS.equals("proper noun")) {
-						end = end.substring(0, 1).toUpperCase() + end.substring(1);
-						storySegment = storySegment.replace("<end>", end);
-					}
-					else {
-						storySegment = storySegment.replace("<end>", SurfaceRealizer.determinerFixer(end));
-					}
-					
+					end = concept.getEndPOS().equals("proper noun")
+							? (end.substring(0, 1).toUpperCase() + end.substring(1)) : SurfaceRealizer.determinerFixer(end);
+
+					storySegment = storySegment.replace("<start>", start);
+					storySegment = storySegment.replace("<end>", end);
 					storySegment = storySegment.substring(0, 1).toUpperCase() + storySegment.substring(1);
-					
-					this.history.add(concept.getId());
-					found = true;
-					
-					return storySegment;
+
+					//this.history.add(concept.getId());
+
+					output.put(concept.getId(), storySegment);
+					return output;
+
 				}
 			}
-			
 		}
-		
-		return null;
-	}
-	
-	/* loop all nouns in current story sentence, 
-	 * already checks if history got concept extracted from db, 
-	 * already checks if noun already has that from text understand
-	 * but no check consecutive same template*/
-	private String hasProperty() {
-		
-		StorySentence storySentence = asr.getCurrentStorySentence();
-		List<String> nounId = storySentence.getAllNounsInStorySentence();
 
-		boolean found = false;
-	
-		while(!nounId.isEmpty() && !found) {
-			int randomNoun = Randomizer.random(1, nounId.size());
-			Noun noun = asr.getNoun(nounId.remove(randomNoun-1));
+		return null;
+
+	}
+
+	private Map<Integer, String> hasProperty() {
+
+		Map<Integer, String> output = new HashMap();
+		
+		List<String> listOfNouns = asr.getCurrentStorySentence().getAllNounsInStorySentence();
+
+		while (!listOfNouns.isEmpty()) {
+
+			int randomNoun = Randomizer.random(1, listOfNouns.size());
+			Noun noun = asr.getNoun(listOfNouns.remove(randomNoun - 1));
 			List<Concept> concepts = null;
-			
-			if(noun instanceof Character && !noun.getIsCommon()) {
+
+			if (noun instanceof Character && !noun.getIsCommon()) {
 				concepts = ConceptNetDAO.getConceptTo("person", "HasProperty");
-			}
-			else {
+			} else {
 				concepts = ConceptNetDAO.getConceptTo(noun.getId(), "HasProperty");
 			}
-			if(concepts == null) {
-				continue;
-			}
-			else {
-				while(!concepts.isEmpty() && !found) {
-					
-					
+
+			if (concepts != null) {
+
+				while (!concepts.isEmpty()) {
+
 					int randomConcept = Randomizer.random(1, concepts.size());
-					Concept concept = concepts.remove(randomConcept-1);
-					
-					boolean already_input = false;
-					
-					if(noun.getAttribute("HasProperty") != null) {
-						if(noun.getAttribute("HasProperty").contains(concept.getEnd())){
-							already_input = true;
-						}
-					}
-					else {
-						
-						if(noun.getReference("HasProperty") != null) {
-							for(Noun n: noun.getReference("HasProperty")) {
-								if(n.getId().equals(concept.getEnd())) {
-									already_input = true;
-									break;
-								}
+					Concept concept = concepts.remove(randomConcept - 1);
+
+					List<String> hasPropertyAttributes = noun.getAttribute("HasProperty");
+					List<Noun> hasPropertyReferences = noun.getReference("HasProperty");
+
+					if (hasPropertyAttributes != null && hasPropertyAttributes.contains(concept.getEnd())) {
+						continue;
+					} else if (hasPropertyReferences != null) {
+						boolean contains = false;
+						for (Noun n : hasPropertyReferences) {
+							if (n.getId().equals(concept.getEnd())) {
+								contains = true;
+								break;
 							}
 						}
+						if (contains) {
+							continue;
+						}
 					}
-					
-					if(already_input) {
+
+					if (history.contains(concept.getId())) {
 						continue;
 					}
+
 					int randomSentence = Randomizer.random(1, this.hasPropertyStorySegment.length);
-					
-					if(history.contains(concept.getId())) {
-						continue;
-					}
-					
-					String storySegment = this.hasPropertyStorySegment[randomSentence-1];
-					
-					if(noun.getIsCommon())
-						storySegment = storySegment.replace("<start>", SurfaceRealizer.determinerFixer(noun.getId()));
-					else 
-						storySegment = storySegment.replace("<start>", noun.getId());
-					
-					
+					String storySegment = this.hasPropertyStorySegment[randomSentence - 1];
+					String start = noun.getIsCommon() ? SurfaceRealizer.determinerFixer(noun.getId()) : noun.getId();
 					String end = concept.getEnd();
-					String endPOS = concept.getEndPOS();
-					
-					if(endPOS.equals("proper noun")) {
+
+					switch (concept.getEndPOS()) {
+					case "proper noun":
 						end = end.substring(0, 1).toUpperCase() + end.substring(1);
-						storySegment = storySegment.replace("<end>", end);
+						break;
+					case "adjective":
+					case "adjective phrase":
+						break;
+					default:
+						end = SurfaceRealizer.determinerFixer(end);
+						break;
 					}
-					else if (endPOS.equals("adjective") || endPOS.equals("adjective phrase")) {
-						storySegment = storySegment.replace("<end>", end);
-					}
-					else {
-						storySegment = storySegment.replace("<end>", SurfaceRealizer.determinerFixer(end));
-					}
-					
+
+					storySegment = storySegment.replace("<start>", start);
+					storySegment = storySegment.replace("<end>", end);
 					storySegment = storySegment.substring(0, 1).toUpperCase() + storySegment.substring(1);
-					
-					this.history.add(concept.getId());
-					found = true;
-					
-					return storySegment;
+
+					//this.history.add(concept.getId());
+
+					output.put(concept.getId(), storySegment);
+					return output;
+
 				}
+
 			}
-			
+
 		}
-		
+
 		return null;
+
 	}
 	
 	
-	private String causes() {
+	private Map<Integer, String> causes() {
+		
+		Map<Integer, String> output = new HashMap();
+		
 		StorySentence storySentence = asr.getCurrentStorySentence();
 		List<Clause> clauses = new ArrayList<Clause>();
 		clauses.addAll(storySentence.getManyDescriptions().values());
@@ -526,10 +476,10 @@ public class StorySegmentGenerator extends TextGeneration{
 				
 				storySegment = storySegment.substring(0, 1).toUpperCase() + storySegment.substring(1);
 				
-				this.history.add(concept.getId());
+				//this.history.add(concept.getId());
 				found = true;
-				
-				return storySegment;
+				output.put(concept.getId(), storySegment);
+				return output;
 				
 			}	
 		}
