@@ -108,5 +108,22 @@ public class Checklist {
 	public boolean isEndingComplete() {
 		return this.isResolutionExist;
 	}
+	
+	public void print() {
+		if(asr.getPartOfStory().equals("start")) {
+			System.out.println("Character exist? " + this.isCharacterExist());
+			System.out.println("Location exist? " + this.isLocationExist());
+			System.out.println("Conflict exist? " + this.isConflictExist());
+			System.out.println("Start complete? " + this.isBeginningComplete());
+		}
+		else if (asr.getPartOfStory().equals("middle")) {
+			System.out.println("Series event exist? " + this.isSeriesActionExist());
+			System.out.println("Middle complete? " + this.isMiddleComplete());
+		}
+		else if (asr.getPartOfStory().equals("end")) {
+			System.out.println("Resolution exist? " + this.isResolutionExist());
+			System.out.println("End complete? " + this.isEndingComplete());
+		}
+	}
 
 }

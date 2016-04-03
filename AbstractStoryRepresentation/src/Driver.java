@@ -5,11 +5,14 @@ import java.util.Scanner;
 import java.util.Map.Entry;
 
 import model.story_representation.AbstractStoryRepresentation;
+import model.story_representation.Checklist;
+import model.story_representation.story_element.Conflict;
 import model.story_representation.story_element.noun.Noun;
 import model.story_representation.story_element.story_sentence.Description;
 import model.story_representation.story_element.story_sentence.Event;
 import model.story_representation.story_element.story_sentence.StorySentence;
 import model.text_generation.DirectivesGenerator;
+import model.text_generation.StorySegmentGenerator;
 import model.text_generation.TextGeneration;
 import model.text_understanding.TextUnderstanding;
 
@@ -28,9 +31,13 @@ public class Driver {
 		
 		Scanner sc = new Scanner(System.in);
 		
-		List<TextGeneration> tg = new ArrayList();
+		List<TextGeneration> tg = new ArrayList<TextGeneration>();
 		
 		tg.add(new DirectivesGenerator(asr));
+		
+		tg.add(new StorySegmentGenerator(asr));
+		
+		Checklist checklist = new Checklist(asr);
 		
 		System.out.println("start? middle? end?");
 
@@ -161,15 +168,24 @@ public class Driver {
 				//asr has no events but has so many descriptions for nouns
 			}
 			
-			System.out.println("conflict's address: " + asr.getConflict());
+			Conflict conflict = asr.getConflict();
+			if(conflict != null) {
+				System.out.println("conflict's address: " + conflict);
+				System.out.println("expected conflict resolution: " + conflict.getExpectedResolutionConcept());
+			}
+			
 //			System.out.println("expected resolution concept: " + asr.getConflict().getExpectedResolutionConcept());
 			System.out.println("resolution's address: " + asr.getResolution());
+			
+			checklist.print();
 			
 			System.out.println();
 			System.out.println("Generation? [1] yes [2] no");
 			int yesNo = sc.nextInt();
 			if(yesNo == 1) {
-				System.out.println(tg.get(0).generateText());
+				System.out.println("[1] Directives [2] Story Segment");
+				int typeToGen = sc.nextInt();
+				System.out.println(tg.get(typeToGen-1).generateText());
 			}
 			
 			System.out.println("start? middle? end?");

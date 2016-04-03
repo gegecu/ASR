@@ -111,7 +111,7 @@ public class Extractor {
 				System.out.println("compound: " + asr.getNoun(td.gov().lemma()).getId());
 			}
 			
-			else if (tdReln.equals("nsubj") || tdReln.equals("nmod:agent")) {
+			else if (tdReln.contains("nsubj") || tdReln.equals("nmod:agent")) {
 
 				Noun noun = asr.getNoun(td.dep().lemma());
 
