@@ -203,19 +203,27 @@ public class StorySegmentGenerator extends TextGeneration{
 					int randomConcept = Randomizer.random(1, concepts.size());
 					Concept concept = concepts.remove(randomConcept-1);
 					
+					boolean already_input = false;
+					
 					if(noun.getAttribute("HasA") != null) {
 						if(noun.getAttribute("HasA").contains(concept.getEnd())){
-						continue;
+							already_input = true;
 						}
 					}
 					else {
+						
 						if(noun.getReference("HasA") != null) {
 							for(Noun n: noun.getReference("HasA")) {
 								if(n.getId().equals(concept.getEnd())) {
-									continue;
+									already_input = true;
+									break;
 								}
 							}
 						}
+					}
+					
+					if(already_input) {
+						continue;
 					}
 					
 					int randomSentence = Randomizer.random(1, this.hasAStorySegment.length);
@@ -286,19 +294,27 @@ public class StorySegmentGenerator extends TextGeneration{
 					int randomConcept = Randomizer.random(1, concepts.size());
 					Concept concept = concepts.remove(randomConcept-1);
 					
+					boolean already_input = false;
+					
 					if(noun.getAttribute("IsA") != null) {
 						if(noun.getAttribute("IsA").contains(concept.getEnd())){
-						continue;
+							already_input = true;
 						}
 					}
 					else {
+						
 						if(noun.getReference("IsA") != null) {
 							for(Noun n: noun.getReference("IsA")) {
 								if(n.getId().equals(concept.getEnd())) {
-									continue;
+									already_input = true;
+									break;
 								}
 							}
 						}
+					}
+					
+					if(already_input) {
+						continue;
 					}
 					
 					
@@ -373,21 +389,28 @@ public class StorySegmentGenerator extends TextGeneration{
 					int randomConcept = Randomizer.random(1, concepts.size());
 					Concept concept = concepts.remove(randomConcept-1);
 					
+					boolean already_input = false;
+					
 					if(noun.getAttribute("HasProperty") != null) {
 						if(noun.getAttribute("HasProperty").contains(concept.getEnd())){
-						continue;
+							already_input = true;
 						}
 					}
 					else {
+						
 						if(noun.getReference("HasProperty") != null) {
 							for(Noun n: noun.getReference("HasProperty")) {
 								if(n.getId().equals(concept.getEnd())) {
-									continue;
+									already_input = true;
+									break;
 								}
 							}
 						}
 					}
 					
+					if(already_input) {
+						continue;
+					}
 					int randomSentence = Randomizer.random(1, this.hasPropertyStorySegment.length);
 					
 					if(history.contains(concept.getId())) {
@@ -500,7 +523,6 @@ public class StorySegmentGenerator extends TextGeneration{
 				if(storySegment.length() == 0) {
 					continue;
 				}
-				
 				
 				storySegment = storySegment.substring(0, 1).toUpperCase() + storySegment.substring(1);
 				
