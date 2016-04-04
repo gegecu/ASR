@@ -1,18 +1,14 @@
 package model.text_generation;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.PriorityQueue;
 import java.util.Set;
 
-import simplenlg.features.Feature;
-import simplenlg.features.Form;
-import simplenlg.features.Tense;
-import simplenlg.phrasespec.VPPhraseSpec;
 import model.knowledge_base.conceptnet.Concept;
 import model.knowledge_base.conceptnet.ConceptNetDAO;
 import model.story_representation.AbstractStoryRepresentation;
@@ -21,32 +17,36 @@ import model.story_representation.story_element.noun.Location;
 import model.story_representation.story_element.noun.Noun;
 import model.story_representation.story_element.story_sentence.Clause;
 import model.story_representation.story_element.story_sentence.Description;
-import model.story_representation.story_element.story_sentence.Predicate;
 import model.story_representation.story_element.story_sentence.StorySentence;
 import model.utility.Randomizer;
 import model.utility.SurfaceRealizer;
+import simplenlg.features.Feature;
+import simplenlg.features.Tense;
+import simplenlg.phrasespec.VPPhraseSpec;
 
-public class StorySegmentGenerator extends TextGeneration{
-	
-	private String[] atLocationStorySegmentStart = {"There is <start> in <end>."
-												, "<end> has <start>."};
-	
-	private String[] atLocationStorySegmentMiddle = {"<doer> saw <start> in <end>."};
-	
-	private String[] hasAStorySegment = {"<start> has <end>."};
-	
-	private String[] isAStorySegment = {"<start> is <end>."};
-	
-	private String[] hasPropertyStorySegment = {"<start> can be <end>."};
-	
-	private String[] causesNoun = {"<start> produces <end>."};
-	
-	private String[] causesVerb = {"<doer> <end>."};
-	
-	private String[] causesAdjective = {"<doer> became <end>."};
+public class StorySegmentGenerator extends TextGeneration {
 
-	private Set<Integer> history; 
-			
+	private String[] atLocationStorySegmentStart = { "There is <start> in <end>.", "<end> has <start>." };
+
+	private String[] atLocationStorySegmentMiddle = { "<doer> saw <start> in <end>." };
+
+	private String[] hasAStorySegment = { "<start> has <end>." };
+
+	private String[] isAStorySegment = { "<start> is <end>." };
+
+	private String[] hasPropertyStorySegment = { "<start> can be <end>." };
+
+	private String[] causesNoun = { "<start> produces <end>." };
+
+	private String[] causesVerb = { "<doer> <end>." };
+
+	private String[] causesAdjective = { "<doer> became <end>." };
+
+	private Set<Integer> history;
+
+	private int defaultNounThreshold = 5;
+	private int nounThreshold = defaultNounThreshold;
+
 	public StorySegmentGenerator(AbstractStoryRepresentation asr) {
 		super(asr);
 		this.history = new HashSet<Integer>();
@@ -55,67 +55,63 @@ public class StorySegmentGenerator extends TextGeneration{
 	@Override
 	public String generateText() {
 		// TODO Auto-generated method stub
-		
-		Map<Integer, String> response = new HashMap();
 
-		if(asr.getPartOfStory().equals("start")) {
+		Map<Integer, String> response = new HashMap<>();
+
+		if (asr.getPartOfStory().equals("start")) {
 			Map<Integer, String> atLocation = atLocation();
-			if(atLocation != null) {
+			if (atLocation != null) {
 				response.putAll(atLocation);
 			}
-			
+
 			Map<Integer, String> hasA = hasA();
-			if(hasA != null) {
+			if (hasA != null) {
 				response.putAll(hasA);
 			}
-			
+
 			Map<Integer, String> isA = isA();
-			if(isA != null) {
+			if (isA != null) {
 				response.putAll(isA);
 			}
-			
+
 			Map<Integer, String> hasProperty = hasProperty();
-			if(hasProperty != null) {
+			if (hasProperty != null) {
 				response.putAll(hasProperty);
 			}
-		}
-		else {
+		} else {
 			Map<Integer, String> causes = causes();
-			if(causes != null) {
+			if (causes != null) {
 				response.putAll(causes);
 			}
 		}
-		
-		if(!response.isEmpty()) {
-			List<Integer> keys = new ArrayList(response.keySet());			
+
+		if (!response.isEmpty()) {
+			List<Integer> keys = new ArrayList<>(response.keySet());
 			int random = Randomizer.random(1, keys.size());
-			history.add(keys.get(random-1));
-			return response.get(keys.get(random-1));
-		}
-		else {
+			history.add(keys.get(random - 1));
+			return response.get(keys.get(random - 1));
+		} else {
 			return null;
 		}
 	}
-		
+
 	private Map<String, Description> getNeededDescription(String relation, Map<String, Description> descriptions) {
 		Map<String, Description> temp = new HashMap(descriptions);
-		for(Map.Entry<String, Description> description: descriptions.entrySet()) {
+		for (Map.Entry<String, Description> description : descriptions.entrySet()) {
 			Description d = description.getValue();
-			if(d.getAttribute(relation) == null && d.getReference(relation) == null) {
+			if (d.getAttribute(relation) == null && d.getReference(relation) == null) {
 				temp.remove(description.getKey());
 			}
 		}
 		return temp;
 	}
-		
-	
-	/**The room has a chair.
-	possible storySegment
-	There is a chair in room.
-	***/
+
+	/**
+	 * The room has a chair. possible storySegment There is a chair in room.
+	 ***/
 	private Map<Integer, String> atLocation() {
-		
-		Map<Integer, String> output = new HashMap();
+
+		Map<Integer, String> output = new HashMap<>();
 
 		StorySentence storySentence = asr.getCurrentStorySentence();
 
@@ -160,7 +156,7 @@ public class StorySegmentGenerator extends TextGeneration{
 						storySegment = storySegment.replace("<end>", end);
 						storySegment = storySegment.substring(0, 1).toUpperCase() + storySegment.substring(1);
 
-						//this.history.add(concept.getId());
+						// this.history.add(concept.getId());
 
 						output.put(concept.getId(), storySegment);
 						return output;
@@ -176,9 +172,9 @@ public class StorySegmentGenerator extends TextGeneration{
 
 	private Map<Integer, String> hasA() {
 
-		Map<Integer, String> output = new HashMap();
-		
-		List<String> listOfNouns = asr.getCurrentStorySentence().getAllNounsInStorySentence();
+		Map<Integer, String> output = new HashMap<>();
+
+		List<String> listOfNouns = getNouns();
 
 		while (!listOfNouns.isEmpty()) {
 
@@ -226,13 +222,14 @@ public class StorySegmentGenerator extends TextGeneration{
 					String start = noun.getIsCommon() ? SurfaceRealizer.determinerFixer(noun.getId()) : noun.getId();
 					String end = concept.getEnd();
 					end = concept.getEndPOS().equals("proper noun")
-							? (end.substring(0, 1).toUpperCase() + end.substring(1)) : SurfaceRealizer.determinerFixer(end);
+							? (end.substring(0, 1).toUpperCase() + end.substring(1))
+							: SurfaceRealizer.determinerFixer(end);
 
 					storySegment = storySegment.replace("<start>", start);
 					storySegment = storySegment.replace("<end>", end);
 					storySegment = storySegment.substring(0, 1).toUpperCase() + storySegment.substring(1);
 
-					//this.history.add(concept.getId());
+					// this.history.add(concept.getId());
 
 					output.put(concept.getId(), storySegment);
 					return output;
@@ -248,9 +245,9 @@ public class StorySegmentGenerator extends TextGeneration{
 
 	private Map<Integer, String> isA() {
 
-		Map<Integer, String> output = new HashMap();
-		
-		List<String> listOfNouns = asr.getCurrentStorySentence().getAllNounsInStorySentence();
+		Map<Integer, String> output = new HashMap<>();
+
+		List<String> listOfNouns = getNouns();
 
 		while (!listOfNouns.isEmpty()) {
 
@@ -298,13 +295,14 @@ public class StorySegmentGenerator extends TextGeneration{
 					String start = noun.getIsCommon() ? SurfaceRealizer.determinerFixer(noun.getId()) : noun.getId();
 					String end = concept.getEnd();
 					end = concept.getEndPOS().equals("proper noun")
-							? (end.substring(0, 1).toUpperCase() + end.substring(1)) : SurfaceRealizer.determinerFixer(end);
+							? (end.substring(0, 1).toUpperCase() + end.substring(1))
+							: SurfaceRealizer.determinerFixer(end);
 
 					storySegment = storySegment.replace("<start>", start);
 					storySegment = storySegment.replace("<end>", end);
 					storySegment = storySegment.substring(0, 1).toUpperCase() + storySegment.substring(1);
 
-					//this.history.add(concept.getId());
+					// this.history.add(concept.getId());
 
 					output.put(concept.getId(), storySegment);
 					return output;
@@ -319,9 +317,9 @@ public class StorySegmentGenerator extends TextGeneration{
 
 	private Map<Integer, String> hasProperty() {
 
-		Map<Integer, String> output = new HashMap();
-		
-		List<String> listOfNouns = asr.getCurrentStorySentence().getAllNounsInStorySentence();
+		Map<Integer, String> output = new HashMap<>();
+
+		List<String> listOfNouns = getNouns();
 
 		while (!listOfNouns.isEmpty()) {
 
@@ -385,7 +383,7 @@ public class StorySegmentGenerator extends TextGeneration{
 					storySegment = storySegment.replace("<end>", end);
 					storySegment = storySegment.substring(0, 1).toUpperCase() + storySegment.substring(1);
 
-					//this.history.add(concept.getId());
+					// this.history.add(concept.getId());
 
 					output.put(concept.getId(), storySegment);
 					return output;
@@ -399,91 +397,112 @@ public class StorySegmentGenerator extends TextGeneration{
 		return null;
 
 	}
-	
-	
+
+	private List<String> getNouns() {
+
+		nounThreshold = 1;
+		List<String> temp = new ArrayList<>();
+		PriorityQueue<Noun> nouns = new PriorityQueue<>();
+
+		for (String i : this.asr.getCurrentStorySentence().getAllNounsInStorySentence()) {
+			nouns.add(asr.getNoun(i));
+		}
+
+		while (temp.isEmpty() && !nouns.isEmpty()) {
+
+			Noun noun = nouns.peek();
+			while (!nouns.isEmpty()
+					&& noun.getAttributes().values().size() + noun.getReferences().values().size() < nounThreshold) {
+				noun = nouns.remove();
+				temp.add(noun.getId());
+			}
+
+			nounThreshold += 2;
+
+		}
+
+		return temp;
+
+	}
+
 	private Map<Integer, String> causes() {
-		
-		Map<Integer, String> output = new HashMap();
-		
+
+		Map<Integer, String> output = new HashMap<>();
+
 		StorySentence storySentence = asr.getCurrentStorySentence();
 		List<Clause> clauses = new ArrayList<Clause>();
 		clauses.addAll(storySentence.getManyDescriptions().values());
 		clauses.addAll(storySentence.getManyPredicates().values());
-		
-		Set<Concept> temp = new HashSet();
+
+		Set<Concept> temp = new HashSet<>();
 		boolean found = false;
-		while(!clauses.isEmpty() && !found) {
-			
+		while (!clauses.isEmpty() && !found) {
+
 			int randomClause = Randomizer.random(1, clauses.size());
 			Clause clause = clauses.remove(randomClause - 1);
-			
-			List<Noun> doers = new ArrayList();
-			for(Noun noun: clause.getManyDoers().values()) {
+
+			List<Noun> doers = new ArrayList<>();
+			for (Noun noun : clause.getManyDoers().values()) {
 				doers.add(noun);
 			}
-			
+
 			String characters = SurfaceRealizer.wordsConjunction(doers);
-			
-			
-			for(String concept: clause.getConcepts()) {
+
+			for (String concept : clause.getConcepts()) {
 				temp.addAll(ConceptNetDAO.getConceptTo(concept, "Causes"));
 			}
-			
-			if(temp.isEmpty()) {
+
+			if (temp.isEmpty()) {
 				found = false;
 			}
-			List<Concept> concepts = new ArrayList(temp);
-			
-			
-			
-			while(!concepts.isEmpty() && !found) {
+			List<Concept> concepts = new ArrayList<>(temp);
+
+			while (!concepts.isEmpty() && !found) {
 				int randomConcept = Randomizer.random(1, concepts.size());
-				Concept concept = concepts.remove(randomConcept-1);
-				
-				if(history.contains(concept.getId())) {
+				Concept concept = concepts.remove(randomConcept - 1);
+
+				if (history.contains(concept.getId())) {
 					continue;
 				}
-				
+
 				String endPOS = concept.getEndPOS();
-				
+
 				int randomSentence = 0;
 				String storySegment = "";
-				if(endPOS.equals("noun") || endPOS.equals("proper noun")) {
+				if (endPOS.equals("noun") || endPOS.equals("proper noun")) {
 					randomSentence = Randomizer.random(1, this.causesNoun.length);
-					storySegment = causesNoun[randomSentence-1];
+					storySegment = causesNoun[randomSentence - 1];
 					storySegment = storySegment.replace("<start>", concept.getStart());
 					storySegment = storySegment.replace("<end>", concept.getEnd());
-				}
-				else if (endPOS.equals("verb") || endPOS.equals("verb phrase")) {
+				} else if (endPOS.equals("verb") || endPOS.equals("verb phrase")) {
 					randomSentence = Randomizer.random(1, this.causesVerb.length);
-					storySegment = causesVerb[randomSentence-1];
+					storySegment = causesVerb[randomSentence - 1];
 					storySegment = storySegment.replace("<doer>", characters);
 					VPPhraseSpec verb = nlgFactory.createVerbPhrase(concept.getEnd());
-			        verb.setFeature(Feature.TENSE, Tense.PAST);
-			        storySegment = storySegment.replace("<end>", realiser.realise(verb).toString());
+					verb.setFeature(Feature.TENSE, Tense.PAST);
+					storySegment = storySegment.replace("<end>", realiser.realise(verb).toString());
 
-				}
-				else if (endPOS.equals("adjective") || endPOS.equals("adjective phrase")) {
+				} else if (endPOS.equals("adjective") || endPOS.equals("adjective phrase")) {
 					randomSentence = Randomizer.random(1, this.causesAdjective.length);
-					storySegment = causesAdjective[randomSentence-1];
+					storySegment = causesAdjective[randomSentence - 1];
 					storySegment = storySegment.replace("<doer>", characters);
 					storySegment = storySegment.replace("<end>", concept.getEnd());
 				}
-				
-				if(storySegment.length() == 0) {
+
+				if (storySegment.length() == 0) {
 					continue;
 				}
-				
+
 				storySegment = storySegment.substring(0, 1).toUpperCase() + storySegment.substring(1);
-				
-				//this.history.add(concept.getId());
+
+				// this.history.add(concept.getId());
 				found = true;
 				output.put(concept.getId(), storySegment);
 				return output;
-				
-			}	
+
+			}
 		}
-		
+
 		return null;
 	}
 

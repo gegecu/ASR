@@ -203,7 +203,7 @@ public class DirectivesGenerator extends TextGeneration {
 		}
 
 		if (predicates.isEmpty() && directive == null) {
-			int randomCapableOfQuestion = Randomizer.random(1, this.causeEffectDirective.length);
+			int randomCapableOfQuestion = Randomizer.random(1, this.causeEffectAlternative.length);
 			directive = this.causeEffectAlternative[randomCapableOfQuestion-1];
 		}
 
