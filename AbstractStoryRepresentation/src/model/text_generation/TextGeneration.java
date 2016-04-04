@@ -1,7 +1,6 @@
 package model.text_generation;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import model.story_representation.AbstractStoryRepresentation;
@@ -16,7 +15,7 @@ public abstract class TextGeneration {
 	protected NLGFactory nlgFactory;
 	protected Realiser realiser;
 	protected AbstractStoryRepresentation asr;
-	protected final int defaultThreshold = 7;
+	protected final int defaultThreshold = 3;
 	protected final int thresholdIncrement = 2;
 
 	public TextGeneration(AbstractStoryRepresentation asr) {
@@ -37,10 +36,8 @@ public abstract class TextGeneration {
 
 			while (result.isEmpty()) {
 
-				List<String> nounId = asr.getCurrentStorySentence().getAllNounsInStorySentence();
-
-				while (!nounId.isEmpty()) {
-					Noun noun = asr.getNoun(nounId.remove(0));
+				for (String i : asr.getCurrentStorySentence().getAllNounsInStorySentence()) {
+					Noun noun = asr.getNoun(i);
 					int count = Utilities.countLists(noun.getAttributes().values())
 							+ Utilities.countLists(noun.getReferences().values());
 					if (count < currThreshold)
@@ -48,8 +45,7 @@ public abstract class TextGeneration {
 				}
 
 				if (result.isEmpty()) {
-					Collection<Noun> nouns = asr.getManyNouns().values();
-					for (Noun noun : nouns) {
+					for (Noun noun : asr.getManyNouns().values()) {
 						int count = Utilities.countLists(noun.getAttributes().values())
 								+ Utilities.countLists(noun.getReferences().values());
 						if (count < currThreshold)
