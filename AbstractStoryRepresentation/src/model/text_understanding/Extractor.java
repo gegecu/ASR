@@ -267,6 +267,7 @@ public class Extractor {
 								description.addDoer(n.getId(), n);
 								description.addReference("HasA", noun);
 								description.addConcept(conceptParser.createConceptWithDirectObject(td.gov().lemma(), td.dep().lemma()));
+								description.addConcept(td.dep().lemma());
 							}
 						}
 						storySentence.addDescription(td.dep().lemma(), description);
@@ -277,11 +278,12 @@ public class Extractor {
 						//create concept
 						event.addDirectObject(td.dep().lemma(), noun);
 						storySentence.addPredicate(td.gov().index(), event);
-						String object = td.dep().lemma();				
+									
 						if(noun instanceof Character) //if direct object is a person, change to someone
 							event.addConcept(conceptParser.createConceptWithDirectObject(td.gov().lemma(), "someone"));
 						else {
-							event.addConcept(conceptParser.createConceptWithDirectObject(td.gov().lemma(), object));
+							event.addConcept(conceptParser.createConceptWithDirectObject(td.gov().lemma(), td.dep().lemma()));
+							event.addConcept(td.dep().lemma());
 						}
 						
 						System.out.println("dobj: "
