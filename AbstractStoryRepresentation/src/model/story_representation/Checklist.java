@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
+import model.knowledge_base.conceptnet.ConceptNetDAO;
 import model.story_representation.story_element.noun.Character;
 import model.story_representation.story_element.noun.Noun;
+import model.story_representation.story_element.story_sentence.Clause;
 import model.story_representation.story_element.story_sentence.StorySentence;
 
 public class Checklist {
@@ -127,7 +129,7 @@ public class Checklist {
 	}
 	
 	private void resolutionExist() {
-		if(!this.isResolutionExist) {
+	if(!this.isResolutionExist) {
 			this.isResolutionExist = this.asr.getResolution() != null;
 		}
 	}

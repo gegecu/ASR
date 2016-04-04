@@ -182,4 +182,58 @@ public class ConceptNetDAO{
 		
 		return concepts;
 	}
+	
+public static Boolean getFourHops(String conflict, String possibleResolution) {
+		
+		String query = "SELECT c1.concept AS lev1, c2.concept as lev2, c3.concept as lev3 "
+				+ "FROM concept_relations AS t1 "
+				+ "LEFT JOIN concepts AS c1 ON c1.id = t1.toID "
+				+ "LEFT JOIN concept_relations AS t2 ON t2.fromID = t1.toID "
+				+ "LEFT JOIN concepts AS c2 ON c2.id = t2.toID "
+				+ "LEFT JOIN concept_relations AS t3 ON t3.fromID = t2.toID "
+				+ "LEFT JOIN concepts AS c3 ON c3.id = t3.toID "
+				+ "WHERE t1.fromID = (SELECT id FROM CONCEPTS WHERE concept = ?)";
+		
+		Connection connection = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		List<Concept> concepts = null;
+		Boolean pathExists = false;
+		
+		try {
+			concepts = new ArrayList<Concept>();
+			connection = MySQLConnector.getInstance().getConnection();
+			ps = connection.prepareStatement(query);
+			ps.setString(1, conflict);
+			rs = ps.executeQuery();
+			
+			while(rs.next() && !pathExists){
+				String[] nodesInRow = {rs.getString(1),rs.getString(2),rs.getString(3)};
+				//System.out.println("nodes:" + rs.getString(1) + rs.getString(2) + rs.getString(3));
+				for (int i = 0; i<nodesInRow.length; i++){
+					if(nodesInRow[i] != null && nodesInRow[i].equals(possibleResolution)){
+						pathExists = true;
+						break;
+					}
+				}
+				
+			}
+			
+		} catch (SQLException e) {
+		   e.printStackTrace();
+		}finally {
+			try {
+				if(ps != null)
+					ps.close();
+				if(connection != null)
+					connection.close();
+				if(rs != null)
+					rs.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return pathExists;
+	}
 }
