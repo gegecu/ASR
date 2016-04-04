@@ -26,7 +26,7 @@ public class DirectivesGenerator extends TextGeneration {
 	// <= 7 hasproperty, capableof, isA, hasA
 
 	private String[] nounStartDirective = { "Describe <noun>.", "Tell me more about <noun>.",
-			"Write more about <noun>.", "I want to hear more about <noun>.", "Tell something more about <noun>." };
+			"Write more about <noun>.", "I want to hear more about <noun>.", "Tell something about <noun>." };
 
 	private String[] nounStartDirectiveAlternative = {
 			"You have mentioned <noun> awhile ago, tell me more about <noun>" };
@@ -34,7 +34,7 @@ public class DirectivesGenerator extends TextGeneration {
 	private String[] causeEffectDirective = { "Tell me more why <noun> <action>.",
 			"Write more about why <noun> <action>.", "Write the reason why <noun> <action>." };
 
-	private String[] causeEffectAlternative = { "Tell me more what happened." };
+	private String[] causeEffectAlternative = { "Tell me more about what happened." };
 
 	private int descriptionThreshold = 7;
 

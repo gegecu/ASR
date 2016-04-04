@@ -41,7 +41,11 @@ public class StorySegmentGenerator extends TextGeneration {
 	private String[] causesVerb = { "<doer> <end>." };
 
 	private String[] causesAdjective = { "<doer> became <end>." };
+	
+	private String [] hasPrerequisite = { "Before that, <doer> <end> first." }; 
 
+	private String [] defaultResponse = { "I can't think of what happens next. Tell me more"};
+	
 	private Set<Integer> history;
 
 	private int defaultNounThreshold = 5;
@@ -83,6 +87,14 @@ public class StorySegmentGenerator extends TextGeneration {
 			if (causes != null) {
 				response.putAll(causes);
 			}
+			Map<Integer, String> hasPrerequisite = hasPrerequitiste();
+			if (hasPrerequisite != null){
+				response.putAll(hasPrerequisite);
+			}
+			Map<Integer, String> hasSubEvent = hasSubEvent();
+			if (hasSubEvent != null){
+				response.putAll(hasSubEvent);
+			}
 		}
 
 		if (!response.isEmpty()) {
@@ -91,7 +103,7 @@ public class StorySegmentGenerator extends TextGeneration {
 			history.add(keys.get(random - 1));
 			return response.get(keys.get(random - 1));
 		} else {
-			return null;
+			return this.defaultResponse[Randomizer.random(1, this.defaultResponse.length) - 1];
 		}
 	}
 
@@ -438,6 +450,169 @@ public class StorySegmentGenerator extends TextGeneration {
 					continue;
 				}
 
+				String endPOS = concept.getEndPOS();
+
+				int randomSentence = 0;
+				String storySegment = "";
+				if (endPOS.equals("noun") || endPOS.equals("proper noun")) {
+					randomSentence = Randomizer.random(1, this.causesNoun.length);
+					storySegment = causesNoun[randomSentence - 1];
+					storySegment = storySegment.replace("<start>", concept.getStart());
+					storySegment = storySegment.replace("<end>", concept.getEnd());
+				} else if (endPOS.equals("verb") || endPOS.equals("verb phrase")) {
+					randomSentence = Randomizer.random(1, this.causesVerb.length);
+					storySegment = causesVerb[randomSentence - 1];
+					storySegment = storySegment.replace("<doer>", characters);
+					VPPhraseSpec verb = nlgFactory.createVerbPhrase(concept.getEnd());
+					verb.setFeature(Feature.TENSE, Tense.PAST);
+					storySegment = storySegment.replace("<end>", realiser.realise(verb).toString());
+
+				} else if (endPOS.equals("adjective") || endPOS.equals("adjective phrase")) {
+					randomSentence = Randomizer.random(1, this.causesAdjective.length);
+					storySegment = causesAdjective[randomSentence - 1];
+					storySegment = storySegment.replace("<doer>", characters);
+					storySegment = storySegment.replace("<end>", concept.getEnd());
+				}
+
+				if (storySegment.length() == 0) {
+					continue;
+				}
+
+				storySegment = storySegment.substring(0, 1).toUpperCase() + storySegment.substring(1);
+
+				// this.history.add(concept.getId());
+				found = true;
+				output.put(concept.getId(), storySegment);
+				return output;
+
+			}
+		}
+
+		return null;
+	}
+	
+	private Map<Integer, String> hasPrerequitiste() {
+
+		Map<Integer, String> output = new HashMap<>();
+
+		StorySentence storySentence = asr.getCurrentStorySentence();
+		List<Clause> clauses = new ArrayList<Clause>();
+		clauses.addAll(storySentence.getManyDescriptions().values());
+		clauses.addAll(storySentence.getManyPredicates().values());
+
+		Set<Concept> temp = new HashSet<>();
+		boolean found = false;
+		while (!clauses.isEmpty() && !found) {
+
+			int randomClause = Randomizer.random(1, clauses.size());
+			Clause clause = clauses.remove(randomClause - 1);
+
+			List<Noun> doers = new ArrayList<>();
+			for (Noun noun : clause.getManyDoers().values()) {
+				doers.add(noun);
+			}
+
+			String characters = SurfaceRealizer.wordsConjunction(doers);
+
+			for (String concept : clause.getConcepts()) {
+				temp.addAll(ConceptNetDAO.getConceptTo(concept, "HasPrerequisite"));
+			}
+
+			if (temp.isEmpty()) {
+				found = false;
+			}
+			List<Concept> concepts = new ArrayList<>(temp);
+
+			while (!concepts.isEmpty() && !found) {
+				int randomConcept = Randomizer.random(1, concepts.size());
+				Concept concept = concepts.remove(randomConcept - 1);
+
+				if (history.contains(concept.getId())) {
+					continue;
+				}
+
+				String endPOS = concept.getEndPOS();
+
+				int randomSentence = 0;
+				String storySegment = "";
+				if (endPOS.equals("noun") || endPOS.equals("proper noun")) {
+					randomSentence = Randomizer.random(1, this.causesNoun.length);
+					storySegment = causesNoun[randomSentence - 1];
+					storySegment = storySegment.replace("<start>", concept.getStart());
+					storySegment = storySegment.replace("<end>", concept.getEnd());
+				} else if (endPOS.equals("verb") || endPOS.equals("verb phrase")) {
+					randomSentence = Randomizer.random(1, this.hasPrerequisite.length);
+					storySegment = causesVerb[randomSentence - 1];
+					storySegment = storySegment.replace("<doer>", characters);
+					VPPhraseSpec verb = nlgFactory.createVerbPhrase(concept.getEnd());
+					verb.setFeature(Feature.TENSE, Tense.PAST);
+					storySegment = storySegment.replace("<end>", realiser.realise(verb).toString());
+
+				} else if (endPOS.equals("adjective") || endPOS.equals("adjective phrase")) {
+					randomSentence = Randomizer.random(1, this.causesAdjective.length);
+					storySegment = causesAdjective[randomSentence - 1];
+					storySegment = storySegment.replace("<doer>", characters);
+					storySegment = storySegment.replace("<end>", concept.getEnd());
+				}
+
+				if (storySegment.length() == 0) {
+					continue;
+				}
+
+				storySegment = storySegment.substring(0, 1).toUpperCase() + storySegment.substring(1);
+
+				// this.history.add(concept.getId());
+				found = true;
+				output.put(concept.getId(), storySegment);
+				return output;
+
+			}
+		}
+
+		return null;
+	}
+	
+	private Map<Integer, String> hasSubEvent() {
+
+		Map<Integer, String> output = new HashMap<>();
+
+		StorySentence storySentence = asr.getCurrentStorySentence();
+		List<Clause> clauses = new ArrayList<Clause>();
+		clauses.addAll(storySentence.getManyDescriptions().values());
+		clauses.addAll(storySentence.getManyPredicates().values());
+
+		Set<Concept> temp = new HashSet<>();
+		boolean found = false;
+		while (!clauses.isEmpty() && !found) {
+
+			int randomClause = Randomizer.random(1, clauses.size());
+			Clause clause = clauses.remove(randomClause - 1);
+
+			List<Noun> doers = new ArrayList<>();
+			for (Noun noun : clause.getManyDoers().values()) {
+				doers.add(noun);
+			}
+
+			String characters = SurfaceRealizer.wordsConjunction(doers);
+
+			for (String concept : clause.getConcepts()) {
+				temp.addAll(ConceptNetDAO.getConceptTo(concept, "HasSubEvent"));
+				temp.addAll(ConceptNetDAO.getConceptTo(concept, "HasFirstSubEvent"));
+				temp.addAll(ConceptNetDAO.getConceptTo(concept, "HasLastSubEvent"));
+			}
+
+			if (temp.isEmpty()) {
+				found = false;
+			}
+			List<Concept> concepts = new ArrayList<>(temp);
+
+			while (!concepts.isEmpty() && !found) {
+				int randomConcept = Randomizer.random(1, concepts.size());
+				Concept concept = concepts.remove(randomConcept - 1);
+
+				if (history.contains(concept.getId())) {
+					continue;
+				}
 				String endPOS = concept.getEndPOS();
 
 				int randomSentence = 0;
