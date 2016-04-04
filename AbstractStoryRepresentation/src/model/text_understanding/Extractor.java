@@ -201,7 +201,19 @@ public class Extractor {
 					}
 				}
 			}
-		
+			else if (tdReln.equals("auxpass")){ /** to create get + verb concepts **/		
+				Event event = storySentence.getPredicate(td.gov().index());
+				if(td.dep().lemma().equals("get")){
+					//create concept
+					if (event == null) {
+						event = new Event(td.gov().lemma());
+						storySentence.addPredicate(td.gov().index(), event);
+					}
+					event.addConcept(td.dep().lemma() + " " + td.gov().originalText());
+				}
+				event.addConcept(conceptParser.createConceptAsVerb(td.gov().lemma()));
+				event.addConcept(conceptParser.createConceptWithDirectObject(td.gov().lemma(), "someone"));
+			}
 
 			else if (tdReln.equals("iobj")) { /**indirect object**/
 				if (tdDepTag.contains("NN") && tdGovTag.contains("VB")) {
