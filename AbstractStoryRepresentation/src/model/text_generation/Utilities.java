@@ -1,6 +1,7 @@
 package model.text_generation;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import model.story_representation.AbstractStoryRepresentation;
@@ -42,6 +43,14 @@ public class Utilities {
 			}
 		}
 		return location;
+	}
+
+	public static <T> int countLists(Collection<List<T>> collection) {
+		int count = 0;
+		for (List<T> list : collection) {
+			count += list.size();
+		}
+		return count;
 	}
 
 }

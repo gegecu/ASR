@@ -398,33 +398,6 @@ public class StorySegmentGenerator extends TextGeneration {
 
 	}
 
-	private List<String> getNouns() {
-
-		nounThreshold = 1;
-		List<String> temp = new ArrayList<>();
-		PriorityQueue<Noun> nouns = new PriorityQueue<>();
-
-		for (String i : this.asr.getCurrentStorySentence().getAllNounsInStorySentence()) {
-			nouns.add(asr.getNoun(i));
-		}
-
-		while (temp.isEmpty() && !nouns.isEmpty()) {
-
-			Noun noun = nouns.peek();
-			while (!nouns.isEmpty()
-					&& noun.getAttributes().values().size() + noun.getReferences().values().size() < nounThreshold) {
-				noun = nouns.remove();
-				temp.add(noun.getId());
-			}
-
-			nounThreshold += 2;
-
-		}
-
-		return temp;
-
-	}
-
 	private Map<Integer, String> causes() {
 
 		Map<Integer, String> output = new HashMap<>();

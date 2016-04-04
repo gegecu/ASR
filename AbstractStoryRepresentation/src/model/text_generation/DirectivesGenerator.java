@@ -129,8 +129,8 @@ public class DirectivesGenerator extends TextGeneration {
 			int randomNoun = Randomizer.random(1, nounId.size());
 			Noun noun = asr.getNoun(nounId.remove(randomNoun - 1));
 
-			threshold += countLists(noun.getAttributes().values());
-			threshold += countLists(noun.getReferences().values());
+			threshold += Utilities.countLists(noun.getAttributes().values());
+			threshold += Utilities.countLists(noun.getReferences().values());
 
 			// find other noun if the number of properties of the current
 			// noun is greater than descriptionThreshold
@@ -146,14 +146,6 @@ public class DirectivesGenerator extends TextGeneration {
 
 		return directive;
 
-	}
-
-	private <T> int countLists(Collection<List<T>> collection) {
-		int count = 0;
-		for (List<T> list : collection) {
-			count += list.size();
-		}
-		return count;
 	}
 
 	private String capableOf() {
@@ -180,7 +172,7 @@ public class DirectivesGenerator extends TextGeneration {
 				VPPhraseSpec verb = nlgFactory.createVerbPhrase(predicate.getAction());
 				verb.setFeature(Feature.TENSE, Tense.PAST);
 				String action = realiser.realise(verb).toString();
-				
+
 				Collection<Noun> directObjects = predicate.getDirectObjects().values();
 				if (predicate.getDirectObjects().size() > 0) {
 					Noun noun = directObjects.iterator().next();
@@ -204,10 +196,11 @@ public class DirectivesGenerator extends TextGeneration {
 
 		if (predicates.isEmpty() && directive == null) {
 			int randomCapableOfQuestion = Randomizer.random(1, this.causeEffectAlternative.length);
-			directive = this.causeEffectAlternative[randomCapableOfQuestion-1];
+			directive = this.causeEffectAlternative[randomCapableOfQuestion - 1];
 		}
 
 		return directive;
+
 	}
 
 }
