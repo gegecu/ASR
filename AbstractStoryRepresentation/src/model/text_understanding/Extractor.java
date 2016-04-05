@@ -313,7 +313,8 @@ public class Extractor {
 				}
 				
 				for(Noun n: storySentence.getPredicate(td.gov().index()).getManyDoers().values()) {
-					if (tdDepTag.equals("JJ")) {
+					if (tdDepTag.contains("JJ")) {
+						System.out.println("JJR");
 						n.addAttribute("HasProperty", td.dep().lemma());
 						description.addDoer(n.getId(), n);
 						description.addAttribute("HasProperty", td.dep().lemma());
@@ -340,6 +341,7 @@ public class Extractor {
 						}
 					}
 				}
+				storySentence.addDescription(td.dep().lemma(), description);
 				storySentence.getManyPredicates().remove(td.gov().index());
 			}
 
@@ -384,7 +386,8 @@ public class Extractor {
 						}	
 						description.addAttribute("HasProperty", td.dep().lemma());
 						description.addConcept(conceptParser.createConceptAsAdjective(td.dep().lemma()));
-					storySentence.getManyPredicates().remove(td.gov().lemma());
+						storySentence.addDescription(td.dep().lemma(), description);
+						storySentence.getManyPredicates().remove(td.gov().lemma());
 					}
 				}
 			}

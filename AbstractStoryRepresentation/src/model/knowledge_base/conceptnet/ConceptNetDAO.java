@@ -192,7 +192,7 @@ public static Boolean getFourHops(String conflict, String possibleResolution) {
 				+ "LEFT JOIN concepts AS c2 ON c2.id = t2.toID "
 				+ "LEFT JOIN concept_relations AS t3 ON t3.fromID = t2.toID "
 				+ "LEFT JOIN concepts AS c3 ON c3.id = t3.toID "
-				+ "WHERE t1.fromID = (SELECT id FROM CONCEPTS WHERE concept = ?)";
+				+ "WHERE t1.fromID = (SELECT id FROM CONCEPTS WHERE concept = ? LIMIT 1)";
 		
 		Connection connection = null;
 		PreparedStatement ps = null;
