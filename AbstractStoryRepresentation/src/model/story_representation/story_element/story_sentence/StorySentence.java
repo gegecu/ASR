@@ -10,11 +10,11 @@ import java.util.Set;
 import model.story_representation.story_element.noun.Noun;
 
 public class StorySentence {
-	private Map<Integer, Event> predicates;
+	private Map<String, Event> predicates;
 	private Map<String, Description> description;
 	
 	public StorySentence() {
-		this.predicates = new HashMap<Integer, Event>();
+		this.predicates = new HashMap<String, Event>();
 		this.description = new HashMap<String, Description>();
 	}
 
@@ -30,15 +30,15 @@ public class StorySentence {
 		return this.description;
 	}
 
-	public void addPredicate(Integer id, Event predicate) {
+	public void addPredicate(String id, Event predicate) {
 		this.predicates.put(id, predicate);
 	}
 
-	public Event getPredicate(Integer id) {
+	public Event getPredicate(String id) {
 		return this.predicates.get(id);
 	}
 
-	public Map<Integer, Event> getManyPredicates() {
+	public Map<String, Event> getManyPredicates() {
 		return this.predicates;
 	}
 

@@ -2,7 +2,9 @@ package model.text_understanding;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import model.story_representation.AbstractStoryRepresentation;
@@ -31,13 +33,12 @@ public class Preprocessing {
 		this.pipeline = pipeline;
 	}
 
-	public String preprocess(String text, AbstractStoryRepresentation asr) {
-		String result = text;
+	public Map<String, String> preprocess(String text, AbstractStoryRepresentation asr) {
 		
 		//result = normalize(result);
-		result = coreference(result, asr);
+		return coreference(text, asr);
 		//result = normalize(result);
-		return result;
+
 	}
 
 	private String normalize(String text) {
@@ -58,58 +59,78 @@ public class Preprocessing {
 		return input;
 	}
 
-	private String coreference(String text, AbstractStoryRepresentation asr) {
-		String output = "";
+	private Map<String, String> coreference(String text, AbstractStoryRepresentation asr) {
+		
+		Map<String, String> coreference = new HashMap();
+		
 		Annotation document = new Annotation(text);
 		pipeline.annotate(document);
-
-		List<Sentence> sens = new ArrayList<Sentence>();
-		List<CoreMap> sentences = document.get(SentencesAnnotation.class);
-
-		for (CoreMap sentence : sentences) {
-			Sentence s = new Sentence();
-			for (CoreLabel token : sentence.get(TokensAnnotation.class)) {
-				String word = token.get(TextAnnotation.class);
-				String pos = token.get(PartOfSpeechAnnotation.class);
-				Word w = new Word();
-				w.addInfo("text", word);
-				w.addInfo("pos", pos);
-				s.addWord(token.index(), w);
+		
+		for (CorefChain cc : document.get(CorefCoreAnnotations.CorefChainAnnotation.class).values()) {
+			for (CorefMention c1 : cc.getMentionsInTextualOrder()) {
+			
+				coreference.put(c1.sentNum + " " + c1.headIndex, cc.getRepresentativeMention().sentNum + " " + cc.getRepresentativeMention().headIndex);
 			}
-			sens.add(s);
 		}
 		
-		 for (CorefChain cc : document.get(CorefCoreAnnotations.CorefChainAnnotation.class).values()) {
-
-			String mainRef = cc.getRepresentativeMention().mentionSpan;
-			int num = cc.getRepresentativeMention().sentNum;
-			MentionType type = cc.getRepresentativeMention().mentionType;
-			
-			for (CorefMention c1 : cc.getMentionsInTextualOrder()) {
-				Sentence newSen = sens.get(c1.sentNum - 1);
-				if (num != c1.sentNum && type.representativeness > c1.mentionType.representativeness) {
-					if (newSen.getWord(c1.startIndex).getInfo("pos").equals("PRP$")) {
-						newSen.getWord(c1.startIndex).addInfo("text", mainRef + "'s");
-					} else {
-						newSen.getWord(c1.startIndex).addInfo("text", mainRef);
-					}
-					if (c1.endIndex > c1.startIndex + 1) {
-						newSen.removeWord(c1.endIndex - 1);
-					}
-				}
-
-			}
+		
+		for(Map.Entry<String, String> entry: coreference.entrySet()) {
+			System.out.println(entry.getKey() + " : " + entry.getValue());
 		}
-		 
-		for (Sentence sen : sens) {
-			output += sen.getWholeSentence();
-		}
-
-		if (output.length() == 0) {
-			return text;
-		} else {
-			return output;
-		}
+		
+		return coreference;
+		
+//		String output = "";
+//		Annotation document = new Annotation(text);
+//		pipeline.annotate(document);
+//
+//		List<Sentence> sens = new ArrayList<Sentence>();
+//		List<CoreMap> sentences = document.get(SentencesAnnotation.class);
+//
+//		for (CoreMap sentence : sentences) {
+//			Sentence s = new Sentence();
+//			for (CoreLabel token : sentence.get(TokensAnnotation.class)) {
+//				String word = token.get(TextAnnotation.class);
+//				String pos = token.get(PartOfSpeechAnnotation.class);
+//				Word w = new Word();
+//				w.addInfo("text", word);
+//				w.addInfo("pos", pos);
+//				s.addWord(token.index(), w);
+//			}
+//			sens.add(s);
+//		}
+//		
+//		 for (CorefChain cc : document.get(CorefCoreAnnotations.CorefChainAnnotation.class).values()) {
+//
+//			String mainRef = cc.getRepresentativeMention().mentionSpan;
+//			int num = cc.getRepresentativeMention().sentNum;
+//			MentionType type = cc.getRepresentativeMention().mentionType;
+//			
+//			for (CorefMention c1 : cc.getMentionsInTextualOrder()) {
+//				Sentence newSen = sens.get(c1.sentNum - 1);
+//				if (num != c1.sentNum && type.representativeness > c1.mentionType.representativeness) {
+//					if (newSen.getWord(c1.startIndex).getInfo("pos").equals("PRP$")) {
+//						newSen.getWord(c1.startIndex).addInfo("text", mainRef + "'s");
+//					} else {
+//						newSen.getWord(c1.startIndex).addInfo("text", mainRef);
+//					}
+//					if (c1.endIndex > c1.startIndex + 1) {
+//						newSen.removeWord(c1.endIndex - 1);
+//					}
+//				}
+//
+//			}
+//		}
+//		 
+//		for (Sentence sen : sens) {
+//			output += sen.getWholeSentence();
+//		}
+//
+//		if (output.length() == 0) {
+//			return text;
+//		} else {
+//			return output;
+//		}
 
 	}
 

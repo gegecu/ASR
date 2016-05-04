@@ -21,7 +21,8 @@ public class TextUnderstanding {
 	}
 	
 	public void processInput(String text) {
-		extractionModule.extract(preprocessingModule.preprocess(text, asr), asr);
+		
+		extractionModule.extract(text, preprocessingModule.preprocess(text, asr), asr);
 	}
 }
 

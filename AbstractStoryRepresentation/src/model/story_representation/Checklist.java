@@ -48,7 +48,8 @@ public class Checklist {
 	}
 
 	private void locationExist() {
-		if(!this.isLocationExist) {
+		
+		this.isLocationExist = false;
 			
 			List<Character> temp = new ArrayList();
 			
@@ -65,7 +66,7 @@ public class Checklist {
 	
 				List<Noun> temp2 = c.getReference("IsA");
 				
-				//System.out.println(c.getId());
+				System.out.println(c.getId());
 				
 				if(c.getReference("AtLocation") != null && !c.getReference("AtLocation").isEmpty()) {
 					System.out.println(c.getId());
@@ -73,7 +74,7 @@ public class Checklist {
 					if(temp2 != null) {
 						for(Noun n: temp2) {
 							if(n instanceof Character) {
-								//System.out.println(n.getId());
+								System.out.println(n.getId());
 								temp3.add((Character)n);
 							}
 						}
@@ -83,11 +84,10 @@ public class Checklist {
 			
 			temp.removeAll(temp3);
 
-			//System.out.println(temp.size());
+			System.out.println(temp.size());
 			if(temp.isEmpty()) {
 				this.isLocationExist = true;
 			}
- 		}
 	}
 
 	public boolean isConflictExist() {

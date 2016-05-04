@@ -3,6 +3,7 @@ package model.text_understanding;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -46,7 +47,7 @@ public class Extractor {
 		this.dictionary = new Dictionaries();
 	}
 
-	public void extract(String text, AbstractStoryRepresentation asr) {
+	public void extract(String text, Map<String, String> coreference, AbstractStoryRepresentation asr) {
 		Annotation document = new Annotation(text);
 		pipeline.annotate(document);
 
@@ -63,7 +64,8 @@ public class Extractor {
 			Collections.sort(listDependencies, new TypedDependencyComparator());
 			
 			for (TypedDependency td : listDependencies) { 
-				extractDependency(td, asr, storySentence, cp);//extract based on dependency
+				
+				extractDependency(coreference, td, asr, storySentence);//extract based on dependency
 			}
 		
 			for(Event event: storySentence.getManyPredicates().values()){
@@ -78,11 +80,27 @@ public class Extractor {
 	}
 
 	//private void 
-	private void extractDependency(TypedDependency td, AbstractStoryRepresentation asr, StorySentence storySentence, ConceptParser conceptParser) {
+	private void extractDependency(Map<String, String> coreference, TypedDependency td, AbstractStoryRepresentation asr, StorySentence storySentence) {
 		try {
 			String tdDepTag = td.dep().tag();
 			String tdGovTag = td.gov().tag();
 			String tdReln = td.reln().toString();
+			String tdDepId = (td.dep().sentIndex() + 1) + " " + td.dep().index();
+			String tdGovId = (td.gov().sentIndex() + 1) + " " + td.gov().index();
+			System.out.println(td.dep().lemma() + " before : " + tdDepId);
+			System.out.println(td.gov().lemma() + "before : " + tdGovId);
+			if(coreference.get(tdDepId) != null) {
+				
+				tdDepId = coreference.get(tdDepId);
+				System.out.println("after : " + tdDepId);
+			}
+			
+			if(coreference.get(tdGovId) != null) {
+				
+				
+				tdGovId = coreference.get(tdGovId);
+				System.out.println("after : " + tdGovId);
+			}
 
 			System.out.println("extracting:..." + td.dep().originalText() + ":" + tdDepTag + ", " + td.gov().originalText() + ":"
 					+ tdGovTag + ",  " + tdReln);
@@ -92,7 +110,7 @@ public class Extractor {
 				boolean commonNouns = tdDepTag.equals("NN") && tdGovTag.contains("NN");
 				String name = td.dep().lemma() + " " + td.gov().lemma();
 
-				Noun noun = asr.getNoun(td.gov().lemma());
+				Noun noun = asr.getNoun(tdGovId);
 
 				if (noun == null) {
 					if (properNouns) {
@@ -106,14 +124,14 @@ public class Extractor {
 				}
 
 				if(noun != null)
-					asr.addNoun(td.gov().lemma(), noun);
+					asr.addNoun(tdGovId, noun);
 
-				System.out.println("compound: " + asr.getNoun(td.gov().lemma()).getId());
+				//System.out.println("compound: " + asr.getNoun(td.gov().lemma()).getId());
 			}
 			
 			else if (tdReln.contains("nsubj")) {
 
-				Noun noun = asr.getNoun(td.dep().lemma());
+				Noun noun = asr.getNoun(tdDepId);
 
 				if (noun == null) { 
 					if (tdDepTag.equals("NNP")) {
@@ -123,10 +141,10 @@ public class Extractor {
 						noun = this.extractCategory(this.getSRL(td.dep().lemma()), td.dep().lemma());
 					}
 					
-					System.out.println(noun.getClass().toString());
+					//System.out.println(noun.getClass().toString());
 
 					if(noun != null)
-					asr.addNoun(td.dep().lemma(), noun);
+					asr.addNoun(tdDepId, noun);
 				}
 				
 				if(noun != null) { /**if noun exists**/
@@ -135,18 +153,18 @@ public class Extractor {
 
 						noun.addAttribute("HasProperty", td.gov().lemma());
 						
-						Description description = storySentence.getDescription(td.gov().lemma());
+						Description description = storySentence.getDescription(tdGovId);
 						if(description == null) {
 							description = new Description();
 						}
 						
-						description.addDoer(noun.getId(), noun);
+						description.addDoer(tdDepId, noun);
 						description.addAttribute("HasProperty", td.gov().lemma());
 						
-						description.addConcept(conceptParser.createConceptAsAdjective(td.gov().lemma()));
-						description.addConcept(conceptParser.createConceptAsPredicativeAdjective(td.gov().lemma()));
+						description.addConcept(cp.createConceptAsAdjective(td.gov().lemma()));
+						description.addConcept(cp.createConceptAsPredicativeAdjective(td.gov().lemma()));
 						
-						storySentence.addDescription(td.gov().lemma(), description);
+						storySentence.addDescription(tdGovId, description);
 						
 						System.out.println(noun.getId() + " hasProperty " + td.gov().lemma());
 					}
@@ -160,19 +178,19 @@ public class Extractor {
 							System.out.println(noun.getId() + " capable of " + td.gov().lemma());
 						}
 	
-						Event event = storySentence.getPredicate(td.gov().index());
+						Event event = storySentence.getPredicate(tdGovId);
 
 						if (event == null) {
 							event = new Event(td.gov().lemma());
 						}
-						event.addDoer(td.dep().lemma(), noun);
-						event.addConcept(conceptParser.createConceptAsVerb(td.gov().lemma()));
-						storySentence.addPredicate(td.gov().index(), event);
+						event.addDoer(tdDepId, noun);
+						event.addConcept(cp.createConceptAsVerb(td.gov().lemma()));
+						storySentence.addPredicate(tdGovId, event);
 					}						
 				
 	
 					else if (tdGovTag.contains("NN")) { /**for isA type relation**/
-						Noun noun2 = asr.getNoun(td.gov().lemma());
+						Noun noun2 = asr.getNoun(tdGovId);
 						if (noun2 == null) {
 							if (tdGovTag.equals("NNP")) {
 								noun2 = this.extractCategory(this.getNER(td.gov().lemma()), td.gov().lemma());
@@ -181,44 +199,44 @@ public class Extractor {
 								noun2 = this.extractCategory(this.getSRL(td.gov().lemma()), td.gov().lemma());
 							}
 		
-							asr.addNoun(td.gov().lemma(), noun2);
+							asr.addNoun(tdGovId, noun2);
 						}
 		
 						noun.addReference("IsA", noun2);
 						
-						Description description = storySentence.getDescription(td.gov().lemma());
+						Description description = storySentence.getDescription(tdGovId);
 						if(description == null) {
 							description = new Description();
 						}
 						
-						description.addDoer(noun.getId(), noun);
-						description.addReference("IsA", noun2);
+						description.addDoer(tdDepId, noun);
+						description.addReference("IsA", noun2); 
 						
-						description.addConcept(conceptParser.createConceptAsAdjective(td.gov().lemma()));
-						description.addConcept(conceptParser.createConceptAsPredicativeAdjective(td.gov().lemma()));
+						description.addConcept(cp.createConceptAsAdjective(td.gov().lemma()));
+						description.addConcept(cp.createConceptAsPredicativeAdjective(td.gov().lemma()));
 						
-						storySentence.addDescription(td.gov().lemma(), description);
+						storySentence.addDescription(tdGovId, description);
 					}
 				}
 			}
 			else if (tdReln.equals("auxpass")){ /** to create get + verb concepts **/		
-				Event event = storySentence.getPredicate(td.gov().index());
+				Event event = storySentence.getPredicate(tdGovId);
 				if(td.dep().lemma().equals("get")){
 					//create concept
 					if (event == null) {
 						event = new Event(td.gov().lemma());
-						storySentence.addPredicate(td.gov().index(), event);
+						storySentence.addPredicate(tdGovId, event);
 					}
 					event.addConcept(td.dep().lemma() + " " + td.gov().originalText());
 				}
-				event.addConcept(conceptParser.createConceptAsVerb(td.gov().lemma()));
-				event.addConcept(conceptParser.createConceptWithDirectObject(td.gov().lemma(), "someone"));
+				event.addConcept(cp.createConceptAsVerb(td.gov().lemma()));
+				event.addConcept(cp.createConceptWithDirectObject(td.gov().lemma(), "someone"));
 			}
 
 			else if (tdReln.equals("iobj")) { /**indirect object**/
 				if (tdDepTag.contains("NN") && tdGovTag.contains("VB")) {
 
-					Noun noun = asr.getNoun(td.dep().lemma());
+					Noun noun = asr.getNoun(tdDepId);
 
 					if (noun == null) { 
 						if (tdDepTag.equals("NNP")) {
@@ -228,24 +246,24 @@ public class Extractor {
 							noun = this.extractCategory(this.getSRL(td.dep().lemma()), td.dep().lemma());
 						}
 
-						asr.addNoun(td.dep().lemma(), noun);
+						asr.addNoun(tdDepId, noun);
 					}
 
-					Event event = storySentence.getPredicate(td.gov().index());
+					Event event = storySentence.getPredicate(tdGovId);
 
 					if (event == null) {
 						event = new Event(td.gov().lemma());
 					}
-					event.addReceiver(td.dep().lemma(), noun);
-					storySentence.addPredicate(td.gov().index(), event);
+					event.addReceiver(tdDepId, noun);
+					storySentence.addPredicate(tdGovId, event);
 
-					System.out.println("iobj: " + asr.getNoun(td.dep().lemma()).getId());
+					//System.out.println("iobj: " + asr.getNoun(td.dep().lemma()).getId());
 				}
 			}
 
 			else if (tdReln.equals("dobj") || tdReln.equals("nmod:for") || tdReln.equals("nmod:agent")) {
 
-				Noun noun = asr.getNoun(td.dep().lemma());
+				Noun noun = asr.getNoun(tdDepId);
 
 				if (noun == null) {
 					if (tdDepTag.equals("NNP")) {
@@ -255,10 +273,10 @@ public class Extractor {
 						noun = this.extractCategory(this.getSRL(td.dep().lemma()), td.dep().lemma());
 					}
 
-					asr.addNoun(td.dep().lemma(), noun);
+					asr.addNoun(tdDepId, noun);
 				}
 
-				Event event = storySentence.getPredicate(td.gov().index());
+				Event event = storySentence.getPredicate(tdGovId);
 
 				if (event == null) {
 					event = new Event(td.gov().lemma());
@@ -268,60 +286,61 @@ public class Extractor {
 	
 					if (td.gov().lemma().equals("has") || td.gov().lemma().equals("have")) {
 						
-						Description description = storySentence.getDescription(td.dep().lemma());
+						Description description = storySentence.getDescription(tdDepId);
 						if(description == null) {
 							description = new Description();
 						}
 
-						for(Noun n: storySentence.getPredicate(td.gov().index()).getManyDoers().values()) {
+						for(Map.Entry<String, Noun> entry: storySentence.getPredicate(tdGovId).getManyDoers().entrySet()) {
 							if (noun != null) {
-								n.addReference("HasA", noun);
-								description.addDoer(n.getId(), n);
+								entry.getValue().addReference("HasA", noun);
+								description.addDoer(entry.getKey(), entry.getValue());
 								description.addReference("HasA", noun);
-								description.addConcept(conceptParser.createConceptWithDirectObject(td.gov().lemma(), td.dep().lemma()));
+								description.addConcept(cp.createConceptWithDirectObject(td.gov().lemma(), td.dep().lemma()));
 								description.addConcept(td.dep().lemma());
 							}
 						}
-						storySentence.addDescription(td.dep().lemma(), description);
-						storySentence.getManyPredicates().remove(td.gov().index());
+						
+						storySentence.addDescription(tdDepId, description);
+						storySentence.getManyPredicates().remove(tdGovId);
 						
 					} else {
 						
 						//create concept
-						event.addDirectObject(td.dep().lemma(), noun);
-						storySentence.addPredicate(td.gov().index(), event);
+						event.addDirectObject(tdDepId, noun);
+						storySentence.addPredicate(tdGovId, event);
 									
 						if(noun instanceof Character) //if direct object is a person, change to someone
-							event.addConcept(conceptParser.createConceptWithDirectObject(td.gov().lemma(), "someone"));
+							event.addConcept(cp.createConceptWithDirectObject(td.gov().lemma(), "someone"));
 						else {
-							event.addConcept(conceptParser.createConceptWithDirectObject(td.gov().lemma(), td.dep().lemma()));
+							event.addConcept(cp.createConceptWithDirectObject(td.gov().lemma(), td.dep().lemma()));
 							event.addConcept(td.dep().lemma());
 						}
 						
-						System.out.println("dobj: "
-								+ storySentence.getPredicate(td.gov().index()).getDirectObject(td.dep().lemma()).getId());
+//						System.out.println("dobj: "
+//								+ storySentence.getPredicate(tdGovId).getDirectObject(tdDepId).getId());
 					}
 				}
 			}
 
 			else if (tdReln.equals("xcomp") && dictionary.copulas.contains(td.gov().lemma())) {
 				
-				Description description = storySentence.getDescription(td.dep().lemma());
+				Description description = storySentence.getDescription(tdDepId);
 				
 				if(description == null) {
 					description = new Description();
 				}
 				
-				for(Noun n: storySentence.getPredicate(td.gov().index()).getManyDoers().values()) {
+				for(Map.Entry<String, Noun> entry: storySentence.getPredicate(tdGovId).getManyDoers().entrySet()) {
 					if (tdDepTag.equals("JJ")) {
-						n.addAttribute("HasProperty", td.dep().lemma());
-						description.addDoer(n.getId(), n);
+						entry.getValue().addAttribute("HasProperty", td.dep().lemma());
+						description.addDoer(entry.getKey(), entry.getValue());
 						description.addAttribute("HasProperty", td.dep().lemma());
-						description.addConcept(conceptParser.createConceptAsAdjective(td.dep().lemma()));
-						description.addConcept(conceptParser.createConceptAsPredicativeAdjective(td.dep().lemma()));
+						description.addConcept(cp.createConceptAsAdjective(td.dep().lemma()));
+						description.addConcept(cp.createConceptAsPredicativeAdjective(td.dep().lemma()));
 					} else if (tdDepTag.contains("NN")) {
 						// n.addAttribute("IsA", td.dep().lemma());
-						Noun noun2 = asr.getNoun(td.dep().lemma());
+						Noun noun2 = asr.getNoun(tdDepId);
 						if (noun2 == null) {
 							if (tdDepTag.equals("NNP")) {
 								noun2 = this.extractCategory(this.getNER(td.dep().lemma()), td.dep().lemma());
@@ -330,21 +349,22 @@ public class Extractor {
 								noun2 = this.extractCategory(this.getSRL(td.dep().lemma()), td.dep().lemma());
 							}
 
-							asr.addNoun(td.dep().lemma(), noun2);
+							asr.addNoun(tdDepId, noun2);
 						}
 
 						if(noun2 != null) {
-							n.addReference("IsA", noun2);
+							entry.getValue().addReference("IsA", noun2);
 							description.addReference("IsA", noun2);
-							description.addConcept(conceptParser.createConceptAsRole(td.dep().lemma()));
+							description.addConcept(cp.createConceptAsRole(td.dep().lemma()));
 						}
 					}
+				
 				}
-				storySentence.getManyPredicates().remove(td.gov().index());
+				storySentence.getManyPredicates().remove(tdGovId);
 			}
 
 			else if (tdReln.equals("amod")) { /** 'adjective noun' format **/
-				Noun noun = asr.getNoun(td.gov().lemma());
+				Noun noun = asr.getNoun(tdGovId);
 
 				if (noun == null) {
 					if (tdGovTag.equals("NNP")) {
@@ -354,44 +374,46 @@ public class Extractor {
 						noun = this.extractCategory(this.getSRL(td.gov().lemma()), td.gov().lemma());
 					}
 
-					asr.addNoun(td.gov().lemma(), noun);
+					asr.addNoun(tdGovId, noun);
 				}
 
 				noun.addAttribute("HasProperty", td.dep().lemma());
-				System.out.println("amod " + noun.getId());
+				//System.out.println("amod " + noun.getId());
 				
-				Description description = storySentence.getDescription(td.dep().lemma());
+				Description description = storySentence.getDescription(tdDepId);
 				if(description == null) {
 					description = new Description();
 				}
 				
 				description.addAttribute("HasProperty", td.dep().lemma());
-				description.addConcept(conceptParser.createConceptAsAdjective(td.dep().lemma()));
-				description.addConcept(conceptParser.createConceptAsPredicativeAdjective(td.dep().lemma()));
+				description.addConcept(cp.createConceptAsAdjective(td.dep().lemma()));
+				description.addConcept(cp.createConceptAsPredicativeAdjective(td.dep().lemma()));
 				
 			}
 
 			else if (tdReln.equals("advmod")) {
 				if (tdDepTag.equals("RB")) {
 					if(dictionary.copulas.contains(td.gov().lemma())) {
-						Description description = storySentence.getDescription(td.dep().lemma());
+						Description description = storySentence.getDescription(tdDepId);
 						if(description == null) {
 							description = new Description();
 						}
-						for(Noun n: storySentence.getPredicate(td.gov().index()).getManyDoers().values()) {
-							n.addAttribute("HasProperty", td.dep().lemma());
-							description.addDoer(n.getId(), n);
-						}	
+						
+						for(Map.Entry<String, Noun> entry: storySentence.getPredicate(tdGovId).getManyDoers().entrySet()) {
+							entry.getValue().addAttribute("HasProperty", td.dep().lemma());
+							description.addDoer(entry.getKey(), entry.getValue());
+						}
+
 						description.addAttribute("HasProperty", td.dep().lemma());
-						description.addConcept(conceptParser.createConceptAsAdjective(td.dep().lemma()));
-					storySentence.getManyPredicates().remove(td.gov().lemma());
+						description.addConcept(cp.createConceptAsAdjective(td.dep().lemma()));
+					storySentence.getManyPredicates().remove(tdGovId);
 					}
 				}
 			}
 
 			else if (tdReln.equals("nmod:at") || tdReln.equals("nmod:near") || tdReln.equals("nmod:to")
 					|| tdReln.equals("nmod:in") || tdReln.equals("nmod:on")) {
-				Noun noun = asr.getNoun(td.dep().lemma());
+				Noun noun = asr.getNoun(tdDepId);
 
 				if (noun == null) {
 					if (tdDepTag.equals("NNP")) {
@@ -401,40 +423,40 @@ public class Extractor {
 						noun = this.extractCategory(this.getSRL(td.dep().lemma()), td.dep().lemma());
 					}
 
-					asr.addNoun(td.dep().lemma(), noun);
+					asr.addNoun(tdDepId, noun);
 				}
 
 				if (noun != null && noun instanceof Location) {
-					Description description = storySentence.getDescription(td.dep().lemma());
+					Description description = storySentence.getDescription(tdDepId);
 					if(description == null) {
 						description = new Description();
 					}
 					
-					for (Noun n : storySentence.getPredicate(td.gov().index()).getManyDoers().values()) {
-						n.addReference("AtLocation", noun);
+					for(Map.Entry<String, Noun> entry: storySentence.getPredicate(tdGovId).getManyDoers().entrySet()) {
+						entry.getValue().addReference("AtLocation", noun);
 						description.addReference("AtLocation", noun);
-						description.addDoer(n.getId(), n);
+						description.addDoer(entry.getKey(), entry.getValue());
 					}
 
-					Event predicate = storySentence.getPredicate(td.gov().index());
+					Event predicate = storySentence.getPredicate(tdGovId);
 
 					if (predicate == null) {
 						predicate = new Event(td.gov().lemma());
 					}
 					
-					predicate.addDirectObject(noun.getId(), noun);
+					predicate.addDirectObject(tdDepId, noun);
 					System.out.println("Location: " + td.dep().lemma());
 					
 				}
 				
 				if(tdReln.equals("nmod:to") && tdGovTag.contains("VB")){
 					//create concept
-					Event predicate = storySentence.getPredicate(td.gov().index());
+					Event predicate = storySentence.getPredicate(tdGovId);
 					if (predicate == null) {
 						predicate = new Event(td.gov().lemma());
-						storySentence.addPredicate(td.gov().index(), predicate);
+						storySentence.addPredicate(tdGovId, predicate);
 					}
-					predicate.addConcept(conceptParser.createConceptAsInfinitive(td.gov().lemma(),td.dep().lemma()));					
+					predicate.addConcept(cp.createConceptAsInfinitive(td.gov().lemma(),td.dep().lemma()));					
 				}
 
 			}

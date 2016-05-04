@@ -127,13 +127,18 @@ public class Driver {
 						}
 					}	
 					
+					System.out.println();
 					System.out.println("descriptions ");
 					
 					
 					for(Entry<String, Description> entry: e.getManyDescriptions().entrySet()) {
 						//System.out.println(entry.getKey());
 						
-						System.out.println("doers: " + entry.getValue().getManyDoers().keySet());
+						for(Map.Entry<String, Noun> doer: entry.getValue().getManyDoers().entrySet()) {
+							System.out.println(doer.getValue());
+						}
+						
+						
 						System.out.println("attributes ");
 						for(Entry<String, List<String>> entry2: entry.getValue().getAttributes().entrySet()) {
 							System.out.print(entry2.getKey() + " ");
