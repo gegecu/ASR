@@ -33,22 +33,29 @@ public class AbstractStoryRepresentation {
 
 	public void setConflict() {
 		StorySentence possibleConflict = this.getCurrentStorySentence();
-		
+
 		List<Clause> clauses = new ArrayList<Clause>();
 		clauses.addAll(possibleConflict.getManyPredicates().values());
 		clauses.addAll(possibleConflict.getManyDescriptions().values());
-		
+
 		String expectedResolutionConcept = null;
-		
-		for(Clause clause: clauses) {
-			if(this.conflict == null) {
-				if(clause.getPolarity() <= -0.2 && (expectedResolutionConcept = ResolutionFinder.findExpectedResolutionConcept(clause)) != null) {
-					this.conflict = new Conflict(clause, expectedResolutionConcept);
+
+		for (Clause clause : clauses) {
+			if (this.conflict == null) {
+				if (clause.getPolarity() <= -0.2
+						&& (expectedResolutionConcept = ResolutionFinder
+								.findExpectedResolutionConcept(
+										clause)) != null) {
+					this.conflict = new Conflict(clause,
+							expectedResolutionConcept);
 				}
-			}
-			else {
-				if((clause.getPolarity() < this.conflict.getPolarity()) && ((expectedResolutionConcept = ResolutionFinder.findExpectedResolutionConcept(clause)) != null)) {
-					this.conflict = new Conflict(clause, expectedResolutionConcept);
+			} else {
+				if ((clause.getPolarity() < this.conflict.getPolarity())
+						&& ((expectedResolutionConcept = ResolutionFinder
+								.findExpectedResolutionConcept(
+										clause)) != null)) {
+					this.conflict = new Conflict(clause,
+							expectedResolutionConcept);
 				}
 			}
 		}
@@ -59,17 +66,20 @@ public class AbstractStoryRepresentation {
 	}
 
 	public void setResolution() {
+
 		StorySentence possibleResolution = this.getCurrentStorySentence();
-		
+
 		List<Clause> clauses = new ArrayList<Clause>();
 		clauses.addAll(possibleResolution.getManyPredicates().values());
 		clauses.addAll(possibleResolution.getManyDescriptions().values());
-		
+
 		List<Noun> doersInConflict = new ArrayList<Noun>();
-		doersInConflict.addAll(this.conflict.getClause().getManyDoers().values());
-		
-		for(Clause clause: clauses) {
-			if(clause.getConcepts().contains(this.conflict.getExpectedResolutionConcept())) {
+		doersInConflict
+				.addAll(this.conflict.getClause().getManyDoers().values());
+
+		for (Clause clause : clauses) {
+			if (clause.getConcepts()
+					.contains(this.conflict.getExpectedResolutionConcept())) {
 				List<Noun> doersInResolution = new ArrayList<Noun>();
 				doersInResolution.addAll(clause.getManyDoers().values());
 
@@ -80,6 +90,7 @@ public class AbstractStoryRepresentation {
 				}
 			}
 		}
+
 	}
 
 	public Resolution getResolution() {
@@ -88,7 +99,8 @@ public class AbstractStoryRepresentation {
 
 	public void addEvent(StorySentence storySentence) {
 
-		List<StorySentence> storySentences = this.storySentences.get(partOfStory);
+		List<StorySentence> storySentences = this.storySentences
+				.get(partOfStory);
 
 		if (storySentences == null) {
 			storySentences = new ArrayList<StorySentence>();
@@ -96,7 +108,6 @@ public class AbstractStoryRepresentation {
 
 		storySentences.add(storySentence);
 		this.storySentences.put(partOfStory, storySentences);
-
 
 		if (this.partOfStory.equals("start")) {
 			this.setConflict();
@@ -107,7 +118,8 @@ public class AbstractStoryRepresentation {
 	}
 
 	public StorySentence getCurrentStorySentence() {
-		List<StorySentence> storySentences = this.storySentences.get(partOfStory);
+		List<StorySentence> storySentences = this.storySentences
+				.get(partOfStory);
 		if (storySentences == null) {
 			return null;
 		}
@@ -118,7 +130,8 @@ public class AbstractStoryRepresentation {
 		return this.storySentences;
 	}
 
-	public List<StorySentence> getManyStorySentencesBasedOnPart(String partOfStory) {
+	public List<StorySentence> getManyStorySentencesBasedOnPart(
+			String partOfStory) {
 		return this.storySentences.get(partOfStory);
 	}
 
@@ -146,5 +159,4 @@ public class AbstractStoryRepresentation {
 		this.partOfStory = partOfStory;
 	}
 
-	
 }

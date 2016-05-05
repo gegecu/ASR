@@ -10,9 +10,10 @@ import java.util.Set;
 import model.story_representation.story_element.noun.Noun;
 
 public class StorySentence {
+
 	private Map<String, Event> predicates;
 	private Map<String, Description> description;
-	
+
 	public StorySentence() {
 		this.predicates = new HashMap<String, Event>();
 		this.description = new HashMap<String, Description>();
@@ -21,11 +22,11 @@ public class StorySentence {
 	public void addDescription(String attributeId, Description description) {
 		this.description.put(attributeId, description);
 	}
-	
+
 	public Description getDescription(String attributeId) {
 		return this.description.get(attributeId);
 	}
-	
+
 	public Map<String, Description> getManyDescriptions() {
 		return this.description;
 	}
@@ -48,24 +49,27 @@ public class StorySentence {
 		}
 		return false;
 	}
-	
+
 	public List<String> getAllNounsInStorySentence() {
+
 		Set<String> nounId = new HashSet<String>();
 		for (Event predicate : this.getManyPredicates().values()) {
 			nounId.addAll(predicate.getManyDoers().keySet());
 			nounId.addAll(predicate.getDirectObjects().keySet());
 			nounId.addAll(predicate.getReceivers().keySet());
 		}
-		
-		for(Description d: this.description.values()) {
+
+		for (Description d : this.description.values()) {
 			nounId.addAll(d.getManyDoers().keySet());
-			for(List<Noun> referred: d.getReferences().values()) {
-				for(Noun n: referred) {
+			for (List<Noun> referred : d.getReferences().values()) {
+				for (Noun n : referred) {
 					nounId.add(n.getId());
 				}
 			}
 		}
-		
+
 		return new ArrayList<String>(nounId);
+
 	}
+
 }

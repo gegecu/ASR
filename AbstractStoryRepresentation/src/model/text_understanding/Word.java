@@ -18,4 +18,5 @@ public class Word {
 	public String getInfo(String key) {
 		return info.get(key);
 	}
+
 }

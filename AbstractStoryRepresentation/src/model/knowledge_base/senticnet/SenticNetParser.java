@@ -9,21 +9,26 @@ public class SenticNetParser {
 
 	private Model m;
 	private final String file = "senticnet3.rdf.xml";
-	
+
 	public SenticNetParser() {
 		m = FileManager.get().loadModel(file);
 	}
-	
+
 	public float getPolarity(String concept) {
-		Resource title = m.getResource("http://sentic.net/api/en/concept/" + concept);
+
+		Resource title = m
+				.getResource("http://sentic.net/api/en/concept/" + concept);
 		Property contains = m.getProperty("http://sentic.net/apipolarity");
+
 		try {
-			System.out.println("senticPolar" + title.getProperty(contains).getFloat());
+			System.out.println(
+					"senticPolar" + title.getProperty(contains).getFloat());
 			return title.getProperty(contains).getFloat();
-		}catch(NullPointerException e) {
+		} catch (NullPointerException e) {
 			//e.printStackTrace();
 			return 0;
 		}
+
 	}
-		
+
 }

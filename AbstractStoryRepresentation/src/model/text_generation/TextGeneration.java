@@ -37,12 +37,15 @@ public abstract class TextGeneration {
 
 			while (result.isEmpty()) {
 
-				List<String> nounId = asr.getCurrentStorySentence().getAllNounsInStorySentence();
+				List<String> nounId = asr.getCurrentStorySentence()
+						.getAllNounsInStorySentence();
 
 				while (!nounId.isEmpty()) {
 					Noun noun = asr.getNoun(nounId.remove(0));
-					int count = Utilities.countLists(noun.getAttributes().values())
-							+ Utilities.countLists(noun.getReferences().values());
+					int count = Utilities
+							.countLists(noun.getAttributes().values())
+							+ Utilities
+									.countLists(noun.getReferences().values());
 					if (count < currThreshold)
 						result.add(noun.getId());
 				}
@@ -50,8 +53,10 @@ public abstract class TextGeneration {
 				if (result.isEmpty()) {
 					Collection<Noun> nouns = asr.getManyNouns().values();
 					for (Noun noun : nouns) {
-						int count = Utilities.countLists(noun.getAttributes().values())
-								+ Utilities.countLists(noun.getReferences().values());
+						int count = Utilities
+								.countLists(noun.getAttributes().values())
+								+ Utilities.countLists(
+										noun.getReferences().values());
 						if (count < currThreshold)
 							result.add(noun.getId());
 					}

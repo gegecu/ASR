@@ -19,7 +19,8 @@ public class Utilities {
 	 */
 	public static List<Noun> getDoers(StorySentence storySentence) {
 		List<Noun> doers = new ArrayList<Noun>();
-		for (Description description : storySentence.getManyDescriptions().values()) {
+		for (Description description : storySentence.getManyDescriptions()
+				.values()) {
 			for (Noun noun : description.getManyDoers().values()) {
 				if (noun instanceof Character) {
 					doers.add((Character) noun);
@@ -33,7 +34,8 @@ public class Utilities {
 	 * @param storySentence
 	 * @return
 	 */
-	public static Location getLocation(StorySentence storySentence, AbstractStoryRepresentation asr) {
+	public static Location getLocation(StorySentence storySentence,
+			AbstractStoryRepresentation asr) {
 		Location location = null;
 		for (String i : storySentence.getAllNounsInStorySentence()) {
 			Noun noun = asr.getNoun(i);

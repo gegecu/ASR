@@ -10,24 +10,24 @@ import model.knowledge_base.MySQLConnector;
 
 import com.mysql.jdbc.Connection;
 
-public class ConceptNetDAO{
+public class ConceptNetDAO {
 
 	public ConceptNetDAO() {
 		super();
 	}
-	
+
 	public static boolean checkSRL(String start, String relation, String end) {
-		String query = 
-				"select `conceptsFrom`.`concept`, `relations`.`relation`, `conceptsTo`.`concept` " +
-				"from (select `id`, `concept` from `concepts`) as `conceptsFrom`,`relations` as `relations`, `concept_relations` as `concept_relations` " + 
-				"left join `concepts` as `conceptsTo` on `concept_relations`.`toID` = `conceptsTo`.`id` " + 
-				" where `concept_relations`.`fromID` = `conceptsFrom`.`id` and `concept_relations`.`relationID` = `relations`.`id` " +
-				"and `conceptsFrom`.`concept` = ? and `relations`.`relation` = ? and `conceptsTo`.`concept` = ?";
-		
+
+		String query = "select `conceptsFrom`.`concept`, `relations`.`relation`, `conceptsTo`.`concept` "
+				+ "from (select `id`, `concept` from `concepts`) as `conceptsFrom`,`relations` as `relations`, `concept_relations` as `concept_relations` "
+				+ "left join `concepts` as `conceptsTo` on `concept_relations`.`toID` = `conceptsTo`.`id` "
+				+ " where `concept_relations`.`fromID` = `conceptsFrom`.`id` and `concept_relations`.`relationID` = `relations`.`id` "
+				+ "and `conceptsFrom`.`concept` = ? and `relations`.`relation` = ? and `conceptsTo`.`concept` = ?";
+
 		Connection connection = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-		
+
 		try {
 			connection = MySQLConnector.getInstance().getConnection();
 			ps = connection.prepareStatement(query);
@@ -35,64 +35,70 @@ public class ConceptNetDAO{
 			ps.setString(2, relation);
 			ps.setString(3, end);
 			rs = ps.executeQuery();
-			
-			if(rs.next()){
+
+			if (rs.next()) {
 				return true;
 			}
-			
+
 		} catch (SQLException e) {
-		   e.printStackTrace();
-		}finally {
+			e.printStackTrace();
+		} finally {
 			try {
-				if(ps != null)
+				if (ps != null)
 					ps.close();
-				if(connection != null)
+				if (connection != null)
 					connection.close();
-				if(rs != null)
+				if (rs != null)
 					rs.close();
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 		}
-		return false;	
+
+		return false;
+
 	}
-	
+
 	public static List<String> getExpectedResolution(String start) {
+
 		String query = "call four_hops(?)";
-		
+
 		Connection connection = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		List<String> concepts = null;
-		
+
 		try {
+
 			concepts = new ArrayList<String>();
 			connection = MySQLConnector.getInstance().getConnection();
 			ps = connection.prepareStatement(query);
 			ps.setString(1, start);
 			rs = ps.executeQuery();
-			
-			while(rs.next()){
+
+			while (rs.next()) {
 				concepts.add(rs.getString(5));
 			}
-			
+
 		} catch (SQLException e) {
-		   e.printStackTrace();
-		}finally {
+			e.printStackTrace();
+		} finally {
 			try {
-				if(ps != null)
+				if (ps != null)
 					ps.close();
-				if(connection != null)
+				if (connection != null)
 					connection.close();
-				if(rs != null)
+				if (rs != null)
 					rs.close();
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 		}
+
 		return concepts;
+
 	}
-	
+
 	public static List<Concept> getConceptFrom(String end, String relation) {
 
 		String query = "select `concept_relations`.`id`, `conceptsFrom`.`concept`, `conceptsFromPOS`.`partOfSpeech`,  `relations`.`relation`,  `conceptsTo`.`concept`, `conceptsToPOS`.`partOfSpeech` "
@@ -107,7 +113,7 @@ public class ConceptNetDAO{
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		List<Concept> concepts = null;
-		
+
 		try {
 			concepts = new ArrayList<Concept>();
 			connection = MySQLConnector.getInstance().getConnection();
@@ -115,31 +121,34 @@ public class ConceptNetDAO{
 			ps.setString(1, end);
 			ps.setString(2, relation);
 			rs = ps.executeQuery();
-			
-			while(rs.next()){
-				concepts.add(new Concept(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6)));
+
+			while (rs.next()) {
+				concepts.add(new Concept(rs.getInt(1), rs.getString(2),
+						rs.getString(3), rs.getString(4), rs.getString(5),
+						rs.getString(6)));
 			}
-			
+
 		} catch (SQLException e) {
-		   e.printStackTrace();
-		}finally {
+			e.printStackTrace();
+		} finally {
 			try {
-				if(ps != null)
+				if (ps != null)
 					ps.close();
-				if(connection != null)
+				if (connection != null)
 					connection.close();
-				if(rs != null)
+				if (rs != null)
 					rs.close();
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 		}
-		
+
 		return concepts;
+
 	}
-	
+
 	public static List<Concept> getConceptTo(String start, String relation) {
-		
+
 		String query = "select `concept_relations`.`id`, `conceptsFrom`.`concept`, `conceptsFromPOS`.`partOfSpeech`,  `relations`.`relation`,  `conceptsTo`.`concept`, `conceptsToPOS`.`partOfSpeech` "
 				+ "FROM (SELECT  `id`, `concept`, `posID` FROM `concepts`) AS `conceptsFrom` LEFT JOIN `part_of_speeches` AS `conceptsFromPOS` ON `conceptsFrom`.`posID` = `conceptsFromPOS`.`id`, "
 				+ "`concept_relations` AS `concept_relations` LEFT JOIN `concepts` AS `conceptsTo` ON `concept_relations`.`toID` = `conceptsTo`.`id` "
@@ -147,12 +156,12 @@ public class ConceptNetDAO{
 				+ "LEFT JOIN `part_of_speeches` AS `conceptsToPOS` ON `conceptsTo`.`posID` = `conceptsToPOS`.`id` "
 				+ "WHERE `concept_relations`.`fromID` = `conceptsFrom`.`id` "
 				+ "and `conceptsFrom`.`concept` = ? and `relations`.`relation` = ?";
-		
+
 		Connection connection = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		List<Concept> concepts = null;
-		
+
 		try {
 			concepts = new ArrayList<Concept>();
 			connection = MySQLConnector.getInstance().getConnection();
@@ -160,26 +169,30 @@ public class ConceptNetDAO{
 			ps.setString(1, start);
 			ps.setString(2, relation);
 			rs = ps.executeQuery();
-			
-			while(rs.next()){
-				concepts.add(new Concept(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6)));
+
+			while (rs.next()) {
+				concepts.add(new Concept(rs.getInt(1), rs.getString(2),
+						rs.getString(3), rs.getString(4), rs.getString(5),
+						rs.getString(6)));
 			}
-			
+
 		} catch (SQLException e) {
-		   e.printStackTrace();
-		}finally {
+			e.printStackTrace();
+		} finally {
 			try {
-				if(ps != null)
+				if (ps != null)
 					ps.close();
-				if(connection != null)
+				if (connection != null)
 					connection.close();
-				if(rs != null)
+				if (rs != null)
 					rs.close();
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 		}
-		
+
 		return concepts;
+
 	}
+
 }

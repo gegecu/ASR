@@ -9,6 +9,7 @@ import model.story_representation.story_element.noun.Noun;
 import model.story_representation.story_element.story_sentence.StorySentence;
 
 public class Checklist {
+
 	private AbstractStoryRepresentation asr;
 	private boolean isCharacterExist;
 	private boolean isLocationExist;
@@ -32,14 +33,15 @@ public class Checklist {
 	}
 
 	private void characterExist() {
-		if(!this.isCharacterExist) {
-			for(Entry<String, Noun> entry: this.asr.getManyNouns().entrySet()) {
-				if(entry.getValue() instanceof Character) {
+		if (!this.isCharacterExist) {
+			for (Entry<String, Noun> entry : this.asr.getManyNouns()
+					.entrySet()) {
+				if (entry.getValue() instanceof Character) {
 					this.isCharacterExist = true;
 					break;
 				}
 			}
- 		}
+		}
 	}
 
 	public boolean isLocationExist() {
@@ -48,111 +50,114 @@ public class Checklist {
 	}
 
 	private void locationExist() {
-		
+
 		this.isLocationExist = false;
-			
-			List<Character> temp = new ArrayList();
-			
-			for(Entry<String, Noun> entry: this.asr.getManyNouns().entrySet()) {
-				if(entry.getValue() instanceof Character) {
-					temp.add((Character) entry.getValue());
-				}
+
+		List<Character> temp = new ArrayList<>();
+
+		for (Entry<String, Noun> entry : this.asr.getManyNouns().entrySet()) {
+			if (entry.getValue() instanceof Character) {
+				temp.add((Character) entry.getValue());
 			}
-			
-			List<Character> temp3 = new ArrayList();
-			
-			for(int i = 0; i < temp.size(); i++) {
-				Character c = (Character) temp.get(i);
-	
-				List<Noun> temp2 = c.getReference("IsA");
-				
+		}
+
+		List<Character> temp3 = new ArrayList<>();
+
+		for (int i = 0; i < temp.size(); i++) {
+			Character c = (Character) temp.get(i);
+
+			List<Noun> temp2 = c.getReference("IsA");
+
+			System.out.println(c.getId());
+
+			if (c.getReference("AtLocation") != null
+					&& !c.getReference("AtLocation").isEmpty()) {
 				System.out.println(c.getId());
-				
-				if(c.getReference("AtLocation") != null && !c.getReference("AtLocation").isEmpty()) {
-					System.out.println(c.getId());
-					temp3.add(c);
-					if(temp2 != null) {
-						for(Noun n: temp2) {
-							if(n instanceof Character) {
-								System.out.println(n.getId());
-								temp3.add((Character)n);
-							}
+				temp3.add(c);
+				if (temp2 != null) {
+					for (Noun n : temp2) {
+						if (n instanceof Character) {
+							System.out.println(n.getId());
+							temp3.add((Character) n);
 						}
 					}
 				}
 			}
-			
-			temp.removeAll(temp3);
+		}
 
-			System.out.println(temp.size());
-			if(temp.isEmpty()) {
-				this.isLocationExist = true;
-			}
+		temp.removeAll(temp3);
+
+		System.out.println(temp.size());
+		if (temp.isEmpty()) {
+			this.isLocationExist = true;
+		}
+
 	}
 
 	public boolean isConflictExist() {
 		this.conflictExist();
 		return isConflictExist;
 	}
-	
+
 	private void conflictExist() {
-		if(!this.isConflictExist) {
+		if (!this.isConflictExist) {
 			this.isConflictExist = this.asr.getConflict() != null;
 		}
 	}
 
 	public boolean isBeginningComplete() {
-		return this.isCharacterExist && this.isConflictExist && this.isLocationExist;
+		return this.isCharacterExist && this.isConflictExist
+				&& this.isLocationExist;
 	}
-	
+
 	private void seriesActionExist() {
-		if(!this.isSeriesActionExist) {
+		if (!this.isSeriesActionExist) {
 			int nEvents = 0;
-			for(StorySentence ss: this.asr.getManyStorySentencesBasedOnPart("middle")) {
-				if(ss.isValidEvent()) {
+			for (StorySentence ss : this.asr
+					.getManyStorySentencesBasedOnPart("middle")) {
+				if (ss.isValidEvent()) {
 					nEvents++;
 				}
 			}
 			this.isSeriesActionExist = nEvents >= 2;
 		}
 	}
-	
+
 	public boolean isSeriesActionExist() {
 		this.seriesActionExist();
 		return this.isSeriesActionExist;
 	}
-	
+
 	public boolean isMiddleComplete() {
 		return this.isSeriesActionExist;
 	}
-	
+
 	private void resolutionExist() {
-		if(!this.isResolutionExist) {
+		if (!this.isResolutionExist) {
 			this.isResolutionExist = this.asr.getResolution() != null;
 		}
 	}
-	
+
 	public boolean isResolutionExist() {
 		this.resolutionExist();
 		return this.isResolutionExist;
 	}
-	
+
 	public boolean isEndingComplete() {
 		return this.isResolutionExist;
 	}
-	
+
 	public void print() {
-		if(asr.getPartOfStory().equals("start")) {
+		if (asr.getPartOfStory().equals("start")) {
 			System.out.println("Character exist? " + this.isCharacterExist());
 			System.out.println("Location exist? " + this.isLocationExist());
 			System.out.println("Conflict exist? " + this.isConflictExist());
 			System.out.println("Start complete? " + this.isBeginningComplete());
-		}
-		else if (asr.getPartOfStory().equals("middle")) {
-			System.out.println("Series event exist? " + this.isSeriesActionExist());
+		} else if (asr.getPartOfStory().equals("middle")) {
+			System.out.println(
+					"Series event exist? " + this.isSeriesActionExist());
 			System.out.println("Middle complete? " + this.isMiddleComplete());
-		}
-		else if (asr.getPartOfStory().equals("end")) {
+		} else if (asr.getPartOfStory().equals("end")) {
 			System.out.println("Resolution exist? " + this.isResolutionExist());
 			System.out.println("End complete? " + this.isEndingComplete());
 		}

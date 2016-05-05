@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class Sentence {
+
 	private Map<Integer, Word> words;
 
 	public Sentence() {
@@ -29,5 +30,5 @@ public class Sentence {
 	public void removeWord(Integer key) {
 		words.remove(key);
 	}
-}
 
+}

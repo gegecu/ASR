@@ -5,7 +5,7 @@ import model.story_representation.story_element.story_sentence.Clause;
 public class Resolution {
 
 	private Clause clause;
-	
+
 	public Resolution(Clause clause) {
 		this.clause = clause;
 	}
@@ -17,6 +17,5 @@ public class Resolution {
 	public void setClause(Clause clause) {
 		this.clause = clause;
 	}
-	
-	
+
 }

@@ -25,16 +25,20 @@ public class DirectivesGenerator extends TextGeneration {
 
 	// <= 7 hasproperty, capableof, isA, hasA
 
-	private String[] nounStartDirective = { "Describe <noun>.", "Tell me more about <noun>.",
-			"Write more about <noun>.", "I want to hear more about <noun>.", "Tell something more about <noun>." };
+	private String[] nounStartDirective = {"Describe <noun>.",
+			"Tell me more about <noun>.", "Write more about <noun>.",
+			"I want to hear more about <noun>.",
+			"Tell something more about <noun>."};
 
 	private String[] nounStartDirectiveAlternative = {
-			"You have mentioned <noun> awhile ago, tell me more about <noun>" };
+			"You have mentioned <noun> awhile ago, tell me more about <noun>"};
 
-	private String[] causeEffectDirective = { "Tell me more why <noun> <action>.",
-			"Write more about why <noun> <action>.", "Write the reason why <noun> <action>." };
+	private String[] causeEffectDirective = {
+			"Tell me more why <noun> <action>.",
+			"Write more about why <noun> <action>.",
+			"Write the reason why <noun> <action>."};
 
-	private String[] causeEffectAlternative = { "Tell me more what happened." };
+	private String[] causeEffectAlternative = {"Tell me more what happened."};
 
 	private int descriptionThreshold = 7;
 
@@ -52,7 +56,8 @@ public class DirectivesGenerator extends TextGeneration {
 		String output = null;
 
 		String directiveNoun, directiveCapableOf;
-		if (asr.getPartOfStory().equals("start") && (directiveNoun = this.directiveNoun()) != null) {
+		if (asr.getPartOfStory().equals("start")
+				&& (directiveNoun = this.directiveNoun()) != null) {
 			response.add(directiveNoun);
 		} else if ((directiveCapableOf = this.capableOf()) != null) {
 			response.add(directiveCapableOf);
@@ -80,12 +85,15 @@ public class DirectivesGenerator extends TextGeneration {
 		List<String> nounId, directives;
 		int iterations = 0;
 
-		while (iterations++ < 10 && (directive == null || (directive != null && !history.contains(directive)))) {
+		while (iterations++ < 10 && (directive == null
+				|| (directive != null && !history.contains(directive)))) {
 
 			nounId = storySentence.getAllNounsInStorySentence();
-			directives = new ArrayList<>(Arrays.asList(this.nounStartDirective));
+			directives = new ArrayList<>(
+					Arrays.asList(this.nounStartDirective));
 
-			directive = findDirective(storySentence, nounId, directives, directive);
+			directive = findDirective(storySentence, nounId, directives,
+					directive);
 
 			if (history.contains(directive)) {
 				directive = null;
@@ -95,9 +103,11 @@ public class DirectivesGenerator extends TextGeneration {
 
 				nounId = new ArrayList<>(asr.getManyNouns().keySet());
 				nounId.removeAll(storySentence.getAllNounsInStorySentence());
-				directives = new ArrayList<>(Arrays.asList(this.nounStartDirectiveAlternative));
+				directives = new ArrayList<>(
+						Arrays.asList(this.nounStartDirectiveAlternative));
 
-				directive = findDirective(storySentence, nounId, directives, directive);
+				directive = findDirective(storySentence, nounId, directives,
+						directive);
 
 				descriptionThreshold += 2;
 
@@ -120,8 +130,8 @@ public class DirectivesGenerator extends TextGeneration {
 	 * @param directive
 	 * @return
 	 */
-	private String findDirective(StorySentence storySentence, List<String> nounId, List<String> directives,
-			String directive) {
+	private String findDirective(StorySentence storySentence,
+			List<String> nounId, List<String> directives, String directive) {
 
 		while (!nounId.isEmpty() && storySentence != null) {
 
@@ -135,10 +145,13 @@ public class DirectivesGenerator extends TextGeneration {
 			// find other noun if the number of properties of the current
 			// noun is greater than descriptionThreshold
 			if (threshold < descriptionThreshold) {
-				while (!directives.isEmpty() && (directive == null || history.contains(directive))) {
-					int randomNounDirective = Randomizer.random(1, directives.size());
+				while (!directives.isEmpty()
+						&& (directive == null || history.contains(directive))) {
+					int randomNounDirective = Randomizer.random(1,
+							directives.size());
 					directive = directives.remove(randomNounDirective - 1);
-					directive = directive.replace("<noun>", (noun.getIsCommon() ? "the " : "") + noun.getId());
+					directive = directive.replace("<noun>",
+							(noun.getIsCommon() ? "the " : "") + noun.getId());
 				}
 			}
 
@@ -151,37 +164,47 @@ public class DirectivesGenerator extends TextGeneration {
 	private String capableOf() {
 
 		StorySentence storySentence = asr.getCurrentStorySentence();
-		List<Event> predicates = new ArrayList<>(storySentence.getManyPredicates().values());
-		List<String> directives = new ArrayList<>(Arrays.asList(this.causeEffectDirective));
+		List<Event> predicates = new ArrayList<>(
+				storySentence.getManyPredicates().values());
+		List<String> directives = new ArrayList<>(
+				Arrays.asList(this.causeEffectDirective));
 		String directive = null;
 
-		while (!predicates.isEmpty() && (directive == null || (directive != null && history.contains(directive)))) {
+		while (!predicates.isEmpty() && (directive == null
+				|| (directive != null && history.contains(directive)))) {
 
 			int randomPredicate = Randomizer.random(1, predicates.size());
 			Event predicate = predicates.remove(randomPredicate - 1);
 
 			while (!directives.isEmpty()) {
 
-				int randomCapableOfQuestion = Randomizer.random(1, directives.size());
+				int randomCapableOfQuestion = Randomizer.random(1,
+						directives.size());
 				directive = directives.remove(randomCapableOfQuestion - 1);
 
-				List<Noun> doers = new ArrayList<>(predicate.getManyDoers().values());
+				List<Noun> doers = new ArrayList<>(
+						predicate.getManyDoers().values());
 
-				directive = directive.replace("<noun>", SurfaceRealizer.wordsConjunction(doers));
+				directive = directive.replace("<noun>",
+						SurfaceRealizer.wordsConjunction(doers));
 
-				VPPhraseSpec verb = nlgFactory.createVerbPhrase(predicate.getAction());
+				VPPhraseSpec verb = nlgFactory
+						.createVerbPhrase(predicate.getAction());
 				verb.setFeature(Feature.TENSE, Tense.PAST);
 				String action = realiser.realise(verb).toString();
 
-				Collection<Noun> directObjects = predicate.getDirectObjects().values();
+				Collection<Noun> directObjects = predicate.getDirectObjects()
+						.values();
 				if (predicate.getDirectObjects().size() > 0) {
 					Noun noun = directObjects.iterator().next();
 					if (noun instanceof Location) {
 						action += " to " + noun.getId();
-					} else if (noun instanceof Character && !noun.getIsCommon()) {
+					} else if (noun instanceof Character
+							&& !noun.getIsCommon()) {
 						action += " " + noun.getId();
 					} else {
-						action += " " + SurfaceRealizer.determinerFixer(noun.getId());
+						action += " "
+								+ SurfaceRealizer.determinerFixer(noun.getId());
 					}
 				}
 				directive = directive.replace("<action>", action);
@@ -195,8 +218,10 @@ public class DirectivesGenerator extends TextGeneration {
 		}
 
 		if (predicates.isEmpty() && directive == null) {
-			int randomCapableOfQuestion = Randomizer.random(1, this.causeEffectAlternative.length);
-			directive = this.causeEffectAlternative[randomCapableOfQuestion - 1];
+			int randomCapableOfQuestion = Randomizer.random(1,
+					this.causeEffectAlternative.length);
+			directive = this.causeEffectAlternative[randomCapableOfQuestion
+					- 1];
 		}
 
 		return directive;

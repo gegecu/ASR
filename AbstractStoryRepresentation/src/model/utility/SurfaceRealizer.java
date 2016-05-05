@@ -5,36 +5,40 @@ import java.util.List;
 import model.story_representation.story_element.noun.Noun;
 
 public class SurfaceRealizer {
-	
+
 	public static String wordsConjunction(List<Noun> nouns) {
+
 		String characters = "";
-		for(int i = 0 ; i < nouns.size(); i++) {
-			if(nouns.get(i).getIsCommon()) {
+
+		for (int i = 0; i < nouns.size(); i++) {
+			if (nouns.get(i).getIsCommon()) {
 				characters += "the ";
 			}
-			if(i < nouns.size()-2) {
+			if (i < nouns.size() - 2) {
 				characters += nouns.get(i).getId() + ", ";
-			}
-			else if (i < nouns.size() - 1) {
+			} else if (i < nouns.size() - 1) {
 				characters += nouns.get(i).getId() + " and ";
-			}
-			else {
+			} else {
 				characters += nouns.get(i).getId();
 			}
 		}
-		
+
 		return characters;
+
 	}
-	
+
+	static String[] vowels = {"a", "e", "i", "o", "u"};
+
 	public static String determinerFixer(String word) {
+
 		String temp = word.toLowerCase();
-		if(temp.startsWith("a") || temp.startsWith("e") || temp.startsWith("i")
-				|| temp.startsWith("o") || temp.startsWith("u")) {
-			return "an " + temp;
+		for (String vowel : vowels) {
+			if (temp.startsWith(vowel)) {
+				return "an " + temp;
+			}
 		}
-		else {
-			return "a " + temp;
-		}
+		return "a " + temp;
+
 	}
-	
+
 }

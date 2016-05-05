@@ -74,8 +74,10 @@ public abstract class Noun implements Comparable<Noun> {
 	}
 
 	public int compareTo(Noun noun) {
-		return (getAttributes().values().size() + getReferences().values().size())
-				- (noun.getAttributes().values().size() + noun.getReferences().values().size());
+		return (getAttributes().values().size()
+				+ getReferences().values().size())
+				- (noun.getAttributes().values().size()
+						+ noun.getReferences().values().size());
 	}
 
 }
