@@ -46,11 +46,12 @@ public class Driver {
 			System.out.println("input sentence story");
 			String sentence = sc.nextLine();
 			
+			asr.reset();
 			story += " " + sentence;
 			
-			tu.processInput(sentence);
-		
-		
+			tu.processInput(story);
+			
+			
 			try{
 				for(StorySentence e: asr.getManyStorySentencesBasedOnCurrentPart()) {
 					System.out.println("event's address: "+ e);

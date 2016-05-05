@@ -109,9 +109,8 @@ public class AbstractStoryRepresentation {
 		storySentences.add(storySentence);
 		this.storySentences.put(partOfStory, storySentences);
 
-		if (this.partOfStory.equals("start")) {
-			this.setConflict();
-		} else if (this.partOfStory.equals("end")) {
+		this.setConflict();
+		if(this.conflict != null) {
 			this.setResolution();
 		}
 
@@ -157,6 +156,13 @@ public class AbstractStoryRepresentation {
 
 	public void setPartOfStory(String partOfStory) {
 		this.partOfStory = partOfStory;
+	}
+	
+	public void reset() {
+		storySentences.clear();
+		nouns.clear();
+		conflict = null;
+		resolution = null;
 	}
 
 }
