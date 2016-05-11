@@ -3,6 +3,7 @@ package model.text_generation;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import model.story_representation.AbstractStoryRepresentation;
 import model.story_representation.story_element.noun.Noun;
@@ -28,6 +29,8 @@ public abstract class TextGeneration {
 
 	public abstract String generateText();
 
+	
+	//recoded
 	protected List<String> getNouns() {
 
 		List<String> result = new ArrayList<>();
@@ -41,24 +44,27 @@ public abstract class TextGeneration {
 						.getAllNounsInStorySentence();
 
 				while (!nounId.isEmpty()) {
-					Noun noun = asr.getNoun(nounId.remove(0));
+					String id = nounId.remove(0);
+					Noun noun = asr.getNoun(id);
 					int count = Utilities
 							.countLists(noun.getAttributes().values())
 							+ Utilities
 									.countLists(noun.getReferences().values());
 					if (count < currThreshold)
-						result.add(noun.getId());
+						//result.add(noun.getId());
+						result.add(id);
 				}
 
 				if (result.isEmpty()) {
-					Collection<Noun> nouns = asr.getManyNouns().values();
-					for (Noun noun : nouns) {
+					Set<String> ids = asr.getManyNouns().keySet();
+					for (String id : ids) {
 						int count = Utilities
-								.countLists(noun.getAttributes().values())
+								.countLists(asr.getNoun(id).getAttributes().values())
 								+ Utilities.countLists(
-										noun.getReferences().values());
+										asr.getNoun(id).getReferences().values());
 						if (count < currThreshold)
-							result.add(noun.getId());
+							//result.add(noun.getId());
+							result.add(id);
 					}
 				}
 
