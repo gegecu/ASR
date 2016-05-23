@@ -50,6 +50,10 @@ public class StorySentence {
 		return false;
 	}
 
+	public int getEventsCount() {
+		return this.predicates.size();
+	}
+
 	public List<String> getAllNounsInStorySentence() {
 
 		Set<String> nounId = new HashSet<String>();

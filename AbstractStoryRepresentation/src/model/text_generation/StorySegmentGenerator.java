@@ -1,12 +1,10 @@
 package model.text_generation;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.PriorityQueue;
 import java.util.Set;
 
 import model.knowledge_base.conceptnet.Concept;
@@ -60,7 +58,8 @@ public class StorySegmentGenerator extends TextGeneration {
 
 		Map<Integer, String> response = new HashMap<>();
 
-		if (asr.getPartOfStory().equals("start")) {
+		if (asr.getCurrentPartOfStory().equals("start")) {
+
 			Map<Integer, String> atLocation = atLocation();
 			if (atLocation != null) {
 				response.putAll(atLocation);
@@ -80,11 +79,14 @@ public class StorySegmentGenerator extends TextGeneration {
 			if (hasProperty != null) {
 				response.putAll(hasProperty);
 			}
+
 		} else {
+
 			Map<Integer, String> causes = causes();
 			if (causes != null) {
 				response.putAll(causes);
 			}
+
 		}
 
 		if (!response.isEmpty()) {
@@ -95,6 +97,7 @@ public class StorySegmentGenerator extends TextGeneration {
 		} else {
 			return null;
 		}
+
 	}
 
 	private Map<String, Description> getNeededDescription(String relation,
@@ -467,9 +470,11 @@ public class StorySegmentGenerator extends TextGeneration {
 			if (temp.isEmpty()) {
 				found = false;
 			}
+
 			List<Concept> concepts = new ArrayList<>(temp);
 
 			while (!concepts.isEmpty() && !found) {
+
 				int randomConcept = Randomizer.random(1, concepts.size());
 				Concept concept = concepts.remove(randomConcept - 1);
 
@@ -524,9 +529,11 @@ public class StorySegmentGenerator extends TextGeneration {
 				return output;
 
 			}
+
 		}
 
 		return null;
+
 	}
 
 }

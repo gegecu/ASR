@@ -85,7 +85,7 @@ public class RelationQuestionGenerator extends TextGeneration{
 		
 		String[] questions;
 		
-		if(asr.getPartOfStory().equals("start")) {
+		if(asr.getCurrentPartOfStory().equals("start")) {
 			questions = new String[this.hasPropertyStartQuestions.length];
 			questions = Arrays.copyOf(this.hasPropertyStartQuestions, this.hasPropertyStartQuestions.length);
 		}
@@ -180,7 +180,7 @@ public class RelationQuestionGenerator extends TextGeneration{
 				
 				String[] questions;
 				
-				if(asr.getPartOfStory().equals("start")) {
+				if(asr.getCurrentPartOfStory().equals("start")) {
 					questions = new String[this.locationStartQuestions.length];
 					questions = Arrays.copyOf(this.locationStartQuestions, this.locationStartQuestions.length);
 				}

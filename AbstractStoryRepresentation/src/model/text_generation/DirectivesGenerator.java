@@ -3,11 +3,9 @@ package model.text_generation;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
-import java.util.Set;
 
 import model.story_representation.AbstractStoryRepresentation;
 import model.story_representation.story_element.noun.Character;
@@ -52,11 +50,11 @@ public class DirectivesGenerator extends TextGeneration {
 	@Override
 	public String generateText() {
 
-		Set<String> response = new HashSet<>();
+		List<String> response = new ArrayList<>();
 		String output = null;
 
 		String directiveNoun, directiveCapableOf;
-		if (asr.getPartOfStory().equals("start")
+		if (asr.getCurrentPartOfStory().equals("start")
 				&& (directiveNoun = this.directiveNoun()) != null) {
 			response.add(directiveNoun);
 		} else if ((directiveCapableOf = this.capableOf()) != null) {
@@ -65,7 +63,7 @@ public class DirectivesGenerator extends TextGeneration {
 
 		if (!response.isEmpty()) {
 			int random = Randomizer.random(1, response.size());
-			output = (String) response.toArray()[random - 1];
+			output = response.get(random - 1);
 			history.add(output);
 		}
 
@@ -101,7 +99,7 @@ public class DirectivesGenerator extends TextGeneration {
 
 			if (directive == null && storySentence != null) {
 
-				nounId = new ArrayList<>(asr.getManyNouns().keySet());
+				nounId = new ArrayList<>(asr.getNounMap().keySet());
 				nounId.removeAll(storySentence.getAllNounsInStorySentence());
 				directives = new ArrayList<>(
 						Arrays.asList(this.nounStartDirectiveAlternative));
@@ -123,13 +121,6 @@ public class DirectivesGenerator extends TextGeneration {
 
 	}
 
-	/**
-	 * @param storySentence
-	 * @param nounId
-	 * @param directives
-	 * @param directive
-	 * @return
-	 */
 	private String findDirective(StorySentence storySentence,
 			List<String> nounId, List<String> directives, String directive) {
 

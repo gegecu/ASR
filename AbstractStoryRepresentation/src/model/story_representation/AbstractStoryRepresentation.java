@@ -5,12 +5,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import model.knowledge_base.conceptnet.ConceptNetDAO;
 import model.story_representation.story_element.Conflict;
 import model.story_representation.story_element.Resolution;
 import model.story_representation.story_element.noun.Noun;
 import model.story_representation.story_element.story_sentence.Clause;
 import model.story_representation.story_element.story_sentence.StorySentence;
-import model.utility.ResolutionFinder;
 
 public class AbstractStoryRepresentation {
 
@@ -32,33 +32,47 @@ public class AbstractStoryRepresentation {
 	}
 
 	public void setConflict() {
+
 		StorySentence possibleConflict = this.getCurrentStorySentence();
 
 		List<Clause> clauses = new ArrayList<Clause>();
 		clauses.addAll(possibleConflict.getManyPredicates().values());
 		clauses.addAll(possibleConflict.getManyDescriptions().values());
 
-		String expectedResolutionConcept = null;
+		//		String expectedResolutionConcept = null;
+		//
+		//		for (Clause clause : clauses) {
+		//			if (this.conflict == null) {
+		//				if (clause.getPolarity() <= -0.2
+		//						&& (expectedResolutionConcept = ResolutionFinder
+		//								.findExpectedResolutionConcept(
+		//										clause)) != null) {
+		//					this.conflict = new Conflict(clause,
+		//							expectedResolutionConcept);
+		//				}
+		//			} else {
+		//				if ((clause.getPolarity() < this.conflict.getPolarity())
+		//						&& ((expectedResolutionConcept = ResolutionFinder
+		//								.findExpectedResolutionConcept(
+		//										clause)) != null)) {
+		//					this.conflict = new Conflict(clause,
+		//							expectedResolutionConcept);
+		//				}
+		//			}
+		//		}
 
 		for (Clause clause : clauses) {
 			if (this.conflict == null) {
-				if (clause.getPolarity() <= -0.2
-						&& (expectedResolutionConcept = ResolutionFinder
-								.findExpectedResolutionConcept(
-										clause)) != null) {
-					this.conflict = new Conflict(clause,
-							expectedResolutionConcept);
+				if (clause.getPolarity() <= -0.2) {
+					this.conflict = new Conflict(clause, null);
 				}
 			} else {
-				if ((clause.getPolarity() < this.conflict.getPolarity())
-						&& ((expectedResolutionConcept = ResolutionFinder
-								.findExpectedResolutionConcept(
-										clause)) != null)) {
-					this.conflict = new Conflict(clause,
-							expectedResolutionConcept);
+				if ((clause.getPolarity() < this.conflict.getPolarity())) {
+					this.conflict = new Conflict(clause, null);
 				}
 			}
 		}
+
 	}
 
 	public Conflict getConflict() {
@@ -78,8 +92,8 @@ public class AbstractStoryRepresentation {
 				.addAll(this.conflict.getClause().getManyDoers().values());
 
 		for (Clause clause : clauses) {
-			if (clause.getConcepts()
-					.contains(this.conflict.getExpectedResolutionConcept())) {
+			//if(clause.getConcepts().contains(this.conflict.getExpectedResolutionConcept())) {
+			if (hasValidResolutionConcept(clause.getConcepts())) {
 				List<Noun> doersInResolution = new ArrayList<Noun>();
 				doersInResolution.addAll(clause.getManyDoers().values());
 
@@ -97,6 +111,22 @@ public class AbstractStoryRepresentation {
 		return this.resolution;
 	}
 
+	/** trial for BFS approach **/
+	private boolean hasValidResolutionConcept(List<String> concepts) {
+		for (String concept : concepts) {
+			for (String conflict : getConflict().getClause().getConcepts()) {
+				if (checkValidResolution(conflict, concept)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	private boolean checkValidResolution(String conflict, String resolution) {
+		return ConceptNetDAO.getFourHops(conflict, resolution);
+	}
+
 	public void addEvent(StorySentence storySentence) {
 
 		List<StorySentence> storySentences = this.storySentences
@@ -109,9 +139,18 @@ public class AbstractStoryRepresentation {
 		storySentences.add(storySentence);
 		this.storySentences.put(partOfStory, storySentences);
 
-		this.setConflict();
-		if(this.conflict != null) {
-			this.setResolution();
+		switch (partOfStory) {
+			case "start" :
+				this.setConflict();
+				break;
+			case "middle" :
+				//
+				break;
+			case "end" :
+				if (this.conflict != null) {
+					this.setResolution();
+				}
+				break;
 		}
 
 	}
@@ -119,22 +158,21 @@ public class AbstractStoryRepresentation {
 	public StorySentence getCurrentStorySentence() {
 		List<StorySentence> storySentences = this.storySentences
 				.get(partOfStory);
-		if (storySentences == null) {
-			return null;
-		}
-		return storySentences.get(storySentences.size() - 1);
+		return storySentences != null
+				? storySentences.get(storySentences.size() - 1)
+				: null;
 	}
 
-	public Map<String, List<StorySentence>> getManyStorySentences() {
+	public Map<String, List<StorySentence>> getStorySentencesMap() {
 		return this.storySentences;
 	}
 
-	public List<StorySentence> getManyStorySentencesBasedOnPart(
+	public List<StorySentence> getStorySentencesBasedOnPart(
 			String partOfStory) {
 		return this.storySentences.get(partOfStory);
 	}
 
-	public List<StorySentence> getManyStorySentencesBasedOnCurrentPart() {
+	public List<StorySentence> getStorySentencesBasedOnCurrentPart() {
 		return this.storySentences.get(this.partOfStory);
 	}
 
@@ -146,23 +184,21 @@ public class AbstractStoryRepresentation {
 		return this.nouns.get(key);
 	}
 
-	public Map<String, Noun> getManyNouns() {
+	public Map<String, Noun> getNounMap() {
 		return this.nouns;
 	}
 
-	public String getPartOfStory() {
+	public String getCurrentPartOfStory() {
 		return partOfStory;
 	}
 
 	public void setPartOfStory(String partOfStory) {
 		this.partOfStory = partOfStory;
 	}
-	
+
 	public void reset() {
 		storySentences.clear();
 		nouns.clear();
-		conflict = null;
-		resolution = null;
 	}
 
 }

@@ -1,7 +1,6 @@
 package model.text_generation;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -29,14 +28,13 @@ public abstract class TextGeneration {
 
 	public abstract String generateText();
 
-	
 	//recoded
 	protected List<String> getNouns() {
 
 		List<String> result = new ArrayList<>();
 		int currThreshold = defaultThreshold;
 
-		if (asr.getManyNouns().values().size() > 0) {
+		if (asr.getNounMap().values().size() > 0) {
 
 			while (result.isEmpty()) {
 
@@ -56,12 +54,13 @@ public abstract class TextGeneration {
 				}
 
 				if (result.isEmpty()) {
-					Set<String> ids = asr.getManyNouns().keySet();
+					Set<String> ids = asr.getNounMap().keySet();
 					for (String id : ids) {
 						int count = Utilities
-								.countLists(asr.getNoun(id).getAttributes().values())
-								+ Utilities.countLists(
-										asr.getNoun(id).getReferences().values());
+								.countLists(asr.getNoun(id).getAttributes()
+										.values())
+								+ Utilities.countLists(asr.getNoun(id)
+										.getReferences().values());
 						if (count < currThreshold)
 							//result.add(noun.getId());
 							result.add(id);
