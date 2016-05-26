@@ -75,7 +75,18 @@ public class Extractor {
 
 		List<CoreMap> sentences = document.get(SentencesAnnotation.class);
 
+		int prevSentenceCount = 0;
+
+		for (List<StorySentence> storySentences : asr.getStorySentencesMap()
+				.values()) {
+			prevSentenceCount += storySentences.size();
+		}
+
+		int i = 0;
 		for (CoreMap sentence : sentences) {
+
+			if (i++ < prevSentenceCount)
+				continue;
 
 			SemanticGraph dependencies = sentence
 					.get(CollapsedCCProcessedDependenciesAnnotation.class);

@@ -1,9 +1,12 @@
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Map.Entry;
 
+import model.instance.SenticNetParserInstance;
+import model.knowledge_base.MySQLConnector;
 import model.story_representation.AbstractStoryRepresentation;
 import model.story_representation.Checklist;
 import model.story_representation.story_element.Conflict;
@@ -18,64 +21,163 @@ import model.text_understanding.TextUnderstanding;
 
 public class Driver {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws SQLException {
 		// TODO Auto-generated method stub
-		String story = "";
-
-		AbstractStoryRepresentation asr = new AbstractStoryRepresentation();
-
-		TextUnderstanding tu = new TextUnderstanding(asr);
-
-		System.out.println("Loading finish!");
-
 		Scanner sc = new Scanner(System.in);
 
-		List<TextGeneration> tg = new ArrayList<TextGeneration>();
+		while (true) {
 
-		tg.add(new DirectivesGenerator(asr));
+			SenticNetParserInstance.getInstance();
+			
+			MySQLConnector.getInstance().getConnection();
+			
+			String part;
+			String story = "";
+			AbstractStoryRepresentation asr = new AbstractStoryRepresentation();
+			TextUnderstanding tu = new TextUnderstanding(asr);
+			List<TextGeneration> tg = new ArrayList<TextGeneration>();
+			tg.add(new DirectivesGenerator(asr));
+			tg.add(new StorySegmentGenerator(asr));
+			Checklist checklist = new Checklist(asr);
+			System.out.println("Loading finish!");
 
-		tg.add(new StorySegmentGenerator(asr));
+			System.out.println("start? middle? end?");
 
-		Checklist checklist = new Checklist(asr);
+			while (sc.hasNextLine()) {
 
-		System.out.println("start? middle? end?");
+				part = sc.nextLine();
 
-		while (sc.hasNextLine()) {
-			asr.setPartOfStory(sc.nextLine());
-			System.out.println("input sentence story");
-			String sentence = sc.nextLine();
+				if (part.equals("stop"))
+					break;
 
-			asr.reset();
-			story += " " + sentence;
+				asr.setPartOfStory(part);
+				System.out.println("input sentence story");
+				String sentence = sc.nextLine();
 
-			tu.processInput(story);
+				story += " " + sentence;
 
-			try {
-				for (StorySentence e : asr
-						.getStorySentencesBasedOnCurrentPart()) {
-					System.out.println("event's address: " + e);
+				tu.processInput(story);
 
-					System.out.println("is valid event? " + e.isValidEvent());
+				try {
+					for (StorySentence e : asr
+							.getStorySentencesBasedOnCurrentPart()) {
+						System.out.println("event's address: " + e);
 
-					for (Event p : e.getManyPredicates().values()) {
-						System.out.println("doers: ");
-						for (Map.Entry<String, Noun> entry : p.getManyDoers()
-								.entrySet()) {
-							System.out
-									.println("id: " + entry.getValue().getId());
-							System.out.println("common noun? "
-									+ entry.getValue().getIsCommon());
+						System.out
+								.println("is valid event? " + e.isValidEvent());
 
-							System.out.println("doers' attributes: ");
-							for (Map.Entry<String, List<String>> entry2 : entry
-									.getValue().getAttributes().entrySet()) {
-								System.out.print(entry2.getKey() + " ");
-								System.out.print(entry2.getValue());
-								System.out.println();
+						for (Event p : e.getManyPredicates().values()) {
+							System.out.println("doers: ");
+							for (Map.Entry<String, Noun> entry : p
+									.getManyDoers().entrySet()) {
+								System.out.println(
+										"id: " + entry.getValue().getId());
+								System.out.println("common noun? "
+										+ entry.getValue().getIsCommon());
+
+								System.out.println("doers' attributes: ");
+								for (Map.Entry<String, List<String>> entry2 : entry
+										.getValue().getAttributes()
+										.entrySet()) {
+									System.out.print(entry2.getKey() + " ");
+									System.out.print(entry2.getValue());
+									System.out.println();
+								}
+
+								System.out.println("doers' references: ");
+								for (Map.Entry<String, List<Noun>> entry2 : entry
+										.getValue().getReferences()
+										.entrySet()) {
+									System.out.print(entry2.getKey() + " ");
+									for (Noun n : entry2.getValue()) {
+										System.out.print(n.getId() + " ");
+									}
+									System.out.println();
+								}
 							}
 
-							System.out.println("doers' references: ");
-							for (Map.Entry<String, List<Noun>> entry2 : entry
+							System.out.println("action: " + p.getAction());
+
+							System.out.println("receivers: ");
+							for (Map.Entry<String, Noun> entry2 : p
+									.getReceivers().entrySet()) {
+								System.out.println(
+										"id: " + entry2.getValue().getId());
+								System.out.println("common noun? "
+										+ entry2.getValue().getIsCommon());
+
+								System.out.println("receiver's attributes");
+								for (Map.Entry<String, List<String>> entry3 : entry2
+										.getValue().getAttributes()
+										.entrySet()) {
+									System.out.print(entry3.getKey() + " ");
+									System.out.print(entry3.getValue() + " ");
+									System.out.println();
+								}
+
+								System.out.println("receiver's references");
+								for (Map.Entry<String, List<Noun>> entry3 : entry2
+										.getValue().getReferences()
+										.entrySet()) {
+									System.out.print(entry3.getKey() + " ");
+									for (Noun n : entry3.getValue()) {
+										System.out.print(n.getId() + " ");
+									}
+									System.out.println();
+								}
+							}
+
+							System.out.println("dobjs: ");
+							for (Map.Entry<String, Noun> entry3 : p
+									.getDirectObjects().entrySet()) {
+								System.out.println(
+										"id: " + entry3.getValue().getId());
+								System.out.println("common noun? "
+										+ entry3.getValue().getIsCommon());
+
+								System.out.println("dobj's attributes ");
+								for (Map.Entry<String, List<String>> entry4 : entry3
+										.getValue().getAttributes()
+										.entrySet()) {
+									System.out.print(entry4.getKey() + " ");
+									System.out.print(entry4.getValue() + " ");
+									System.out.println();
+								}
+
+								System.out.println("dobj's references ");
+								for (Map.Entry<String, List<Noun>> entry4 : entry3
+										.getValue().getReferences()
+										.entrySet()) {
+									System.out.print(entry4.getKey() + " ");
+									for (Noun n : entry4.getValue()) {
+										System.out.print(n.getId() + " ");
+									}
+									System.out.println();
+								}
+							}
+						}
+
+						System.out.println();
+						System.out.println("descriptions ");
+
+						for (Entry<String, Description> entry : e
+								.getManyDescriptions().entrySet()) {
+							//System.out.println(entry.getKey());
+
+							for (Map.Entry<String, Noun> doer : entry.getValue()
+									.getManyDoers().entrySet()) {
+								System.out.println(doer.getValue());
+							}
+
+							System.out.println("attributes ");
+							for (Entry<String, List<String>> entry2 : entry
+									.getValue().getAttributes().entrySet()) {
+								System.out.print(entry2.getKey() + " ");
+								System.out.println(entry2.getValue() + " ");
+							}
+
+							System.out.println("references ");
+							for (Entry<String, List<Noun>> entry2 : entry
 									.getValue().getReferences().entrySet()) {
 								System.out.print(entry2.getKey() + " ");
 								for (Noun n : entry2.getValue()) {
@@ -85,139 +187,61 @@ public class Driver {
 							}
 						}
 
-						System.out.println("action: " + p.getAction());
-
-						System.out.println("receivers: ");
-						for (Map.Entry<String, Noun> entry2 : p.getReceivers()
-								.entrySet()) {
+						System.out.println();
+						//System.out.println("polarity: " + e.getPolarity());
+						System.out.println("concepts per predicate");
+						for (Event predicate : e.getManyPredicates().values()) {
+							System.out.print(
+									"p_concepts: " + predicate.getConcepts());
 							System.out.println(
-									"id: " + entry2.getValue().getId());
-							System.out.println("common noun? "
-									+ entry2.getValue().getIsCommon());
-
-							System.out.println("receiver's attributes");
-							for (Map.Entry<String, List<String>> entry3 : entry2
-									.getValue().getAttributes().entrySet()) {
-								System.out.print(entry3.getKey() + " ");
-								System.out.print(entry3.getValue() + " ");
-								System.out.println();
-							}
-
-							System.out.println("receiver's references");
-							for (Map.Entry<String, List<Noun>> entry3 : entry2
-									.getValue().getReferences().entrySet()) {
-								System.out.print(entry3.getKey() + " ");
-								for (Noun n : entry3.getValue()) {
-									System.out.print(n.getId() + " ");
-								}
-								System.out.println();
-							}
+									" polarity: " + predicate.getPolarity());
 						}
-
-						System.out.println("dobjs: ");
-						for (Map.Entry<String, Noun> entry3 : p
-								.getDirectObjects().entrySet()) {
+						for (Description description : e.getManyDescriptions()
+								.values()) {
+							System.out.print(
+									"n_concepts: " + description.getConcepts());
 							System.out.println(
-									"id: " + entry3.getValue().getId());
-							System.out.println("common noun? "
-									+ entry3.getValue().getIsCommon());
-
-							System.out.println("dobj's attributes ");
-							for (Map.Entry<String, List<String>> entry4 : entry3
-									.getValue().getAttributes().entrySet()) {
-								System.out.print(entry4.getKey() + " ");
-								System.out.print(entry4.getValue() + " ");
-								System.out.println();
-							}
-
-							System.out.println("dobj's references ");
-							for (Map.Entry<String, List<Noun>> entry4 : entry3
-									.getValue().getReferences().entrySet()) {
-								System.out.print(entry4.getKey() + " ");
-								for (Noun n : entry4.getValue()) {
-									System.out.print(n.getId() + " ");
-								}
-								System.out.println();
-							}
+									" polarity: " + description.getPolarity());
 						}
+						System.out.println();
 					}
 
-					System.out.println();
-					System.out.println("descriptions ");
-
-					for (Entry<String, Description> entry : e
-							.getManyDescriptions().entrySet()) {
-						//System.out.println(entry.getKey());
-
-						for (Map.Entry<String, Noun> doer : entry.getValue()
-								.getManyDoers().entrySet()) {
-							System.out.println(doer.getValue());
-						}
-
-						System.out.println("attributes ");
-						for (Entry<String, List<String>> entry2 : entry
-								.getValue().getAttributes().entrySet()) {
-							System.out.print(entry2.getKey() + " ");
-							System.out.println(entry2.getValue() + " ");
-						}
-
-						System.out.println("references ");
-						for (Entry<String, List<Noun>> entry2 : entry.getValue()
-								.getReferences().entrySet()) {
-							System.out.print(entry2.getKey() + " ");
-							for (Noun n : entry2.getValue()) {
-								System.out.print(n.getId() + " ");
-							}
-							System.out.println();
-						}
-					}
-
-					System.out.println();
-					//System.out.println("polarity: " + e.getPolarity());
-					System.out.println("concepts per predicate");
-					for (Event predicate : e.getManyPredicates().values()) {
-						System.out.print(
-								"p_concepts: " + predicate.getConcepts());
-						System.out.println(
-								" polarity: " + predicate.getPolarity());
-					}
-					for (Description description : e.getManyDescriptions()
-							.values()) {
-						System.out.print(
-								"n_concepts: " + description.getConcepts());
-						System.out.println(
-								" polarity: " + description.getPolarity());
-					}
-					System.out.println();
+				} catch (NullPointerException e) {
+					//asr has no events but has so many descriptions for nouns
 				}
 
-			} catch (NullPointerException e) {
-				//asr has no events but has so many descriptions for nouns
+				Conflict conflict = asr.getConflict();
+				if (conflict != null) {
+					System.out.println("conflict's address: " + conflict);
+					System.out.println("expected conflict resolution: "
+							+ conflict.getExpectedResolutionConcept());
+				}
+
+				//			System.out.println("expected resolution concept: " + asr.getConflict().getExpectedResolutionConcept());
+				System.out.println(
+						"resolution's address: " + asr.getResolution());
+
+				checklist.print();
+
+				System.out.println();
+				System.out.println("Generation? [1] yes [2] no");
+				int yesNo = sc.nextInt();
+				if (yesNo == 1) {
+					System.out.println("[1] Directives [2] Story Segment");
+					int typeToGen = sc.nextInt();
+					System.out.println(tg.get(typeToGen - 1).generateText());
+				}
+
+				System.out.println("start? middle? end?");
+
+				part = sc.nextLine();
+
+				if (part.equals("stop"))
+					break;
+
+				asr.setPartOfStory(part);
+
 			}
-
-			Conflict conflict = asr.getConflict();
-			if (conflict != null) {
-				System.out.println("conflict's address: " + conflict);
-				System.out.println("expected conflict resolution: "
-						+ conflict.getExpectedResolutionConcept());
-			}
-
-			//			System.out.println("expected resolution concept: " + asr.getConflict().getExpectedResolutionConcept());
-			System.out.println("resolution's address: " + asr.getResolution());
-
-			checklist.print();
-
-			System.out.println();
-			System.out.println("Generation? [1] yes [2] no");
-			int yesNo = sc.nextInt();
-			if (yesNo == 1) {
-				System.out.println("[1] Directives [2] Story Segment");
-				int typeToGen = sc.nextInt();
-				System.out.println(tg.get(typeToGen - 1).generateText());
-			}
-
-			System.out.println("start? middle? end?");
-			asr.setPartOfStory(sc.nextLine());
 
 		}
 

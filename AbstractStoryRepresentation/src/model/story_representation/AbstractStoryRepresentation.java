@@ -196,9 +196,4 @@ public class AbstractStoryRepresentation {
 		this.partOfStory = partOfStory;
 	}
 
-	public void reset() {
-		storySentences.clear();
-		nouns.clear();
-	}
-
 }

@@ -6,9 +6,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import model.knowledge_base.MySQLConnector;
-
 import com.mysql.jdbc.Connection;
+
+import model.knowledge_base.MySQLConnector;
 
 public class ConceptNetDAO {
 
