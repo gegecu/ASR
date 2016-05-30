@@ -38,7 +38,7 @@ public class StorySegmentGenerator extends TextGeneration {
 
 	private String[] causesNoun = {"<start> produces <end>."};
 
-	private String[] causesVerb = {"<doer> <end>."};
+	private String[] causesVerb = {"<doer> <end> <object>."};
 
 	private String[] causesAdjective = {"<doer> became <end>."};
 
@@ -505,6 +505,11 @@ public class StorySegmentGenerator extends TextGeneration {
 					verb.setFeature(Feature.TENSE, Tense.PAST);
 					storySegment = storySegment.replace("<end>",
 							realiser.realise(verb).toString());
+					
+					// unsure
+					List<Concept> temp1 = ConceptNetDAO.getConceptFrom(concept.getEnd(), "usedFor");
+					int rand = Randomizer.random(1, temp1.size());
+					storySegment = storySegment.replace("<object>", " using " + temp1.get(rand-1).getStart());
 
 				} else if (endPOS.equals("adjective")
 						|| endPOS.equals("adjective phrase")) {

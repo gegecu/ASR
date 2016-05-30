@@ -189,7 +189,8 @@ public class DirectivesGenerator extends TextGeneration {
 				if (predicate.getDirectObjects().size() > 0) {
 					Noun noun = directObjects.iterator().next();
 					if (noun instanceof Location) {
-						action += " to " + noun.getId();
+						action = "is in " + noun.getId();
+						//action += " to " + noun.getId();
 					} else if (noun instanceof Character
 							&& !noun.getIsCommon()) {
 						action += " " + noun.getId();

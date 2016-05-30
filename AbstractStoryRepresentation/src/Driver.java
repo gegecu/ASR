@@ -1,9 +1,17 @@
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Map.Entry;
+
+import org.apache.commons.io.output.TeeOutputStream;
 
 import model.instance.SenticNetParserInstance;
 import model.knowledge_base.MySQLConnector;
@@ -21,10 +29,18 @@ import model.text_understanding.TextUnderstanding;
 
 public class Driver {
 
-	public static void main(String[] args) throws SQLException {
+	public static void main(String[] args) throws SQLException, FileNotFoundException {
 		// TODO Auto-generated method stub
 		Scanner sc = new Scanner(System.in);
-
+		/*** for testing purposes ***/
+		String out = new SimpleDateFormat("yyyy-MM-dd hh-mm-ss'.txt'").format(new Date());
+		File f = new File(out);
+		FileOutputStream fos = new FileOutputStream(f);
+		TeeOutputStream tos = new TeeOutputStream(fos, System.out);
+		PrintStream ps = new PrintStream(tos);
+	    System.setOut(ps);
+	    /*** for testing purposes ***/
+	    
 		while (true) {
 
 			SenticNetParserInstance.getInstance();
