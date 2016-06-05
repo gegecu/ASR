@@ -68,7 +68,10 @@ public class Extractor {
 		this.dictionary = DictionariesInstance.getInstance();
 	}
 
-	public void extract(String text, Map<String, String> coreference) {
+	public List<StorySentence> extract(String text,
+			Map<String, String> coreference) {
+
+		List<StorySentence> extractedStorySentences = new ArrayList<>();
 
 		Annotation document = new Annotation(text);
 		pipeline.annotate(document);
@@ -112,8 +115,11 @@ public class Extractor {
 			}
 
 			asr.addEvent(storySentence);
+			extractedStorySentences.add(storySentence);
 
 		}
+
+		return extractedStorySentences;
 
 	}
 

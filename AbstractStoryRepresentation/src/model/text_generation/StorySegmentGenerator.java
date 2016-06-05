@@ -15,6 +15,7 @@ import model.story_representation.story_element.noun.Location;
 import model.story_representation.story_element.noun.Noun;
 import model.story_representation.story_element.story_sentence.Clause;
 import model.story_representation.story_element.story_sentence.Description;
+import model.story_representation.story_element.story_sentence.Event;
 import model.story_representation.story_element.story_sentence.StorySentence;
 import model.utility.Randomizer;
 import model.utility.SurfaceRealizer;
@@ -27,8 +28,8 @@ public class StorySegmentGenerator extends TextGeneration {
 	private String[] atLocationStorySegmentStart = {
 			"There is <start> in <end>.", "<end> has <start>."};
 
-	private String[] atLocationStorySegmentMiddle = {
-			"<doer> saw <start> in <end>."};
+	private String[] atLocationStorySegmentDirectObject = {
+			"<doer> is in <end>."};
 
 	private String[] hasAStorySegment = {"<start> has <end>."};
 
@@ -38,7 +39,7 @@ public class StorySegmentGenerator extends TextGeneration {
 
 	private String[] causesNoun = {"<start> produces <end>."};
 
-	private String[] causesVerb = {"<doer> <end>."};
+	private String[] causesVerb = {"<doer> <end> <object>."};
 
 	private String[] causesAdjective = {"<doer> became <end>."};
 
@@ -63,6 +64,11 @@ public class StorySegmentGenerator extends TextGeneration {
 			Map<Integer, String> atLocation = atLocation();
 			if (atLocation != null) {
 				response.putAll(atLocation);
+			}
+
+			Map<Integer, String> atLocationDobj = atLocationDobj();
+			if (atLocationDobj != null) {
+				response.putAll(atLocationDobj);
 			}
 
 			Map<Integer, String> hasA = hasA();
@@ -114,9 +120,85 @@ public class StorySegmentGenerator extends TextGeneration {
 		return temp;
 	}
 
+	private Map<Integer, String> atLocationDobj() {
+
+		Map<Integer, String> output = new HashMap<>();
+
+		StorySentence storySentence = asr.getCurrentStorySentence();
+
+		List<String> predicateIds = new ArrayList(
+				storySentence.getManyPredicates().keySet());
+
+		boolean found = false;
+
+		while (storySentence != null && !predicateIds.isEmpty() && !found) {
+
+			int randomEvent = Randomizer.random(1, predicateIds.size());
+			Event event = storySentence
+					.getPredicate(predicateIds.remove(randomEvent - 1));
+
+			List<String> directObjects = new ArrayList<String>(
+					event.getDirectObjects().keySet());
+
+			while (!directObjects.isEmpty() && !found) {
+				int randomObject = Randomizer.random(1, directObjects.size());
+				Noun dobj = event.getDirectObject(
+						directObjects.remove(randomObject - 1));
+
+				List<Concept> concepts = ConceptNetDAO
+						.getConceptTo(dobj.getId(), "AtLocation");
+
+				List<Noun> doers = new ArrayList<Noun>(
+						event.getManyDoers().values());
+				String characters = SurfaceRealizer.wordsConjunction(doers);
+
+				if (concepts != null) {
+
+					while (!concepts.isEmpty()) {
+
+						int randomConcept = Randomizer.random(1,
+								concepts.size());
+						Concept concept = concepts.remove(randomConcept - 1);
+
+						if (history.contains(concept.getId())) {
+							continue;
+						}
+
+						int randomSentence = Randomizer.random(1,
+								this.atLocationStorySegmentDirectObject.length);
+
+						//System.out.println(characters);
+						String storySegment = this.atLocationStorySegmentDirectObject[randomSentence
+								- 1];
+						String end = concept.getEnd();
+						end = concept.getStartPOS().equals("proper noun")
+								? (end.substring(0, 1).toUpperCase()
+										+ end.substring(1))
+								: SurfaceRealizer.determinerFixer(end);
+
+						storySegment = storySegment.replace("<doer>",
+								characters);
+						storySegment = storySegment.replace("<end>", end);
+						storySegment = storySegment.substring(0, 1)
+								.toUpperCase() + storySegment.substring(1);
+
+						//this.history.add(concept.getId());
+
+						output.put(concept.getId(), storySegment);
+						found = true;
+						return output;
+
+					}
+				}
+			}
+		}
+		return null;
+	}
+
 	/**
 	 * The room has a chair. possible storySegment There is a chair in room.
 	 ***/
+
 	private Map<Integer, String> atLocation() {
 
 		Map<Integer, String> output = new HashMap<>();
@@ -174,7 +256,7 @@ public class StorySegmentGenerator extends TextGeneration {
 						storySegment = storySegment.substring(0, 1)
 								.toUpperCase() + storySegment.substring(1);
 
-						// this.history.add(concept.getId());
+						//this.history.add(concept.getId());
 
 						output.put(concept.getId(), storySegment);
 						return output;
@@ -505,6 +587,13 @@ public class StorySegmentGenerator extends TextGeneration {
 					verb.setFeature(Feature.TENSE, Tense.PAST);
 					storySegment = storySegment.replace("<end>",
 							realiser.realise(verb).toString());
+
+					// unsure
+					List<Concept> temp1 = ConceptNetDAO
+							.getConceptFrom(concept.getEnd(), "usedFor");
+					int rand = Randomizer.random(1, temp1.size());
+					storySegment = storySegment.replace("<object>",
+							" using " + temp1.get(rand - 1).getStart());
 
 				} else if (endPOS.equals("adjective")
 						|| endPOS.equals("adjective phrase")) {
