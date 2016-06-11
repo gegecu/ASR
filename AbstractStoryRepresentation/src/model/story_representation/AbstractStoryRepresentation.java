@@ -2,6 +2,7 @@ package model.story_representation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,7 +26,7 @@ public class AbstractStoryRepresentation {
 	private String partOfStory;
 
 	public AbstractStoryRepresentation() {
-		this.storySentences = new HashMap<String, List<StorySentence>>();
+		this.storySentences = new LinkedHashMap<String, List<StorySentence>>();
 		this.nouns = new HashMap<String, Noun>();
 		this.conflict = null;
 		this.partOfStory = "start";
@@ -65,11 +66,22 @@ public class AbstractStoryRepresentation {
 	}
 
 	public StorySentence getCurrentStorySentence() {
-		List<StorySentence> storySentences = this.storySentences
-				.get(partOfStory);
-		return storySentences != null
-				? storySentences.get(storySentences.size() - 1)
-				: null;
+		List<StorySentence> storySentences = this.storySentences.get(partOfStory);
+		
+		if(storySentences == null) {
+			if(partOfStory.equals("start")) {
+				return null;
+			}
+			else if(partOfStory.equals("middle")) {
+				storySentences = this.storySentences.get("start");
+			}
+			else if(partOfStory.equals("end")) {
+				storySentences = this.storySentences.get("middle");
+			}
+		}
+
+		return storySentences.get(storySentences.size()-1);
+//		return storySentences != null? storySentences.get(storySentences.size() - 1): null;
 	}
 
 	public Map<String, List<StorySentence>> getStorySentencesMap() {

@@ -239,8 +239,8 @@ public class Extractor {
 
 			for (Map.Entry<String, Noun> entry : storySentence
 					.getPredicate(tdGovId).getManyDoers().entrySet()) {
-				entry.getValue().addReference("AtLocation", noun);
-				description.addReference("AtLocation", noun);
+				entry.getValue().addReference("AtLocation", tdDepId, noun);
+				description.addReference("AtLocation", tdDepId, noun);
 				description.addDoer(entry.getKey(), entry.getValue());
 			}
 
@@ -379,8 +379,8 @@ public class Extractor {
 				}
 
 				if (noun2 != null) {
-					entry.getValue().addReference("IsA", noun2);
-					description.addReference("IsA", noun2);
+					entry.getValue().addReference("IsA", tdDepId, noun2);
+					description.addReference("IsA", tdDepId, noun2);
 					description.addConcept(cp.createConceptAsRole(tdDepLemma));
 				}
 
@@ -435,9 +435,9 @@ public class Extractor {
 
 					if (noun != null) {
 
-						entry.getValue().addReference("HasA", noun);
+						entry.getValue().addReference("HasA", tdDepId, noun);
 						description.addDoer(entry.getKey(), entry.getValue());
-						description.addReference("HasA", noun);
+						description.addReference("HasA", tdDepId, noun);
 						description.addConcept(cp.createConceptWithDirectObject(
 								tdGovLemma, tdDepLemma));
 						description.addConcept(tdDepLemma);
@@ -628,7 +628,7 @@ public class Extractor {
 
 				}
 
-				noun.addReference("IsA", noun2);
+				noun.addReference("IsA", tdGovId, noun2);
 
 				Description description = storySentence.getDescription(tdGovId);
 
@@ -637,7 +637,7 @@ public class Extractor {
 				}
 
 				description.addDoer(tdDepId, noun);
-				description.addReference("IsA", noun2);
+				description.addReference("IsA", tdDepId, noun2);
 
 				description.addConcept(cp.createConceptAsAdjective(tdGovLemma));
 				description.addConcept(

@@ -46,8 +46,7 @@ public abstract class TextGeneration {
 					Noun noun = asr.getNoun(id);
 					int count = Utilities
 							.countLists(noun.getAttributes().values())
-							+ Utilities
-									.countLists(noun.getReferences().values());
+							+ noun.getReferences().size();
 					if (count < currThreshold)
 						//result.add(noun.getId());
 						result.add(id);
@@ -59,8 +58,7 @@ public abstract class TextGeneration {
 						int count = Utilities
 								.countLists(asr.getNoun(id).getAttributes()
 										.values())
-								+ Utilities.countLists(asr.getNoun(id)
-										.getReferences().values());
+								+ asr.getNoun(id).getReferences().size();
 						if (count < currThreshold)
 							//result.add(noun.getId());
 							result.add(id);

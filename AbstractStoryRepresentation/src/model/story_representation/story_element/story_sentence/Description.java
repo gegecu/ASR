@@ -10,11 +10,11 @@ import model.story_representation.story_element.noun.Noun;
 public class Description extends Clause {
 
 	private Map<String, List<String>> attributes;
-	private Map<String, List<Noun>> references;
+	private Map<String, Map<String, Noun>> references;
 
 	public Description() {
 		this.attributes = new HashMap<String, List<String>>();
-		this.references = new HashMap<String, List<Noun>>();
+		this.references = new HashMap<String, Map<String, Noun>>();
 	}
 
 	public void addAttribute(String key, String attribute) {
@@ -39,25 +39,25 @@ public class Description extends Clause {
 		return this.attributes.get(key);
 	}
 
-	public void addReference(String key, Noun reference) {
+	public void addReference(String key, String nounId, Noun reference) {
 
-		List<Noun> temp = this.references.get(key);
+		Map<String, Noun> temp = this.references.get(key);
 
 		if (temp == null) {
-			temp = new ArrayList<Noun>();
+			temp = new HashMap();
 		}
 
-		temp.remove(reference);
-		temp.add(reference);
+		temp.remove(nounId);
+		temp.put(nounId, reference);
 		this.references.put(key, temp);
 
 	}
 
-	public Map<String, List<Noun>> getReferences() {
+	public Map<String, Map<String, Noun>> getReferences() {
 		return this.references;
 	}
 
-	public List<Noun> getReference(String key) {
+	public Map<String, Noun> getReference(String key) {
 		return this.references.get(key);
 	}
 

@@ -1,7 +1,9 @@
 package model.story_representation;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import model.story_representation.story_element.noun.Character;
@@ -53,43 +55,46 @@ public class Checklist {
 
 		this.isLocationExist = false;
 
-		List<Character> temp = new ArrayList<>();
-
-		for (Entry<String, Noun> entry : this.asr.getNounMap().entrySet()) {
-			if (entry.getValue() instanceof Character) {
-				temp.add((Character) entry.getValue());
+		if(this.isCharacterExist != false) {
+			List<Character> temp = new ArrayList<>();
+	
+			for (Entry<String, Noun> entry : this.asr.getNounMap().entrySet()) {
+				if (entry.getValue() instanceof Character) {
+					temp.add((Character) entry.getValue());
+				}
 			}
-		}
-
-		List<Character> temp3 = new ArrayList<>();
-
-		for (int i = 0; i < temp.size(); i++) {
-			Character c = (Character) temp.get(i);
-
-			List<Noun> temp2 = c.getReference("IsA");
-
-			System.out.println(c.getId());
-
-			if (c.getReference("AtLocation") != null
-					&& !c.getReference("AtLocation").isEmpty()) {
+	
+			List<Character> temp3 = new ArrayList<>();
+	
+			for (int i = 0; i < temp.size(); i++) {
+				Character c = (Character) temp.get(i);
+	
+				Map<String, Noun> temp2 = c.getReference("IsA");
+	
 				System.out.println(c.getId());
-				temp3.add(c);
-				if (temp2 != null) {
-					for (Noun n : temp2) {
-						if (n instanceof Character) {
-							System.out.println(n.getId());
-							temp3.add((Character) n);
+	
+				if (c.getReference("AtLocation") != null
+						&& !c.getReference("AtLocation").isEmpty()) {
+					System.out.println(c.getId());
+					temp3.add(c);
+					if (temp2 != null) {
+						Collection<Noun> nouns = temp2.values();
+						for (Noun n : nouns) {
+							if (n instanceof Character) {
+								System.out.println(n.getId());
+								temp3.add((Character) n);
+							}
 						}
 					}
 				}
 			}
-		}
-
-		temp.removeAll(temp3);
-
-		System.out.println(temp.size());
-		if (temp.isEmpty()) {
-			this.isLocationExist = true;
+	
+			temp.removeAll(temp3);
+	
+			System.out.println(temp.size());
+			if (temp.isEmpty()) {
+				this.isLocationExist = true;
+			}
 		}
 
 	}

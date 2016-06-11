@@ -85,11 +85,11 @@ public class Driver {
 								}
 
 								System.out.println("doers' references: ");
-								for (Map.Entry<String, List<Noun>> entry2 : entry
+								for (Map.Entry<String, Map<String, Noun>> entry2 : entry
 										.getValue().getReferences()
 										.entrySet()) {
 									System.out.print(entry2.getKey() + " ");
-									for (Noun n : entry2.getValue()) {
+									for (Noun n : entry2.getValue().values()) {
 										System.out.print(n.getId() + " ");
 									}
 									System.out.println();
@@ -116,11 +116,11 @@ public class Driver {
 								}
 
 								System.out.println("receiver's references");
-								for (Map.Entry<String, List<Noun>> entry3 : entry2
+								for (Map.Entry<String, Map<String, Noun>> entry3 : entry2
 										.getValue().getReferences()
 										.entrySet()) {
 									System.out.print(entry3.getKey() + " ");
-									for (Noun n : entry3.getValue()) {
+									for (Noun n : entry3.getValue().values()) {
 										System.out.print(n.getId() + " ");
 									}
 									System.out.println();
@@ -145,11 +145,11 @@ public class Driver {
 								}
 
 								System.out.println("dobj's references ");
-								for (Map.Entry<String, List<Noun>> entry4 : entry3
+								for (Map.Entry<String, Map<String, Noun>> entry4 : entry3
 										.getValue().getReferences()
 										.entrySet()) {
 									System.out.print(entry4.getKey() + " ");
-									for (Noun n : entry4.getValue()) {
+									for (Noun n : entry4.getValue().values()) {
 										System.out.print(n.getId() + " ");
 									}
 									System.out.println();
@@ -177,10 +177,10 @@ public class Driver {
 							}
 
 							System.out.println("references ");
-							for (Entry<String, List<Noun>> entry2 : entry
+							for (Entry<String, Map<String, Noun>> entry2 : entry
 									.getValue().getReferences().entrySet()) {
 								System.out.print(entry2.getKey() + " ");
-								for (Noun n : entry2.getValue()) {
+								for (Noun n : entry2.getValue().values()) {
 									System.out.print(n.getId() + " ");
 								}
 								System.out.println();

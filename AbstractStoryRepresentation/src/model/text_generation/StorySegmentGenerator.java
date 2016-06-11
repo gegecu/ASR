@@ -99,6 +99,7 @@ public class StorySegmentGenerator extends TextGeneration {
 			List<Integer> keys = new ArrayList<>(response.keySet());
 			int random = Randomizer.random(1, keys.size());
 			history.add(keys.get(random - 1));
+			System.out.println("text gen: " + response.get(keys.get(random - 1)));
 			return response.get(keys.get(random - 1));
 		} else {
 			return null;
@@ -296,14 +297,14 @@ public class StorySegmentGenerator extends TextGeneration {
 					Concept concept = concepts.remove(randomConcept - 1);
 
 					List<String> hasAAttributes = noun.getAttribute("HasA");
-					List<Noun> hasAReferences = noun.getReference("HasA");
+					Map<String, Noun> hasAReferences = noun.getReference("HasA");
 
 					if (hasAAttributes != null
 							&& hasAAttributes.contains(concept.getEnd())) {
 						continue;
 					} else if (hasAReferences != null) {
 						boolean contains = false;
-						for (Noun n : hasAReferences) {
+						for (Noun n : hasAReferences.values()) {
 							if (n.getId().equals(concept.getEnd())) {
 								contains = true;
 								break;
@@ -376,14 +377,14 @@ public class StorySegmentGenerator extends TextGeneration {
 					Concept concept = concepts.remove(randomConcept - 1);
 
 					List<String> isAAttributes = noun.getAttribute("IsA");
-					List<Noun> isAReferences = noun.getReference("IsA");
+					Map<String, Noun> isAReferences = noun.getReference("IsA");
 
 					if (isAAttributes != null
 							&& isAAttributes.contains(concept.getEnd())) {
 						continue;
 					} else if (isAReferences != null) {
 						boolean contains = false;
-						for (Noun n : isAReferences) {
+						for (Noun n : isAReferences.values()) {
 							if (n.getId().equals(concept.getEnd())) {
 								contains = true;
 								break;
@@ -457,7 +458,7 @@ public class StorySegmentGenerator extends TextGeneration {
 
 					List<String> hasPropertyAttributes = noun
 							.getAttribute("HasProperty");
-					List<Noun> hasPropertyReferences = noun
+					Map<String, Noun> hasPropertyReferences = noun
 							.getReference("HasProperty");
 
 					if (hasPropertyAttributes != null && hasPropertyAttributes
@@ -465,7 +466,7 @@ public class StorySegmentGenerator extends TextGeneration {
 						continue;
 					} else if (hasPropertyReferences != null) {
 						boolean contains = false;
-						for (Noun n : hasPropertyReferences) {
+						for (Noun n : hasPropertyReferences.values()) {
 							if (n.getId().equals(concept.getEnd())) {
 								contains = true;
 								break;

@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 
 import model.story_representation.AbstractStoryRepresentation;
@@ -71,6 +72,8 @@ public class DirectivesGenerator extends TextGeneration {
 			System.out.println(history.size());
 			history.remove();
 		}
+		
+		System.out.println("text gen: " + output);
 
 		return output;
 
@@ -131,7 +134,8 @@ public class DirectivesGenerator extends TextGeneration {
 			Noun noun = asr.getNoun(nounId.remove(randomNoun - 1));
 
 			threshold += Utilities.countLists(noun.getAttributes().values());
-			threshold += Utilities.countLists(noun.getReferences().values());
+			//threshold += Utilities.countLists(noun.getReferences().values());
+			threshold += noun.getReferences().values().size();
 
 			// find other noun if the number of properties of the current
 			// noun is greater than descriptionThreshold

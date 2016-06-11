@@ -10,12 +10,12 @@ public abstract class Noun implements Comparable<Noun> {
 	protected String id;
 	protected boolean isCommon;
 	protected Map<String, List<String>> attributes;
-	protected Map<String, List<Noun>> references;
+	protected Map<String, Map<String, Noun>> references;
 
 	public Noun(String id) {
 		this.id = id;
 		this.attributes = new HashMap<String, List<String>>();
-		this.references = new HashMap<String, List<Noun>>();
+		this.references = new HashMap<String, Map<String, Noun>>();
 		this.isCommon = true;
 	}
 
@@ -46,22 +46,22 @@ public abstract class Noun implements Comparable<Noun> {
 		return attributes.get(key);
 	}
 
-	public void addReference(String key, Noun reference) {
-		List<Noun> temp = this.references.get(key);
+	public void addReference(String key, String nounId, Noun reference) {
+		Map<String, Noun> temp = this.references.get(key);
 
 		if (temp == null) {
-			temp = new ArrayList<Noun>();
+			temp = new HashMap();
 			this.references.put(key, temp);
 		}
-		temp.remove(reference);
-		temp.add(reference);
+		temp.remove(nounId);
+		temp.put(nounId, reference);
 	}
 
-	public Map<String, List<Noun>> getReferences() {
+	public Map<String, Map<String, Noun>> getReferences() {
 		return this.references;
 	}
 
-	public List<Noun> getReference(String key) {
+	public Map<String, Noun> getReference(String key) {
 		return references.get(key);
 	}
 

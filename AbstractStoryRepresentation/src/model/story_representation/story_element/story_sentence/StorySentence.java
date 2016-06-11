@@ -65,11 +65,14 @@ public class StorySentence {
 
 		for (Description d : this.description.values()) {
 			nounId.addAll(d.getManyDoers().keySet());
-			for (List<Noun> referred : d.getReferences().values()) {
-				for (Noun n : referred) {
-					nounId.add(n.getId());
-				}
+			for(Map<String, Noun> temp : d.getReferences().values()) {
+				nounId.addAll(temp.keySet());
 			}
+//			for (List<Noun> referred : d.getReferences().values()) {
+//				for (Noun n : referred) {
+//					nounId.add(n.getId());
+//				}
+//			}
 		}
 
 		return new ArrayList<String>(nounId);
