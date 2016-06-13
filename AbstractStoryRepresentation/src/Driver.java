@@ -166,7 +166,7 @@ public class Driver {
 
 							for (Map.Entry<String, Noun> doer : entry.getValue()
 									.getManyDoers().entrySet()) {
-								System.out.println(doer.getValue());
+								System.out.println(doer.getValue().getId());
 							}
 
 							System.out.println("attributes ");

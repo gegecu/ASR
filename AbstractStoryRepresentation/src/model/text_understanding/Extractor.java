@@ -33,6 +33,7 @@ import model.story_representation.story_element.story_sentence.Clause;
 import model.story_representation.story_element.story_sentence.Description;
 import model.story_representation.story_element.story_sentence.Event;
 import model.story_representation.story_element.story_sentence.StorySentence;
+import model.utility.PartOfSpeechComparator;
 import model.utility.TypedDependencyComparator;
 
 @SuppressWarnings("rawtypes")
@@ -100,6 +101,7 @@ public class Extractor {
 			List<TypedDependency> listDependencies = new ArrayList<TypedDependency>(
 					dependencies.typedDependencies());
 			Collections.sort(listDependencies, new TypedDependencyComparator());
+			Collections.sort(listDependencies, new PartOfSpeechComparator());
 
 			for (TypedDependency td : listDependencies) {
 				extractDependency(coreference, td, storySentence);//extract based on dependency
@@ -136,8 +138,8 @@ public class Extractor {
 			String tdGovId = (td.gov().sentIndex() + 1) + " "
 					+ td.gov().index();
 
-			System.out.println(td.dep().lemma() + " before : " + tdDepId);
-			System.out.println(td.gov().lemma() + "before : " + tdGovId);
+			//System.out.println(td.dep().lemma() + " before : " + tdDepId);
+			//System.out.println(td.gov().lemma() + "before : " + tdGovId);
 
 			if (coreference.get(tdDepId) != null) {
 				tdDepId = coreference.get(tdDepId);
@@ -544,9 +546,9 @@ public class Extractor {
 		String tdGovLemma = td.gov().lemma();
 
 		Noun noun = asr.getNoun(tdDepId);
+		
 
 		if (noun == null) {
-
 			if (tdDepTag.equals("NNP")) {
 				noun = extractCategory(getNER(tdDepLemma), tdDepLemma);
 				noun.setProper();
