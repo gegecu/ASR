@@ -1,6 +1,8 @@
 package model.utility;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import model.story_representation.story_element.noun.Noun;
 
@@ -11,9 +13,18 @@ public class SurfaceRealizer {
 		String characters = "";
 
 		for (int i = 0; i < nouns.size(); i++) {
-			if (nouns.get(i).getIsCommon()) {
-				characters += "the ";
+			
+			Map<String, Noun> ownersMap = nouns.get(i).getReference("IsOwnedBy");
+			if(ownersMap != null) {
+				List<Noun> owners = new ArrayList(ownersMap.values());
+				if(owners != null) {
+					characters = owners.get(owners.size()-1).getId() + "'s ";
+				}
 			}
+			else {
+				characters = (nouns.get(i).getIsCommon() ? "the " : "");
+			}
+
 			if (i < nouns.size() - 2) {
 				characters += nouns.get(i).getId() + ", ";
 			} else if (i < nouns.size() - 1) {

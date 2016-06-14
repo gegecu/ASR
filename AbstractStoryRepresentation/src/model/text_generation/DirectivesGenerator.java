@@ -145,8 +145,22 @@ public class DirectivesGenerator extends TextGeneration {
 					int randomNounDirective = Randomizer.random(1,
 							directives.size());
 					directive = directives.remove(randomNounDirective - 1);
+					
+					String toBeReplaced = "";
+		
+					Map<String, Noun> ownersMap = noun.getReference("IsOwnedBy");
+					if(ownersMap != null) {
+						List<Noun> owners = new ArrayList(ownersMap.values());
+						if(owners != null) {
+							toBeReplaced = owners.get(owners.size()-1).getId() + "'s ";
+						}
+					}
+					else {
+						toBeReplaced = (noun.getIsCommon() ? "the " : "");
+					}
+					
 					directive = directive.replace("<noun>",
-							(noun.getIsCommon() ? "the " : "") + noun.getId());
+							toBeReplaced + noun.getId());
 				}
 			}
 
@@ -185,12 +199,16 @@ public class DirectivesGenerator extends TextGeneration {
 
 				VPPhraseSpec verb = nlgFactory
 						.createVerbPhrase(predicate.getAction());
-				verb.setFeature(Feature.TENSE, Tense.PAST);
-				String action = realiser.realise(verb).toString();
+	
+				String action = "";
 
 				Collection<Noun> directObjects = predicate.getDirectObjects()
 						.values();
 				if (predicate.getDirectObjects().size() > 0) {
+					
+					verb.setFeature(Feature.TENSE, Tense.PAST);
+					action = realiser.realise(verb).toString();
+					
 					Noun noun = directObjects.iterator().next();
 					if (noun instanceof Location) {
 						action += " to " + noun.getId();
@@ -201,6 +219,10 @@ public class DirectivesGenerator extends TextGeneration {
 						action += " "
 								+ SurfaceRealizer.determinerFixer(noun.getId());
 					}
+				}
+				else {
+					verb.setFeature(Feature.PROGRESSIVE, true);
+					action = realiser.realise(verb).toString();
 				}
 				directive = directive.replace("<action>", action);
 

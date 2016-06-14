@@ -200,11 +200,56 @@ public class Extractor {
 					|| tdReln.equals("nmod:on")) {
 				extractLocationDependency(td, storySentence, tdDepId, tdGovId);
 			}
+			/** extract possession **/
+			else if (tdReln.equals("nmod:poss")) {
+				extractPossesionDependency(td, storySentence, tdDepId, tdGovId);
+			}
 
 		} catch (NullPointerException e) {
 			e.printStackTrace();
 		}
 
+	}
+	
+	private void extractPossesionDependency(TypedDependency td,
+			StorySentence storySentence, String tdDepId, String tdGovId) {
+		//nmod:poss ( ball-5 , John-3 )  gov, dep
+		String tdDepTag = td.dep().tag();
+		String tdDepLemma = td.dep().lemma();
+		String tdGovTag = td.gov().tag();
+		String tdGovLemma = td.gov().lemma();
+		String tdReln = td.reln().toString();
+		
+		Noun noun = asr.getNoun(tdDepId);
+
+		if (noun == null) {
+
+			if (tdDepTag.equals("NNP")) {
+				noun = extractCategory(getNER(tdDepLemma), tdDepLemma);
+				noun.setProper();
+			} else if (tdDepTag.contains("NN")) {
+				noun = extractCategory(getSRL(tdDepLemma), tdDepLemma);
+			}
+
+			asr.addNoun(tdDepId, noun);
+		}
+		
+		Noun noun2 = asr.getNoun(tdGovId);
+		
+		if (noun2 == null) {
+
+			if (tdGovTag.equals("NNP")) {
+				noun2 = extractCategory(getNER(tdGovLemma), tdGovLemma);
+				noun2.setProper();
+			} else if (tdGovTag.contains("NN")) {
+				noun2 = extractCategory(getSRL(tdGovLemma), tdGovLemma);
+			}
+
+			asr.addNoun(tdGovId, noun2);
+		}
+		
+		noun.addReference("HasA", tdDepId, noun2);
+		noun2.addReference("IsOwnedBy", tdGovId, noun);
 	}
 
 	private void extractLocationDependency(TypedDependency td,
@@ -440,6 +485,10 @@ public class Extractor {
 						entry.getValue().addReference("HasA", tdDepId, noun);
 						description.addDoer(entry.getKey(), entry.getValue());
 						description.addReference("HasA", tdDepId, noun);
+						
+						noun.addReference("IsOwnedBy", entry.getKey(), entry.getValue());
+						//System.out.println(entry.getKey() + ", " + entry.getValue().getId());
+						
 						description.addConcept(cp.createConceptWithDirectObject(
 								tdGovLemma, tdDepLemma));
 						description.addConcept(tdDepLemma);
