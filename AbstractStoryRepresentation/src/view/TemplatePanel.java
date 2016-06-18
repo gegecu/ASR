@@ -3,6 +3,8 @@
  */
 package view;
 
+import java.awt.event.ActionListener;
+
 import javax.swing.JPanel;
 
 /**
@@ -25,6 +27,10 @@ public abstract class TemplatePanel extends JPanel {
 
 	public void reinitialize() {
 		// do nothing for some
+	}
+
+	public void addActionListener(ActionListener actionListener) {
+
 	}
 
 }

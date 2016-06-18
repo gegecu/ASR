@@ -13,6 +13,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.miginfocom.swing.MigLayout;
+import view.MainFrame;
 import view.TemplatePanel;
 import view.menu.AliceHeaderPanel;
 import view.utilities.AutoResizingButton;
@@ -74,7 +75,8 @@ public class ChooseFriendPanel extends TemplatePanel {
 
 		cancelButton.getModel().addChangeListener(new ChangeListener() {
 
-			private RoundedBorder border = (RoundedBorder) cancelButton.getBorder();
+			private RoundedBorder border = (RoundedBorder) cancelButton
+					.getBorder();
 
 			@Override
 			public void stateChanged(ChangeEvent e) {
@@ -90,7 +92,8 @@ public class ChooseFriendPanel extends TemplatePanel {
 
 		helpButton.getModel().addChangeListener(new ChangeListener() {
 
-			private RoundedBorder border = (RoundedBorder) helpButton.getBorder();
+			private RoundedBorder border = (RoundedBorder) helpButton
+					.getBorder();
 
 			@Override
 			public void stateChanged(ChangeEvent e) {
@@ -109,6 +112,10 @@ public class ChooseFriendPanel extends TemplatePanel {
 	@Override
 	protected void addUXFeatures() {
 		// TODO Auto-generated method stub
+
+	}
+
+	public void setMainFrame(MainFrame mainFrame) {
 
 	}
 

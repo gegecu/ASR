@@ -11,13 +11,14 @@ import javax.swing.ButtonModel;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.MouseInputAdapter;
 
-import controller.SubmitController;
+import controller.peer.SubmitController;
 import net.miginfocom.swing.MigLayout;
 import view.TemplatePanel;
 import view.utilities.AutoResizingButton;
@@ -193,6 +194,10 @@ public class StoryInputPanel extends TemplatePanel {
 		String text = storySegmentInputArea.getText();
 		storySegmentInputArea.setText("");
 		return text;
+	}
+
+	public JTextArea getInputArea() {
+		return storySegmentInputArea;
 	}
 
 }

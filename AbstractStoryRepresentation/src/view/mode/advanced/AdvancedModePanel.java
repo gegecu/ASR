@@ -14,16 +14,19 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.MouseInputAdapter;
 
-import controller.AskMeController;
-import controller.ChecklistController;
-import controller.SubmitController;
+import controller.peer.AskMeController;
+import controller.peer.CancelController;
+import controller.peer.ChecklistController;
+import controller.peer.SaveController;
+import controller.peer.SubmitController;
 import model.story_representation.AbstractStoryRepresentation;
 import model.text_generation.DirectivesGenerator;
 import model.text_generation.StorySegmentGenerator;
 import model.text_understanding.TextUnderstanding;
 import net.miginfocom.swing.MigLayout;
-import view.TemplatePanel;
+import view.MainFrame;
 import view.mode.AlicePanel;
+import view.mode.ModePanel;
 import view.mode.StoryInputPanel;
 import view.mode.StoryViewPanel;
 import view.utilities.AutoResizingButton;
@@ -36,11 +39,9 @@ import view.utilities.RoundedBorder;
  * @since December 23, 2015
  */
 @SuppressWarnings("serial")
-public class AdvancedModePanel extends TemplatePanel {
+public class AdvancedModePanel extends ModePanel {
 
-	private JButton cancelButton;
 	private JButton helpButton;
-	private JButton saveButton;
 	private JButton askMeButton;
 
 	private AutoResizingTextFieldWithPlaceHolder titleField;
@@ -59,14 +60,22 @@ public class AdvancedModePanel extends TemplatePanel {
 	private ChecklistController checklistController;
 	private SubmitController submitController;
 
+	private SaveController saveController;
+	private CancelController cancelController;
+
 	public AdvancedModePanel() {
 
 		checklistController = new ChecklistController(asr, null, null);
 		submitController = new SubmitController(asr, tu, checklistController);
 		askMeController = new AskMeController(dg, ssg, submitController);
+		saveController = new SaveController(titleField,
+				storyInputPanel.getInputArea());
+		cancelController = new CancelController();
 
 		addAskMeController(askMeController);
 		addSubmitController(submitController);
+		addCancelButtonActionListener(cancelController);
+		addSaveButtonActionListener(saveController);
 
 	}
 
@@ -288,6 +297,11 @@ public class AdvancedModePanel extends TemplatePanel {
 
 	public StoryViewPanel getStoryViewPanel() {
 		return storyViewPanel;
+	}
+
+	public void setMainFrame(MainFrame mainFrame) {
+		cancelController.setMainFrame(mainFrame);
+		saveController.setMainFrame(mainFrame);
 	}
 
 }

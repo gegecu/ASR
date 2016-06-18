@@ -17,7 +17,7 @@ public class AlicePanel extends TemplatePanel {
 		setLayout(new MigLayout("insets 0"));
 		setBackground(Color.decode("#36B214"));
 
-		JLabel test = new JLabel(new ImageIcon("Untitled-1.png"));
+		JLabel test = new JLabel(new ImageIcon("Alice.png"));
 		test.setBackground(Color.decode("#36B214"));
 
 		JPanel panel1 = new JPanel(new MigLayout("insets 0"));

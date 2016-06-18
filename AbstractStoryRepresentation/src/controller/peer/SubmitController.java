@@ -1,4 +1,4 @@
-package controller;
+package controller.peer;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -73,6 +73,10 @@ public class SubmitController implements ActionListener {
 
 	public void setStoryViewPanel(StoryViewPanel storyViewPanel) {
 		this.storyViewPanel = storyViewPanel;
+	}
+
+	public void checkAnswer(Object nounAdjective, String inputText) {
+
 	}
 
 }

@@ -18,17 +18,20 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.MouseInputAdapter;
 
-import controller.AskMeController;
-import controller.ChecklistController;
-import controller.SubmitController;
+import controller.peer.AskMeController;
+import controller.peer.CancelController;
+import controller.peer.ChecklistController;
+import controller.peer.SaveController;
+import controller.peer.SubmitController;
 import model.story_representation.AbstractStoryRepresentation;
 import model.story_representation.Checklist;
 import model.text_generation.DirectivesGenerator;
 import model.text_generation.StorySegmentGenerator;
 import model.text_understanding.TextUnderstanding;
 import net.miginfocom.swing.MigLayout;
-import view.TemplatePanel;
+import view.MainFrame;
 import view.mode.AlicePanel;
+import view.mode.ModePanel;
 import view.mode.StoryInputPanel;
 import view.mode.StoryViewPanel;
 import view.utilities.AutoResizingButton;
@@ -42,22 +45,20 @@ import view.utilities.RoundedBorder;
  * @since January 1, 2016
  */
 @SuppressWarnings("serial")
-public class BeginnerModePanel extends TemplatePanel {
+public class BeginnerModePanel extends ModePanel {
 
-	public JButton cancelButton;
-	public JButton helpButton;
-	public JButton saveButton;
-	public JButton askMeButton;
-	public JButton nextButton;
+	private JButton helpButton;
+	private JButton askMeButton;
+	private JButton nextButton;
 
-	public StoryViewPanel storyViewPanel;
+	private StoryViewPanel storyViewPanel;
 
 	private AutoResizingTextFieldWithPlaceHolder titleField;
 
 	private JLabel guideLabel;
 	private ChecklistPanel checkListPanel;
 
-	public StoryInputPanel storyInputPanel;
+	private StoryInputPanel storyInputPanel;
 
 	private boolean titleFieldFocused = false;
 
@@ -66,9 +67,12 @@ public class BeginnerModePanel extends TemplatePanel {
 	private TextUnderstanding tu;
 	private DirectivesGenerator dg;
 	private StorySegmentGenerator ssg;
+
 	private AskMeController askMeController;
 	private ChecklistController checklistController;
 	private SubmitController submitController;
+	private SaveController saveController;
+	private CancelController cancelController;
 
 	public BeginnerModePanel() {
 
@@ -81,10 +85,15 @@ public class BeginnerModePanel extends TemplatePanel {
 		checklistController = new ChecklistController(asr, cl, checkListPanel);
 		submitController = new SubmitController(asr, tu, checklistController);
 		askMeController = new AskMeController(dg, ssg, submitController);
+		saveController = new SaveController(titleField,
+				storyInputPanel.getInputArea());
+		cancelController = new CancelController();
 
-		addAskMeController(askMeController);
-		addSubmitController(submitController);
-		addCheckListController(checklistController);
+		addAskMeActionListener(askMeController);
+		addSubmitActionListener(submitController);
+		addCheckListActionListener(checklistController);
+		addSaveButtonActionListener(saveController);
+		addCancelButtonActionListener(cancelController);
 
 	}
 
@@ -200,6 +209,9 @@ public class BeginnerModePanel extends TemplatePanel {
 
 		add(panel1, "h 10%, w 100%, grow, wrap");
 		add(panel6, "h 90%, w 100%, grow");
+
+		addCancelButtonActionListener(cancelController);
+		addSaveButtonActionListener(saveController);
 
 	}
 
@@ -343,11 +355,11 @@ public class BeginnerModePanel extends TemplatePanel {
 
 	}
 
-	public void addAskMeController(AskMeController askMeController) {
+	public void addAskMeActionListener(AskMeController askMeController) {
 		askMeButton.addActionListener(askMeController);
 	}
 
-	public void addSubmitController(SubmitController submitController) {
+	public void addSubmitActionListener(SubmitController submitController) {
 		submitController.setStoryInputPanel(storyInputPanel);
 		submitController.setStoryViewPanel(storyViewPanel);
 		storyInputPanel.addSubmitButtonController(submitController);
@@ -361,9 +373,14 @@ public class BeginnerModePanel extends TemplatePanel {
 		return checkListPanel;
 	}
 
-	public void addCheckListController(
+	public void addCheckListActionListener(
 			ChecklistController checklistController) {
 		nextButton.addActionListener(checklistController);
+	}
+
+	public void setMainFrame(MainFrame mainFrame) {
+		cancelController.setMainFrame(mainFrame);
+		saveController.setMainFrame(mainFrame);
 	}
 
 }

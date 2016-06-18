@@ -17,12 +17,14 @@ import view.utilities.RoundedBorder;
 
 public class WaitDialog extends JDialog {
 
+	private static final long serialVersionUID = 1L;
+
 	private JLabel waitLabel;
 	private JPanel panel;
 	private WaitDialog waitDialog;
 
-	public WaitDialog() {
-	
+	public WaitDialog(String dialogText) {
+
 		waitDialog = this;
 		panel = new JPanel();
 		waitLabel = new AutoResizingLabel();
@@ -33,7 +35,7 @@ public class WaitDialog extends JDialog {
 		panel.setBackground(Color.WHITE);
 		panel.setBorder(new RoundedBorder(Color.BLACK, 3, 0));
 
-		waitLabel.setText("Alice is thinking ... Please Wait. =)");
+		waitLabel.setText(dialogText);
 		waitLabel.setFont(new Font("Arial", Font.BOLD, 25));
 
 		panel.add(waitLabel, "h 100%, center");
