@@ -19,6 +19,7 @@ public class IdeaDialog extends HelpDialog {
 	private JPanel panel;
 	private JButton gotItButton;
 	private JButton otherSuggestionButton;
+	private Object expectedNounAttribute;
 
 	public IdeaDialog() {
 	}
@@ -135,6 +136,18 @@ public class IdeaDialog extends HelpDialog {
 	protected void addUXFeatures() {
 		// TODO Auto-generated method stub
 
+	}
+
+	public String getInputText() {
+		return "";
+	}
+
+	public Object getNountAdjective() {
+		return null;
+	}
+
+	public void setExpectedNounAttribute(Object expectedNounAttribute) {
+		this.expectedNounAttribute = expectedNounAttribute;
 	}
 
 }

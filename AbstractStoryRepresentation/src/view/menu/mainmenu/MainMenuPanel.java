@@ -6,6 +6,7 @@ package view.menu.mainmenu;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
+import java.awt.event.ActionListener;
 
 import javax.swing.ButtonModel;
 import javax.swing.JButton;
@@ -14,7 +15,9 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import controller.MainMenuController;
 import net.miginfocom.swing.MigLayout;
+import view.MainFrame;
 import view.TemplatePanel;
 import view.menu.AliceHeaderPanel;
 import view.utilities.AutoResizingButton;
@@ -27,12 +30,18 @@ import view.utilities.RoundedBorder;
 @SuppressWarnings("serial")
 public class MainMenuPanel extends TemplatePanel {
 
-	JButton exitButton;
-	JButton writeStoryButton;
-	JButton helpButton;
+	public static final String writeStoryButtonActionCommand = "Write Story";
+	public static final String exitButtonActionCommand = "Exit";
+	public static final String helpButtonActionCommand = "help";
 
-	AliceHeaderPanel aliceHeaderPanel;
-	MainMenuLibraryPanel mainMenuLibraryPanel;
+	private JButton exitButton;
+	private JButton writeStoryButton;
+	private JButton helpButton;
+
+	private AliceHeaderPanel aliceHeaderPanel;
+	private MainMenuLibraryPanel mainMenuLibraryPanel;
+
+	private MainMenuController mainMenuController;
 
 	@Override
 	protected void initializeUI() {
@@ -44,17 +53,22 @@ public class MainMenuPanel extends TemplatePanel {
 		aliceHeaderPanel = new AliceHeaderPanel();
 		mainMenuLibraryPanel = new MainMenuLibraryPanel(95, 5);
 
+		mainMenuController = new MainMenuController();
+
 		setLayout(new MigLayout());
 		setBackground(Color.decode("#609AD1"));
 
+		exitButton.setActionCommand(exitButtonActionCommand);
 		exitButton.setText("X");
 		exitButton.setFont(new Font("Arial", Font.BOLD, 40));
 		exitButton.setBackground(Color.RED);
 		exitButton.setForeground(Color.WHITE);
 		exitButton.setFocusPainted(false);
 		exitButton.setAlignmentY(Component.CENTER_ALIGNMENT);
-		exitButton.setBorder(new RoundedBorder(Color.BLACK, 3, 8, 0, 25, 0, 25));
+		exitButton
+				.setBorder(new RoundedBorder(Color.BLACK, 3, 8, 0, 25, 0, 25));
 
+		helpButton.setActionCommand(helpButtonActionCommand);
 		helpButton.setText("?");
 		helpButton.setFont(new Font("Arial", Font.BOLD, 40));
 		helpButton.setBackground(Color.WHITE);
@@ -62,8 +76,10 @@ public class MainMenuPanel extends TemplatePanel {
 		helpButton.setFocusPainted(false);
 		helpButton.setAlignmentY(Component.TOP_ALIGNMENT);
 		helpButton.setVerticalAlignment(SwingConstants.TOP);
-		helpButton.setBorder(new RoundedBorder(Color.BLACK, 3, 8, 13, 0, 13, 0));
+		helpButton
+				.setBorder(new RoundedBorder(Color.BLACK, 3, 8, 13, 0, 13, 0));
 
+		writeStoryButton.setActionCommand(writeStoryButtonActionCommand);
 		writeStoryButton.setText("Write Your Story");
 		writeStoryButton.setFont(new Font("Arial", Font.BOLD, 25));
 		writeStoryButton.setBackground(Color.WHITE);
@@ -83,7 +99,8 @@ public class MainMenuPanel extends TemplatePanel {
 		mainMenuLibraryPanel.setBackground(Color.decode("#36B214"));
 
 		// bottom panel
-		JPanel panel2 = new JPanel(new MigLayout("insets 0 10 10 10", "[]push[]", ""));
+		JPanel panel2 = new JPanel(
+				new MigLayout("insets 0 10 10 10", "[]push[]", ""));
 		panel2.setBackground(Color.decode("#36B214"));
 		panel2.add(helpButton, "w 15%, h 100%");
 		panel2.add(writeStoryButton, "w 40%, h 100%, growy");
@@ -98,6 +115,8 @@ public class MainMenuPanel extends TemplatePanel {
 		add(panel1, "w 100%, h 10%, grow, wrap");
 		add(panel3, "w 100%, h 90%, grow, wrap");
 
+		addActionListener(mainMenuController);
+
 	}
 
 	@Override
@@ -105,7 +124,8 @@ public class MainMenuPanel extends TemplatePanel {
 
 		exitButton.getModel().addChangeListener(new ChangeListener() {
 
-			private RoundedBorder border = (RoundedBorder) exitButton.getBorder();
+			private RoundedBorder border = (RoundedBorder) exitButton
+					.getBorder();
 
 			@Override
 			public void stateChanged(ChangeEvent e) {
@@ -121,7 +141,8 @@ public class MainMenuPanel extends TemplatePanel {
 
 		helpButton.getModel().addChangeListener(new ChangeListener() {
 
-			private RoundedBorder border = (RoundedBorder) helpButton.getBorder();
+			private RoundedBorder border = (RoundedBorder) helpButton
+					.getBorder();
 
 			@Override
 			public void stateChanged(ChangeEvent e) {
@@ -137,7 +158,8 @@ public class MainMenuPanel extends TemplatePanel {
 
 		writeStoryButton.getModel().addChangeListener(new ChangeListener() {
 
-			private RoundedBorder border = (RoundedBorder) writeStoryButton.getBorder();
+			private RoundedBorder border = (RoundedBorder) writeStoryButton
+					.getBorder();
 
 			@Override
 			public void stateChanged(ChangeEvent e) {
@@ -161,6 +183,17 @@ public class MainMenuPanel extends TemplatePanel {
 
 	public JPanel getLibrary() {
 		return mainMenuLibraryPanel;
+	}
+
+	@Override
+	public void addActionListener(ActionListener actionListener) {
+		writeStoryButton.addActionListener(actionListener);
+		exitButton.addActionListener(actionListener);
+		helpButton.addActionListener(actionListener);
+	}
+
+	public void setMainFrame(MainFrame mainFrame) {
+		mainMenuController.setMainFrame(mainFrame);
 	}
 
 }

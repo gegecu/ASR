@@ -1,4 +1,4 @@
-package controller;
+package controller.peer;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -35,7 +35,8 @@ public class AskMeController implements ActionListener {
 	public AskMeController(DirectivesGenerator directivesGenerator,
 			StorySegmentGenerator storySegmentGenerator,
 			SubmitController submitController) {
-		this.waitDialog = new WaitDialog();
+		this.waitDialog = new WaitDialog(
+				"Alice is thinking ... Please Wait. =)");
 		this.processed = new Semaphore(0);
 		this.directivesGenerator = directivesGenerator;
 		this.storySegmentGenerator = storySegmentGenerator;
@@ -64,8 +65,6 @@ public class AskMeController implements ActionListener {
 					break;
 			}
 
-			System.out.println(typeOfHelp);
-
 			do {
 
 				processTextGeneration();
@@ -77,6 +76,13 @@ public class AskMeController implements ActionListener {
 				if (typeOfHelp == TypeOfHelp.SUGGESTIONS) {
 					if (answer == HelpAnswer.ACCEPT) {
 						submitController.processStory(helpText);
+					}
+				} else if (typeOfHelp == TypeOfHelp.IDEAS) {
+					if (answer == HelpAnswer.ACCEPT) {
+						IdeaDialog tempDialog = ((IdeaDialog) dialog);
+						Object nounAdjective = tempDialog.getNountAdjective();
+						String inputText = tempDialog.getInputText();
+						submitController.checkAnswer(nounAdjective, inputText);
 					}
 				}
 
@@ -92,10 +98,17 @@ public class AskMeController implements ActionListener {
 
 			@Override
 			protected Void doInBackground() throws Exception {
+
 				helpText = currentTextGenerator.generateText() + "";
 				//helpText = "The quick brown fox jumps over the lazy dog.";
 				dialog.setHelpText(helpText);
+
+				if (typeOfHelp == TypeOfHelp.IDEAS) {
+					((IdeaDialog) dialog).setExpectedNounAttribute(null);
+				}
+
 				return null;
+
 			}
 
 			@Override
