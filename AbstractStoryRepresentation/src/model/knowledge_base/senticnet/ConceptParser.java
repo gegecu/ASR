@@ -12,6 +12,14 @@ public class ConceptParser {
 	public String createConceptWithDirectObject(String verb, String dobj) {
 		return (verb + " " + dobj);
 	}
+	
+	public String createNegationVerbWithDirectObject(String verb, String dobj) {
+		return ("not " + verb + " " + dobj);
+	}
+	
+	public String createNegationVerb(String verb) {
+		return ("not " + verb);
+	}
 
 	/** creates a concept in the format 'verb + to + location' **/
 	public String createConceptAsInfinitive(String verb, String location) {
@@ -26,9 +34,22 @@ public class ConceptParser {
 	public String createConceptAsAdjective(String adj) {
 		return (adj);
 	}
+	
+	/** creates a concept in the format 'be + adjective' **/
+	public String createConceptAsPredicativeAdjectiveNegated(String adj) {
+		return ("not be " + adj);
+	}
+
+	public String createConceptAsAdjectiveNegated(String adj) {
+		return ("not " + adj);
+	}
 
 	public String createConceptAsRole(String role) {
 		return (role);
+	}
+	
+	public String createConceptAsRoleNegation(String role) {
+		return ("not " + role);
 	}
 
 }

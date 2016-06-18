@@ -3,6 +3,7 @@ package model.story_representation.story_element.story_sentence;
 import java.util.HashMap;
 import java.util.Map;
 
+import model.story_representation.story_element.Verb;
 import model.story_representation.story_element.noun.Noun;
 
 public class Event extends Clause {
@@ -10,11 +11,21 @@ public class Event extends Clause {
 	private String action;
 	private Map<String, Noun> receivers;
 	private Map<String, Noun> directObjects;
+	private Verb verb;
 
 	public Event(String action) {
 		this.action = action;
 		this.receivers = new HashMap<String, Noun>();
 		this.directObjects = new HashMap<String, Noun>();
+		this.verb = new Verb(action);
+	}
+
+	public Verb getVerb() {
+		return verb;
+	}
+
+	public void setVerb(Verb verb) {
+		this.verb = verb;
 	}
 
 	public String getAction() {

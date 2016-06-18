@@ -204,11 +204,90 @@ public class Extractor {
 			else if (tdReln.equals("nmod:poss")) {
 				extractPossesionDependency(td, storySentence, tdDepId, tdGovId);
 			}
+			
+			/** extract negation **/
+			else if (tdReln.equals("neg")) {
+				extractNegation(td, storySentence, tdDepId, tdGovId);
+			}
 
 		} catch (NullPointerException e) {
 			e.printStackTrace();
 		}
 
+	}
+	
+	private void extractNegation(TypedDependency td,
+			StorySentence storySentence, String tdDepId, String tdGovId) {
+		//neg ( give-4 , not-3 )  gov, dep
+		//neg ( doctor-5 , not-3 ) 
+		// neg ( cute-4 , not-3 ) 
+		
+		String tdDepTag = td.dep().tag();
+		String tdDepLemma = td.dep().lemma();
+		String tdGovTag = td.gov().tag();
+		String tdGovLemma = td.gov().lemma();
+		String tdReln = td.reln().toString();
+
+		if(tdGovTag.contains("VB")) {
+			Event p = storySentence.getPredicate(tdGovId);
+			p.getConcepts().clear();
+			p.getVerb().setNegated(true);
+			
+			if(!p.getDirectObjects().isEmpty()) {
+				for(Noun dobj: p.getDirectObjects().values()) {
+					p.addConcept(cp.createNegationVerbWithDirectObject(tdGovLemma, dobj.getId()));
+				}
+			}
+			else {
+				p.addConcept(cp.createNegationVerb(tdGovLemma));
+			}
+		}
+		
+		else if (tdGovTag.contains("NN")) {
+			Description d = storySentence.getDescription(tdGovId);
+			
+			d.getConcepts().clear();
+			
+			d.addReference("NotIsA", tdGovId, d.getReference("IsA").remove(tdGovId));
+			
+			if(d.getReference("IsA").isEmpty()) {
+				d.getReferences().remove("IsA");
+			}
+			
+			for(Noun noun: d.getManyDoers().values()) {
+				noun.addReference("NotIsA", tdGovId, noun.getReference("IsA").remove(tdGovId));
+				
+				if(noun.getReference("IsA").isEmpty()) {
+					noun.getReferences().remove("IsA");
+				}
+			}
+			
+			d.addConcept(cp.createConceptAsRoleNegation(tdGovLemma));
+		}
+		
+		else if (tdGovTag.contains("JJ")) {
+			Description d = storySentence.getDescription(tdGovId);
+			d.getAttribute("HasProperty").remove(tdGovLemma);
+			d.addAttribute("NotHasProperty", tdGovLemma);
+			
+			d.getConcepts().clear();
+			
+			if(d.getAttribute("HasProperty").isEmpty()) {
+				d.getAttributes().remove("HasProperty");
+			}
+			
+			for(Noun noun: d.getManyDoers().values()) {
+				noun.getAttribute("HasProperty").remove(tdGovLemma);
+				noun.addAttribute("NotHasProperty", tdGovLemma);
+				
+				if(noun.getAttribute("HasProperty").isEmpty()) {
+					noun.getAttributes().remove("IsA");
+				}
+			}
+			
+			d.addConcept(cp.createConceptAsAdjectiveNegated(tdGovLemma));
+			d.addConcept(cp.createConceptAsPredicativeAdjectiveNegated(tdGovLemma));
+		}
 	}
 	
 	private void extractPossesionDependency(TypedDependency td,
@@ -278,42 +357,39 @@ public class Extractor {
 
 		if (noun != null && noun instanceof Location) {
 
-			Description description = storySentence.getDescription(tdDepId);
-
-			if (description == null) {
-				description = new Description();
-			}
-
-			for (Map.Entry<String, Noun> entry : storySentence
-					.getPredicate(tdGovId).getManyDoers().entrySet()) {
-				entry.getValue().addReference("AtLocation", tdDepId, noun);
-				description.addReference("AtLocation", tdDepId, noun);
-				description.addDoer(entry.getKey(), entry.getValue());
-			}
-
 			Event predicate = storySentence.getPredicate(tdGovId);
+			
+			if(!predicate.getVerb().isNegated() && predicate != null) {
 
-			if (predicate == null) {
-				predicate = new Event(tdGovLemma);
+				Description description = storySentence.getDescription(tdDepId);
+	
+				if (description == null) {
+					description = new Description();
+				}
+	
+				for (Map.Entry<String, Noun> entry : storySentence
+						.getPredicate(tdGovId).getManyDoers().entrySet()) {
+					entry.getValue().addReference("AtLocation", tdDepId, noun);
+					description.addReference("AtLocation", tdDepId, noun);
+					description.addDoer(entry.getKey(), entry.getValue());
+				}
+				
+				predicate.addDirectObject(tdDepId, noun);
+				System.out.println("Location: " + tdDepLemma);
+				
+				predicate.addConcept(
+						cp.createConceptAsInfinitive(tdGovLemma, tdDepLemma));
 			}
-
-			predicate.addDirectObject(tdDepId, noun);
-			System.out.println("Location: " + tdDepLemma);
-
 		}
 
-		if (tdReln.equals("nmod:to") && tdGovTag.contains("VB")) {
-			//create concept
-			Event predicate = storySentence.getPredicate(tdGovId);
-			if (predicate == null) {
-				predicate = new Event(tdGovLemma);
-				storySentence.addPredicate(tdGovId, predicate);
-			}
-
-			predicate.addConcept(
-					cp.createConceptAsInfinitive(tdGovLemma, tdDepLemma));
-
-		}
+//		if (tdReln.equals("nmod:to") && tdGovTag.contains("VB")) {
+//			//create concept
+//			Event predicate = storySentence.getPredicate(tdGovId);
+//			if (predicate == null) {
+//				predicate = new Event(tdGovLemma);
+//				storySentence.addPredicate(tdGovId, predicate);
+//			}
+//		}
 
 	}
 
@@ -797,13 +873,29 @@ public class Extractor {
 		if (concepts == null) {
 			return (float) 0;
 		}
-
+		
+		
+		float negated = -1;
 		float worstPolarity = Float.MAX_VALUE;
 		float polarity = 0;
 		for (String concept : concepts) {
-			polarity = snp.getPolarity(concept.replace(" ", "_"));
-			if (polarity < worstPolarity) {
-				worstPolarity = polarity;
+			
+			if(!concept.contains("not")) {
+				polarity = snp.getPolarity(concept.replace(" ", "_"));
+				if (polarity < worstPolarity) {
+					worstPolarity = polarity;
+				}
+			}
+			else {
+				
+				String temp = concept.replace("not ", "");
+				temp = temp.replace(" ", "_");
+				System.out.println(temp);
+				polarity = snp.getPolarity(temp);
+				polarity *= negated;
+				if (polarity < worstPolarity) {
+					worstPolarity = polarity;
+				}
 			}
 			System.out.println(worstPolarity);
 		}
