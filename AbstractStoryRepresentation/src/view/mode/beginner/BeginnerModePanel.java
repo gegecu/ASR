@@ -18,6 +18,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.MouseInputAdapter;
 
+import org.apache.log4j.Logger;
+
 import controller.peer.AskMeController;
 import controller.peer.CancelController;
 import controller.peer.ChecklistController;
@@ -46,6 +48,9 @@ import view.utilities.RoundedBorder;
  */
 @SuppressWarnings("serial")
 public class BeginnerModePanel extends ModePanel {
+
+	private static Logger log = Logger
+			.getLogger(BeginnerModePanel.class.getName());
 
 	private JButton helpButton;
 	private JButton askMeButton;
@@ -81,6 +86,8 @@ public class BeginnerModePanel extends ModePanel {
 		tu = new TextUnderstanding(asr);
 		dg = new DirectivesGenerator(asr);
 		ssg = new StorySegmentGenerator(asr);
+
+		log.debug("========== New Story ==========");
 
 		checklistController = new ChecklistController(asr, cl, checkListPanel);
 		submitController = new SubmitController(asr, tu, checklistController);

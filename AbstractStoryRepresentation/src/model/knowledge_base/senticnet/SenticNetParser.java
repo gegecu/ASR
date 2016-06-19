@@ -4,11 +4,14 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.util.FileManager;
+import org.apache.log4j.Logger;
 
 public class SenticNetParser {
 
 	private Model m;
 	private final String file = "senticnet3.rdf.xml";
+
+	private static Logger log = Logger.getLogger(SenticNetParser.class.getName());
 
 	public SenticNetParser() {
 		m = FileManager.get().loadModel(file);
@@ -21,8 +24,7 @@ public class SenticNetParser {
 		Property contains = m.getProperty("http://sentic.net/apipolarity");
 
 		try {
-			System.out.println(
-					"senticPolar" + title.getProperty(contains).getFloat());
+			log.debug("senticPolar" + title.getProperty(contains).getFloat());
 			return title.getProperty(contains).getFloat();
 		} catch (NullPointerException e) {
 			//e.printStackTrace();

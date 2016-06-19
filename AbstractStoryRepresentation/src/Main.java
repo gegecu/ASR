@@ -1,8 +1,10 @@
+import org.apache.log4j.Logger;
+
 import model.instance.AbstractSequenceClassifierInstance;
 import model.instance.DictionariesInstance;
-import model.instance.JLanguageToolInstance;
 import model.instance.SenticNetParserInstance;
 import model.instance.StanfordCoreNLPInstance;
+import model.knowledge_base.MySQLConnector;
 import view.MainFrame;
 
 public class Main {
@@ -10,11 +12,16 @@ public class Main {
 	static int i;
 	static int k;
 
+	private static Logger log = Logger.getLogger(Main.class.getName());
+
 	static synchronized int getNumber() {
 		return k++;
 	}
 
 	public static void main(String[] args) {
+
+		log.debug("\n\n");
+		// BasicConfigurator.configure();
 
 		//		k = 1;
 		//
@@ -37,10 +44,14 @@ public class Main {
 		//
 		//		}
 
+		MySQLConnector.getInstance();
+		
 		new Thread() {
 
 			@Override
 			public void run() {
+
+				long t = System.currentTimeMillis();
 
 				StanfordCoreNLPInstance.getInstance();
 				DictionariesInstance.getInstance();
@@ -48,8 +59,9 @@ public class Main {
 				SenticNetParserInstance.getInstance();
 				// JLanguageToolInstance.getInstance();
 
-				System.out.println("---- done loading ----");
-				
+				log.debug("---- done loading libraries in "
+						+ (System.currentTimeMillis() - t) + " ms ----");
+
 			}
 
 		}.start();

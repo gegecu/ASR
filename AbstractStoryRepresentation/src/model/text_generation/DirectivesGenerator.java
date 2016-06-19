@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 
+import org.apache.log4j.Logger;
+
 import model.story_representation.AbstractStoryRepresentation;
 import model.story_representation.story_element.noun.Character;
 import model.story_representation.story_element.noun.Location;
@@ -24,6 +26,8 @@ public class DirectivesGenerator extends TextGeneration {
 
 	// <= 7 hasproperty, capableof, isA, hasA
 
+	private static Logger log = Logger.getLogger(DirectivesGenerator.class.getName());
+	
 	private String[] nounStartDirective = {"Describe <noun>.",
 			"Tell me more about <noun>.", "Write more about <noun>.",
 			"I want to hear more about <noun>.",
@@ -69,11 +73,12 @@ public class DirectivesGenerator extends TextGeneration {
 		}
 
 		if (history.size() > 3) {
-			System.out.println(history.size());
+			log.debug(history.size());
 			history.remove();
 		}
 		
-		System.out.println("text gen: " + output);
+		
+		log.debug("text gen: " + output);
 
 		return output;
 

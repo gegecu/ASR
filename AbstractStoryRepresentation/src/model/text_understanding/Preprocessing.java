@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.languagetool.JLanguageTool;
 import org.languagetool.rules.RuleMatch;
 
@@ -18,6 +19,8 @@ import model.instance.StanfordCoreNLPInstance;
 import model.story_representation.AbstractStoryRepresentation;
 
 public class Preprocessing {
+
+	private static Logger log = Logger.getLogger(Preprocessing.class.getName());
 
 	private StanfordCoreNLP pipeline;
 	private AbstractStoryRepresentation asr;
@@ -48,7 +51,7 @@ public class Preprocessing {
 						+ match.getSuggestedReplacements().get(0)
 						+ input.substring(match.getEndColumn() - 1);
 				matches = langTool.check(input);
-				System.out.println(input);
+				log.debug(input);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -70,25 +73,31 @@ public class Preprocessing {
 				.get(CorefCoreAnnotations.CorefChainAnnotation.class)
 				.values()) {
 			for (CorefMention c1 : cc.getMentionsInTextualOrder()) {
-				if(c1.mentionType.representativeness < cc.getRepresentativeMention().mentionType.representativeness ||
-						c1.mentionType.representativeness == cc.getRepresentativeMention().mentionType.representativeness) {
+				if (c1.mentionType.representativeness < cc
+						.getRepresentativeMention().mentionType.representativeness
+						|| c1.mentionType.representativeness == cc
+								.getRepresentativeMention().mentionType.representativeness) {
 					coreference.put(c1.sentNum + " " + c1.headIndex,
 							cc.getRepresentativeMention().sentNum + " "
 									+ cc.getRepresentativeMention().headIndex);
-				}
-				else /*(c1.mentionType.representativeness > cc.getRepresentativeMention().mentionType.representativeness) */ {
+				} else /*
+						 * (c1.mentionType.representativeness >
+						 * cc.getRepresentativeMention().mentionType.
+						 * representativeness)
+						 */ {
 					// if the other reference represents more than the main reference, flip
 					// possible collision, just make it map with list later
-					System.out.println("woo");
-					coreference.put(cc.getRepresentativeMention().sentNum + " "
-							+ cc.getRepresentativeMention().headIndex,
+					log.debug("woo");
+					coreference.put(
+							cc.getRepresentativeMention().sentNum + " "
+									+ cc.getRepresentativeMention().headIndex,
 							c1.sentNum + " " + c1.headIndex);
 				}
 			}
 		}
 
 		for (Map.Entry<String, String> entry : coreference.entrySet()) {
-			System.out.println(entry.getKey() + " : " + entry.getValue());
+			log.debug(entry.getKey() + " : " + entry.getValue());
 		}
 
 		return coreference;

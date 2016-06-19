@@ -6,12 +6,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.log4j.Logger;
+
 import model.story_representation.story_element.noun.Character;
 import model.story_representation.story_element.noun.Noun;
 import model.story_representation.story_element.story_sentence.StorySentence;
 
 public class Checklist {
 
+	private static Logger log = Logger.getLogger(Checklist.class.getName());
+	
 	private AbstractStoryRepresentation asr;
 	private boolean isCharacterExist;
 	private boolean isLocationExist;
@@ -71,17 +75,17 @@ public class Checklist {
 	
 				Map<String, Noun> temp2 = c.getReference("IsA");
 	
-				System.out.println(c.getId());
+				log.debug(c.getId());
 	
 				if (c.getReference("AtLocation") != null
 						&& !c.getReference("AtLocation").isEmpty()) {
-					System.out.println(c.getId());
+					log.debug(c.getId());
 					temp3.add(c);
 					if (temp2 != null) {
 						Collection<Noun> nouns = temp2.values();
 						for (Noun n : nouns) {
 							if (n instanceof Character) {
-								System.out.println(n.getId());
+								log.debug(n.getId());
 								temp3.add((Character) n);
 							}
 						}
@@ -91,7 +95,7 @@ public class Checklist {
 	
 			temp.removeAll(temp3);
 	
-			System.out.println(temp.size());
+			log.debug(temp.size());
 			if (temp.isEmpty()) {
 				this.isLocationExist = true;
 			}
@@ -155,17 +159,17 @@ public class Checklist {
 
 	public void print() {
 		if (asr.getCurrentPartOfStory().equals("start")) {
-			System.out.println("Character exist? " + this.isCharacterExist());
-			System.out.println("Location exist? " + this.isLocationExist());
-			System.out.println("Conflict exist? " + this.isConflictExist());
-			System.out.println("Start complete? " + this.isBeginningComplete());
+			log.debug("Character exist? " + this.isCharacterExist());
+			log.debug("Location exist? " + this.isLocationExist());
+			log.debug("Conflict exist? " + this.isConflictExist());
+			log.debug("Start complete? " + this.isBeginningComplete());
 		} else if (asr.getCurrentPartOfStory().equals("middle")) {
-			System.out.println(
+			log.debug(
 					"Series event exist? " + this.isSeriesActionExist());
-			System.out.println("Middle complete? " + this.isMiddleComplete());
+			log.debug("Middle complete? " + this.isMiddleComplete());
 		} else if (asr.getCurrentPartOfStory().equals("end")) {
-			System.out.println("Resolution exist? " + this.isResolutionExist());
-			System.out.println("End complete? " + this.isEndingComplete());
+			log.debug("Resolution exist? " + this.isResolutionExist());
+			log.debug("End complete? " + this.isEndingComplete());
 		}
 	}
 

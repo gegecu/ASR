@@ -97,6 +97,11 @@ public class AutoResizingButton extends JButton {
 	public void setChecked(boolean checked) {
 		this.checked = checked;
 	}
+	
+	public boolean isChecked() {
+		return checked;
+	}
+
 
 	public void addDescription(String title, String description) {
 

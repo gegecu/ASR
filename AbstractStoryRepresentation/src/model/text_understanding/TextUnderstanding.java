@@ -28,6 +28,10 @@ public class TextUnderstanding {
 		List<StorySentence> extractedStorySentences = extractionModule
 				.extract(text, preprocessingModule.preprocess(text));
 
+		for (StorySentence storySentence : extractedStorySentences) {
+			asr.addEvent(storySentence);
+		}
+		
 		if (asr.getCurrentPartOfStory().equals("start")) {
 			Conflict conflict = null;
 			for (StorySentence storySentence : extractedStorySentences) {

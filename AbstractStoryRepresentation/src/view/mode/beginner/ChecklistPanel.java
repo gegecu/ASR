@@ -10,6 +10,8 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.apache.log4j.Logger;
+
 import model.story_representation.AbstractStoryRepresentation;
 import model.story_representation.Checklist;
 import net.miginfocom.swing.MigLayout;
@@ -18,6 +20,9 @@ import view.utilities.AutoResizingButton;
 import view.utilities.RoundedBorder;
 
 public class ChecklistPanel extends ViewPanel {
+
+	private static Logger log = Logger
+			.getLogger(ChecklistPanel.class.getName());
 
 	private static final long serialVersionUID = 1L;
 
@@ -262,7 +267,7 @@ public class ChecklistPanel extends ViewPanel {
 				conflict.setChecked(checklist.isConflictExist());
 				break;
 			case ChecklistPanel.MIDDLE :
-				System.out.println(checklist.isSeriesActionExist());
+				log.debug(checklist.isSeriesActionExist());
 				seriesOfActions.setChecked(checklist.isSeriesActionExist());
 				break;
 			case ChecklistPanel.END :
@@ -274,26 +279,18 @@ public class ChecklistPanel extends ViewPanel {
 
 		switch (partOfStory) {
 			case ChecklistPanel.START :
-				System.out.println(
-						"Character exist? " + checklist.isCharacterExist());
-				System.out.println(
-						"Location exist? " + checklist.isLocationExist());
-				System.out.println(
-						"Conflict exist? " + checklist.isConflictExist());
-				System.out.println(
-						"Start complete? " + checklist.isBeginningComplete());
+				log.debug("Character exist? " + character.isChecked());
+				log.debug("Location exist? " + location.isChecked());
+				log.debug("Conflict exist? " + conflict.isChecked());
+				log.debug("Start complete? " + checklist.isBeginningComplete());
 				break;
 			case ChecklistPanel.MIDDLE :
-				System.out.println("Series event exist? "
-						+ checklist.isSeriesActionExist());
-				System.out.println(
-						"Middle complete? " + checklist.isMiddleComplete());
+				log.debug("Series event exist? " + seriesOfActions.isChecked());
+				log.debug("Middle complete? " + checklist.isMiddleComplete());
 				break;
 			case ChecklistPanel.END :
-				System.out.println(
-						"Resolution exist? " + checklist.isResolutionExist());
-				System.out.println(
-						"End complete? " + checklist.isEndingComplete());
+				log.debug("Resolution exist? " + resolution.isChecked());
+				log.debug("End complete? " + checklist.isEndingComplete());
 				break;
 		}
 
