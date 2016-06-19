@@ -8,19 +8,24 @@ public class DictionariesInstance {
 
 	private static Semaphore semaphore;
 	private static Dictionaries dictionaries;
+	private static boolean processed;
 
 	static {
+		processed = false;
 		semaphore = new Semaphore(0);
 		dictionaries = new Dictionaries();
 		semaphore.release(1);
+		processed = true;
 	}
 
 	public static synchronized Dictionaries getInstance() {
-		try {
-			semaphore.acquire();
-			semaphore.release();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+		if (!processed) {
+			try {
+				semaphore.acquire();
+				semaphore.release();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 		return dictionaries;
 	}

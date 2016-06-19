@@ -9,22 +9,27 @@ public class StanfordCoreNLPInstance {
 
 	private static Semaphore semaphore;
 	private static StanfordCoreNLP pipeline;
+	private static boolean processed;
 
 	static {
+		processed = false;
 		semaphore = new Semaphore(0);
 		Properties props = new Properties();
 		props.put("annotators",
 				"tokenize, ssplit, pos, lemma, ner, parse, dcoref");
 		pipeline = new StanfordCoreNLP(props);
 		semaphore.release(1);
+		processed = true;
 	}
 
 	public static synchronized StanfordCoreNLP getInstance() {
-		try {
-			semaphore.acquire();
-			semaphore.release();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+		if (!processed) {
+			try {
+				semaphore.acquire();
+				semaphore.release();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 		return pipeline;
 	}
