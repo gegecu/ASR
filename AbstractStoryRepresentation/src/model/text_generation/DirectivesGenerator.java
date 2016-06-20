@@ -26,8 +26,9 @@ public class DirectivesGenerator extends TextGeneration {
 
 	// <= 7 hasproperty, capableof, isA, hasA
 
-	private static Logger log = Logger.getLogger(DirectivesGenerator.class.getName());
-	
+	private static Logger log = Logger
+			.getLogger(DirectivesGenerator.class.getName());
+
 	private String[] nounStartDirective = {"Describe <noun>.",
 			"Tell me more about <noun>.", "Write more about <noun>.",
 			"I want to hear more about <noun>.",
@@ -76,8 +77,7 @@ public class DirectivesGenerator extends TextGeneration {
 			log.debug(history.size());
 			history.remove();
 		}
-		
-		
+
 		log.debug("text gen: " + output);
 
 		return output;
@@ -145,28 +145,35 @@ public class DirectivesGenerator extends TextGeneration {
 			// find other noun if the number of properties of the current
 			// noun is greater than descriptionThreshold
 			if (threshold < descriptionThreshold) {
+
 				while (!directives.isEmpty()
 						&& (directive == null || history.contains(directive))) {
+
 					int randomNounDirective = Randomizer.random(1,
 							directives.size());
+
 					directive = directives.remove(randomNounDirective - 1);
-					
+
 					String toBeReplaced = "";
-		
-					Map<String, Noun> ownersMap = noun.getReference("IsOwnedBy");
-					if(ownersMap != null) {
-						List<Noun> owners = new ArrayList(ownersMap.values());
-						if(owners != null) {
-							toBeReplaced = owners.get(owners.size()-1).getId() + "'s ";
+
+					Map<String, Noun> ownersMap = noun
+							.getReference("IsOwnedBy");
+
+					if (ownersMap != null) {
+						List<Noun> owners = new ArrayList<>(ownersMap.values());
+						if (owners != null) {
+							toBeReplaced = owners.get(owners.size() - 1).getId()
+									+ "'s ";
 						}
-					}
-					else {
+					} else {
 						toBeReplaced = (noun.getIsCommon() ? "the " : "");
 					}
-					
+
 					directive = directive.replace("<noun>",
 							toBeReplaced + noun.getId());
+
 				}
+
 			}
 
 		}
@@ -204,16 +211,16 @@ public class DirectivesGenerator extends TextGeneration {
 
 				VPPhraseSpec verb = nlgFactory
 						.createVerbPhrase(predicate.getAction());
-	
+
 				String action = "";
 
 				Collection<Noun> directObjects = predicate.getDirectObjects()
 						.values();
 				if (predicate.getDirectObjects().size() > 0) {
-					
+
 					verb.setFeature(Feature.TENSE, Tense.PAST);
 					action = realiser.realise(verb).toString();
-					
+
 					Noun noun = directObjects.iterator().next();
 					if (noun instanceof Location) {
 						action += " to " + noun.getId();
@@ -224,8 +231,7 @@ public class DirectivesGenerator extends TextGeneration {
 						action += " "
 								+ SurfaceRealizer.determinerFixer(noun.getId());
 					}
-				}
-				else {
+				} else {
 					verb.setFeature(Feature.PROGRESSIVE, true);
 					action = realiser.realise(verb).toString();
 				}
@@ -244,6 +250,10 @@ public class DirectivesGenerator extends TextGeneration {
 					this.causeEffectAlternative.length);
 			directive = this.causeEffectAlternative[randomCapableOfQuestion
 					- 1];
+		}
+
+		if (history.contains(directive)) {
+			directive = null;
 		}
 
 		return directive;

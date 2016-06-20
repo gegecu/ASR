@@ -114,7 +114,7 @@ public class StorySegmentGenerator extends TextGeneration {
 
 	private Map<String, Description> getNeededDescription(String relation,
 			Map<String, Description> descriptions) {
-		Map<String, Description> temp = new HashMap(descriptions);
+		Map<String, Description> temp = new HashMap<>(descriptions);
 		for (Map.Entry<String, Description> description : descriptions
 				.entrySet()) {
 			Description d = description.getValue();
@@ -132,7 +132,7 @@ public class StorySegmentGenerator extends TextGeneration {
 
 		StorySentence storySentence = asr.getCurrentStorySentence();
 
-		List<String> predicateIds = new ArrayList(
+		List<String> predicateIds = new ArrayList<>(
 				storySentence.getManyPredicates().keySet());
 
 		boolean found = false;
@@ -258,7 +258,7 @@ public class StorySegmentGenerator extends TextGeneration {
 						Map<String, Noun> ownersMap = location
 								.getReference("IsOwnedBy");
 						if (ownersMap != null) {
-							List<Noun> owners = new ArrayList(
+							List<Noun> owners = new ArrayList<>(
 									ownersMap.values());
 							if (owners != null) {
 								end = owners.get(owners.size() - 1).getId()
@@ -350,7 +350,7 @@ public class StorySegmentGenerator extends TextGeneration {
 					Map<String, Noun> ownersMap = noun
 							.getReference("IsOwnedBy");
 					if (ownersMap != null) {
-						List<Noun> owners = new ArrayList(ownersMap.values());
+						List<Noun> owners = new ArrayList<>(ownersMap.values());
 						if (owners != null) {
 							start = owners.get(owners.size() - 1).getId()
 									+ "'s ";
@@ -529,7 +529,7 @@ public class StorySegmentGenerator extends TextGeneration {
 					Map<String, Noun> ownersMap = noun
 							.getReference("IsOwnedBy");
 					if (ownersMap != null) {
-						List<Noun> owners = new ArrayList(ownersMap.values());
+						List<Noun> owners = new ArrayList<>(ownersMap.values());
 						if (owners != null) {
 							start = owners.get(owners.size() - 1).getId()
 									+ "'s ";

@@ -45,7 +45,7 @@ public class Main {
 		//		}
 
 		MySQLConnector.getInstance();
-		
+
 		new Thread() {
 
 			@Override
