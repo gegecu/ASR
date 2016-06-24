@@ -746,8 +746,12 @@ public class Extractor {
 			/** for isA type relation **/
 			else if (tdGovTag.contains("NN")) {
 
-				Noun noun2 = asr.getNoun(tdGovId);
-
+				//because of John isA John...
+				String tdGovIdNN = (td.gov().sentIndex() + 1) + " "
+						+ td.gov().index();
+				
+				Noun noun2 = asr.getNoun(tdGovIdNN);
+				
 				if (noun2 == null) {
 
 					if (tdGovTag.equals("NNP")) {
@@ -757,13 +761,13 @@ public class Extractor {
 						noun2 = extractCategory(getSRL(tdGovLemma), tdGovLemma);
 					}
 
-					asr.addNoun(tdGovId, noun2);
+					asr.addNoun(tdGovIdNN, noun2);
 
 				}
 
-				noun.addReference("IsA", tdGovId, noun2);
+				noun.addReference("IsA", tdGovIdNN, noun2);
 
-				Description description = storySentence.getDescription(tdGovId);
+				Description description = storySentence.getDescription(tdGovIdNN);
 
 				if (description == null) {
 					description = new Description();
@@ -776,7 +780,7 @@ public class Extractor {
 				description.addConcept(
 						cp.createConceptAsPredicativeAdjective(tdGovLemma));
 
-				storySentence.addDescription(tdGovId, description);
+				storySentence.addDescription(tdGovIdNN, description);
 
 			}
 
