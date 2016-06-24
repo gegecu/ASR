@@ -148,4 +148,8 @@ public class AutoResizingTextAreaWithPlaceHolder extends JTextArea {
 		fontChanged = true;
 	}
 
+	public void setPlaceHolderColor(Color color) {
+		this.placeHolderColor = color;
+	}
+
 }

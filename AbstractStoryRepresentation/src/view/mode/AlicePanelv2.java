@@ -9,7 +9,7 @@ import javax.swing.JPanel;
 import net.miginfocom.swing.MigLayout;
 import view.TemplatePanel;
 
-public class AlicePanel extends TemplatePanel {
+public class AlicePanelv2 extends TemplatePanel {
 
 	private static final long serialVersionUID = 1L;
 
@@ -22,7 +22,7 @@ public class AlicePanel extends TemplatePanel {
 		setLayout(new MigLayout("insets 0"));
 		setBackground(Color.decode("#36B214"));
 
-		test = new JLabel(new ImageIcon("Alice.png"));
+		test = new JLabel(new ImageIcon("Alicev2.png"));
 		test.setBackground(Color.decode("#36B214"));
 
 		panel1 = new JPanel(new MigLayout("insets 0"));

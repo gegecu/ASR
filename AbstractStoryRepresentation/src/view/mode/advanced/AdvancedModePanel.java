@@ -82,19 +82,19 @@ public class AdvancedModePanel extends ModePanel {
 	@Override
 	protected void initializeUI() {
 
-		cancelButton = new CancelButton();
+		backButton = new CancelButton();
 		helpButton = new AutoResizingButton();
 		saveButton = new AutoResizingButton();
 		askMeButton = new AutoResizingButton();
 		titleField = new AutoResizingTextFieldWithPlaceHolder();
 		storyViewPanel = new StoryViewPanel(94, 6);
 
-		cancelButton.setText("");
-		cancelButton.setFocusPainted(false);
-		cancelButton.setBackground(Color.RED);
-		cancelButton.setForeground(Color.BLACK);
-		cancelButton.setFont(new Font("Arial", Font.BOLD, 40));
-		cancelButton.setBorder(new RoundedBorder(Color.BLACK, 3, 12));
+		backButton.setText("");
+		backButton.setFocusPainted(false);
+		backButton.setBackground(Color.RED);
+		backButton.setForeground(Color.BLACK);
+		backButton.setFont(new Font("Arial", Font.BOLD, 40));
+		backButton.setBorder(new RoundedBorder(Color.BLACK, 3, 12));
 
 		helpButton.setText("?");
 		helpButton.setFocusPainted(false);
@@ -134,7 +134,7 @@ public class AdvancedModePanel extends ModePanel {
 
 		JPanel panel1 = new JPanel(new MigLayout());
 		panel1.setBackground(Color.decode("#5B9CD2"));
-		panel1.add(cancelButton, "h 100%, w 12%, grow");
+		panel1.add(backButton, "h 100%, w 12%, grow");
 		panel1.add(titleField, "h 100%, w 64%, grow");
 		panel1.add(helpButton, "h 100%, w 12%, grow");
 		panel1.add(saveButton, "h 100%, w 12%, grow");
@@ -165,9 +165,9 @@ public class AdvancedModePanel extends ModePanel {
 	@Override
 	protected void addUIEffects() {
 
-		cancelButton.getModel().addChangeListener(new ChangeListener() {
+		backButton.getModel().addChangeListener(new ChangeListener() {
 
-			private RoundedBorder border = (RoundedBorder) cancelButton
+			private RoundedBorder border = (RoundedBorder) backButton
 					.getBorder();
 
 			@Override

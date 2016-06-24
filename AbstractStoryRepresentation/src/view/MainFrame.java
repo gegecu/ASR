@@ -14,6 +14,7 @@ import view.menu.choosemode.ChooseModePanel;
 import view.menu.mainmenu.MainMenuPanel;
 import view.mode.advanced.AdvancedModePanel;
 import view.mode.beginner.BeginnerModePanel;
+import view.mode.beginner.BeginnerModePanelv2;
 
 /**
  * @author Alice
@@ -33,6 +34,7 @@ public class MainFrame extends JFrame {
 	public MainFrame() {
 		super("Alice");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		//setMinimumSize(new Dimension(1104, 621));
 		setMinimumSize(new Dimension(880, 660));
 		initializeUI();
 		pack();
