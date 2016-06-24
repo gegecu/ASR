@@ -234,10 +234,11 @@ public class Driver {
 					TextGeneration uhm = tg.get(typeToGen - 1);
 					System.out.println(uhm.generateText());
 					if(uhm instanceof PromptChooser) {
-						String answer = "John is cute.";
+						String answer = sc.nextLine();
 						((PromptChooser) uhm).checkAnswer(answer);
-						System.out.println(((PromptChooser) uhm).restrictedInGeneral);
-						System.out.println(((PromptChooser) uhm).restrictedInSpecific);
+//						System.out.println(((PromptChooser) uhm).restrictedInGeneral);
+//						System.out.println(((PromptChooser) uhm).restrictedInSpecific);
+						System.out.println(((PromptChooser) uhm).correctAnswer(answer));
 					}
 				}
 

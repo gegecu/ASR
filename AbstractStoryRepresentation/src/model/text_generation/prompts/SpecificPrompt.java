@@ -19,11 +19,12 @@ import model.story_representation.story_element.noun.Character;
 import model.story_representation.story_element.noun.Object;
 import model.utility.Randomizer;
 import model.utility.TypedDependencyAnswerCheckerComparator;
+import model.utility.TypedDependencyComparator;
 
 public class SpecificPrompt extends Prompt{
 	
-	private String[] objectTopics = {"color" , "size", "shape", "texture"};
-	private String[] personTopics = {"attitude", "nationality"};
+	private String[] objectTopics = {"color", "size", "shape", "texture"};
+	private String[] personTopics = {"attitude", "nationality", "talent"};
 	private Map<Noun, List<String>> answered;
 	private String currentTopic;
 	
@@ -44,6 +45,37 @@ public class SpecificPrompt extends Prompt{
 		if(answeredTopics == null) {
 			answeredTopics = new ArrayList();
 		}
+		
+		String[] topics = null;
+		if(noun instanceof Object) {
+			topics = objectTopics;
+		}
+		else if (noun instanceof Character) {
+			topics = personTopics;
+		}
+		
+		//check all anyway to be sure because TU sometime fails
+		for(List<String> attributes : noun.getAttributes().values()) {
+			for(String attribute: attributes) {
+				for(String topic: topics) {
+					if(ConceptNetDAO.checkSRL(attribute, topic, "IsA")) {
+						answeredTopics.add(topic);
+					}
+				}
+			}
+		}
+		
+		//need to check references because possible error in TU ball isA round
+		for(Map.Entry<String, Map<String, Noun>> entry: noun.getReferences().entrySet()) {
+			for(Map.Entry<String, Noun> entry2: entry.getValue().entrySet()) {
+				for(String topic: topics) {
+					if(ConceptNetDAO.checkSRL(entry2.getValue().getId(), topic, "IsA")) {
+						answeredTopics.add(topic);
+					}
+				}
+			}
+		}
+		
 		
 		List<String> availableTopics = null;
 		if(noun instanceof Object) {
@@ -86,6 +118,9 @@ public class SpecificPrompt extends Prompt{
 	
 		// TODO Auto-generated method stub
 		
+		String noun = "";
+		String topicAnswer = "";
+		
 		Annotation document = new Annotation(input);
 		pipeline.annotate(document);
 
@@ -96,29 +131,37 @@ public class SpecificPrompt extends Prompt{
 			
 			List<TypedDependency> listDependencies = new ArrayList<TypedDependency>(
 					dependencies.typedDependencies());
-			Collections.sort(listDependencies, new TypedDependencyAnswerCheckerComparator());
-			
-			String name = null;
-			
+			Collections.sort(listDependencies, new TypedDependencyComparator());
+
 			for (TypedDependency td : listDependencies) {
-				if(td.reln().toString().equals("compound")) {
-					name = td.dep().lemma() + " " + td.gov().lemma();
-				}
+				
 				
 				if(td.reln().toString().equals("nsubj")) {
-					if(name == null) {
-						name = td.dep().lemma();
-					}
-					if(name.equals(currentNoun.getId())) {
-						if(ConceptNetDAO.checkSRL(td.gov().lemma(), currentTopic, "IsA")) {
-							List<String> topics = answered.get(currentNoun);
-							topics.add(currentTopic);
-							answered.put(currentNoun, topics);
-							return true;
-						}
-					}
+					noun = td.dep().lemma();
+					topicAnswer = td.gov().lemma();
 				}
 				
+				if(td.reln().toString().equals("compound")) {
+					if(td.gov().lemma().equals(noun)) {
+						noun = td.dep().lemma() + " " + noun;
+					}
+					else if (td.gov().lemma().equals(topicAnswer)) {
+						topicAnswer = td.dep().lemma() + " " + topicAnswer;
+					}
+					
+				}
+			}
+			
+			System.out.println("noun  " + noun + " " + currentNoun.getId() + " " + "answer " + topicAnswer + " " + currentTopic);
+			
+			if(ConceptNetDAO.checkSRL(topicAnswer, "IsA", currentTopic) && noun.equals(currentNoun.getId())) {
+				List<String> topics = answered.get(currentNoun);
+				if(topics == null) {
+					topics = new ArrayList();
+				}
+				topics.add(currentTopic);
+				answered.put(currentNoun, topics);
+				return true;
 			}
 			// get first sentence of answer only.
 			break;
