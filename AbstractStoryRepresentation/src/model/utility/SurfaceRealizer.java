@@ -16,7 +16,7 @@ public class SurfaceRealizer {
 			
 			Map<String, Noun> ownersMap = nouns.get(i).getReference("IsOwnedBy");
 			if(ownersMap != null) {
-				List<Noun> owners = new ArrayList(ownersMap.values());
+				List<Noun> owners = new ArrayList<>(ownersMap.values());
 				if(owners != null) {
 					characters = owners.get(owners.size()-1).getId() + "'s ";
 				}

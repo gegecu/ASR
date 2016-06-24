@@ -48,6 +48,10 @@ public class AutoResizingTextAreaWithPlaceHolder extends JTextArea {
 
 		setForeground(Color.BLACK);
 
+	}
+
+	public void addUndoRedoManager() {
+
 		undo = new UndoManager();
 		Document doc = getDocument();
 		doc.addUndoableEditListener(new UndoableEditListener() {

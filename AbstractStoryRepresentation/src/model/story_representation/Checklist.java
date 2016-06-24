@@ -1,9 +1,5 @@
 package model.story_representation;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
@@ -16,7 +12,7 @@ import model.story_representation.story_element.story_sentence.StorySentence;
 public class Checklist {
 
 	private static Logger log = Logger.getLogger(Checklist.class.getName());
-	
+
 	private AbstractStoryRepresentation asr;
 	private boolean isCharacterExist;
 	private boolean isLocationExist;
@@ -41,8 +37,7 @@ public class Checklist {
 
 	private void characterExist() {
 		if (!this.isCharacterExist) {
-			for (Entry<String, Noun> entry : this.asr.getNounMap()
-					.entrySet()) {
+			for (Entry<String, Noun> entry : this.asr.getNounMap().entrySet()) {
 				if (entry.getValue() instanceof Character) {
 					this.isCharacterExist = true;
 					break;
@@ -60,50 +55,50 @@ public class Checklist {
 
 		this.isLocationExist = false;
 
-//		if(this.isCharacterExist() != false) {
-//			List<Character> temp = new ArrayList<>();
-//	
-//			for (Entry<String, Noun> entry : this.asr.getNounMap().entrySet()) {
-//				if (entry.getValue() instanceof Character) {
-//					temp.add((Character) entry.getValue());
-//				}
-//			}
-//	
-//			List<Character> temp3 = new ArrayList<>();
-//	
-//			for (int i = 0; i < temp.size(); i++) {
-//				Character c = (Character) temp.get(i);
-//	
-//				Map<String, Noun> temp2 = c.getReference("IsA");
-//	
-//				log.debug(c.getId());
-//	
-//				if (c.getReference("AtLocation") != null
-//						&& !c.getReference("AtLocation").isEmpty()) {
-//					log.debug(c.getId());
-//					temp3.add(c);
-//					if (temp2 != null) {
-//						Collection<Noun> nouns = temp2.values();
-//						for (Noun n : nouns) {
-//							if (n instanceof Character) {
-//								log.debug(n.getId());
-//								temp3.add((Character) n);
-//							}
-//						}
-//					}
-//				}
-//			}
-//	
-//			temp.removeAll(temp3);
-//	
-//			log.debug(temp.size());
-//			if (temp.isEmpty()) {
-//				this.isLocationExist = true;
-//			}
-//		}
-		
-		for(Entry<String, Noun> entry : this.asr.getNounMap().entrySet()) {
-			if(entry.getValue() instanceof Location) {
+		//		if(this.isCharacterExist() != false) {
+		//			List<Character> temp = new ArrayList<>();
+		//	
+		//			for (Entry<String, Noun> entry : this.asr.getNounMap().entrySet()) {
+		//				if (entry.getValue() instanceof Character) {
+		//					temp.add((Character) entry.getValue());
+		//				}
+		//			}
+		//	
+		//			List<Character> temp3 = new ArrayList<>();
+		//	
+		//			for (int i = 0; i < temp.size(); i++) {
+		//				Character c = (Character) temp.get(i);
+		//	
+		//				Map<String, Noun> temp2 = c.getReference("IsA");
+		//	
+		//				log.debug(c.getId());
+		//	
+		//				if (c.getReference("AtLocation") != null
+		//						&& !c.getReference("AtLocation").isEmpty()) {
+		//					log.debug(c.getId());
+		//					temp3.add(c);
+		//					if (temp2 != null) {
+		//						Collection<Noun> nouns = temp2.values();
+		//						for (Noun n : nouns) {
+		//							if (n instanceof Character) {
+		//								log.debug(n.getId());
+		//								temp3.add((Character) n);
+		//							}
+		//						}
+		//					}
+		//				}
+		//			}
+		//	
+		//			temp.removeAll(temp3);
+		//	
+		//			log.debug(temp.size());
+		//			if (temp.isEmpty()) {
+		//				this.isLocationExist = true;
+		//			}
+		//		}
+
+		for (Entry<String, Noun> entry : this.asr.getNounMap().entrySet()) {
+			if (entry.getValue() instanceof Location) {
 				this.isLocationExist = true;
 				break;
 			}
@@ -130,8 +125,8 @@ public class Checklist {
 	private void seriesActionExist() {
 		if (!this.isSeriesActionExist) {
 			int nEvents = 0;
-			for (StorySentence ss : this.asr
-					.getStorySentencesBasedOnPart("middle")) {
+			for (StorySentence ss : this.asr.getStorySentencesBasedOnPart(
+					AbstractStoryRepresentation.middle)) {
 				if (ss.isValidEvent()) {
 					nEvents += ss.getEventsCount();
 				}
@@ -154,7 +149,6 @@ public class Checklist {
 			this.isResolutionExist = (this.asr.getResolution() != null);
 		}
 	}
-	
 
 	public boolean isResolutionExist() {
 		this.resolutionExist();
@@ -166,16 +160,18 @@ public class Checklist {
 	}
 
 	public void print() {
-		if (asr.getCurrentPartOfStory().equals("start")) {
+		if (asr.getCurrentPartOfStory()
+				.equals(AbstractStoryRepresentation.start)) {
 			log.debug("Character exist? " + this.isCharacterExist());
 			log.debug("Location exist? " + this.isLocationExist());
 			log.debug("Conflict exist? " + this.isConflictExist());
 			log.debug("Start complete? " + this.isBeginningComplete());
-		} else if (asr.getCurrentPartOfStory().equals("middle")) {
-			log.debug(
-					"Series event exist? " + this.isSeriesActionExist());
+		} else if (asr.getCurrentPartOfStory()
+				.equals(AbstractStoryRepresentation.middle)) {
+			log.debug("Series event exist? " + this.isSeriesActionExist());
 			log.debug("Middle complete? " + this.isMiddleComplete());
-		} else if (asr.getCurrentPartOfStory().equals("end")) {
+		} else if (asr.getCurrentPartOfStory()
+				.equals(AbstractStoryRepresentation.end)) {
 			log.debug("Resolution exist? " + this.isResolutionExist());
 			log.debug("End complete? " + this.isEndingComplete());
 		}

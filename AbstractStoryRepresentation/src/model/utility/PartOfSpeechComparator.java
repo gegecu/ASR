@@ -4,20 +4,21 @@ import java.util.Comparator;
 
 import edu.stanford.nlp.trees.TypedDependency;
 
-public class PartOfSpeechComparator implements Comparator<TypedDependency>{
+public class PartOfSpeechComparator implements Comparator<TypedDependency> {
 
 	@Override
-	public int compare(TypedDependency arg0, TypedDependency arg1) {
-		// TODO Auto-generated method stub
-		if(arg0.reln().equals(arg1.reln())) {
-			if (arg0.dep().tag().toString().equals("PRP")) {
+	public int compare(TypedDependency td1, TypedDependency td2) {
+
+		if (td1.reln().equals(td2.reln())) {
+			if (td1.dep().tag().toString().equals("PRP")) {
 				return 1;
-			} else if (arg1.dep().tag().toString().equals("PRP")) {
+			} else if (td2.dep().tag().toString().equals("PRP")) {
 				return -1;
 			}
 		}
 
 		return 0;
+
 	}
 
 }

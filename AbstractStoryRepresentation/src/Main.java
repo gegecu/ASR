@@ -1,3 +1,5 @@
+import java.sql.SQLException;
+
 import org.apache.log4j.Logger;
 
 import model.instance.AbstractSequenceClassifierInstance;
@@ -18,7 +20,7 @@ public class Main {
 		return k++;
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws SQLException {
 
 		log.debug("\n\n");
 		// BasicConfigurator.configure();
@@ -44,7 +46,8 @@ public class Main {
 		//
 		//		}
 
-		MySQLConnector.getInstance();
+		System.out.println("Checking Connection To Database ...");
+		MySQLConnector.getInstance().getConnection();
 
 		new Thread() {
 

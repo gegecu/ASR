@@ -11,7 +11,7 @@ public class States {
 	public static final Map<String, String> CONFLICT_RESOLUTION;
 
 	static {
-		Map<String, String> temp = new HashMap();
+		Map<String, String> temp = new HashMap<>();
 		temp.put("sad", "happy");
 		temp.put("hungry", "full");
 		CONFLICT_RESOLUTION = Collections.unmodifiableMap(temp);
@@ -20,7 +20,7 @@ public class States {
 	public static final List<String> STATES;
 
 	static {
-		List<String> temp = new ArrayList();
+		List<String> temp = new ArrayList<>();
 		temp.add("sad");
 		temp.add("happy");
 		temp.add("hungry");

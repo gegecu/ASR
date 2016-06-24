@@ -9,6 +9,7 @@ import java.awt.event.MouseEvent;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonModel;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -17,6 +18,8 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.MouseInputAdapter;
+
+import org.languagetool.gui.GrammarChecker;
 
 import controller.peer.SubmitController;
 import net.miginfocom.swing.MigLayout;
@@ -37,6 +40,8 @@ public class StoryInputPanel extends TemplatePanel {
 	private AutoResizingTextAreaWithPlaceHolder storySegmentInputArea;
 	private JScrollPane storySegmentInputScrollPane;
 	private JPanel foregroundPanel;
+
+	private GrammarChecker grammarChecker;
 
 	private boolean storySegmentInputAreaFocused = false;
 
@@ -81,6 +86,9 @@ public class StoryInputPanel extends TemplatePanel {
 
 		add(foregroundPanel, "h 100%, w 75%, grow");
 		add(submitButton, "h 100%, w 25%, grow, wrap");
+
+		grammarChecker = new GrammarChecker(storySegmentInputArea);
+		grammarChecker.setMillisecondDelay(300);
 
 	}
 

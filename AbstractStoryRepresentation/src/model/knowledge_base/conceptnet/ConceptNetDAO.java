@@ -27,6 +27,7 @@ public class ConceptNetDAO {
 		Connection connection = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
+		boolean result = false;
 
 		try {
 			connection = MySQLConnector.getInstance().getConnection();
@@ -37,7 +38,7 @@ public class ConceptNetDAO {
 			rs = ps.executeQuery();
 
 			if (rs.next()) {
-				return true;
+				result = true;
 			}
 
 		} catch (SQLException e) {
@@ -55,7 +56,7 @@ public class ConceptNetDAO {
 			}
 		}
 
-		return false;
+		return result;
 
 	}
 

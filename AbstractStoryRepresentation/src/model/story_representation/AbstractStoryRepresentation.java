@@ -6,11 +6,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import model.knowledge_base.conceptnet.ConceptNetDAO;
 import model.story_representation.story_element.Conflict;
 import model.story_representation.story_element.Resolution;
 import model.story_representation.story_element.noun.Noun;
-import model.story_representation.story_element.story_sentence.Clause;
 import model.story_representation.story_element.story_sentence.StorySentence;
 
 public class AbstractStoryRepresentation {
@@ -24,6 +22,10 @@ public class AbstractStoryRepresentation {
 	private Resolution resolution;
 
 	private String partOfStory;
+
+	public static final String start = "start";
+	public static final String middle = "middle";
+	public static final String end = "end";
 
 	public AbstractStoryRepresentation() {
 		this.storySentences = new LinkedHashMap<String, List<StorySentence>>();
@@ -52,36 +54,28 @@ public class AbstractStoryRepresentation {
 
 		storySentences.add(storySentence);
 
-		switch (partOfStory) {
-			case "start" :
-				//
-				break;
-			case "middle" :
-				//
-				break;
-			case "end" :
-				break;
-		}
-
 	}
 
 	public StorySentence getCurrentStorySentence() {
-		List<StorySentence> storySentences = this.storySentences.get(partOfStory);
-		
-		if(storySentences == null) {
-			if(partOfStory.equals("start")) {
-				return null;
-			}
-			else if(partOfStory.equals("middle")) {
-				storySentences = this.storySentences.get("start");
-			}
-			else if(partOfStory.equals("end")) {
-				storySentences = this.storySentences.get("middle");
+
+		List<StorySentence> storySentences = this.storySentences
+				.get(partOfStory);
+
+		if (storySentences == null) {
+			switch (partOfStory) {
+				case start :
+					return null;
+				case middle :
+					storySentences = this.storySentences.get(start);
+					break;
+				case end :
+					storySentences = this.storySentences.get(middle);
+					break;
 			}
 		}
 
-		return storySentences.get(storySentences.size()-1);
-//		return storySentences != null? storySentences.get(storySentences.size() - 1): null;
+		return storySentences.get(storySentences.size() - 1);
+
 	}
 
 	public Map<String, List<StorySentence>> getStorySentencesMap() {
