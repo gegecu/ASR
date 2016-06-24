@@ -17,6 +17,7 @@ import model.story_representation.story_element.story_sentence.StorySentence;
 import model.text_generation.DirectivesGenerator;
 import model.text_generation.StorySegmentGenerator;
 import model.text_generation.TextGeneration;
+import model.text_generation.prompts.PromptChooser;
 import model.text_understanding.TextUnderstanding;
 
 public class Driver {
@@ -36,7 +37,7 @@ public class Driver {
 			AbstractStoryRepresentation asr = new AbstractStoryRepresentation();
 			TextUnderstanding tu = new TextUnderstanding(asr);
 			List<TextGeneration> tg = new ArrayList<TextGeneration>();
-			tg.add(new DirectivesGenerator(asr));
+			tg.add(new PromptChooser(asr));
 			tg.add(new StorySegmentGenerator(asr));
 			Checklist checklist = new Checklist(asr);
 			System.out.println("Loading finish!");
@@ -230,7 +231,14 @@ public class Driver {
 				if (yesNo == 1) {
 					System.out.println("[1] Directives [2] Story Segment");
 					int typeToGen = sc.nextInt();
-					System.out.println(tg.get(typeToGen - 1).generateText());
+					TextGeneration uhm = tg.get(typeToGen - 1);
+					System.out.println(uhm.generateText());
+					if(uhm instanceof PromptChooser) {
+						String answer = "John is cute.";
+						((PromptChooser) uhm).checkAnswer(answer);
+						System.out.println(((PromptChooser) uhm).restrictedInGeneral);
+						System.out.println(((PromptChooser) uhm).restrictedInSpecific);
+					}
 				}
 
 				System.out.println("start? middle? end?");

@@ -1,0 +1,148 @@
+package model.text_generation.prompts;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
+import edu.stanford.nlp.pipeline.Annotation;
+import edu.stanford.nlp.semgraph.SemanticGraph;
+import edu.stanford.nlp.semgraph.SemanticGraphCoreAnnotations.CollapsedCCProcessedDependenciesAnnotation;
+import edu.stanford.nlp.trees.TypedDependency;
+import edu.stanford.nlp.util.CoreMap;
+import model.knowledge_base.conceptnet.ConceptNetDAO;
+import model.story_representation.story_element.noun.Noun;
+import model.story_representation.story_element.noun.Character;
+import model.story_representation.story_element.noun.Object;
+import model.utility.Randomizer;
+import model.utility.TypedDependencyAnswerCheckerComparator;
+
+public class SpecificPrompt extends Prompt{
+	
+	private String[] objectTopics = {"color" , "size", "shape", "texture"};
+	private String[] personTopics = {"attitude", "nationality"};
+	private Map<Noun, List<String>> answered;
+	private String currentTopic;
+	
+	public SpecificPrompt() {
+		super();
+		answered = new HashMap();
+	}
+
+	@Override
+	public String generateText(Noun noun) {
+		String text = checkAvailableTopics(noun);
+		return text;
+	}
+	
+	private String checkAvailableTopics(Noun noun) {
+		List<String> answeredTopics = answered.get(noun);
+		
+		if(answeredTopics == null) {
+			answeredTopics = new ArrayList();
+		}
+		
+		List<String> availableTopics = null;
+		if(noun instanceof Object) {
+			availableTopics = new ArrayList(Arrays.asList(objectTopics));
+		}
+		else if (noun instanceof Character) {
+			availableTopics = new ArrayList(Arrays.asList(personTopics));
+		}
+		
+		availableTopics.removeAll(answeredTopics);
+		int random = Randomizer.random(1, availableTopics.size());
+		if(!availableTopics.isEmpty()) {
+			
+			String toBeReplaced = "";
+
+			Map<String, Noun> ownersMap = noun.getReference("IsOwnedBy");
+
+			if (ownersMap != null) {
+				List<Noun> owners = new ArrayList<>(ownersMap.values());
+				if (owners != null) {
+					toBeReplaced = owners.get(owners.size() - 1).getId()
+							+ "'s ";
+				}
+			} else {
+				toBeReplaced = (noun.getIsCommon() ? "the " : "");
+			}
+			
+			currentNoun = noun;
+			currentTopic = availableTopics.get(random-1);
+			
+			return "What is the " + availableTopics.get(random-1) + " of " + toBeReplaced + noun.getId();
+		}
+		return null;
+	}
+
+	
+	// need to fix or think of another way because possible compound compound.
+	@Override
+	public boolean checkAnswer(String input) {
+	
+		// TODO Auto-generated method stub
+		
+		Annotation document = new Annotation(input);
+		pipeline.annotate(document);
+
+		List<CoreMap> sentences = document.get(SentencesAnnotation.class);
+		for (CoreMap sentence : sentences) {
+			SemanticGraph dependencies = sentence
+					.get(CollapsedCCProcessedDependenciesAnnotation.class);
+			
+			List<TypedDependency> listDependencies = new ArrayList<TypedDependency>(
+					dependencies.typedDependencies());
+			Collections.sort(listDependencies, new TypedDependencyAnswerCheckerComparator());
+			
+			String name = null;
+			
+			for (TypedDependency td : listDependencies) {
+				if(td.reln().toString().equals("compound")) {
+					name = td.dep().lemma() + " " + td.gov().lemma();
+				}
+				
+				if(td.reln().toString().equals("nsubj")) {
+					if(name == null) {
+						name = td.dep().lemma();
+					}
+					if(name.equals(currentNoun.getId())) {
+						if(ConceptNetDAO.checkSRL(td.gov().lemma(), currentTopic, "IsA")) {
+							List<String> topics = answered.get(currentNoun);
+							topics.add(currentTopic);
+							answered.put(currentNoun, topics);
+							return true;
+						}
+					}
+				}
+				
+			}
+			// get first sentence of answer only.
+			break;
+		}
+		
+		return false;
+	}
+	
+	public boolean checkifCompleted() {
+		
+		if(answered.get(currentNoun) != null) {
+			if(currentNoun instanceof Character) {
+				if(answered.get(currentNoun).size() == personTopics.length) {
+					return true;
+				}
+			}
+			else if(currentNoun instanceof Object) {
+				if(answered.get(currentNoun).size() == objectTopics.length) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+
+}
