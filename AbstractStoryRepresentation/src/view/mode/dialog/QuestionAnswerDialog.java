@@ -53,7 +53,7 @@ public class QuestionAnswerDialog extends HelpDialog {
 
 		grammarChecker = new GrammarChecker(storyInputArea);
 
-		panel.setLayout(new MigLayout("debug, insets 0, gapy 5"));
+		panel.setLayout(new MigLayout("insets 0, gapy 5"));
 		panel.setBorder(new RoundedBorder(Color.BLACK, 3, 0, 10, 10, 5, 10));
 		panel.setBackground(Color.WHITE);
 
