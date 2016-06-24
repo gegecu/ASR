@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
 import model.knowledge_base.conceptnet.Concept;
 import model.knowledge_base.conceptnet.ConceptNetDAO;
 import model.story_representation.AbstractStoryRepresentation;
@@ -24,6 +26,8 @@ import simplenlg.features.Tense;
 import simplenlg.phrasespec.VPPhraseSpec;
 
 public class StorySegmentGenerator extends TextGeneration {
+	
+	private static Logger log = Logger.getLogger(StorySegmentGenerator.class.getName());
 
 	private String[] atLocationStorySegmentStart = {
 			"There is <start> in <end>.", "<end> has <start>."};
@@ -99,7 +103,7 @@ public class StorySegmentGenerator extends TextGeneration {
 			List<Integer> keys = new ArrayList<>(response.keySet());
 			int random = Randomizer.random(1, keys.size());
 			history.add(keys.get(random - 1));
-			System.out.println("text gen: " + response.get(keys.get(random - 1)));
+			log.debug("text gen: " + response.get(keys.get(random - 1)));
 			return response.get(keys.get(random - 1));
 		} else {
 			return null;
@@ -168,7 +172,7 @@ public class StorySegmentGenerator extends TextGeneration {
 						int randomSentence = Randomizer.random(1,
 								this.atLocationStorySegmentDirectObject.length);
 
-						//System.out.println(characters);
+						//log.debug(characters);
 						String storySegment = this.atLocationStorySegmentDirectObject[randomSentence
 								- 1];
 						String end = concept.getEnd();
