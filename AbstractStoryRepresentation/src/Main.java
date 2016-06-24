@@ -18,7 +18,7 @@ public class Main {
 		log.debug("\n\n");
 
 		System.out.println("Checking Connection To Database ...");
-//		MySQLConnector.getInstance().getConnection();
+		MySQLConnector.getInstance().getConnection();
 
 		new Thread() {
 
