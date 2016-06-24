@@ -22,6 +22,7 @@ import controller.peer.SubmitController;
 import model.story_representation.AbstractStoryRepresentation;
 import model.text_generation.DirectivesGenerator;
 import model.text_generation.StorySegmentGenerator;
+import model.text_generation.prompts.PromptChooser;
 import model.text_understanding.TextUnderstanding;
 import net.miginfocom.swing.MigLayout;
 import view.MainFrame;
@@ -56,6 +57,8 @@ public class AdvancedModePanel extends ModePanel {
 	private TextUnderstanding tu;
 	private DirectivesGenerator dg;
 	private StorySegmentGenerator ssg;
+	private PromptChooser promptChooser;
+
 	private AskMeController askMeController;
 	private ChecklistController checklistController;
 	private SubmitController submitController;
@@ -66,8 +69,10 @@ public class AdvancedModePanel extends ModePanel {
 	public AdvancedModePanel() {
 
 		checklistController = new ChecklistController(asr, null, null);
-		submitController = new SubmitController(asr, tu, checklistController);
-		askMeController = new AskMeController(dg, ssg, submitController);
+		submitController = new SubmitController(asr, tu, promptChooser,
+				checklistController);
+		askMeController = new AskMeController(dg, ssg, promptChooser,
+				submitController);
 		saveController = new SaveController(titleField,
 				storyInputPanel.getInputArea());
 		cancelController = new CancelController();
