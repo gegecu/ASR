@@ -19,7 +19,7 @@ public class NewFileOnRebootAppender extends FileAppender {
 
 	private static String prependDate(String filename) {
 		SimpleDateFormat dateFormat = new SimpleDateFormat(
-				"yyyy-MM-dd hh;mm;ss");
+				"yyyy-MM-dd HH;mm;ss");
 		return file_directory + "/" + file_name + "_"
 				+ dateFormat.format(new Date()) + "." + file_extension;
 	}
