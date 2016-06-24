@@ -16,7 +16,7 @@ import view.utilities.RoundedBorder;
 public class AskMeDialog extends JDialog {
 
 	public static enum TypeOfHelp {
-		IDEAS, SUGGESTIONS, CANCEL;
+		IDEAS, SUGGESTIONS, CANCEL, QUESTION_ANSWER;
 	};
 
 	private JPanel panel;
@@ -61,7 +61,7 @@ public class AskMeDialog extends JDialog {
 		ideasButton.setFont(new Font("Arial", Font.BOLD, 30));
 		ideasButton.setBorder(new RoundedBorder(Color.BLACK, 3, 12, 10, 10, 10, 10));
 		ideasButton.addActionListener((e) -> {
-			result = TypeOfHelp.IDEAS;
+			result = TypeOfHelp.QUESTION_ANSWER;
 			dispose();
 		});
 

@@ -7,6 +7,7 @@ import java.util.concurrent.Semaphore;
 import javax.swing.SwingWorker;
 
 import model.story_representation.AbstractStoryRepresentation;
+import model.text_generation.prompts.PromptChooser;
 import model.text_understanding.TextUnderstanding;
 import view.mode.StoryInputPanel;
 import view.mode.StoryViewPanel;
@@ -17,6 +18,7 @@ public class SubmitController implements ActionListener {
 	private StoryViewPanel storyViewPanel;
 	private AbstractStoryRepresentation asr;
 	private TextUnderstanding tu;
+	private PromptChooser promptChooser;
 	private ChecklistController checklistController;
 	private Semaphore semaphore;
 
@@ -29,9 +31,11 @@ public class SubmitController implements ActionListener {
 	 *            CheclistController
 	 */
 	public SubmitController(AbstractStoryRepresentation asr,
-			TextUnderstanding tu, ChecklistController checklistController) {
+			TextUnderstanding tu, PromptChooser promptChooser,
+			ChecklistController checklistController) {
 		this.asr = asr;
 		this.tu = tu;
+		this.promptChooser = promptChooser;
 		this.checklistController = checklistController;
 		this.semaphore = new Semaphore(1);
 	}
@@ -76,7 +80,7 @@ public class SubmitController implements ActionListener {
 	}
 
 	public void checkAnswer(Object nounAdjective, String inputText) {
-
+		promptChooser.checkAnswer(inputText);
 	}
 
 }

@@ -60,8 +60,8 @@ public class RoundedBorder extends AbstractBorder {
 	 * @param paddingRight
 	 *            defines the right padding of the component from the border.
 	 */
-	public RoundedBorder(Color color, int thickness, int radii, int paddingTop, int paddingLeft, int paddingBottom,
-			int paddingRight) {
+	public RoundedBorder(Color color, int thickness, int radii, int paddingTop,
+			int paddingLeft, int paddingBottom, int paddingRight) {
 
 		this.thickness = thickness;
 		this.radii = radii;
@@ -70,10 +70,11 @@ public class RoundedBorder extends AbstractBorder {
 		stroke = new BasicStroke(thickness);
 		strokePad = (int) (thickness * 0.5);
 
-		hints = new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		hints = new RenderingHints(RenderingHints.KEY_ANTIALIASING,
+				RenderingHints.VALUE_ANTIALIAS_ON);
 
-		insets = new Insets(strokePad + paddingTop, strokePad + paddingLeft, strokePad + paddingBottom,
-				strokePad + paddingRight);
+		insets = new Insets(strokePad + paddingTop, strokePad + paddingLeft,
+				strokePad + paddingBottom, strokePad + paddingRight);
 
 	}
 
@@ -88,15 +89,16 @@ public class RoundedBorder extends AbstractBorder {
 	}
 
 	@Override
-	public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
+	public void paintBorder(Component c, Graphics g, int x, int y, int width,
+			int height) {
 
 		Graphics2D g2 = (Graphics2D) g;
 
 		int lineY = height - thickness;
 		int lineX = width - thickness;
 
-		RoundRectangle2D.Double roundRectangle = new RoundRectangle2D.Double(0 + strokePad, 0 + strokePad, lineX, lineY,
-				radii, radii);
+		RoundRectangle2D.Double roundRectangle = new RoundRectangle2D.Double(
+				0 + strokePad, 0 + strokePad, lineX, lineY, radii, radii);
 
 		Area roundRectangleArea = new Area(roundRectangle);
 
@@ -129,6 +131,10 @@ public class RoundedBorder extends AbstractBorder {
 		this.thickness = thickness;
 		stroke = new BasicStroke(thickness);
 		strokePad = (int) (thickness * 0.5);
+	}
+
+	public void setColor(Color color) {
+		this.borderColor = color;
 	}
 
 }
