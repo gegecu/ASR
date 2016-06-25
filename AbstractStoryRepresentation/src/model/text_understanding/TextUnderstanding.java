@@ -24,7 +24,7 @@ public class TextUnderstanding {
 
 	public TextUnderstanding(AbstractStoryRepresentation asr) {
 		this.asr = asr;
-		preprocessingModule = new Preprocessing(asr);
+		preprocessingModule = new Preprocessing();
 		extractionModule = new Extractor(asr);
 	}
 

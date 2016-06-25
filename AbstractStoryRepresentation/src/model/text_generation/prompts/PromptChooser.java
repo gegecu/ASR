@@ -38,6 +38,7 @@ public class PromptChooser extends TextGeneration{
 	private int descriptionThreshold;
 	private String currentId;
 	private Queue<String> history;
+	private boolean answeredCorrect;
 	
 	private static Logger log = Logger
 			.getLogger(PromptChooser.class.getName());
@@ -69,6 +70,8 @@ public class PromptChooser extends TextGeneration{
 			String nounid = findNounId();
 			Noun noun = asr.getNoun(nounid);
 			currentId = nounid;
+			
+			System.out.println(currentId);
 			
 			if(restrictedInGeneral.contains(nounid)) {
 				if(noun instanceof Object || noun instanceof Character) {
@@ -172,20 +175,32 @@ public class PromptChooser extends TextGeneration{
 		
 		Noun noun = asr.getNoun(currentId);
 		
-		boolean answered = false;
+		answeredCorrect = false;
 		
 		if(currentPrompt instanceof GeneralPrompt) {
+			//wrong answer
 			if(!currentPrompt.checkAnswer(input)) {
 				
 				//forever in general prompts, never add in restrictedGeneral because all specific answered
 				if(!restrictedInSpecific.contains(currentId)) {
-					if(!(noun instanceof Location || noun instanceof Unknown))
-					restrictedInGeneral.add(currentId);
+					// answered wrong, not yet completed q/a and not object or person
+					if(!(noun instanceof Location || noun instanceof Unknown)) {
+						System.out.println(currentId);
+						restrictedInGeneral.add(currentId);
+					}
 				}
+
+			}
+			else {
+				answeredCorrect = true;
 			}
 		}
 		else if(currentPrompt instanceof SpecificPrompt) {
-			currentPrompt.checkAnswer(input);
+			
+			//correct answer
+			if(currentPrompt.checkAnswer(input)) {
+				answeredCorrect = true;
+			}
 			
 			if(((SpecificPrompt)currentPrompt).checkifCompleted()) {
 				restrictedInGeneral.remove(currentId);
@@ -193,13 +208,11 @@ public class PromptChooser extends TextGeneration{
 			}
 		}
 		
-		correctAnswer(input);
+		//System.out.println(correctAnswer());
 	}
 	
-	public boolean correctAnswer(String input) {
-		boolean correct = currentPrompt.checkAnswer(input);
-		System.out.println(correct);
-		return correct;
+	public boolean correctAnswer() {
+		return this.answeredCorrect;
 	}
 	
 	private String findNounId() {

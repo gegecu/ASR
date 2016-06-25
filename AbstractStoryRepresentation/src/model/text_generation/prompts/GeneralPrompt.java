@@ -23,6 +23,7 @@ import model.story_representation.story_element.noun.Noun;
 import model.story_representation.story_element.story_sentence.Event;
 import model.story_representation.story_element.story_sentence.StorySentence;
 import model.text_generation.Utilities;
+import model.text_understanding.Preprocessing;
 import model.utility.Randomizer;
 import model.utility.SurfaceRealizer;
 import model.utility.TypedDependencyAnswerCheckerComparator;
@@ -45,6 +46,7 @@ public class GeneralPrompt extends Prompt {
 		if (history.size() > 3) {
 			history.remove();
 		}
+		currentPrompt = directive;
 		
 		return directive;
 	}
@@ -84,46 +86,36 @@ public class GeneralPrompt extends Prompt {
 	
 	// need to fix or think of another way because possible compound compound.
 	public boolean checkAnswer(String input) {
-		String noun = "";
-//		String topicAnswer = "";
 		
+		Map<String, String> coref;
+	
 		Annotation document = new Annotation(input);
 		pipeline.annotate(document);
 
 		List<CoreMap> sentences = document.get(SentencesAnnotation.class);
 		for (CoreMap sentence : sentences) {
-			SemanticGraph dependencies = sentence
-					.get(CollapsedCCProcessedDependenciesAnnotation.class);
 			
-			List<TypedDependency> listDependencies = new ArrayList<TypedDependency>(
-					dependencies.typedDependencies());
-			Collections.sort(listDependencies, new TypedDependencyComparator());
+			//Describe the ball. It is round.
+			//Tell me more about John. Mary gave him a bath.
+			//If user inputs, pronoun, it is correct because John and he are same but not John and her
+			//Describe John Roberts. He is fat or John Roberts is fat. but cannot be John is fat because in TU cannot be coreferenced anyway
 			
-			for (TypedDependency td : listDependencies) {
-				if(td.reln().toString().equals("nsubj")) {
-					noun = td.dep().lemma();
-//					topicAnswer = td.gov().lemma();
+			coref = preprocess.preprocess(currentPrompt + " " + sentence.toString());
+			
+			int countSame = 0;
+			for(Map.Entry<String, String> entry: coref.entrySet()) {
+				if(entry.getKey().equals(entry.getValue())) {
+					countSame++;
 				}
-				
-				if(td.reln().toString().equals("compound")) {
-					if(td.gov().lemma().equals(noun)) {
-						noun = td.dep().lemma() + " " + noun;
-					}
-//					else if (td.gov().lemma().equals(topicAnswer)) {
-//						topicAnswer = td.dep().lemma() + " " + topicAnswer;
-//					}
-//					
-				}
-				
 			}
 			
-			if(noun.equals(currentNoun.getId())) {
+			if(coref.size() - countSame > 1) {
 				return true;
 			}
-				
-				
 			// get first sentence of answer only.
+
 			break;
+			
 		}
 		
 		return false;

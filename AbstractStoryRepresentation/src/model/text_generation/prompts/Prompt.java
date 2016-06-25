@@ -9,16 +9,20 @@ import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import model.instance.StanfordCoreNLPInstance;
 import model.story_representation.AbstractStoryRepresentation;
 import model.story_representation.story_element.noun.Noun;
+import model.text_understanding.Preprocessing;
 
 public abstract class Prompt {
 	protected Queue<String> history;
 	protected StanfordCoreNLP pipeline;
 	protected Noun currentNoun;
+	protected String currentPrompt;
+	protected Preprocessing preprocess;
 	
 	public Prompt() {
 		super();
 		this.pipeline = StanfordCoreNLPInstance.getInstance();
 		this.history = new LinkedList();
+		this.preprocess = new Preprocessing();
 	}
 	
 	public abstract String generateText(Noun noun);
@@ -28,5 +32,5 @@ public abstract class Prompt {
 	public Noun getCurrentNoun() {
 		return this.currentNoun;
 	}
-	
+
 }

@@ -23,16 +23,14 @@ public class Preprocessing {
 	private static Logger log = Logger.getLogger(Preprocessing.class.getName());
 
 	private StanfordCoreNLP pipeline;
-	private AbstractStoryRepresentation asr;
 
-	public Preprocessing(AbstractStoryRepresentation asr) {
-		this.asr = asr;
+	public Preprocessing() {
 		this.pipeline = StanfordCoreNLPInstance.getInstance();
 	}
 
 	public Map<String, String> preprocess(String text) {
 		//result = normalize(result);
-		return coreference(text, asr);
+		return coreference(text);
 		//result = normalize(result);
 	}
 
@@ -61,8 +59,7 @@ public class Preprocessing {
 
 	}
 
-	private Map<String, String> coreference(String text,
-			AbstractStoryRepresentation asr) {
+	private Map<String, String> coreference(String text) {
 
 		Map<String, String> coreference = new HashMap<>();
 
@@ -87,7 +84,6 @@ public class Preprocessing {
 						 */ {
 					// if the other reference represents more than the main reference, flip
 					// possible collision, just make it map with list later
-					log.debug("woo");
 					coreference.put(
 							cc.getRepresentativeMention().sentNum + " "
 									+ cc.getRepresentativeMention().headIndex,
@@ -155,5 +151,6 @@ public class Preprocessing {
 		//		}
 
 	}
+	
 
 }

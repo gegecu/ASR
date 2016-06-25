@@ -105,8 +105,9 @@ public class SpecificPrompt extends Prompt{
 			
 			currentNoun = noun;
 			currentTopic = availableTopics.get(random-1);
+			currentPrompt = "What is the " + availableTopics.get(random-1) + " of " + toBeReplaced + noun.getId() + "?";
 			
-			return "What is the " + availableTopics.get(random-1) + " of " + toBeReplaced + noun.getId();
+			return currentPrompt;
 		}
 		return null;
 	}
@@ -118,6 +119,8 @@ public class SpecificPrompt extends Prompt{
 	
 		// TODO Auto-generated method stub
 		
+		Map<String, String> coref;
+		
 		String noun = "";
 		String topicAnswer = "";
 		
@@ -126,6 +129,9 @@ public class SpecificPrompt extends Prompt{
 
 		List<CoreMap> sentences = document.get(SentencesAnnotation.class);
 		for (CoreMap sentence : sentences) {
+			
+			coref = preprocess.preprocess(currentPrompt + " " + sentence.toString());
+			
 			SemanticGraph dependencies = sentence
 					.get(CollapsedCCProcessedDependenciesAnnotation.class);
 			
@@ -135,24 +141,31 @@ public class SpecificPrompt extends Prompt{
 
 			for (TypedDependency td : listDependencies) {
 				
-				
-				if(td.reln().toString().equals("nsubj")) {
-					noun = td.dep().lemma();
-					topicAnswer = td.gov().lemma();
+				//What is the color of the ball? It is red. cannot be He is red.
+				//What is the nationality of John Roberts. He is Chinese or John Roberts is Chinese.
+				int countSame = 0;
+				for(Map.Entry<String, String> entry: coref.entrySet()) {
+					if(entry.getKey().equals(entry.getValue())) {
+						countSame++;
+					}
 				}
 				
-				if(td.reln().toString().equals("compound")) {
-					if(td.gov().lemma().equals(noun)) {
-						noun = td.dep().lemma() + " " + noun;
+				if(coref.size() - countSame > 1) {
+				
+					if(td.reln().toString().equals("nsubj")) {
+							//noun = td.dep().lemma();
+						topicAnswer = td.gov().lemma();
 					}
-					else if (td.gov().lemma().equals(topicAnswer)) {
-						topicAnswer = td.dep().lemma() + " " + topicAnswer;
+						
+					if(td.reln().toString().equals("compound")) {
+						if (td.gov().lemma().equals(topicAnswer)) {
+							topicAnswer = td.dep().lemma() + " " + topicAnswer;
+						}	
 					}
-					
 				}
 			}
 			
-			System.out.println("noun  " + noun + " " + currentNoun.getId() + " " + "answer " + topicAnswer + " " + currentTopic);
+			//System.out.println("noun  " + noun + " " + currentNoun.getId() + " " + "answer " + topicAnswer + " " + currentTopic);
 			
 			if(ConceptNetDAO.checkSRL(topicAnswer, "IsA", currentTopic) && noun.equals(currentNoun.getId())) {
 				List<String> topics = answered.get(currentNoun);
