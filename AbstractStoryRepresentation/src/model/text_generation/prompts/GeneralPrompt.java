@@ -109,7 +109,7 @@ public class GeneralPrompt extends Prompt {
 				}
 			}
 			
-			if(coref.size() - countSame > 1) {
+			if(coref.size() - countSame >= 1) {
 				return true;
 			}
 			// get first sentence of answer only.

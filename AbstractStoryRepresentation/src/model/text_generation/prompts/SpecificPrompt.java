@@ -22,7 +22,7 @@ import model.utility.TypedDependencyComparator;
 
 public class SpecificPrompt extends Prompt {
 
-	private String[] objectTopics = {"color", "size", "shape", "texture"};
+	private String[] objectTopics = {"color", "shape", "size", "texture"};
 	private String[] personTopics = {"attitude", "nationality", "talent"};
 	private Map<Noun, List<String>> answered;
 	private String currentTopic;
@@ -39,55 +39,12 @@ public class SpecificPrompt extends Prompt {
 	}
 
 	private String checkAvailableTopics(Noun noun) {
-		List<String> answeredTopics = answered.get(noun);
-
-		if (answeredTopics == null) {
-			answeredTopics = new ArrayList<>();
-		}
-
-		String[] topics = null;
-
-		if (noun instanceof Object) {
-			topics = objectTopics;
-		} else if (noun instanceof Character) {
-			topics = personTopics;
-		}
-
-		//check all anyway to be sure because TU sometime fails
-		for (List<String> attributes : noun.getAttributes().values()) {
-			for (String attribute : attributes) {
-				for (String topic : topics) {
-					if (ConceptNetDAO.checkSRL(attribute, topic, "IsA")) {
-						answeredTopics.add(topic);
-					}
-				}
-			}
-		}
-
-		//need to check references because possible error in TU ball isA round
-		for (Map.Entry<String, Map<String, Noun>> entry : noun.getReferences()
-				.entrySet()) {
-			for (Map.Entry<String, Noun> entry2 : entry.getValue().entrySet()) {
-				for (String topic : topics) {
-					if (ConceptNetDAO.checkSRL(entry2.getValue().getId(), topic,
-							"IsA")) {
-						answeredTopics.add(topic);
-					}
-				}
-			}
-		}
-
-		List<String> availableTopics = null;
-		if (noun instanceof Object) {
-			availableTopics = new ArrayList<>(Arrays.asList(objectTopics));
-		} else if (noun instanceof Character) {
-			availableTopics = new ArrayList<>(Arrays.asList(personTopics));
-		}
-
-		availableTopics.removeAll(answeredTopics);
-		int random = Randomizer.random(1, availableTopics.size());
+		
+		currentNoun = noun;
+		List<String> availableTopics = availableTopics(noun);
 
 		if (!availableTopics.isEmpty()) {
+			int random = Randomizer.random(1, availableTopics.size());
 
 			String toBeReplaced = "";
 
@@ -103,11 +60,13 @@ public class SpecificPrompt extends Prompt {
 				toBeReplaced = (noun.getIsCommon() ? "the " : "");
 			}
 
-			currentNoun = noun;
+			
 			currentTopic = availableTopics.get(random - 1);
 			currentPrompt = "What is the " + availableTopics.get(random - 1)
 					+ " of " + toBeReplaced + noun.getId() + "?";
 
+			System.out.println(currentPrompt);
+			
 			return currentPrompt;
 
 		}
@@ -151,7 +110,9 @@ public class SpecificPrompt extends Prompt {
 					}
 				}
 
-				if (coref.size() - countSame > 1) {
+				if (coref.size() - countSame >= 1) {
+					
+					noun = currentNoun.getId();
 
 					if (td.reln().toString().equals("nsubj")) {
 						//noun = td.dep().lemma();
@@ -192,20 +153,57 @@ public class SpecificPrompt extends Prompt {
 
 	}
 
-	public boolean checkifCompleted() {
-
-		if (answered.get(currentNoun) != null) {
-			if (currentNoun instanceof Character) {
-				if (answered.get(currentNoun).size() == personTopics.length) {
-					return true;
-				}
-			} else if (currentNoun instanceof Object) {
-				if (answered.get(currentNoun).size() == objectTopics.length) {
-					return true;
+	private List<String> availableTopics(Noun noun) {
+		String[] topics = null;
+		
+		if (noun instanceof Object) {
+			topics = objectTopics;
+		} else if (noun instanceof Character) {
+			topics = personTopics;
+		}
+		
+		List<String> answeredTopics = answered.get(noun);
+		if (answeredTopics == null) {
+			answeredTopics = new ArrayList<>();
+		}
+		
+		//check all anyway to be sure because TU sometime fails
+		for (List<String> attributes : noun.getAttributes().values()) {
+			for (String attribute : attributes) {
+				for (String topic : topics) {
+					if (ConceptNetDAO.checkSRL(attribute, "IsA", topic)) {
+						answeredTopics.add(topic);
+					}
 				}
 			}
 		}
-		return false;
+	
+		//need to check references because possible error in TU ball isA round
+		for (Map.Entry<String, Map<String, Noun>> entry : noun.getReferences()
+				.entrySet()) {
+			for (Map.Entry<String, Noun> entry2 : entry.getValue().entrySet()) {
+				for (String topic : topics) {
+					if (ConceptNetDAO.checkSRL(entry2.getValue().getId(), "IsA",
+							topic)) {
+						answeredTopics.add(topic);
+					}
+				}
+			}
+		}
+		
+		List<String> availableTopics = null;
+		if (noun instanceof Object) {
+			availableTopics = new ArrayList<>(Arrays.asList(objectTopics));
+		} else if (noun instanceof Character) {
+			availableTopics = new ArrayList<>(Arrays.asList(personTopics));
+		}
+		
+		availableTopics.removeAll(answeredTopics);
+		return availableTopics;
+	}
+	
+	public boolean checkifCompleted() {
+		return availableTopics(currentNoun).isEmpty();
 	}
 
 }

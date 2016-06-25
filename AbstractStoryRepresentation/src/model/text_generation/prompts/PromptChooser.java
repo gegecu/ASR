@@ -70,24 +70,34 @@ public class PromptChooser extends TextGeneration {
 	@Override
 	public String generateText() {
 
-		String output = "";
+		String output = null;
 
 		if (asr.getCurrentPartOfStory()
 				.equals(AbstractStoryRepresentation.start)) {
-
-			String nounid = findNounId();
-			Noun noun = asr.getNoun(nounid);
-			currentId = nounid;
-
-			if (restrictedInGeneral.contains(nounid)) {
-				if (noun instanceof Object || noun instanceof Character) {
-					currentPrompt = specificPrompt;
+			
+			while(output == null) {
+			
+				String nounid = findNounId();
+				Noun noun = asr.getNoun(nounid);
+				currentId = nounid;
+	
+				if (restrictedInGeneral.contains(nounid)) {
+					if (noun instanceof Object || noun instanceof Character) {
+						currentPrompt = specificPrompt;
+					}
+				} else {
+					currentPrompt = generalPrompt;
 				}
-			} else {
-				currentPrompt = generalPrompt;
+	
+				output = currentPrompt.generateText(noun);
+				
+				if(currentPrompt instanceof SpecificPrompt) {
+					if (((SpecificPrompt) currentPrompt).checkifCompleted()) {
+						restrictedInGeneral.remove(currentId);
+						restrictedInSpecific.add(currentId);
+					}
+				}
 			}
-
-			output = currentPrompt.generateText(noun);
 
 		} else {
 			output = capableOf();
@@ -243,7 +253,7 @@ public class PromptChooser extends TextGeneration {
 
 			if (listDependencies.size() == 1) {
 				return "The " + asr.getNoun(currentId).getId() + " is "
-						+ listDependencies.get(0).dep().lemma();
+						+ listDependencies.get(0).dep().lemma().toLowerCase() + ".";
 			}
 		}
 
