@@ -6,13 +6,12 @@ package view;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.event.MouseEvent;
 
+import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
-import javax.swing.event.MouseInputAdapter;
 
 import net.miginfocom.swing.MigLayout;
 import view.utilities.CustomScrollBarUI;
@@ -63,17 +62,32 @@ public abstract class ViewPanelv2 extends TemplatePanel {
 		scrollPane.setHorizontalScrollBarPolicy(
 				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		scrollPane.setVerticalScrollBarPolicy(
-				ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+				ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
 		scrollPane.setViewportView(scrollPanePanel);
 
-		//verticalScrollBar.setUI(customScrollBarUI);
+		//		verticalScrollBar.setUI(customScrollBarUI);
 		verticalScrollBar.setBackground(Color.white);
 		verticalScrollBar.setUnitIncrement(16);
 
-		foregroundPanel.setLayout(new MigLayout());
+		JPanel scrollPanePanel = new JPanel();
+		scrollPanePanel.setLayout(new MigLayout("insets 10 10 10 5"));
+		scrollPanePanel.setOpaque(false);
+		scrollPanePanel.add(scrollPane, "h 100%, w 100%, grow");
+
+		foregroundPanel.setLayout(new MigLayout("insets 0, gapx 0"));
 		foregroundPanel.setBackground(Color.white);
-		foregroundPanel.setBorder(new RoundedBorder(Color.decode("#7E7E7E"), 3, 24));
-		foregroundPanel.add(scrollPane, "w 100%, h 100%");
+		foregroundPanel
+				.setBorder(new RoundedBorder(Color.decode("#7E7E7E"), 3, 24));
+		foregroundPanel.add(scrollPanePanel, "h 100%, w 94%");
+
+		JPanel scrollBarPanel = new JPanel();
+		scrollBarPanel.setLayout(new MigLayout());
+		scrollBarPanel.setOpaque(false);
+		scrollBarPanel.setBorder(BorderFactory.createMatteBorder(0, 3, 0, 0,
+				Color.decode("#7F7F7F")));
+		scrollBarPanel.add(verticalScrollBar, "h 100%, w 100%, grow");
+
+		foregroundPanel.add(scrollBarPanel, "h 100%, w 6%");
 
 		add(foregroundPanel, "h 100%, grow");
 

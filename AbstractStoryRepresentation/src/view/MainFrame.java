@@ -14,7 +14,6 @@ import view.menu.choosemode.ChooseModePanel;
 import view.menu.mainmenu.MainMenuPanel;
 import view.mode.advanced.AdvancedModePanel;
 import view.mode.beginner.BeginnerModePanel;
-import view.mode.beginner.BeginnerModePanelv2;
 
 /**
  * @author Alice
