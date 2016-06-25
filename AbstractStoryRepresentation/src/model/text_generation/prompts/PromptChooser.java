@@ -7,14 +7,23 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
 
+import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
+import edu.stanford.nlp.pipeline.Annotation;
+import edu.stanford.nlp.pipeline.StanfordCoreNLP;
+import edu.stanford.nlp.semgraph.SemanticGraph;
+import edu.stanford.nlp.semgraph.SemanticGraphCoreAnnotations.CollapsedCCProcessedDependenciesAnnotation;
+import edu.stanford.nlp.trees.TypedDependency;
+import edu.stanford.nlp.util.CoreMap;
 import simplenlg.features.Feature;
 import simplenlg.features.Tense;
 import simplenlg.phrasespec.VPPhraseSpec;
+import model.instance.StanfordCoreNLPInstance;
 import model.story_representation.AbstractStoryRepresentation;
 import model.story_representation.story_element.noun.Location;
 import model.story_representation.story_element.noun.Noun;
@@ -39,6 +48,7 @@ public class PromptChooser extends TextGeneration{
 	private String currentId;
 	private Queue<String> history;
 	private boolean answeredCorrect;
+	private StanfordCoreNLP pipeline;
 	
 	private static Logger log = Logger
 			.getLogger(PromptChooser.class.getName());
@@ -58,6 +68,7 @@ public class PromptChooser extends TextGeneration{
 		descriptionThreshold = 7;
 		restrictedInGeneral = new LinkedHashSet();
 		restrictedInSpecific = new LinkedHashSet();
+		pipeline = StanfordCoreNLPInstance.getInstance();
 	}
 
 	@Override
@@ -173,13 +184,15 @@ public class PromptChooser extends TextGeneration{
 		
 		log.debug("answer in prompts: " + input);
 		
+		String temp = incompleteAnswer(input);
+		
 		Noun noun = asr.getNoun(currentId);
 		
 		answeredCorrect = false;
 		
 		if(currentPrompt instanceof GeneralPrompt) {
 			//wrong answer
-			if(!currentPrompt.checkAnswer(input)) {
+			if(!currentPrompt.checkAnswer(temp)) {
 				
 				//forever in general prompts, never add in restrictedGeneral because all specific answered
 				if(!restrictedInSpecific.contains(currentId)) {
@@ -198,7 +211,7 @@ public class PromptChooser extends TextGeneration{
 		else if(currentPrompt instanceof SpecificPrompt) {
 			
 			//correct answer
-			if(currentPrompt.checkAnswer(input)) {
+			if(currentPrompt.checkAnswer(temp)) {
 				answeredCorrect = true;
 			}
 			
@@ -213,6 +226,25 @@ public class PromptChooser extends TextGeneration{
 	
 	public boolean correctAnswer() {
 		return this.answeredCorrect;
+	}
+	
+	public String incompleteAnswer(String input) {
+		Annotation document = new Annotation(input);
+		pipeline.annotate(document);
+		List<CoreMap> sentences = document.get(SentencesAnnotation.class);
+		for (CoreMap sentence : sentences) {
+			SemanticGraph dependencies = sentence
+					.get(CollapsedCCProcessedDependenciesAnnotation.class);
+			
+			List<TypedDependency> listDependencies = new ArrayList<TypedDependency>(
+					dependencies.typedDependencies());
+			//Collections.sort(listDependencies, new TypedDependencyComparator());
+			
+			if(listDependencies.size() == 1) {
+				return "The " + asr.getNoun(currentId).getId() + " is " + listDependencies.get(0).dep().lemma();
+			}
+		}
+		return input;
 	}
 	
 	private String findNounId() {
