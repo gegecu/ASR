@@ -2,8 +2,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.Map.Entry;
+import java.util.Scanner;
 
 import model.instance.SenticNetParserInstance;
 import model.knowledge_base.MySQLConnector;
@@ -14,7 +14,6 @@ import model.story_representation.story_element.noun.Noun;
 import model.story_representation.story_element.story_sentence.Description;
 import model.story_representation.story_element.story_sentence.Event;
 import model.story_representation.story_element.story_sentence.StorySentence;
-import model.text_generation.DirectivesGenerator;
 import model.text_generation.StorySegmentGenerator;
 import model.text_generation.TextGeneration;
 import model.text_generation.prompts.PromptChooser;
@@ -29,9 +28,9 @@ public class Driver {
 		while (true) {
 
 			SenticNetParserInstance.getInstance();
-			
+
 			MySQLConnector.getInstance().getConnection();
-			
+
 			String part;
 			String story = "";
 			AbstractStoryRepresentation asr = new AbstractStoryRepresentation();
@@ -97,8 +96,10 @@ public class Driver {
 								}
 							}
 
-							System.out.println("action: " + p.getVerb().getAction());
-							System.out.println("isNegated: " + p.getVerb().isNegated());
+							System.out.println(
+									"action: " + p.getVerb().getAction());
+							System.out.println(
+									"isNegated: " + p.getVerb().isNegated());
 
 							System.out.println("receivers: ");
 							for (Map.Entry<String, Noun> entry2 : p
@@ -233,12 +234,12 @@ public class Driver {
 					int typeToGen = sc.nextInt();
 					TextGeneration uhm = tg.get(typeToGen - 1);
 					System.out.println(uhm.generateText());
-					if(uhm instanceof PromptChooser) {
+					if (uhm instanceof PromptChooser) {
 						String answer = sc.nextLine();
-						((PromptChooser) uhm).checkAnswer(answer);
-//						System.out.println(((PromptChooser) uhm).restrictedInGeneral);
-//						System.out.println(((PromptChooser) uhm).restrictedInSpecific);
-						System.out.println(((PromptChooser) uhm).correctAnswer(answer));
+						//						System.out.println(((PromptChooser) uhm).restrictedInGeneral);
+						//						System.out.println(((PromptChooser) uhm).restrictedInSpecific);
+						System.out.println(
+								((PromptChooser) uhm).checkAnswer(answer));
 					}
 				}
 

@@ -3,11 +3,9 @@ package model.text_generation.prompts;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 
@@ -20,25 +18,24 @@ import edu.stanford.nlp.semgraph.SemanticGraph;
 import edu.stanford.nlp.semgraph.SemanticGraphCoreAnnotations.CollapsedCCProcessedDependenciesAnnotation;
 import edu.stanford.nlp.trees.TypedDependency;
 import edu.stanford.nlp.util.CoreMap;
-import simplenlg.features.Feature;
-import simplenlg.features.Tense;
-import simplenlg.phrasespec.VPPhraseSpec;
 import model.instance.StanfordCoreNLPInstance;
 import model.story_representation.AbstractStoryRepresentation;
+import model.story_representation.story_element.noun.Character;
 import model.story_representation.story_element.noun.Location;
 import model.story_representation.story_element.noun.Noun;
 import model.story_representation.story_element.noun.Object;
-import model.story_representation.story_element.noun.Character;
 import model.story_representation.story_element.noun.Unknown;
 import model.story_representation.story_element.story_sentence.Event;
 import model.story_representation.story_element.story_sentence.StorySentence;
-import model.text_generation.DirectivesGenerator;
 import model.text_generation.TextGeneration;
 import model.text_generation.Utilities;
 import model.utility.Randomizer;
 import model.utility.SurfaceRealizer;
+import simplenlg.features.Feature;
+import simplenlg.features.Tense;
+import simplenlg.phrasespec.VPPhraseSpec;
 
-public class PromptChooser extends TextGeneration{
+public class PromptChooser extends TextGeneration {
 	private Set<String> restrictedInGeneral;
 	private Set<String> restrictedInSpecific;
 	private GeneralPrompt generalPrompt;
@@ -49,9 +46,8 @@ public class PromptChooser extends TextGeneration{
 	private Queue<String> history;
 	private boolean answeredCorrect;
 	private StanfordCoreNLP pipeline;
-	
-	private static Logger log = Logger
-			.getLogger(PromptChooser.class.getName());
+
+	private static Logger log = Logger.getLogger(PromptChooser.class.getName());
 
 	private String[] causeEffectDirective = {
 			"Tell me more why <noun> <action>.",
@@ -59,49 +55,50 @@ public class PromptChooser extends TextGeneration{
 			"Write the reason why <noun> <action>."};
 
 	private String[] causeEffectAlternative = {"Tell me more what happened."};
-	
+
 	public PromptChooser(AbstractStoryRepresentation asr) {
 		super(asr);
-		history = new LinkedList();
+		history = new LinkedList<>();
 		generalPrompt = new GeneralPrompt();
 		specificPrompt = new SpecificPrompt();
 		descriptionThreshold = 7;
-		restrictedInGeneral = new LinkedHashSet();
-		restrictedInSpecific = new LinkedHashSet();
+		restrictedInGeneral = new LinkedHashSet<>();
+		restrictedInSpecific = new LinkedHashSet<>();
 		pipeline = StanfordCoreNLPInstance.getInstance();
 	}
 
 	@Override
 	public String generateText() {
-		// TODO Auto-generated method stub
-		
+
 		String output = "";
-		
-		if(asr.getCurrentPartOfStory().equals("start")) {
+
+		if (asr.getCurrentPartOfStory()
+				.equals(AbstractStoryRepresentation.start)) {
+
 			String nounid = findNounId();
 			Noun noun = asr.getNoun(nounid);
 			currentId = nounid;
-			
-			System.out.println(currentId);
-			
-			if(restrictedInGeneral.contains(nounid)) {
-				if(noun instanceof Object || noun instanceof Character) {
+
+			if (restrictedInGeneral.contains(nounid)) {
+				if (noun instanceof Object || noun instanceof Character) {
 					currentPrompt = specificPrompt;
 				}
-			}
-			else {
+			} else {
 				currentPrompt = generalPrompt;
 			}
+
 			output = currentPrompt.generateText(noun);
-		}
-		else {
+
+		} else {
 			output = capableOf();
 		}
 
 		log.debug("text gen: " + output);
+
 		return output;
+
 	}
-	
+
 	private String capableOf() {
 
 		StorySentence storySentence = asr.getCurrentStorySentence();
@@ -109,6 +106,7 @@ public class PromptChooser extends TextGeneration{
 				storySentence.getManyPredicates().values());
 		List<String> directives = new ArrayList<>(
 				Arrays.asList(this.causeEffectDirective));
+
 		String directive = null;
 
 		while (!predicates.isEmpty() && (directive == null
@@ -136,6 +134,7 @@ public class PromptChooser extends TextGeneration{
 
 				Collection<Noun> directObjects = predicate.getDirectObjects()
 						.values();
+
 				if (predicate.getDirectObjects().size() > 0) {
 
 					verb.setFeature(Feature.TENSE, Tense.PAST);
@@ -151,10 +150,12 @@ public class PromptChooser extends TextGeneration{
 						action += " "
 								+ SurfaceRealizer.determinerFixer(noun.getId());
 					}
+
 				} else {
 					verb.setFeature(Feature.PROGRESSIVE, true);
 					action = realiser.realise(verb).toString();
 				}
+
 				directive = directive.replace("<action>", action);
 
 			}
@@ -179,123 +180,136 @@ public class PromptChooser extends TextGeneration{
 		return directive;
 
 	}
-	
-	public void checkAnswer(String input) {
-		
-		log.debug("answer in prompts: " + input);
-		
+
+	public boolean checkAnswer(String input) {
+
+		log.debug("answer in prompt: " + input);
+
 		String temp = incompleteAnswer(input);
-		
+
 		Noun noun = asr.getNoun(currentId);
-		
+
 		answeredCorrect = false;
-		
-		if(currentPrompt instanceof GeneralPrompt) {
+
+		if (currentPrompt instanceof GeneralPrompt) {
 			//wrong answer
-			if(!currentPrompt.checkAnswer(temp)) {
-				
+			if (!currentPrompt.checkAnswer(temp)) {
+
 				//forever in general prompts, never add in restrictedGeneral because all specific answered
-				if(!restrictedInSpecific.contains(currentId)) {
+				if (!restrictedInSpecific.contains(currentId)) {
 					// answered wrong, not yet completed q/a and not object or person
-					if(!(noun instanceof Location || noun instanceof Unknown)) {
+					if (!(noun instanceof Location
+							|| noun instanceof Unknown)) {
 						System.out.println(currentId);
 						restrictedInGeneral.add(currentId);
 					}
+
 				}
 
-			}
-			else {
+			} else {
 				answeredCorrect = true;
 			}
-		}
-		else if(currentPrompt instanceof SpecificPrompt) {
-			
+
+		} else if (currentPrompt instanceof SpecificPrompt) {
+
 			//correct answer
-			if(currentPrompt.checkAnswer(temp)) {
+			if (currentPrompt.checkAnswer(temp)) {
 				answeredCorrect = true;
 			}
-			
-			if(((SpecificPrompt)currentPrompt).checkifCompleted()) {
+
+			if (((SpecificPrompt) currentPrompt).checkifCompleted()) {
 				restrictedInGeneral.remove(currentId);
 				restrictedInSpecific.add(currentId);
 			}
+
 		}
-		
-		//System.out.println(correctAnswer());
+
+		return answeredCorrect;
+
 	}
-	
-	public boolean correctAnswer() {
-		return this.answeredCorrect;
-	}
-	
+
 	public String incompleteAnswer(String input) {
+
 		Annotation document = new Annotation(input);
 		pipeline.annotate(document);
 		List<CoreMap> sentences = document.get(SentencesAnnotation.class);
 		for (CoreMap sentence : sentences) {
 			SemanticGraph dependencies = sentence
 					.get(CollapsedCCProcessedDependenciesAnnotation.class);
-			
+
 			List<TypedDependency> listDependencies = new ArrayList<TypedDependency>(
 					dependencies.typedDependencies());
 			//Collections.sort(listDependencies, new TypedDependencyComparator());
-			
-			if(listDependencies.size() == 1) {
-				return "The " + asr.getNoun(currentId).getId() + " is " + listDependencies.get(0).dep().lemma();
+
+			if (listDependencies.size() == 1) {
+				return "The " + asr.getNoun(currentId).getId() + " is "
+						+ listDependencies.get(0).dep().lemma();
 			}
 		}
+
 		return input;
+
 	}
-	
+
 	private String findNounId() {
+
 		StorySentence storySentence = asr.getCurrentStorySentence();
 		List<String> nounId;
-		int iterations = 0;
-		while (iterations++ < 10) {
 
-			nounId = storySentence.getAllNounsInStorySentence();
+		for (int iterations = 0; iterations < 10; iterations++) {
+
 			int randomNoun;
 			String id;
 			Noun noun;
 			int threshold;
-			
-			while(!nounId.isEmpty()) {
+
+			nounId = storySentence.getAllNounsInStorySentence();
+
+			while (!nounId.isEmpty()) {
+
 				threshold = 0;
 				randomNoun = Randomizer.random(1, nounId.size());
 				id = nounId.remove(randomNoun - 1);
 				noun = asr.getNoun(id);
 
-				threshold += Utilities.countLists(noun.getAttributes().values());
+				threshold += Utilities
+						.countLists(noun.getAttributes().values());
 				//threshold += Utilities.countLists(noun.getReferences().values());
 				threshold += noun.getReferences().values().size();
-				
+
 				if (threshold < descriptionThreshold) {
 					return id;
 				}
+
 			}
-			
-			
+
 			nounId = new ArrayList<>(asr.getNounMap().keySet());
 			nounId.removeAll(storySentence.getAllNounsInStorySentence());
-				
-			while(!nounId.isEmpty()) {
+
+			while (!nounId.isEmpty()) {
+
 				threshold = 0;
 				randomNoun = Randomizer.random(1, nounId.size());
 				id = nounId.remove(randomNoun - 1);
 				noun = asr.getNoun(id);
-	
-				threshold += Utilities.countLists(noun.getAttributes().values());
+
+				threshold += Utilities
+						.countLists(noun.getAttributes().values());
 				//threshold += Utilities.countLists(noun.getReferences().values());
 				threshold += noun.getReferences().values().size();
-					
+
 				if (threshold < descriptionThreshold) {
 					return id;
 				}
-					
+
 			}
-			descriptionThreshold+=2;
+
+			descriptionThreshold += 2;
+
 		}
+
 		return null;
+
 	}
-	
+
 }

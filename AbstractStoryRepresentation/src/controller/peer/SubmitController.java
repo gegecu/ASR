@@ -80,7 +80,9 @@ public class SubmitController implements ActionListener {
 	}
 
 	public void checkAnswer(Object nounAdjective, String inputText) {
-		promptChooser.checkAnswer(inputText);
+		if (promptChooser.checkAnswer(inputText)) {
+			processStory(promptChooser.incompleteAnswer(inputText));
+		}
 	}
 
 }
