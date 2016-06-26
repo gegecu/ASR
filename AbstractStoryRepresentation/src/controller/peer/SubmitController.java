@@ -2,7 +2,8 @@ package controller.peer;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.concurrent.Semaphore;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.swing.SwingWorker;
 
@@ -20,7 +21,7 @@ public class SubmitController implements ActionListener {
 	private TextUnderstanding tu;
 	private PromptChooser promptChooser;
 	private ChecklistController checklistController;
-	private Semaphore semaphore;
+	private ExecutorService executorService;
 
 	/**
 	 * @param asr
@@ -37,7 +38,7 @@ public class SubmitController implements ActionListener {
 		this.tu = tu;
 		this.promptChooser = promptChooser;
 		this.checklistController = checklistController;
-		this.semaphore = new Semaphore(1);
+		this.executorService = Executors.newSingleThreadExecutor();
 	}
 
 	@Override
@@ -50,24 +51,17 @@ public class SubmitController implements ActionListener {
 
 	public void processStory(String text) {
 
-		storyViewPanel.appendStory(text);
-
-		new SwingWorker<Void, Void>() {
+		executorService.submit(new SwingWorker<Void, Void>() {
 
 			@Override
 			protected Void doInBackground() throws Exception {
-				semaphore.acquire();
+				storyViewPanel.appendStory(text);
 				tu.processInput(storyViewPanel.getStory());
-				semaphore.release();
 				checklistController.updateChecklist();
 				return null;
 			}
 
-			@Override
-			protected void done() {
-			}
-
-		}.execute();
+		});
 
 	}
 
@@ -79,7 +73,7 @@ public class SubmitController implements ActionListener {
 		this.storyViewPanel = storyViewPanel;
 	}
 
-	public void checkAnswer(Object nounAdjective, String inputText) {
+	public void verifyAnswer(String inputText) {
 		if (promptChooser.checkAnswer(inputText)) {
 			processStory(promptChooser.incompleteAnswer(inputText));
 		}

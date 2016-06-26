@@ -88,9 +88,8 @@ public class AskMeController implements ActionListener {
 				} else if (typeOfHelp == TypeOfHelp.QUESTION_ANSWER) {
 					if (answer == HelpAnswer.ACCEPT) {
 						QuestionAnswerDialog tempDialog = ((QuestionAnswerDialog) dialog);
-						Object nounAdjective = tempDialog.getNountAdjective();
 						String inputText = tempDialog.getInputText();
-						submitController.checkAnswer(nounAdjective, inputText);
+						submitController.verifyAnswer(inputText);
 					}
 				}
 
@@ -106,17 +105,9 @@ public class AskMeController implements ActionListener {
 
 			@Override
 			protected Void doInBackground() throws Exception {
-
 				helpText = currentTextGenerator.generateText() + "";
-				//helpText = "The quick brown fox jumps over the lazy dog.";
 				dialog.setHelpText(helpText);
-
-				if (typeOfHelp == TypeOfHelp.QUESTION_ANSWER) {
-					((QuestionAnswerDialog) dialog).setExpectedNounAttribute(null);
-				}
-
 				return null;
-
 			}
 
 			@Override

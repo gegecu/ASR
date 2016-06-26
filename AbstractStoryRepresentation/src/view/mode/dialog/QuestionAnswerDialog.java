@@ -31,8 +31,6 @@ public class QuestionAnswerDialog extends HelpDialog {
 	private JPanel storyInputPanel;
 	private GrammarChecker grammarChecker;
 
-	private Object expectedNounAttribute;
-
 	private boolean storyInputAreaFocused = false;
 
 	public QuestionAnswerDialog() {
@@ -253,20 +251,11 @@ public class QuestionAnswerDialog extends HelpDialog {
 
 	@Override
 	protected void addUXFeatures() {
-		// TODO Auto-generated method stub
 
 	}
 
 	public String getInputText() {
 		return storyInputArea.getText();
-	}
-
-	public Object getNountAdjective() {
-		return null;
-	}
-
-	public void setExpectedNounAttribute(Object expectedNounAttribute) {
-		this.expectedNounAttribute = expectedNounAttribute;
 	}
 
 }

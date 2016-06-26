@@ -20,7 +20,7 @@ public class Main {
 		System.out.println("Checking Connection To Database ...");
 		MySQLConnector.getInstance().getConnection();
 
-		new Thread() {
+		Thread loadResources = new Thread() {
 
 			@Override
 			public void run() {
@@ -31,14 +31,15 @@ public class Main {
 				DictionariesInstance.getInstance();
 				AbstractSequenceClassifierInstance.getInstance();
 				SenticNetParserInstance.getInstance();
-				// JLanguageToolInstance.getInstance();
 
 				log.debug("---- done loading libraries in "
 						+ (System.currentTimeMillis() - t) + " ms ----");
 
 			}
 
-		}.start();
+		};
+		loadResources.setPriority(Thread.MIN_PRIORITY);
+		loadResources.start();
 
 		MainFrame mainFrame = new MainFrame();
 		mainFrame.getChooseModePanel().setMainFrame(mainFrame);
