@@ -260,21 +260,24 @@ public class Extractor {
 			}
 			else {
 				Description d = storySentence.getDescription(tdGovId);
-					if(d.getReference("HasA") != null) {
-						for(Map.Entry<String, Noun> possession: d.getReference("HasA").entrySet()) {
-							for(Map.Entry<String, Noun> doer : d.getManyDoers().entrySet()) {
-								doer.getValue().getReference("HasA").remove(possession.getKey());
-								
-								if(doer.getValue().getReference("HasA").isEmpty()) {
-									doer.getValue().getReferences().remove("HasA");
-								}
-							}
-							
-							d.addConcept(cp.createNegationVerbWithDirectObject(
-									tdGovLemma, possession.getValue().getId()));	
+				d.getConcepts().clear();
+				if(d.getReference("HasA") != null) {
+					for(Map.Entry<String, Noun> possession: d.getReference("HasA").entrySet()) {
+						for(Map.Entry<String, Noun> doer : d.getManyDoers().entrySet()) {
+							doer.getValue().getReference("HasA").remove(possession.getKey());
+							if(doer.getValue().getReference("HasA").isEmpty()) {
+								doer.getValue().getReferences().remove("HasA");
 						}
+							possession.getValue().getReference("IsOwnedBy").remove(doer.getKey());
+							d.addReference("NotHasA", possession.getKey(), possession.getValue());
 					}
+							
+						d.addConcept(cp.createNegationVerbWithDirectObject(
+								tdGovLemma, possession.getValue().getId()));	
+					}
+					d.getReferences().remove("HasA");
 				}
+			}
 		}
 		else if (tdGovTag.contains("NN")) {
 			
@@ -380,6 +383,15 @@ public class Extractor {
 
 		noun.addReference("HasA", tdDepId, noun2);
 		noun2.addReference("IsOwnedBy", tdGovId, noun);
+		
+		if(noun.getReference("NotHasA") != null) {
+			noun.getReference("NotHasA").remove(tdDepId);
+			
+			if(noun.getReference("NotHasA").isEmpty()) {
+				noun.getReferences().remove("NotHasA");
+			}
+		}
+		
 	
 		//we're not storing NotHasA anyway	
 		
@@ -470,11 +482,13 @@ public class Extractor {
 					
 					if(entry.getValue().getAttribute("NotHasProperty") != null) {
 						entry.getValue().getAttribute("NotHasProperty").remove(tdDepLemma);
+						
+						if(entry.getValue().getAttribute("NotHasProperty").isEmpty()) {
+							entry.getValue().getAttributes().remove("NotHasProperty");
+						}
+						
 					}
 					
-					if(entry.getValue().getAttribute("NotHasProperty").isEmpty()) {
-						entry.getValue().getAttributes().remove("NotHasProperty");
-					}
 					
 					description.addDoer(entry.getKey(), entry.getValue());
 				}
@@ -513,11 +527,13 @@ public class Extractor {
 		
 		if(noun.getAttribute("NotHasProperty") != null) {
 			noun.getAttribute("NotHasProperty").remove(tdDepLemma);
+			
+			if(noun.getAttribute("NotHasProperty").isEmpty()) {
+				noun.getAttributes().remove("NotHasProperty");
+			}
 		}
 		
-		if(noun.getAttribute("NotHasProperty").isEmpty()) {
-			noun.getAttributes().remove("NotHasProperty");
-		}
+		
 		//log.debug("amod " + noun.getId());
 
 		Description description = storySentence.getDescription(tdDepId);
@@ -554,11 +570,13 @@ public class Extractor {
 				
 				if(entry.getValue().getAttribute("NotHasProperty") != null) {
 					entry.getValue().getAttribute("NotHasProperty").remove(tdDepLemma);
+					
+					if(entry.getValue().getAttribute("NotHasProperty").isEmpty()) {
+						entry.getValue().getAttributes().remove("NotHasProperty");
+					}
 				}
 				
-				if(entry.getValue().getAttribute("NotHasProperty").isEmpty()) {
-					entry.getValue().getAttributes().remove("NotHasProperty");
-				}
+				
 				
 				description.addDoer(entry.getKey(), entry.getValue());
 				description.addAttribute("HasProperty", tdDepLemma);
@@ -587,11 +605,13 @@ public class Extractor {
 					
 					if(entry.getValue().getAttribute("NotIsA") != null) {
 						entry.getValue().getAttribute("NotIsA").remove(tdDepId);
+						
+						if(entry.getValue().getAttribute("NotIsA").isEmpty()) {
+							entry.getValue().getAttributes().remove("NotIsA");
+						}
 					}
 					
-					if(entry.getValue().getAttribute("NotIsA").isEmpty()) {
-						entry.getValue().getAttributes().remove("NotIsA");
-					}
+					
 					
 					description.addReference("IsA", tdDepId, noun2);
 					description.addConcept(cp.createConceptAsRole(tdDepLemma));
@@ -728,6 +748,16 @@ public class Extractor {
 					if (noun != null) {
 
 						entry.getValue().addReference("HasA", tdDepId, noun);
+						
+						if(entry.getValue().getReference("NotHasA") != null) {
+							entry.getValue().getReference("NotHasA").remove(tdDepId);
+							
+							if(entry.getValue().getReference("NotHasA").isEmpty()) {
+								entry.getValue().getReferences().remove("NotHasA");
+							}
+						}
+						
+						
 						description.addDoer(entry.getKey(), entry.getValue());
 						description.addReference("HasA", tdDepId, noun);
 
@@ -868,11 +898,13 @@ public class Extractor {
 				
 				if(noun.getAttribute("NotHasProperty") != null) {
 					noun.getAttribute("NotHasProperty").remove(tdGovLemma);
+					
+					if(noun.getAttribute("NotHasProperty").isEmpty()) {
+						noun.getAttributes().remove("NotHasProperty");
+					}
 				}
 				
-				if(noun.getAttribute("NotHasProperty").isEmpty()) {
-					noun.getAttributes().remove("NotHasProperty");
-				}
+				
 				
 				
 
@@ -941,11 +973,13 @@ public class Extractor {
 				
 				if(noun.getAttribute("NotIsA") != null) {
 					noun.getAttribute("NotIsA").remove(tdGovIdNN);
+					
+					if(noun.getAttribute("NotIsA").isEmpty()) {
+						noun.getAttributes().remove("NotIsA");
+					}
 				}
 				
-				if(noun.getAttribute("NotIsA").isEmpty()) {
-					noun.getAttributes().remove("NotIsA");
-				}
+				
 
 				Description description = storySentence.getDescription(tdGovIdNN);
 
