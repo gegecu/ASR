@@ -241,22 +241,54 @@ public class Extractor {
 		String tdReln = td.reln().toString();
 
 		if (tdGovTag.contains("VB")) {
-			Event p = storySentence.getPredicate(tdGovId);
-			p.getConcepts().clear();
-			p.getVerb().setNegated(true);
-
-			if (!p.getDirectObjects().isEmpty()) {
-				for (Noun dobj : p.getDirectObjects().values()) {
-					p.addConcept(cp.createNegationVerbWithDirectObject(
-							tdGovLemma, dobj.getId()));
+			
+			if(!(tdGovLemma.equalsIgnoreCase("has") || tdGovLemma.equalsIgnoreCase("have"))) {
+				Event p = storySentence.getPredicate(tdGovId);
+				p.getConcepts().clear();
+				p.getVerb().setNegated(true);
+	
+				if (!p.getDirectObjects().isEmpty()) {
+					for(Map.Entry<String, Noun> dobj: p.getDirectObjects().entrySet()) {
+						p.addConcept(cp.createNegationVerbWithDirectObject(
+								tdGovLemma, dobj.getValue().getId()));	
+					}
+				} else {
+					p.addConcept(cp.createNegationVerb(tdGovLemma));
 				}
-			} else {
-				p.addConcept(cp.createNegationVerb(tdGovLemma));
+				
+				storySentence.addPredicate(tdGovId, p);
 			}
+			else {
+				Description d = storySentence.getDescription(tdGovId);
+					if(d.getReference("HasA") != null) {
+						for(Map.Entry<String, Noun> possession: d.getReference("HasA").entrySet()) {
+							for(Map.Entry<String, Noun> doer : d.getManyDoers().entrySet()) {
+								doer.getValue().getReference("HasA").remove(possession.getKey());
+								
+								if(doer.getValue().getReference("HasA").isEmpty()) {
+									doer.getValue().getReferences().remove("HasA");
+								}
+							}
+							
+							d.addConcept(cp.createNegationVerbWithDirectObject(
+									tdGovLemma, possession.getValue().getId()));	
+						}
+					}
+				}
 		}
-
 		else if (tdGovTag.contains("NN")) {
-			Description d = storySentence.getDescription(tdGovId);
+			
+			String temp = tdGovId;
+			
+			Description d = storySentence.getDescription(temp);
+			
+			//chances are restricted coref
+			if(d == null) {
+				temp = (td.gov().sentIndex() + 1) + " "
+						+ td.gov().index();
+				
+				d = storySentence.getDescription(temp);
+			}
 
 			d.getConcepts().clear();
 
@@ -277,6 +309,8 @@ public class Extractor {
 			}
 
 			d.addConcept(cp.createConceptAsRoleNegation(tdGovLemma));
+			
+			storySentence.addDescription(temp, d);
 		}
 
 		else if (tdGovTag.contains("JJ")) {
@@ -295,13 +329,15 @@ public class Extractor {
 				noun.addAttribute("NotHasProperty", tdGovLemma);
 
 				if (noun.getAttribute("HasProperty").isEmpty()) {
-					noun.getAttributes().remove("IsA");
+					noun.getAttributes().remove("HasProperty");
 				}
 			}
 
 			d.addConcept(cp.createConceptAsAdjectiveNegated(tdGovLemma));
 			d.addConcept(
 					cp.createConceptAsPredicativeAdjectiveNegated(tdGovLemma));
+			
+			storySentence.addDescription(tdGovId, d);
 		}
 	}
 
@@ -344,6 +380,9 @@ public class Extractor {
 
 		noun.addReference("HasA", tdDepId, noun2);
 		noun2.addReference("IsOwnedBy", tdGovId, noun);
+	
+		//we're not storing NotHasA anyway	
+		
 	}
 
 	private void extractLocationDependency(TypedDependency td,
@@ -389,6 +428,7 @@ public class Extractor {
 					description.addDoer(entry.getKey(), entry.getValue());
 				}
 
+				//caution might conflict with xcomp action
 				predicate.addDirectObject(tdDepId, noun);
 				log.debug("Location: " + tdDepLemma);
 
@@ -427,6 +467,15 @@ public class Extractor {
 				for (Map.Entry<String, Noun> entry : storySentence
 						.getPredicate(tdGovId).getManyDoers().entrySet()) {
 					entry.getValue().addAttribute("HasProperty", tdDepLemma);
+					
+					if(entry.getValue().getAttribute("NotHasProperty") != null) {
+						entry.getValue().getAttribute("NotHasProperty").remove(tdDepLemma);
+					}
+					
+					if(entry.getValue().getAttribute("NotHasProperty").isEmpty()) {
+						entry.getValue().getAttributes().remove("NotHasProperty");
+					}
+					
 					description.addDoer(entry.getKey(), entry.getValue());
 				}
 
@@ -461,6 +510,14 @@ public class Extractor {
 		}
 
 		noun.addAttribute("HasProperty", tdDepLemma);
+		
+		if(noun.getAttribute("NotHasProperty") != null) {
+			noun.getAttribute("NotHasProperty").remove(tdDepLemma);
+		}
+		
+		if(noun.getAttribute("NotHasProperty").isEmpty()) {
+			noun.getAttributes().remove("NotHasProperty");
+		}
 		//log.debug("amod " + noun.getId());
 
 		Description description = storySentence.getDescription(tdDepId);
@@ -494,6 +551,15 @@ public class Extractor {
 			if (tdDepTag.equals("JJ")) {
 
 				entry.getValue().addAttribute("HasProperty", tdDepLemma);
+				
+				if(entry.getValue().getAttribute("NotHasProperty") != null) {
+					entry.getValue().getAttribute("NotHasProperty").remove(tdDepLemma);
+				}
+				
+				if(entry.getValue().getAttribute("NotHasProperty").isEmpty()) {
+					entry.getValue().getAttributes().remove("NotHasProperty");
+				}
+				
 				description.addDoer(entry.getKey(), entry.getValue());
 				description.addAttribute("HasProperty", tdDepLemma);
 				description.addConcept(cp.createConceptAsAdjective(tdDepLemma));
@@ -518,6 +584,15 @@ public class Extractor {
 
 				if (noun2 != null) {
 					entry.getValue().addReference("IsA", tdDepId, noun2);
+					
+					if(entry.getValue().getAttribute("NotIsA") != null) {
+						entry.getValue().getAttribute("NotIsA").remove(tdDepId);
+					}
+					
+					if(entry.getValue().getAttribute("NotIsA").isEmpty()) {
+						entry.getValue().getAttributes().remove("NotIsA");
+					}
+					
 					description.addReference("IsA", tdDepId, noun2);
 					description.addConcept(cp.createConceptAsRole(tdDepLemma));
 				}
@@ -529,6 +604,7 @@ public class Extractor {
 
 	}
 
+	//gege does not understand :(
 	private void extractXcompActionDependency(TypedDependency td,
 			StorySentence storySentence, String tdDepId, String tdGovId, List<TypedDependency> listDependencies){
 		
@@ -628,6 +704,7 @@ public class Extractor {
 
 		if (noun != null) {
 
+			// we do not store NotHasA anyway
 			if (tdGovLemma.equals("has") || tdGovLemma.equals("have")) {
 
 				Description description = storySentence.getDescription(tdDepId);
@@ -657,7 +734,7 @@ public class Extractor {
 
 				}
 
-				storySentence.addDescription(tdDepId, description);
+				storySentence.addDescription(tdGovId, description);
 				storySentence.getManyPredicates().remove(tdGovId);
 
 			} else {
@@ -779,6 +856,16 @@ public class Extractor {
 			if (tdGovTag.equals("JJ")) {
 
 				noun.addAttribute("HasProperty", tdGovLemma);
+				
+				if(noun.getAttribute("NotHasProperty") != null) {
+					noun.getAttribute("NotHasProperty").remove(tdGovLemma);
+				}
+				
+				if(noun.getAttribute("NotHasProperty").isEmpty()) {
+					noun.getAttributes().remove("NotHasProperty");
+				}
+				
+				
 
 				Description description = storySentence.getDescription(tdGovId);
 
@@ -842,6 +929,14 @@ public class Extractor {
 				}
 
 				noun.addReference("IsA", tdGovIdNN, noun2);
+				
+				if(noun.getAttribute("NotIsA") != null) {
+					noun.getAttribute("NotIsA").remove(tdGovIdNN);
+				}
+				
+				if(noun.getAttribute("NotIsA").isEmpty()) {
+					noun.getAttributes().remove("NotIsA");
+				}
 
 				Description description = storySentence.getDescription(tdGovIdNN);
 
