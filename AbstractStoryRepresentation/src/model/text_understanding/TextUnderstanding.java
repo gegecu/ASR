@@ -11,6 +11,7 @@ import model.story_representation.story_element.Conflict;
 import model.story_representation.story_element.Resolution;
 import model.story_representation.story_element.noun.Noun;
 import model.story_representation.story_element.story_sentence.Clause;
+import model.story_representation.story_element.story_sentence.Event;
 import model.story_representation.story_element.story_sentence.StorySentence;
 
 public class TextUnderstanding {
@@ -121,14 +122,23 @@ public class TextUnderstanding {
 	private boolean hasValidResolutionConcept(Conflict conflict,
 			List<String> concepts) {
 
-		for (String concept : concepts) {
-			for (String conflict2 : conflict.getClause().getConcepts()) {
-				if (checkValidResolution(conflict2, concept)) {
-					return true;
+		//if conflict is from negation, resolution should be un-negated statement
+		if (conflict.isNegation()){
+//			for (String concept : concepts) {
+//				//if(concept.equals(((Event) conflict.getClause()).getAction())){
+//				//return true;
+//				//}
+//			}
+		}
+		else { //else check for 4 hops in conceptnet
+			for (String concept : concepts) {
+				for (String conflict2 : conflict.getClause().getConcepts()) {
+					if (checkValidResolution(conflict2, concept)) {
+						return true;
+					}
 				}
 			}
 		}
-
 		return false;
 
 	}

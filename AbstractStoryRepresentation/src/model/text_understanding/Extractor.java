@@ -1,6 +1,7 @@
 package model.text_understanding;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +12,7 @@ import org.apache.log4j.Logger;
 
 import edu.stanford.nlp.dcoref.Dictionaries;
 import edu.stanford.nlp.ie.AbstractSequenceClassifier;
+import edu.stanford.nlp.ling.IndexedWord;
 import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
@@ -26,6 +28,7 @@ import model.knowledge_base.conceptnet.ConceptNetDAO;
 import model.knowledge_base.senticnet.ConceptParser;
 import model.knowledge_base.senticnet.SenticNetParser;
 import model.story_representation.AbstractStoryRepresentation;
+import model.story_representation.story_element.Verb;
 import model.story_representation.story_element.noun.Character;
 import model.story_representation.story_element.noun.Location;
 import model.story_representation.story_element.noun.Noun;
@@ -108,7 +111,7 @@ public class Extractor {
 			Collections.sort(listDependencies, new PartOfSpeechComparator());
 
 			for (TypedDependency td : listDependencies) {
-				extractDependency(coreference, td, storySentence);//extract based on dependency
+				extractDependency(coreference, td, storySentence, listDependencies);//extract based on dependency
 			}
 
 			for (Event event : storySentence.getManyPredicates().values()) {
@@ -130,7 +133,7 @@ public class Extractor {
 	}
 
 	private void extractDependency(Map<String, String> coreference,
-			TypedDependency td, StorySentence storySentence) {
+			TypedDependency td, StorySentence storySentence, List<TypedDependency> listDependencies) {
 
 		try {
 
@@ -182,12 +185,17 @@ public class Extractor {
 				extractDirectObjectDependency(td, storySentence, tdDepId,
 						tdGovId);
 			}
-			/** extract xcomp "HasProperty" **/
-			else if (tdReln.equals("xcomp")
-					&& dictionary.copulas.contains(td.gov().lemma())) {
-				extractXcompPropertyDependency(td, storySentence, tdDepId,
+			/** extract xcomp "HasProperty" and xcomp action **/
+			else if (tdReln.equals("xcomp")) {
+				if (dictionary.copulas.contains(td.gov().lemma())){
+					extractXcompPropertyDependency(td, storySentence, tdDepId,
 						tdGovId);
+				}
+				else {
+					extractXcompActionDependency(td, storySentence, tdDepId, tdGovId, listDependencies);
+				}
 			}
+			
 			/** extract amod "IsA" ('adjective noun' format) **/
 			else if (tdReln.equals("amod")) {
 				extractAmodPropertyDependency(td, storySentence, tdDepId,
@@ -515,13 +523,81 @@ public class Extractor {
 				}
 
 			}
-
 		}
 
 		storySentence.getManyPredicates().remove(tdGovId);
 
 	}
 
+	private void extractXcompActionDependency(TypedDependency td,
+			StorySentence storySentence, String tdDepId, String tdGovId, List<TypedDependency> listDependencies){
+		
+		String tdDepLemma = td.dep().lemma();
+		String tdDepTag = td.dep().tag();
+		String tdGovLemma = td.gov().lemma();
+		
+		Event event = storySentence.getPredicate(tdGovId);
+		if(event == null){
+			event = new Event(tdGovId);
+			storySentence.addPredicate(tdGovId, event);
+		}
+		
+		if (tdDepTag.contains("VB")) {
+			
+			String xcompAction = tdDepLemma;
+			Verb temp = new Verb(xcompAction);
+			//exhaust details of complement
+			List<TypedDependency> caseTags = findDependencies(td.dep(), "dep", "case", listDependencies);
+			for(TypedDependency t: caseTags){
+				String append = t.dep().lemma() + " " + t.gov().lemma();
+				temp.addDetail(append);
+				event.addConcept(t.gov().lemma());
+				event.addConcept(cp.createConceptAsPrepPhrase(tdDepLemma, t.gov().lemma(), t.dep().lemma()));
+				xcompAction += " " + append;
+			}
+			//check for negation/positives
+			int emotion = emotionIndicator(tdGovLemma);
+			if(emotion != 0){ //if main verb is only used to indicate emotion
+				event.setVerb(temp);
+			}
+			else {
+				event.getVerb().addDetail(xcompAction);
+			}
+		}
+		else if(tdDepTag.contains("NN")){
+			List<TypedDependency> copulaTags = findDependencies(td.dep(), "gov", "cop", listDependencies);
+			for(TypedDependency t: copulaTags){
+				event.addConcept(t.dep().lemma() + " " + t.gov().lemma());
+			}
+		}
+	}
+	
+	private float computePolarityWithEmotion(String emotion, String action){
+		//improve computation, as of now augment value by 0.25
+		
+		return (float) 0;
+	}
+	private Boolean isMorphemeOfGo(String word){
+		//remove array here in the future
+		String[] morphemes = {"went", "go", "going", "gone"};
+		if(Arrays.asList(morphemes).contains(word))
+			return true;
+		return false;
+	}
+	
+	/** if verb indicates emotion  */
+	private int emotionIndicator(String word){
+		//remove array here in the future
+		String[] negatives = {"hate", "hates", "dislike", "dislikes"};
+		String[] positives = {"like", "likes", "love", "loves"};
+		if(Arrays.asList(negatives).contains(word))
+			return 1;
+		else if (Arrays.asList(positives).contains(word)) {
+			return 2;
+		}
+		return 0;
+	}
+	
 	private void extractDirectObjectDependency(TypedDependency td,
 			StorySentence storySentence, String tdDepId, String tdGovId) {
 
@@ -911,5 +987,35 @@ public class Extractor {
 		return worstPolarity;
 
 	}
+	
+	private void exploreActionComplement(IndexedWord iw, List<TypedDependency> listDependencies){
+		
+	}
 
+	private List<TypedDependency> findDependencies(IndexedWord iw, String inputType, String rel, List<TypedDependency> list){
+		List<TypedDependency> returnList = new ArrayList();
+		if(inputType.equals("gov")){
+			for(TypedDependency td: list){
+				if(compareIndexedWord(td.gov(), iw) && td.reln().toString().contains(rel)){
+					returnList.add(td);
+				}
+			}
+		}
+		else if(inputType.equals("dep")){
+			for(TypedDependency td: list){
+				if(compareIndexedWord(td.dep(), iw) && td.reln().toString().contains(rel)){
+					returnList.add(td);
+				}
+			}
+		}
+		return returnList;
+	}
+	
+	/** checks if indexed words are equal */
+	private boolean compareIndexedWord(IndexedWord arg1, IndexedWord arg2){
+		if(arg1.lemma().equals(arg2.lemma()) && arg1.index() == arg2.index()){
+			return true;
+		}
+		return false;
+	}
 }

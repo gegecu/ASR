@@ -25,7 +25,9 @@ public class ConceptParser {
 	public String createConceptAsInfinitive(String verb, String location) {
 		return (verb + " to " + location);
 	}
-
+	public String createConceptAsPrepPhrase (String verb, String prep, String location){
+		return (verb + " " + prep +  " " + location);
+	}
 	/** creates a concept in the format 'be + adjective' **/
 	public String createConceptAsPredicativeAdjective(String adj) {
 		return ("be " + adj);
