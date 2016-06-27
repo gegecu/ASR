@@ -50,7 +50,7 @@ public class Conflict {
 			Map<String,List<String>> attr = ((Description) clause).getAttributes();
 			Map<String,Map<String, Noun>> ref =((Description) clause).getReferences();
 			
-			if(attr.containsKey("notHasProperty") || ref.containsKey("notIsA")){
+			if(attr.containsKey("NotHasProperty") || ref.containsKey("NotIsA")){
 				isNegation = true;
 			}
 		}
