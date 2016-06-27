@@ -41,8 +41,10 @@ public class Conflict {
 		return this.clause.getPolarity();
 	}
 	private void checkNegation(){
+		//System.out.println("checking negation");
 		if(clause instanceof Event){
 			isNegation = ((Event) clause).getVerb().isNegated();
+			//System.out.println("neg: " + isNegation);
 		}
 		else if (clause instanceof Description){
 			Map<String,List<String>> attr = ((Description) clause).getAttributes();
@@ -55,6 +57,7 @@ public class Conflict {
 	}
 	//for negation resolution purposes
 	public Boolean isNegation() {
+		System.out.println("isneg: " + isNegation);
 		return this.isNegation;
 	}
 

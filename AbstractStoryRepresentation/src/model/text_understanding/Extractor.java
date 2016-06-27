@@ -547,22 +547,39 @@ public class Extractor {
 			String xcompAction = tdDepLemma;
 			Verb temp = new Verb(xcompAction);
 			//exhaust details of complement
-			List<TypedDependency> caseTags = findDependencies(td.dep(), "dep", "case", listDependencies);
-			for(TypedDependency t: caseTags){
-				String append = t.dep().lemma() + " " + t.gov().lemma();
+			List<TypedDependency> nmodTags = findDependencies(td.dep(), "gov", "nmod", listDependencies);
+			for(TypedDependency t: nmodTags){
+				String preposition = t.reln().toString().replace("nmod", "");
+				preposition = preposition.replace(":", "");
+				if(preposition.equals("")){
+					preposition = "to";
+				}
+				String append = preposition + " " + t.dep().lemma();
 				temp.addDetail(append);
 				event.addConcept(t.gov().lemma());
-				event.addConcept(cp.createConceptAsPrepPhrase(tdDepLemma, t.gov().lemma(), t.dep().lemma()));
+				event.addConcept(cp.createConceptAsPrepPhrase(tdDepLemma, preposition, t.dep().lemma()));
 				xcompAction += " " + append;
 			}
 			//check for negation/positives
 			int emotion = emotionIndicator(tdGovLemma);
-			if(emotion != 0){ //if main verb is only used to indicate emotion
+			if(emotion != 0){
+				if(emotion == 1){//negative
+					//to do polarity modifications
+					temp.setNegated(true);
+				}
+				else if(emotion == 2){//positive
+					//to do polarity modifications
+				}
 				event.setVerb(temp);
 			}
-			else {
+			else {//no emotion
 				event.getVerb().addDetail(xcompAction);
+				event.addConcept(xcompAction);
 			}
+//			System.out.println(xcompAction);
+//			for(String s: event.getConcepts()){
+//				System.out.println("conc: " + s);
+//			}
 		}
 		else if(tdDepTag.contains("NN")){
 			List<TypedDependency> copulaTags = findDependencies(td.dep(), "gov", "cop", listDependencies);
@@ -574,15 +591,7 @@ public class Extractor {
 	
 	private float computePolarityWithEmotion(String emotion, String action){
 		//improve computation, as of now augment value by 0.25
-		
 		return (float) 0;
-	}
-	private Boolean isMorphemeOfGo(String word){
-		//remove array here in the future
-		String[] morphemes = {"went", "go", "going", "gone"};
-		if(Arrays.asList(morphemes).contains(word))
-			return true;
-		return false;
 	}
 	
 	/** if verb indicates emotion  */
@@ -987,10 +996,6 @@ public class Extractor {
 		return worstPolarity;
 
 	}
-	
-	private void exploreActionComplement(IndexedWord iw, List<TypedDependency> listDependencies){
-		
-	}
 
 	private List<TypedDependency> findDependencies(IndexedWord iw, String inputType, String rel, List<TypedDependency> list){
 		List<TypedDependency> returnList = new ArrayList();
@@ -1003,6 +1008,7 @@ public class Extractor {
 		}
 		else if(inputType.equals("dep")){
 			for(TypedDependency td: list){
+				System.out.println("rel: " + td.reln().toString() + " " + rel);
 				if(compareIndexedWord(td.dep(), iw) && td.reln().toString().contains(rel)){
 					returnList.add(td);
 				}
@@ -1013,8 +1019,11 @@ public class Extractor {
 	
 	/** checks if indexed words are equal */
 	private boolean compareIndexedWord(IndexedWord arg1, IndexedWord arg2){
-		if(arg1.lemma().equals(arg2.lemma()) && arg1.index() == arg2.index()){
-			return true;
+		//System.out.println(arg1.lemma() + " " + arg2.lemma());
+		if(arg1.lemma() != null){//sometimes when reln = ROOT
+			if(arg1.lemma().equals(arg2.lemma()) && arg1.index() == arg2.index()){
+				return true;
+			}
 		}
 		return false;
 	}

@@ -9,6 +9,7 @@ import model.knowledge_base.conceptnet.ConceptNetDAO;
 import model.story_representation.AbstractStoryRepresentation;
 import model.story_representation.story_element.Conflict;
 import model.story_representation.story_element.Resolution;
+import model.story_representation.story_element.Verb;
 import model.story_representation.story_element.noun.Noun;
 import model.story_representation.story_element.story_sentence.Clause;
 import model.story_representation.story_element.story_sentence.Event;
@@ -102,9 +103,8 @@ public class TextUnderstanding {
 
 		List<Noun> doersInConflict = new ArrayList<Noun>();
 		doersInConflict.addAll(conflict.getClause().getManyDoers().values());
-
 		for (Clause clause : clauses) {
-			if (hasValidResolutionConcept(conflict, clause.getConcepts())) {
+			if (hasValidResolutionConcept(conflict, clause)) {
 				List<Noun> doersInResolution = new ArrayList<Noun>();
 				doersInResolution.addAll(clause.getManyDoers().values());
 				doersInResolution.retainAll(doersInConflict);
@@ -120,20 +120,27 @@ public class TextUnderstanding {
 	}
 
 	private boolean hasValidResolutionConcept(Conflict conflict,
-			List<String> concepts) {
-
+			Clause resolutionClause) {
+		
 		//if conflict is from negation, resolution should be un-negated statement
 		if (conflict.isNegation()){
-//			for (String concept : concepts) {
-//				//if(concept.equals(((Event) conflict.getClause()).getAction())){
-//				//return true;
-//				//}
-//			}
+			System.out.println("conflict is negation");
+			List<String> concepts = resolutionClause.getConcepts();
+			//System.out.println("size:" +concepts.size());
+			for (String resolutionConcept : concepts) {
+				for (String conflictConcept : conflict.getClause().getConcepts()) {
+					if (conflictConcept.equals(resolutionConcept) && !((Event) resolutionClause).getVerb().isNegated()) {
+						System.out.println("Resolution check, conf:" + conflictConcept + " reso: " +resolutionConcept);
+						return true;
+					}
+				}
+			}
 		}
 		else { //else check for 4 hops in conceptnet
+			List<String> concepts = resolutionClause.getConcepts();
 			for (String concept : concepts) {
 				for (String conflict2 : conflict.getClause().getConcepts()) {
-					if (checkValidResolution(conflict2, concept)) {
+					if (ConceptNetDAO.getFourHops(conflict2, concept)) {
 						return true;
 					}
 				}
@@ -141,10 +148,6 @@ public class TextUnderstanding {
 		}
 		return false;
 
-	}
-
-	private boolean checkValidResolution(String conflict, String resolution) {
-		return ConceptNetDAO.getFourHops(conflict, resolution);
 	}
 
 }
