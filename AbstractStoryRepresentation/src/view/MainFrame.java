@@ -33,6 +33,7 @@ public class MainFrame extends JFrame {
 	public MainFrame() {
 		super("Alice");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		//setMinimumSize(new Dimension(1104, 621));
 		setMinimumSize(new Dimension(880, 660));
 		initializeUI();
 		pack();

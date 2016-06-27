@@ -26,9 +26,9 @@ public class ChecklistPanel extends ViewPanel {
 
 	private static final long serialVersionUID = 1L;
 
-	public static final String START = "start";
-	public static final String MIDDLE = "middle";
-	public static final String END = "end";
+	public static final String START = AbstractStoryRepresentation.start;
+	public static final String MIDDLE = AbstractStoryRepresentation.middle;
+	public static final String END = AbstractStoryRepresentation.end;
 
 	private JPanel panel;
 

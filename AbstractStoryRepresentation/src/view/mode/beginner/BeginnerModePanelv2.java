@@ -9,7 +9,9 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
 
+import javax.swing.BorderFactory;
 import javax.swing.ButtonModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -29,18 +31,16 @@ import model.story_representation.AbstractStoryRepresentation;
 import model.story_representation.Checklist;
 import model.text_generation.DirectivesGenerator;
 import model.text_generation.StorySegmentGenerator;
-import model.text_generation.prompts.PromptChooser;
 import model.text_understanding.TextUnderstanding;
 import net.miginfocom.swing.MigLayout;
 import view.MainFrame;
-import view.mode.AlicePanel;
+import view.mode.AlicePanelv2;
 import view.mode.ModePanel;
-import view.mode.StoryInputPanel;
-import view.mode.StoryViewPanel;
+import view.mode.StoryInputPanelv2;
+import view.mode.StoryViewPanelv2;
 import view.utilities.AutoResizingButton;
 import view.utilities.AutoResizingLabel;
 import view.utilities.AutoResizingTextFieldWithPlaceHolder;
-import view.utilities.CancelButton;
 import view.utilities.RoundedBorder;
 
 /**
@@ -48,23 +48,29 @@ import view.utilities.RoundedBorder;
  * @since January 1, 2016
  */
 @SuppressWarnings("serial")
-public class BeginnerModePanel extends ModePanel {
+public class BeginnerModePanelv2 extends ModePanel {
 
 	private static Logger log = Logger
-			.getLogger(BeginnerModePanel.class.getName());
+			.getLogger(BeginnerModePanelv2.class.getName());
 
 	private JButton helpButton;
 	private JButton askMeButton;
 	private JButton nextButton;
 
-	private StoryViewPanel storyViewPanel;
+	private JPanel storyViewLabelPanel;
+	private AutoResizingLabel storyViewLabel;
+	private StoryViewPanelv2 storyViewPanel;
 
+	private JPanel titlePanel;
+	private AutoResizingLabel titleLabel;
 	private AutoResizingTextFieldWithPlaceHolder titleField;
 
-	private JLabel guideLabel;
-	private ChecklistPanel checkListPanel;
+	private AlicePanelv2 alicePanel;
 
-	private StoryInputPanel storyInputPanel;
+	private JLabel guideLabel;
+	private ChecklistPanelv2 checkListPanel;
+
+	private StoryInputPanelv2 storyInputPanel;
 
 	private boolean titleFieldFocused = false;
 
@@ -73,7 +79,6 @@ public class BeginnerModePanel extends ModePanel {
 	private TextUnderstanding tu;
 	private DirectivesGenerator dg;
 	private StorySegmentGenerator ssg;
-	private PromptChooser promptChooser;
 
 	private AskMeController askMeController;
 	private ChecklistController checklistController;
@@ -81,27 +86,26 @@ public class BeginnerModePanel extends ModePanel {
 	private SaveController saveController;
 	private CancelController cancelController;
 
-	public BeginnerModePanel() {
+	public BeginnerModePanelv2() {
 
-		asr = new AbstractStoryRepresentation();
-		cl = new Checklist(asr);
-		tu = new TextUnderstanding(asr);
-		dg = new DirectivesGenerator(asr);
-		ssg = new StorySegmentGenerator(asr);
-		promptChooser = new PromptChooser(asr);
-
-		log.debug("========== New Story ==========");
-
-		checklistController = new ChecklistController(asr, cl, checkListPanel);
-		submitController = new SubmitController(asr, tu, promptChooser, checklistController);
-		askMeController = new AskMeController(dg, ssg, promptChooser, submitController);
+		//		asr = new AbstractStoryRepresentation();
+		//		cl = new Checklist(asr);
+		//		tu = new TextUnderstanding(asr);
+		//		dg = new DirectivesGenerator(asr);
+		//		ssg = new StorySegmentGenerator(asr);
+		//
+		//		log.debug("========== New Story ==========");
+		//
+		//		checklistController = new ChecklistController(asr, cl, checkListPanel);
+		//		submitController = new SubmitController(asr, tu, checklistController);
+		//		askMeController = new AskMeController(dg, ssg, submitController);
 		saveController = new SaveController(titleField,
 				storyInputPanel.getInputArea());
 		cancelController = new CancelController();
-
-		addAskMeActionListener(askMeController);
-		addSubmitActionListener(submitController);
-		addCheckListActionListener(checklistController);
+		//
+		//		addAskMeActionListener(askMeController);
+		//		addSubmitActionListener(submitController);
+		//		addCheckListActionListener(checklistController);
 		addSaveButtonActionListener(saveController);
 		addCancelButtonActionListener(cancelController);
 
@@ -116,109 +120,142 @@ public class BeginnerModePanel extends ModePanel {
 	@Override
 	protected void initializeUI() {
 
-		backButton = new CancelButton();
+		backButton = new AutoResizingButton();
 		helpButton = new AutoResizingButton();
 		saveButton = new AutoResizingButton();
 		askMeButton = new AutoResizingButton();
 		nextButton = new AutoResizingButton();
+		titlePanel = new JPanel();
+		titleLabel = new AutoResizingLabel();
 		titleField = new AutoResizingTextFieldWithPlaceHolder();
-		storyViewPanel = new StoryViewPanel(92, 8);
+		storyViewLabelPanel = new JPanel();
+		storyViewLabel = new AutoResizingLabel();
+		storyViewPanel = new StoryViewPanelv2();
 		guideLabel = new AutoResizingLabel();
-		checkListPanel = new ChecklistPanel(85, 15);
+		checkListPanel = new ChecklistPanelv2();
+		alicePanel = new AlicePanelv2();
 
-		backButton.setText("");
+		backButton.setText("<");
 		backButton.setFocusPainted(false);
-		backButton.setBackground(Color.RED);
-		backButton.setForeground(Color.BLACK);
-		backButton.setFont(new Font("Arial", Font.BOLD, 40));
-		backButton.setBorder(new RoundedBorder(Color.BLACK, 3, 12));
+		backButton.setBackground(Color.decode("#DCB3DD"));
+		backButton.setForeground(Color.decode("#9D489C"));
+		backButton.setFont(new Font("Arial", Font.PLAIN, 60));
+		backButton.setBorder(
+				new RoundedBorder(Color.decode("#9E4D9E"), 3, 12, 0, 0, 0, 0));
 
 		helpButton.setText("?");
 		helpButton.setFocusPainted(false);
-		helpButton.setBackground(Color.WHITE);
-		helpButton.setForeground(Color.BLACK);
-		helpButton.setFont(new Font("Arial", Font.BOLD, 40));
-		helpButton.setBorder(new RoundedBorder(Color.BLACK, 3, 12));
+		helpButton.setBackground(Color.decode("#F8A8AB"));
+		helpButton.setForeground(Color.decode("#E4211B"));
+		helpButton.setFont(new Font("Arial", Font.PLAIN, 60));
+		helpButton.setBorder(
+				new RoundedBorder(Color.decode("#E4211B"), 3, 12, 0, 0, 0, 0));
 
-		saveButton.setText("S");
+		saveButton.setIcon(new ImageIcon("save.png"));
 		saveButton.setFocusPainted(false);
-		saveButton.setBackground(Color.decode("#36B214"));
-		saveButton.setForeground(Color.BLACK);
-		saveButton.setFont(new Font("Arial", Font.BOLD, 40));
-		saveButton.setBorder(new RoundedBorder(Color.BLACK, 3, 12));
+		saveButton.setBackground(Color.decode("#B5E61B"));
+		saveButton.setForeground(Color.decode("#28B149"));
+		saveButton.setFont(new Font("Berlin Sans FB Demi", Font.BOLD, 60));
+		saveButton.setBorder(
+				new RoundedBorder(Color.decode("#28B149"), 3, 12, 5, 0, 5, 0));
 
-		askMeButton.setText("Ask Me");
+		askMeButton.setText("NO MORE IDEAS?");
 		askMeButton.setFocusPainted(false);
-		askMeButton.setBackground(Color.WHITE);
-		askMeButton.setForeground(Color.BLACK);
+		askMeButton.setBackground(Color.decode("#25B14F"));
+		askMeButton.setForeground(Color.WHITE);
 		askMeButton.setHorizontalAlignment(SwingConstants.CENTER);
-		askMeButton.setFont(new Font("Arial", Font.BOLD, 30));
-		askMeButton.setBorder(
-				new RoundedBorder(Color.BLACK, 3, 12, 15, 10, 15, 10));
+		askMeButton.setFont(new Font("Berlin Sans FB Demi", Font.BOLD, 15));
+		askMeButton.setBorder(new RoundedBorder(Color.decode("#1EB14B"), 3, 12,
+				15, 10, 15, 10));
+
+		alicePanel.setBackgroundColor(Color.WHITE);
 
 		guideLabel.setText("To Do List");
 		guideLabel.setForeground(Color.BLACK);
-		guideLabel.setFont(new Font("Arial", Font.BOLD, 36));
+		guideLabel.setFont(new Font("Berlin Sans FB Demi", Font.BOLD, 36));
 		guideLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
-		checkListPanel.setBackground(Color.decode("#36B214"));
+		checkListPanel.setBackground(Color.WHITE);
 
 		nextButton.setText("Next Part");
 		nextButton.setFocusPainted(false);
 		nextButton.setBackground(Color.GREEN);
 		nextButton.setForeground(Color.BLACK);
 		nextButton.setHorizontalAlignment(SwingConstants.CENTER);
-		nextButton.setFont(new Font("Arial", Font.BOLD, 25));
+		nextButton.setFont(new Font("Berlin Sans FB Demi", Font.BOLD, 25));
 		nextButton.setBorder(
 				new RoundedBorder(Color.BLACK, 3, 12, 15, 10, 15, 10));
 
-		titleField.setPlaceHolder("Enter Title Here");
-		titleField.setFont(new Font("Arial", Font.BOLD, 40));
-		titleField.setBorder(
-				new RoundedBorder(Color.BLACK, 3, 12, 20, 10, 20, 10));
+		titleLabel.setText("TITLE");
+		titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		titleLabel.setFont(new Font("Berlin Sans FB Demi", Font.BOLD, 30));
+		titleLabel.setForeground(Color.decode("#7E7E77"));
+
+		titleField.setFont(new Font("Berlin Sans FB Demi", Font.BOLD, 40));
+		titleField.setBorder(new RoundedBorder(Color.decode("#7E7C86"), 3, 12,
+				11, 10, 12, 10));
 		titleField.setBackground(Color.decode("#F0F0F0"));
 		titleField.setForeground(Color.BLACK);
 		titleField.setHorizontalAlignment(SwingConstants.CENTER);
 
-		storyViewPanel.setBackground(Color.decode("#36B214"));
+		titlePanel.setLayout(new MigLayout("insets 0"));
+		titlePanel.setBackground(Color.decode("#FFD237"));
+		titlePanel.add(titleLabel, "h 10%, w 100%, growx, bottom, wrap");
+		titlePanel.add(titleField, "h 90%, w 100%, growx, bottom");
 
-		setLayout(new MigLayout("insets 5 10 10 10"));
-		setBackground(Color.decode("#5B9CD2"));
+		storyViewLabelPanel.setLayout(new MigLayout("insets 0"));
+		storyViewLabelPanel.setBackground(Color.WHITE);
 
-		JPanel panel1 = new JPanel(new MigLayout());
-		panel1.setBackground(Color.decode("#5B9CD2"));
-		panel1.add(backButton, "h 100%, w 12%, grow");
-		panel1.add(titleField, "h 100%, w 64%, grow");
-		panel1.add(helpButton, "h 100%, w 12%, grow");
-		panel1.add(saveButton, "h 100%, w 12%, grow");
+		storyViewLabel.setText("YOUR STORY :");
+		storyViewLabel.setFont(new Font("Berlin Sans FB Demi", Font.BOLD, 20));
+		storyViewLabel.setForeground(Color.decode("#26AE51"));
 
-		JPanel panel2 = new JPanel(new MigLayout("insets 5 0 0 0"));
-		panel2.setBackground(Color.decode("#36B214"));
-		panel2.add(guideLabel, "h 15%, w 95%, wrap");
-		panel2.add(checkListPanel, "h 65%, w 100%, wrap");
-		panel2.add(nextButton, "h 15%, w 100%, wrap");
+		storyViewPanel.setBackground(Color.WHITE);
 
-		JPanel panel3 = new JPanel(new MigLayout("insets 0"));
-		panel3.setBackground(Color.decode("#36B214"));
-		panel3.add(askMeButton, "h 15%, w 100%, wrap");
-		panel3.add(new AlicePanel(), "h 85%, w 100%, wrap");
+		storyViewLabelPanel.add(storyViewLabel, "h 5%, w 100%, grow, wrap");
+		storyViewLabelPanel.add(storyViewPanel, "h 95%, w 100%, grow");
 
-		JPanel panel4 = new JPanel(new MigLayout("insets 0 10 0 10"));
-		panel4.setBackground(Color.decode("#36B214"));
-		panel4.add(storyViewPanel, "h 100%, w 50%");
-		panel4.add(panel2, "h 100%, w 25%");
-		panel4.add(panel3, "h 100%, w 25%");
+		setLayout(new MigLayout("insets 0, gapy 0"));
+		setBackground(Color.decode("#FFD237"));
 
-		storyInputPanel = new StoryInputPanel();
+		JPanel panel1 = new JPanel(new MigLayout(""));
+		panel1.setBackground(Color.decode("#FFCF3D"));
+		panel1.setBorder(BorderFactory.createMatteBorder(0, 0, 4, 0,
+				Color.decode("#8B7F60")));
+		panel1.add(backButton, "h 40%, w 9%, bottom, gapx 1%");
+		panel1.add(helpButton, "h 40%, w 9%, bottom");
+		panel1.add(titlePanel, "h 100%, w 70%, grow");
+		panel1.add(saveButton, "h 40%, w 9%, bottom, gapx 0% 1%");
 
-		JPanel panel6 = new JPanel(new MigLayout("insets 15 5 5 5"));
-		panel6.setBackground(Color.decode("#36B214"));
-		panel6.setBorder(new RoundedBorder(Color.BLACK, 3, 12));
-		panel6.add(panel4, "h 80%, w 100%, wrap");
-		panel6.add(storyInputPanel, "h 20%, w 100%, wrap");
+		JPanel panel2 = new JPanel(new MigLayout("insets 0, gapy 0"));
+		panel2.setBackground(Color.WHITE);
+		//panel2.add(guideLabel, "h 15%, w 95%, wrap");
+		panel2.add(checkListPanel, "h 100%, w 100%, wrap");
+		//panel2.add(nextButton, "h 15%, w 100%, wrap");
+
+		JPanel panel3 = new JPanel(
+				new MigLayout("insets 0, fillx, al center center, gapy 0"));
+		panel3.setBackground(Color.WHITE);
+		panel3.add(askMeButton, "h 15%, w 70%, center, wrap");
+		panel3.add(alicePanel, "h 85%, w 100%, grow, wrap");
+
+		JPanel panel4 = new JPanel(new MigLayout("insets 0"));
+		panel4.setBackground(Color.WHITE);
+		panel4.add(storyViewLabelPanel, "h 100%, w 55%, gapx 1% 1%");
+		panel4.add(panel2, "h 91%, w 25%, bottom");
+		panel4.add(panel3, "h 91%, w 18%, bottom");
+
+		storyInputPanel = new StoryInputPanelv2();
+		storyInputPanel.setBorder(BorderFactory.createMatteBorder(4, 0, 0, 0,
+				Color.decode("#8B7F60")));
+
+		JPanel panel6 = new JPanel(new MigLayout("insets 10 10 10 10"));
+		panel6.setBackground(Color.WHITE);
+		panel6.add(panel4, "h 100%, w 100%, grow, wrap");
 
 		add(panel1, "h 10%, w 100%, grow, wrap");
-		add(panel6, "h 90%, w 100%, grow");
+		add(panel6, "h 60%, w 100%, grow, wrap");
+		add(storyInputPanel, "h 30%, w 100%, grow, wrap");
 
 		addCancelButtonActionListener(cancelController);
 		addSaveButtonActionListener(saveController);
@@ -370,16 +407,16 @@ public class BeginnerModePanel extends ModePanel {
 	}
 
 	public void addSubmitActionListener(SubmitController submitController) {
-		submitController.setStoryInputPanel(storyInputPanel);
-		submitController.setStoryViewPanel(storyViewPanel);
+		//submitController.setStoryInputPanel(storyInputPanel);
+		//submitController.setStoryViewPanel(storyViewPanel);
 		storyInputPanel.addSubmitButtonController(submitController);
 	}
 
-	public StoryViewPanel getStoryViewPanel() {
+	public StoryViewPanelv2 getStoryViewPanel() {
 		return storyViewPanel;
 	}
 
-	public ChecklistPanel getCheckListPanel() {
+	public ChecklistPanelv2 getCheckListPanel() {
 		return checkListPanel;
 	}
 

@@ -11,11 +11,11 @@ public abstract class ModePanel extends TemplatePanel {
 
 	private static final long serialVersionUID = 1L;
 
-	protected JButton cancelButton;
+	protected JButton backButton;
 	protected JButton saveButton;
 
 	public void addCancelButtonActionListener(ActionListener actionListener) {
-		cancelButton.addActionListener(actionListener);
+		backButton.addActionListener(actionListener);
 	}
 
 	public void addSaveButtonActionListener(ActionListener actionListener) {
