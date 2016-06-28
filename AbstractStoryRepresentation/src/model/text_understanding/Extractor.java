@@ -666,7 +666,7 @@ public class Extractor {
 				else if(emotion == 2){//positive
 					//to do polarity modifications
 				}
-				event.setVerb(temp);
+				//event.setVerb(temp);
 			}
 			else {//no emotion
 				event.getVerb().addDetail(xcompAction);
