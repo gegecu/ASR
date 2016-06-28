@@ -130,8 +130,9 @@ public class TextUnderstanding {
 			System.out.println("RESOLUTION CHECK");
 			for (String resolutionConcept : concepts) {
 				for (String conflictConcept : conflict.getClause().getConcepts()) {
-					System.out.println("  conf:" + conflictConcept + " reso: " +resolutionConcept);
-					if (conflictConcept.equals(resolutionConcept) && !((Event) resolutionClause).getVerb().isNegated()) {
+					String temp = resolutionConcept.replace("not ", "");
+					System.out.println("  conf:" + conflictConcept + " reso: " +temp);
+					if (conflictConcept.equals(temp) && !((Event) resolutionClause).getVerb().isNegated()) {
 						
 						return true;
 					}
