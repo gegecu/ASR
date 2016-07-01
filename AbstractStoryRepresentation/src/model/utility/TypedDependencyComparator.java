@@ -8,9 +8,9 @@ public class TypedDependencyComparator implements Comparator<TypedDependency> {
 
 	public int compare(TypedDependency td1, TypedDependency td2) {
 
-		if (td1.reln().toString().equals("nsubj")) {
+		if (td1.reln().toString().contains("nsubj")) {
 			return -1;
-		} else if (td2.reln().toString().equals("nsubj")) {
+		} else if (td2.reln().toString().contains("nsubj")) {
 			return 1;
 		} else if (td1.reln().toString().equals("dobj")) {
 			return -1;

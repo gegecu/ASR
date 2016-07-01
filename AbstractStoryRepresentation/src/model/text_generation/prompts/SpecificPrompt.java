@@ -231,6 +231,10 @@ public class SpecificPrompt extends Prompt {
 			int randomConcept = Randomizer.random(1, concepts.size());
 			prompt = "An example of " + currentTopic + " is " + concepts.get(randomConcept).getStart() + ". ";
 		}
+		else {
+			//ignore
+			this.isWrong = false;
+		}
 		
 		prompt += "What is the " + currentTopic + " of " + currentNoun.getId() + "?";
 

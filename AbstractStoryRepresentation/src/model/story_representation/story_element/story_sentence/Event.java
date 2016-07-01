@@ -8,13 +8,11 @@ import model.story_representation.story_element.noun.Noun;
 
 public class Event extends Clause {
 
-	private String action;
 	private Map<String, Noun> receivers;
 	private Map<String, Noun> directObjects;
 	private Verb verb;
 
 	public Event(String action) {
-		this.action = action;
 		this.receivers = new HashMap<String, Noun>();
 		this.directObjects = new HashMap<String, Noun>();
 		this.verb = new Verb(action);
@@ -26,14 +24,6 @@ public class Event extends Clause {
 
 	public void setVerb(Verb verb) {
 		this.verb = verb;
-	}
-
-	public String getAction() {
-		return action;
-	}
-
-	public void setAction(String action) {
-		this.action = action;
 	}
 
 	public Map<String, Noun> getReceivers() {

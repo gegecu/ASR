@@ -108,6 +108,10 @@ public class PromptChooser extends TextGeneration {
 
 		} else {
 			output = capableOf();
+			history.add(output);
+			if (history.size() > 3) {
+				history.remove();
+			}
 		}
 
 		log.debug("text gen: " + output);
@@ -143,20 +147,34 @@ public class PromptChooser extends TextGeneration {
 
 				directive = directive.replace("<noun>",
 						SurfaceRealizer.wordsConjunction(doers));
-
-				VPPhraseSpec verb = nlgFactory
-						.createVerbPhrase(predicate.getAction());
-
+				
 				String action = "";
-
+				
 				Collection<Noun> directObjects = predicate.getDirectObjects()
 						.values();
 
-				if (predicate.getDirectObjects().size() > 0) {
+				if(!predicate.getVerb().isNegated()) {
+				
+					VPPhraseSpec verb = nlgFactory
+							.createVerbPhrase(predicate.getVerb().getAction());
 
-					verb.setFeature(Feature.TENSE, Tense.PAST);
+					if (directObjects.size() > 0) {
+						verb.setFeature(Feature.TENSE, Tense.PAST);
+						action = realiser.realise(verb).toString();
+	
+					} else {
+						verb.setFeature(Feature.PROGRESSIVE, true);
+						action = realiser.realise(verb).toString();
+					}
+				}
+				else {
+					VPPhraseSpec verb = nlgFactory.createVerbPhrase(predicate.getVerb().getAction());
+					verb.setFeature(Feature.TENSE, Tense.PRESENT);
+					verb.setFeature(Feature.NEGATED, true);
 					action = realiser.realise(verb).toString();
-
+				}
+				
+				if(directObjects.size() > 0) {
 					Noun noun = directObjects.iterator().next();
 					if (noun instanceof Location) {
 						action += " to " + noun.getId();
@@ -167,10 +185,6 @@ public class PromptChooser extends TextGeneration {
 						action += " "
 								+ SurfaceRealizer.determinerFixer(noun.getId());
 					}
-
-				} else {
-					verb.setFeature(Feature.PROGRESSIVE, true);
-					action = realiser.realise(verb).toString();
 				}
 
 				directive = directive.replace("<action>", action);

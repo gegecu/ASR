@@ -244,6 +244,7 @@ public class Extractor {
 			
 			if(!(tdGovLemma.equalsIgnoreCase("has") || tdGovLemma.equalsIgnoreCase("have"))) {
 				Event p = storySentence.getPredicate(tdGovId);
+				System.out.println(tdGovId + " " + p);
 				p.getConcepts().clear();
 				p.getVerb().setNegated(true);
 	
@@ -940,6 +941,7 @@ public class Extractor {
 
 				event.addDoer(tdDepId, noun);
 				event.addConcept(cp.createConceptAsVerb(tdGovLemma));
+				System.out.println(tdGovId);
 				storySentence.addPredicate(tdGovId, event);
 
 			}
