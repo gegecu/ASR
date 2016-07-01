@@ -94,7 +94,7 @@ public class AskMeController implements ActionListener {
 						if (!isAnswerCorrect) {
 							answer = HelpAnswer.WRONG_ANSWER;
 						}
-					} else if (answer == HelpAnswer.CANCEL) {
+					} else if (answer == HelpAnswer.CANCEL || answer == HelpAnswer.REJECT) {
 						promptChooser.ignored();
 					}
 				}
