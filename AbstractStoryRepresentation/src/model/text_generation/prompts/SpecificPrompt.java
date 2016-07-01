@@ -48,6 +48,10 @@ public class SpecificPrompt extends Prompt {
 	public void setIsWrongIgnored(boolean isWrong) {
 		this.isWrong = isWrong;
 	}
+	
+	public boolean getIsWrong() {
+		return this.isWrong;
+	}
 
 	private String checkAvailableTopics(Noun noun) {
 		
