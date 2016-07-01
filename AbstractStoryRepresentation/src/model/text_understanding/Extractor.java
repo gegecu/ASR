@@ -903,10 +903,6 @@ public class Extractor {
 						noun.getAttributes().remove("NotHasProperty");
 					}
 				}
-				
-				
-				
-				
 
 				Description description = storySentence.getDescription(tdGovId);
 
