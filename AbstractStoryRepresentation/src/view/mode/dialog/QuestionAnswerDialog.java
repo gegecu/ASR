@@ -80,12 +80,13 @@ public class QuestionAnswerDialog extends HelpDialog {
 			if (!storyInputArea.getText().isEmpty()) {
 				result = HelpAnswer.ACCEPT;
 				dispose();
-			} else {
-				RoundedBorder border = (RoundedBorder) storyInputPanel
-						.getBorder();
-				border.setColor(Color.RED);
-				storyInputPanel.repaint();
 			}
+			//	else {
+			//		RoundedBorder border = (RoundedBorder) storyInputPanel
+			//				.getBorder();
+			//		border.setColor(Color.RED);
+			//		storyInputPanel.repaint();
+			//	}
 		});
 
 		gotItButton.setText("Got It");
@@ -256,6 +257,10 @@ public class QuestionAnswerDialog extends HelpDialog {
 
 	public String getInputText() {
 		return storyInputArea.getText();
+	}
+
+	public void clearInputText() {
+		storyInputArea.setText("");
 	}
 
 }
