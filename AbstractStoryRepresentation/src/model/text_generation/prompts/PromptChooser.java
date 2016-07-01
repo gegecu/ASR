@@ -239,7 +239,7 @@ public class PromptChooser extends TextGeneration {
 
 	}
 	
-	public void ignored(boolean isWrong) {
+	public void ignored() {
 		if(currentPrompt instanceof SpecificPrompt) {
 			((SpecificPrompt) currentPrompt).setIsWrongIgnored(false);
 		}
