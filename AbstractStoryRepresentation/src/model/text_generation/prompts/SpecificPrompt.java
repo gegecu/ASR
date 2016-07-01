@@ -13,6 +13,7 @@ import edu.stanford.nlp.semgraph.SemanticGraph;
 import edu.stanford.nlp.semgraph.SemanticGraphCoreAnnotations.CollapsedCCProcessedDependenciesAnnotation;
 import edu.stanford.nlp.trees.TypedDependency;
 import edu.stanford.nlp.util.CoreMap;
+import model.knowledge_base.conceptnet.Concept;
 import model.knowledge_base.conceptnet.ConceptNetDAO;
 import model.story_representation.story_element.noun.Character;
 import model.story_representation.story_element.noun.Noun;
@@ -26,16 +27,26 @@ public class SpecificPrompt extends Prompt {
 	private String[] personTopics = {"attitude", "nationality", "talent"};
 	private Map<Noun, List<String>> answered;
 	private String currentTopic;
+	private boolean isWrong;
 
 	public SpecificPrompt() {
 		super();
 		answered = new HashMap<>();
+		isWrong = false;
 	}
 
 	@Override
 	public String generateText(Noun noun) {
-		String text = checkAvailableTopics(noun);
-		return text;
+		if(!isWrong) {
+			return checkAvailableTopics(noun);
+		}
+		else {
+			return generateWrongPrompts();
+		}
+	}
+	
+	public void setIsWrongIgnored(boolean isWrong) {
+		this.isWrong = isWrong;
 	}
 
 	private String checkAvailableTopics(Noun noun) {
@@ -204,6 +215,22 @@ public class SpecificPrompt extends Prompt {
 	
 	public boolean checkifCompleted() {
 		return availableTopics(currentNoun).isEmpty();
+	}
+	
+	private String generateWrongPrompts() {
+		
+		String prompt = "";
+		
+		List<Concept> concepts = ConceptNetDAO.getConceptFrom("color", "IsA");
+		
+		if(concepts != null && !concepts.isEmpty()) {
+			int randomConcept = Randomizer.random(1, concepts.size());
+			prompt = "An example of " + currentTopic + " is " + concepts.get(randomConcept).getStart() + ".";
+		}
+		
+		prompt += "What is the " + currentTopic + " of " + currentNoun.getId();
+
+		return prompt;
 	}
 
 }

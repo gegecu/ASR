@@ -225,17 +225,24 @@ public class PromptChooser extends TextGeneration {
 			//correct answer
 			if (currentPrompt.checkAnswer(temp)) {
 				answeredCorrect = true;
+				if (((SpecificPrompt) currentPrompt).checkifCompleted()) {
+					restrictedInGeneral.remove(currentId);
+					restrictedInSpecific.add(currentId);
+				}
 			}
-
-			if (((SpecificPrompt) currentPrompt).checkifCompleted()) {
-				restrictedInGeneral.remove(currentId);
-				restrictedInSpecific.add(currentId);
+			else {
+				((SpecificPrompt) currentPrompt).setIsWrongIgnored(true);
 			}
-
 		}
 
 		return answeredCorrect;
 
+	}
+	
+	public void ignored(boolean isWrong) {
+		if(currentPrompt instanceof SpecificPrompt) {
+			((SpecificPrompt) currentPrompt).setIsWrongIgnored(false);
+		}
 	}
 
 	public String incompleteAnswer(String input) {
