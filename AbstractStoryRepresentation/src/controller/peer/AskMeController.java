@@ -86,20 +86,23 @@ public class AskMeController implements ActionListener {
 						submitController.processStory(helpText);
 					}
 				} else if (typeOfHelp == TypeOfHelp.QUESTION_ANSWER) {
+					QuestionAnswerDialog tempDialog = ((QuestionAnswerDialog) dialog);
 					if (answer == HelpAnswer.ACCEPT) {
-						QuestionAnswerDialog tempDialog = ((QuestionAnswerDialog) dialog);
 						String inputText = tempDialog.getInputText();
 						boolean isAnswerCorrect = submitController
 								.verifyAnswer(inputText);
 						if (!isAnswerCorrect) {
 							answer = HelpAnswer.WRONG_ANSWER;
 						}
-					} else if (answer == HelpAnswer.CANCEL) {
+					} else if (answer == HelpAnswer.CANCEL
+							|| answer == HelpAnswer.REJECT) {
 						promptChooser.ignored();
 					}
+					tempDialog.clearInputText();
 				}
 
-			} while (answer == HelpAnswer.REJECT || answer == HelpAnswer.WRONG_ANSWER);
+			} while (answer == HelpAnswer.REJECT
+					|| answer == HelpAnswer.WRONG_ANSWER);
 
 		}
 
