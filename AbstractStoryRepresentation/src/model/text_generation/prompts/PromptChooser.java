@@ -71,14 +71,13 @@ public class PromptChooser extends TextGeneration {
 	public String generateText() {
 
 		String output = null;
-		boolean isWrong = false;
 
 		if (asr.getCurrentPartOfStory()
 				.equals(AbstractStoryRepresentation.start)) {
 			
 			while(output == null) {
 			
-				if(currentPrompt instanceof SpecificPrompt) {
+				if(currentPrompt != null && currentPrompt instanceof SpecificPrompt) {
 					if(((SpecificPrompt) currentPrompt).getIsWrong()) {
 						currentPrompt = specificPrompt;
 						return currentPrompt.generateText(null);

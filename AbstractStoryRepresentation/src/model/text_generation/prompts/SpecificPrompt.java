@@ -225,14 +225,14 @@ public class SpecificPrompt extends Prompt {
 		
 		String prompt = "";
 		
-		List<Concept> concepts = ConceptNetDAO.getConceptFrom("color", "IsA");
+		List<Concept> concepts = ConceptNetDAO.getConceptFrom(currentTopic, "IsA");
 		
 		if(concepts != null && !concepts.isEmpty()) {
 			int randomConcept = Randomizer.random(1, concepts.size());
-			prompt = "An example of " + currentTopic + " is " + concepts.get(randomConcept).getStart() + ".";
+			prompt = "An example of " + currentTopic + " is " + concepts.get(randomConcept).getStart() + ". ";
 		}
 		
-		prompt += "What is the " + currentTopic + " of " + currentNoun.getId();
+		prompt += "What is the " + currentTopic + " of " + currentNoun.getId() + "?";
 
 		return prompt;
 	}
