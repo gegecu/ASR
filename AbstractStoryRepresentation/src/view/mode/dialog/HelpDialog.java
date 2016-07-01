@@ -8,7 +8,7 @@ import view.mode.StoryViewPanel;
 public abstract class HelpDialog extends JDialog {
 
 	public static enum HelpAnswer {
-		ACCEPT, REJECT, CANCEL;
+		ACCEPT, REJECT, CANCEL, WRONG_ANSWER;
 	};
 
 	protected String helpText;

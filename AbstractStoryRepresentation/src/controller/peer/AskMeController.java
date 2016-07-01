@@ -89,11 +89,17 @@ public class AskMeController implements ActionListener {
 					if (answer == HelpAnswer.ACCEPT) {
 						QuestionAnswerDialog tempDialog = ((QuestionAnswerDialog) dialog);
 						String inputText = tempDialog.getInputText();
-						submitController.verifyAnswer(inputText);
+						boolean isAnswerCorrect = submitController
+								.verifyAnswer(inputText);
+						if (!isAnswerCorrect) {
+							answer = HelpAnswer.WRONG_ANSWER;
+						}
+					} else if (answer == HelpAnswer.CANCEL) {
+						promptChooser.ignored();
 					}
 				}
 
-			} while (answer == HelpAnswer.REJECT);
+			} while (answer == HelpAnswer.REJECT || answer == HelpAnswer.WRONG_ANSWER);
 
 		}
 

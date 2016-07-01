@@ -73,10 +73,12 @@ public class SubmitController implements ActionListener {
 		this.storyViewPanel = storyViewPanel;
 	}
 
-	public void verifyAnswer(String inputText) {
-		if (promptChooser.checkAnswer(inputText)) {
+	public boolean verifyAnswer(String inputText) {
+		boolean isAnswerCorrect = promptChooser.checkAnswer(inputText);
+		if (isAnswerCorrect) {
 			processStory(promptChooser.incompleteAnswer(inputText));
 		}
+		return isAnswerCorrect;
 	}
 
 }
