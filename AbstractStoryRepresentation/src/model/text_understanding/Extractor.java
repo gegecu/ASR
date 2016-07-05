@@ -662,7 +662,8 @@ public class Extractor {
 			if(emotion != 0){
 				if(emotion == 1){//negative
 					//to do polarity modifications
-					temp.setNegated(true);
+					//System.out.println("hates negated");
+					event.getVerb().setNegated(true);
 				}
 				else if(emotion == 2){//positive
 					//to do polarity modifications
@@ -1135,7 +1136,7 @@ public class Extractor {
 		}
 		else if(inputType.equals("dep")){
 			for(TypedDependency td: list){
-				System.out.println("rel: " + td.reln().toString() + " " + rel);
+				//System.out.println("rel: " + td.reln().toString() + " " + rel);
 				if(compareIndexedWord(td.dep(), iw) && td.reln().toString().contains(rel)){
 					returnList.add(td);
 				}

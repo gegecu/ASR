@@ -55,9 +55,15 @@ public class SubmitController implements ActionListener {
 
 			@Override
 			protected Void doInBackground() throws Exception {
-				storyViewPanel.appendStory(text);
-				tu.processInput(storyViewPanel.getStory());
-				checklistController.updateChecklist();
+
+				try {
+					storyViewPanel.appendStory(text);
+					tu.processInput(storyViewPanel.getStory());
+					checklistController.updateChecklist();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+
 				return null;
 			}
 

@@ -12,13 +12,12 @@ public class Conflict {
 
 	private Clause clause;
 	private String expectedResolutionConcept;
-	private Boolean isNegation;
 
 	public Conflict(Clause clause, String expectedResolutionConcept) {
 		this.clause = clause;
+		//System.out.println("conflict created.." + clause.getConcepts().get(0) + " neg:" + clause.isNegated());
 		this.expectedResolutionConcept = expectedResolutionConcept;
-		this.isNegation = false;
-		checkNegation();
+		
 	}
 
 	public Clause getClause() {
@@ -40,25 +39,25 @@ public class Conflict {
 	public float getPolarity() {
 		return this.clause.getPolarity();
 	}
-	private void checkNegation(){
-		//System.out.println("checking negation");
-		if(clause instanceof Event){
-			isNegation = ((Event) clause).getVerb().isNegated();
-			//System.out.println("neg: " + isNegation);
-		}
-		else if (clause instanceof Description){
-			Map<String,List<String>> attr = ((Description) clause).getAttributes();
-			Map<String,Map<String, Noun>> ref =((Description) clause).getReferences();
-			
-			if(attr.containsKey("NotHasProperty") || ref.containsKey("NotIsA")){
-				isNegation = true;
-			}
-		}
-	}
+//	private void checkNegation(){
+//		//System.out.println("checking negation");
+//		if(clause instanceof Event){
+//			isNegation = ((Event) clause).getVerb().isNegated();
+//			//System.out.println("neg: " + isNegation);
+//		}
+//		else if (clause instanceof Description){
+//			Map<String,List<String>> attr = ((Description) clause).getAttributes();
+//			Map<String,Map<String, Noun>> ref =((Description) clause).getReferences();
+//			
+//			if(attr.containsKey("NotHasProperty") || ref.containsKey("NotIsA")){
+//				isNegation = true;
+//			}
+//		}
+//	}
 	//for negation resolution purposes
 	public Boolean isNegation() {
-		System.out.println("isneg: " + isNegation);
-		return this.isNegation;
+		//System.out.println("isneg: " + isNegation);
+		return clause.isNegated();
 	}
 
 }

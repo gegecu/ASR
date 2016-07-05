@@ -16,8 +16,12 @@ public class Event extends Clause {
 		this.receivers = new HashMap<String, Noun>();
 		this.directObjects = new HashMap<String, Noun>();
 		this.verb = new Verb(action);
+		evaluateNegation();
 	}
 
+	private void evaluateNegation(){
+		isNegated = this.getVerb().isNegated();
+	}
 	public Verb getVerb() {
 		return verb;
 	}

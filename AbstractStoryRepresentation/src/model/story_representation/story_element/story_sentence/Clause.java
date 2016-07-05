@@ -12,13 +12,18 @@ public abstract class Clause {
 	protected float polarity;
 	protected List<String> concepts;
 	protected Map<String, Noun> doers;
+	protected Boolean isNegated;
 
 	public Clause() {
 		this.polarity = 0;
 		this.concepts = new ArrayList<String>();
 		this.doers = new HashMap<String, Noun>();
+		isNegated = false;
 	}
-
+	
+	public Boolean isNegated(){
+		return this.isNegated;
+	}
 	public void setPolarity(float polarity) {
 		this.polarity = polarity;
 	}

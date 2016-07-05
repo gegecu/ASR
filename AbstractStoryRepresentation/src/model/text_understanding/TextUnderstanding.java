@@ -124,16 +124,12 @@ public class TextUnderstanding {
 		
 		//if conflict is from negation, resolution should be un-negated statement
 		if (conflict.isNegation()){
-			System.out.println("conflict is negation");
 			List<String> concepts = resolutionClause.getConcepts();
-			//System.out.println("size:" +concepts.size());
-			System.out.println("RESOLUTION CHECK");
+			//if(resolutionClause.isNegated())
 			for (String resolutionConcept : concepts) {
 				for (String conflictConcept : conflict.getClause().getConcepts()) {
-					String temp = resolutionConcept.replace("not ", "");
-					System.out.println("  conf:" + conflictConcept + " reso: " +temp);
-					if (conflictConcept.equals(temp) && !((Event) resolutionClause).getVerb().isNegated()) {
-						
+					String temp = conflictConcept.replace("not ", "");
+					if (resolutionConcept.equals(temp)) {
 						return true;
 					}
 				}
