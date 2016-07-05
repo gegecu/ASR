@@ -623,7 +623,7 @@ public class StorySegmentGenerator extends TextGeneration {
 
 				int randomSentence = 0;
 				String storySegment = "";
-				if (endPOS.equals("noun") || endPOS.equals("proper noun")) {
+				if (endPOS.equals("proper noun")) {
 					randomSentence = Randomizer.random(1,
 							this.causesNoun.length);
 					storySegment = causesNoun[randomSentence - 1];
@@ -631,7 +631,16 @@ public class StorySegmentGenerator extends TextGeneration {
 							concept.getStart());
 					storySegment = storySegment.replace("<end>",
 							concept.getEnd());
-				} else if (endPOS.equals("verb")
+				} else if (endPOS.equals("noun")) {
+					randomSentence = Randomizer.random(1,
+							this.causesNoun.length);
+					storySegment = causesNoun[randomSentence - 1];
+					storySegment = storySegment.replace("<start>",
+							SurfaceRealizer.determinerFixer(concept.getStart()));
+					storySegment = storySegment.replace("<end>",
+							concept.getEnd());
+				}
+				else if (endPOS.equals("verb")
 						|| endPOS.equals("verb phrase")) {
 					randomSentence = Randomizer.random(1,
 							this.causesVerb.length);
