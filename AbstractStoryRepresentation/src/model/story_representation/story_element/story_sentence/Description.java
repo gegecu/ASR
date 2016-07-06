@@ -15,16 +15,9 @@ public class Description extends Clause {
 	public Description() {
 		this.attributes = new HashMap<String, List<String>>();
 		this.references = new HashMap<String, Map<String, Noun>>();
-		evaluateNegation();
+
 	}
-	private void evaluateNegation(){
-		Map<String,List<String>> attr = ((Description) this).getAttributes();
-		Map<String,Map<String, Noun>> ref =((Description) this).getReferences();
-		if(attr.containsKey("NotHasProperty") || ref.containsKey("NotIsA")){
-			//System.out.println("descriptionHasNegation");
-			isNegated = true;
-		}
-	}
+
 	public void addAttribute(String key, String attribute) {
 
 		List<String> temp = this.attributes.get(key);
@@ -36,7 +29,6 @@ public class Description extends Clause {
 		temp.remove(attribute);
 		temp.add(attribute);
 		this.attributes.put(key, temp);
-		evaluateNegation();
 
 	}
 
@@ -59,7 +51,6 @@ public class Description extends Clause {
 		temp.remove(nounId);
 		temp.put(nounId, reference);
 		this.references.put(key, temp);
-		evaluateNegation();
 	}
 
 	public Map<String, Map<String, Noun>> getReferences() {

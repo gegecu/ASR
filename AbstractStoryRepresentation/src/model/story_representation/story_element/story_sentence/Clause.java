@@ -12,7 +12,7 @@ public abstract class Clause {
 	protected float polarity;
 	protected List<String> concepts;
 	protected Map<String, Noun> doers;
-	protected Boolean isNegated;
+	protected boolean isNegated;
 
 	public Clause() {
 		this.polarity = 0;
@@ -21,9 +21,14 @@ public abstract class Clause {
 		isNegated = false;
 	}
 	
-	public Boolean isNegated(){
+	public boolean isNegated(){
 		return this.isNegated;
 	}
+	
+	public void setNegated(boolean isNegated) {
+		this.isNegated = isNegated;
+	}
+	
 	public void setPolarity(float polarity) {
 		this.polarity = polarity;
 	}

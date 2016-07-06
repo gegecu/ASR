@@ -26,7 +26,6 @@ import model.text_generation.Utilities;
 import model.text_understanding.Preprocessing;
 import model.utility.Randomizer;
 import model.utility.SurfaceRealizer;
-import model.utility.TypedDependencyAnswerCheckerComparator;
 import model.utility.TypedDependencyComparator;
 
 public class GeneralPrompt extends Prompt {

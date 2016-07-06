@@ -20,7 +20,6 @@ import controller.peer.ChecklistController;
 import controller.peer.SaveController;
 import controller.peer.SubmitController;
 import model.story_representation.AbstractStoryRepresentation;
-import model.text_generation.DirectivesGenerator;
 import model.text_generation.StorySegmentGenerator;
 import model.text_generation.prompts.PromptChooser;
 import model.text_understanding.TextUnderstanding;
@@ -55,7 +54,6 @@ public class AdvancedModePanel extends ModePanel {
 
 	private AbstractStoryRepresentation asr;
 	private TextUnderstanding tu;
-	private DirectivesGenerator dg;
 	private StorySegmentGenerator ssg;
 	private PromptChooser promptChooser;
 
@@ -71,7 +69,7 @@ public class AdvancedModePanel extends ModePanel {
 		checklistController = new ChecklistController(asr, null, null);
 		submitController = new SubmitController(asr, tu, promptChooser,
 				checklistController);
-		askMeController = new AskMeController(dg, ssg, promptChooser,
+		askMeController = new AskMeController(ssg, promptChooser,
 				submitController);
 		saveController = new SaveController(titleField,
 				storyInputPanel.getInputArea());

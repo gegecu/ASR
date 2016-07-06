@@ -153,7 +153,7 @@ public class PromptChooser extends TextGeneration {
 				Collection<Noun> directObjects = predicate.getDirectObjects()
 						.values();
 
-				if(!predicate.getVerb().isNegated()) {
+				if(!predicate.isNegated()) {
 				
 					VPPhraseSpec verb = nlgFactory
 							.createVerbPhrase(predicate.getVerb().getAction());

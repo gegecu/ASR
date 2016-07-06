@@ -12,6 +12,7 @@ import model.story_representation.story_element.noun.Noun;
 import model.text_understanding.Preprocessing;
 
 public abstract class Prompt {
+	
 	protected Queue<String> history;
 	protected StanfordCoreNLP pipeline;
 	protected Noun currentNoun;

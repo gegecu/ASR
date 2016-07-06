@@ -29,7 +29,6 @@ import controller.peer.SaveController;
 import controller.peer.SubmitController;
 import model.story_representation.AbstractStoryRepresentation;
 import model.story_representation.Checklist;
-import model.text_generation.DirectivesGenerator;
 import model.text_generation.StorySegmentGenerator;
 import model.text_understanding.TextUnderstanding;
 import net.miginfocom.swing.MigLayout;
@@ -77,7 +76,6 @@ public class BeginnerModePanelv2 extends ModePanel {
 	private AbstractStoryRepresentation asr;
 	private Checklist cl;
 	private TextUnderstanding tu;
-	private DirectivesGenerator dg;
 	private StorySegmentGenerator ssg;
 
 	private AskMeController askMeController;

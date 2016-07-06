@@ -6,7 +6,6 @@ import java.util.concurrent.Semaphore;
 
 import javax.swing.SwingWorker;
 
-import model.text_generation.DirectivesGenerator;
 import model.text_generation.StorySegmentGenerator;
 import model.text_generation.TextGeneration;
 import model.text_generation.prompts.PromptChooser;
@@ -30,19 +29,16 @@ public class AskMeController implements ActionListener {
 
 	private SubmitController submitController;
 
-	private DirectivesGenerator directivesGenerator;
 	private StorySegmentGenerator storySegmentGenerator;
 	private PromptChooser promptChooser;
 	private TextGeneration currentTextGenerator;
 
-	public AskMeController(DirectivesGenerator directivesGenerator,
-			StorySegmentGenerator storySegmentGenerator,
+	public AskMeController(StorySegmentGenerator storySegmentGenerator,
 			PromptChooser promptChooser, SubmitController submitController) {
 		this.waitDialog = new WaitDialog(
 				"Alice is thinking ... Please Wait. =)");
 		this.processed = new Semaphore(0);
 		this.promptChooser = promptChooser;
-		this.directivesGenerator = directivesGenerator;
 		this.storySegmentGenerator = storySegmentGenerator;
 		this.submitController = submitController;
 	}
@@ -57,10 +53,6 @@ public class AskMeController implements ActionListener {
 			helpText = "Test";
 
 			switch (typeOfHelp) {
-			case IDEAS:
-				currentTextGenerator = directivesGenerator;
-				dialog = new IdeaDialog();
-				break;
 			case QUESTION_ANSWER:
 				currentTextGenerator = promptChooser;
 				dialog = new QuestionAnswerDialog();

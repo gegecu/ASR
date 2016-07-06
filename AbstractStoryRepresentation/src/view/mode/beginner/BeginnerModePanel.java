@@ -27,7 +27,6 @@ import controller.peer.SaveController;
 import controller.peer.SubmitController;
 import model.story_representation.AbstractStoryRepresentation;
 import model.story_representation.Checklist;
-import model.text_generation.DirectivesGenerator;
 import model.text_generation.StorySegmentGenerator;
 import model.text_generation.prompts.PromptChooser;
 import model.text_understanding.TextUnderstanding;
@@ -71,7 +70,6 @@ public class BeginnerModePanel extends ModePanel {
 	private AbstractStoryRepresentation asr;
 	private Checklist cl;
 	private TextUnderstanding tu;
-	private DirectivesGenerator dg;
 	private StorySegmentGenerator ssg;
 	private PromptChooser promptChooser;
 
@@ -86,7 +84,6 @@ public class BeginnerModePanel extends ModePanel {
 		asr = new AbstractStoryRepresentation();
 		cl = new Checklist(asr);
 		tu = new TextUnderstanding(asr);
-		dg = new DirectivesGenerator(asr);
 		ssg = new StorySegmentGenerator(asr);
 		promptChooser = new PromptChooser(asr);
 
@@ -94,7 +91,7 @@ public class BeginnerModePanel extends ModePanel {
 
 		checklistController = new ChecklistController(asr, cl, checkListPanel);
 		submitController = new SubmitController(asr, tu, promptChooser, checklistController);
-		askMeController = new AskMeController(dg, ssg, promptChooser, submitController);
+		askMeController = new AskMeController(ssg, promptChooser, submitController);
 		saveController = new SaveController(titleField,
 				storyInputPanel.getInputArea());
 		cancelController = new CancelController();

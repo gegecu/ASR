@@ -49,9 +49,6 @@ public class StorySegmentGenerator extends TextGeneration {
 
 	private Set<Integer> history;
 
-	private int defaultNounThreshold = 5;
-	private int nounThreshold = defaultNounThreshold;
-
 	public StorySegmentGenerator(AbstractStoryRepresentation asr) {
 		super(asr);
 		this.history = new HashSet<Integer>();
@@ -111,19 +108,19 @@ public class StorySegmentGenerator extends TextGeneration {
 
 	}
 
-	private Map<String, Description> getNeededDescription(String relation,
-			Map<String, Description> descriptions) {
-		Map<String, Description> temp = new HashMap<>(descriptions);
-		for (Map.Entry<String, Description> description : descriptions
-				.entrySet()) {
-			Description d = description.getValue();
-			if (d.getAttribute(relation) == null
-					&& d.getReference(relation) == null) {
-				temp.remove(description.getKey());
-			}
-		}
-		return temp;
-	}
+//	private Map<String, Description> getNeededDescription(String relation,
+//			Map<String, Description> descriptions) {
+//		Map<String, Description> temp = new HashMap<>(descriptions);
+//		for (Map.Entry<String, Description> description : descriptions
+//				.entrySet()) {
+//			Description d = description.getValue();
+//			if (d.getAttribute(relation) == null
+//					&& d.getReference(relation) == null) {
+//				temp.remove(description.getKey());
+//			}
+//		}
+//		return temp;
+//	}
 
 	private Map<Integer, String> atLocationDobj() {
 
