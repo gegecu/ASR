@@ -1095,37 +1095,28 @@ public class Extractor {
 	private float getPolarityOfEvent(Clause clause) {
 
 		List<String> concepts = clause.getConcepts();
-
-		if (concepts == null) {
-			return (float) 0;
-		}
-
-		float negated = -1;
-		float worstPolarity = Float.MAX_VALUE;
-		float polarity = 0;
-		for (String concept : concepts) {
-
-			if (!concept.contains("not")) {
-				polarity = snp.getPolarity(concept.replace(" ", "_"));
-				if (polarity < worstPolarity) {
-					worstPolarity = polarity;
-				}
-			} else {
-
-				String temp = concept.replace("not ", "");
-				temp = temp.replace(" ", "_");
-				log.debug(temp);
-				polarity = snp.getPolarity(temp);
-				polarity *= negated;
-				if (polarity < worstPolarity) {
-					worstPolarity = polarity;
-				}
+			
+	
+			if (concepts == null) {
+				return (float) 0;
 			}
-			log.debug(worstPolarity);
-		}
+	
+			float negated = -1;
+			float sumPolarity = 0;
+			for (String concept : concepts) {
+	
+				if (!concept.contains("not")) {
+					sumPolarity += snp.getPolarity(concept.replace(" ", "_"));
+				
+				} else {
+					String temp = concept.replace("not ", "");
+					temp = temp.replace(" ", "_");
+					sumPolarity += snp.getPolarity(temp) * negated;
+				}
+				log.debug(sumPolarity);
+			}
 
-		return worstPolarity;
-
+		return sumPolarity / concepts.size();
 	}
 
 	private List<TypedDependency> findDependencies(IndexedWord iw, String inputType, String rel, List<TypedDependency> list){

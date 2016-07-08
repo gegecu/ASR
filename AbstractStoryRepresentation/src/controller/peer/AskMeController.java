@@ -74,6 +74,7 @@ public class AskMeController implements ActionListener {
 
 				if (typeOfHelp == TypeOfHelp.SUGGESTIONS) {
 					if (answer == HelpAnswer.ACCEPT) {
+						((StorySegmentGenerator)currentTextGenerator).addUsed(helpText);
 						submitController.processStory(helpText);
 					}
 				} else if (typeOfHelp == TypeOfHelp.QUESTION_ANSWER) {

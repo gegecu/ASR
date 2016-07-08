@@ -3,8 +3,10 @@ package model.text_generation;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -47,11 +49,18 @@ public class StorySegmentGenerator extends TextGeneration {
 
 	private String[] causesAdjective = { "<doer> became <end>." };
 
-	private Set<Integer> history;
+	private Queue<Integer> history;
+	
+	private Set<String> used;
 
 	public StorySegmentGenerator(AbstractStoryRepresentation asr) {
 		super(asr);
-		this.history = new HashSet<Integer>();
+		this.history = new LinkedList<Integer>();
+		this.used = new HashSet();
+	}
+	
+	public void addUsed(String storySegment) {
+		this.used.add(storySegment);
 	}
 
 	@Override
@@ -100,6 +109,11 @@ public class StorySegmentGenerator extends TextGeneration {
 			List<Integer> keys = new ArrayList<>(response.keySet());
 			int random = Randomizer.random(1, keys.size());
 			history.add(keys.get(random - 1));
+			
+			if(history.size() > 3) {
+				history.remove();
+			}
+			
 			log.debug("text gen: " + response.get(keys.get(random - 1)));
 			return response.get(keys.get(random - 1));
 		} else {
@@ -184,6 +198,10 @@ public class StorySegmentGenerator extends TextGeneration {
 								.toUpperCase() + storySegment.substring(1);
 
 						// this.history.add(concept.getId());
+						
+						if(this.used.contains(storySegment)) {
+							continue;
+						}
 
 						output.put(concept.getId(), storySegment);
 						found = true;
@@ -271,6 +289,9 @@ public class StorySegmentGenerator extends TextGeneration {
 								.toUpperCase() + storySegment.substring(1);
 
 						// this.history.add(concept.getId());
+						if(this.used.contains(storySegment)) {
+							continue;
+						}
 
 						output.put(concept.getId(), storySegment);
 						return output;
@@ -363,6 +384,9 @@ public class StorySegmentGenerator extends TextGeneration {
 							+ storySegment.substring(1);
 
 					// this.history.add(concept.getId());
+					if(this.used.contains(storySegment)) {
+						continue;
+					}
 
 					output.put(concept.getId(), storySegment);
 					return output;
@@ -456,6 +480,9 @@ public class StorySegmentGenerator extends TextGeneration {
 							+ storySegment.substring(1);
 
 					// this.history.add(concept.getId());
+					if(this.used.contains(storySegment)) {
+						continue;
+					}
 
 					output.put(concept.getId(), storySegment);
 					return output;
@@ -560,6 +587,9 @@ public class StorySegmentGenerator extends TextGeneration {
 							+ storySegment.substring(1);
 
 					// this.history.add(concept.getId());
+					if(this.used.contains(storySegment)) {
+						continue;
+					}
 
 					output.put(concept.getId(), storySegment);
 					return output;
