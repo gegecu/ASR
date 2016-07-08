@@ -118,4 +118,8 @@ public class MainFrame extends JFrame {
 		cardLayout.show(panel, "view story");
 	}
 
+	public ViewStoryPanel getViewStoryPanel() {
+		return viewStoryPanel;
+	}
+
 }

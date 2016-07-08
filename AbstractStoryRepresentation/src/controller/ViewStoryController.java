@@ -30,4 +30,8 @@ public class ViewStoryController implements ActionListener {
 
 	}
 
+	public void setMainFrame(MainFrame mainFrame) {
+		this.mainFrame = mainFrame;
+	}
+
 }

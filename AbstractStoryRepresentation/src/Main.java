@@ -47,6 +47,7 @@ public class Main {
 		mainFrame.getChooseModePanel().setMainFrame(mainFrame);
 		mainFrame.getChooseFriendPanel().setMainFrame(mainFrame);
 		mainFrame.getMainMenuPanel().setMainFrame(mainFrame);
+		mainFrame.getViewStoryPanel().setMainFrame(mainFrame);
 		mainFrame.setVisible(true);
 
 	}

@@ -3,12 +3,15 @@ package view.viewstory;
 import java.awt.Color;
 import java.awt.Font;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+import controller.ViewStoryController;
 import model.story_database.Story;
 import net.miginfocom.swing.MigLayout;
+import view.MainFrame;
 import view.TemplatePanel;
 import view.mode.StoryViewPanel;
 import view.utilities.AutoResizingButton;
@@ -29,11 +32,13 @@ public class ViewStoryPanel extends TemplatePanel {
 
 	private StoryViewPanel storyViewPanel;
 
+	private ViewStoryController viewStoryController;
+
 	@Override
 	protected void initializeUI() {
 
 		backButton = new AutoResizingButton();
-		deleteButton = new CancelButton();
+		deleteButton = new AutoResizingButton();
 
 		titleField = new AutoResizingTextFieldWithPlaceHolder();
 
@@ -43,6 +48,7 @@ public class ViewStoryPanel extends TemplatePanel {
 		setBackground(Color.decode("#609AD1"));
 
 		backButton.setText("<");
+		backButton.setActionCommand(cancelButtonActionCommand);
 		backButton.setFocusPainted(false);
 		backButton.setBackground(Color.WHITE);
 		backButton.setForeground(Color.BLACK);
@@ -57,7 +63,7 @@ public class ViewStoryPanel extends TemplatePanel {
 		titleField.setEditable(false);
 		titleField.setHorizontalAlignment(SwingConstants.CENTER);
 
-		deleteButton.setText("");
+		deleteButton.setIcon(new ImageIcon("res/delete.png"));
 		deleteButton.setFocusPainted(false);
 		deleteButton.setBackground(Color.RED);
 		deleteButton.setForeground(Color.BLACK);
@@ -72,8 +78,8 @@ public class ViewStoryPanel extends TemplatePanel {
 		JPanel panel1 = new JPanel(new MigLayout("insets 10 10 5 10"));
 		panel1.setBackground(Color.decode("#609AD1"));
 		panel1.add(backButton, "w 13%, growy");
-		panel1.add(titleField, "w 74%, grow");
-		panel1.add(deleteButton, "w 13%, grow");
+		panel1.add(titleField, "w 87%, grow");
+		//panel1.add(deleteButton, "w 13%, grow");
 
 		JPanel panel3 = new JPanel(new MigLayout("insets 15 15 15 10"));
 		panel3.setBackground(Color.decode("#36B214"));
@@ -82,6 +88,9 @@ public class ViewStoryPanel extends TemplatePanel {
 
 		add(panel1, "w 100%, h 10%, grow, wrap");
 		add(panel3, "w 100%, h 90%, grow, wrap");
+
+		viewStoryController = new ViewStoryController();
+		backButton.addActionListener(viewStoryController);
 
 	}
 
@@ -98,6 +107,10 @@ public class ViewStoryPanel extends TemplatePanel {
 	public void setStory(Story story) {
 		titleField.setText(story.getStoryTitle());
 		storyViewPanel.setStoryText(story.getStoryText());
+	}
+
+	public void setMainFrame(MainFrame mainFrame) {
+		viewStoryController.setMainFrame(mainFrame);
 	}
 
 }
