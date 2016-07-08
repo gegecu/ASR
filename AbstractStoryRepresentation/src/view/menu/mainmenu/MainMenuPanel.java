@@ -92,8 +92,8 @@ public class MainMenuPanel extends TemplatePanel {
 		// top panel
 		JPanel panel1 = new JPanel(new MigLayout("insets 10 10 5 10"));
 		panel1.setBackground(Color.decode("#609AD1"));
-		panel1.add(aliceHeaderPanel, "w 85%, grow");
-		panel1.add(exitButton, "w 15%, growy");
+		panel1.add(aliceHeaderPanel, "w 86%, grow");
+		panel1.add(exitButton, "w 14%, growy");
 
 		// middle panel
 		mainMenuLibraryPanel.setBackground(Color.decode("#36B214"));
@@ -194,6 +194,11 @@ public class MainMenuPanel extends TemplatePanel {
 
 	public void setMainFrame(MainFrame mainFrame) {
 		mainMenuController.setMainFrame(mainFrame);
+		mainMenuLibraryPanel.setMainFrame(mainFrame);
+	}
+
+	public void refresh() {
+		mainMenuLibraryPanel.refreshLibrary();
 	}
 
 }

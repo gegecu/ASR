@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.FontMetrics;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -22,7 +23,9 @@ public class WaitDialog extends JDialog {
 	private JLabel waitLabel;
 	private JPanel panel;
 	private WaitDialog waitDialog;
+	private FontMetrics fontMetrics;
 
+	@SuppressWarnings("serial")
 	public WaitDialog(String dialogText) {
 
 		waitDialog = this;
@@ -38,11 +41,15 @@ public class WaitDialog extends JDialog {
 		waitLabel.setText(dialogText);
 		waitLabel.setFont(new Font("Arial", Font.BOLD, 25));
 
+		fontMetrics = waitLabel.getFontMetrics(waitLabel.getFont());
+
+		int width = fontMetrics.stringWidth(dialogText);
+
 		panel.add(waitLabel, "h 100%, center");
 
 		add(panel, BorderLayout.CENTER);
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		setPreferredSize(new Dimension(500, 120));
+		setPreferredSize(new Dimension(width + 100, 120));
 		pack();
 		setTitle("Please Wait");
 		setLocationRelativeTo(null);

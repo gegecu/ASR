@@ -18,12 +18,19 @@ import view.utilities.AutoResizingTextAreaWithPlaceHolder;
 @SuppressWarnings("serial")
 public class StoryViewPanel extends ViewPanel {
 
-	private JTextArea storyViewArea;
-
 	public StoryViewPanel(int panelWidthPercentage,
 			int verticalScrollBarWidthPercentage) {
 		super(panelWidthPercentage, verticalScrollBarWidthPercentage);
 	}
+
+	public StoryViewPanel(int panelWidthPercentage,
+			int verticalScrollBarWidthPercentage, int paddingTop,
+			int paddingLeft, int paddingBottom, int paddingRight) {
+		super(panelWidthPercentage, verticalScrollBarWidthPercentage,
+				paddingTop, paddingLeft, paddingBottom, paddingRight);
+	}
+
+	private JTextArea storyViewArea;
 
 	@Override
 	protected void initializeUI() {
@@ -56,12 +63,13 @@ public class StoryViewPanel extends ViewPanel {
 		}
 	}
 
-	public void setStory(String story) {
+	public void setStoryText(String story) {
 		storyViewArea.setText(story);
+		storyViewArea.setCaretPosition(0);
 	}
 
 	public void setText(String text) {
-		setStory(text);
+		setStoryText(text);
 	}
 
 	@Override
@@ -73,6 +81,10 @@ public class StoryViewPanel extends ViewPanel {
 
 	public String getStory() {
 		return storyViewArea.getText();
+	}
+
+	public void setTextColor(Color fg) {
+		storyViewArea.setForeground(fg);
 	}
 
 }

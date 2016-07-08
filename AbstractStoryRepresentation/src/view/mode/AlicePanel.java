@@ -22,7 +22,7 @@ public class AlicePanel extends TemplatePanel {
 		setLayout(new MigLayout("insets 0"));
 		setBackground(Color.decode("#36B214"));
 
-		test = new JLabel(new ImageIcon("Alice.png"));
+		test = new JLabel(new ImageIcon("res/Alice.png"));
 		test.setBackground(Color.decode("#36B214"));
 
 		panel1 = new JPanel(new MigLayout("insets 0"));

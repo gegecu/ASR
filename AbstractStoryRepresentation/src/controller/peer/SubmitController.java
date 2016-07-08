@@ -4,6 +4,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.swing.SwingWorker;
 
@@ -23,6 +25,9 @@ public class SubmitController implements ActionListener {
 	private ChecklistController checklistController;
 	private ExecutorService executorService;
 
+	private Semaphore submitSemaphore;
+	private AtomicInteger threadCount;
+
 	/**
 	 * @param asr
 	 *            Abstract Story Representation
@@ -39,6 +44,9 @@ public class SubmitController implements ActionListener {
 		this.promptChooser = promptChooser;
 		this.checklistController = checklistController;
 		this.executorService = Executors.newSingleThreadExecutor();
+
+		this.submitSemaphore = new Semaphore(1);
+		this.threadCount = new AtomicInteger(0);
 	}
 
 	@Override
@@ -50,6 +58,14 @@ public class SubmitController implements ActionListener {
 	}
 
 	public void processStory(String text) {
+
+		if (threadCount.incrementAndGet() == 1) {
+			try {
+				submitSemaphore.acquire();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 
 		executorService.submit(new SwingWorker<Void, Void>() {
 
@@ -65,6 +81,14 @@ public class SubmitController implements ActionListener {
 				}
 
 				return null;
+
+			}
+
+			@Override
+			protected void done() {
+				if (threadCount.decrementAndGet() == 0) {
+					submitSemaphore.release();
+				}
 			}
 
 		});
@@ -85,6 +109,10 @@ public class SubmitController implements ActionListener {
 			processStory(promptChooser.incompleteAnswer(inputText));
 		}
 		return isAnswerCorrect;
+	}
+
+	public Semaphore getSubmitSemaphore() {
+		return submitSemaphore;
 	}
 
 }

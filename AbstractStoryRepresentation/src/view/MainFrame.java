@@ -9,11 +9,13 @@ import java.awt.Dimension;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import model.story_database.Story;
 import view.menu.choosefriend.ChooseFriendPanel;
 import view.menu.choosemode.ChooseModePanel;
 import view.menu.mainmenu.MainMenuPanel;
 import view.mode.advanced.AdvancedModePanel;
 import view.mode.beginner.BeginnerModePanel;
+import view.viewstory.ViewStoryPanel;
 
 /**
  * @author Alice
@@ -23,6 +25,7 @@ import view.mode.beginner.BeginnerModePanel;
 public class MainFrame extends JFrame {
 
 	private MainMenuPanel mainMenuPanel;
+	private ViewStoryPanel viewStoryPanel;
 	private ChooseFriendPanel chooseFriendPanel;
 	private ChooseModePanel chooseModePanel;
 	private BeginnerModePanel beginnerModePanel;
@@ -32,7 +35,7 @@ public class MainFrame extends JFrame {
 
 	public MainFrame() {
 		super("Alice");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		//setMinimumSize(new Dimension(1104, 621));
 		setMinimumSize(new Dimension(880, 660));
 		initializeUI();
@@ -45,6 +48,7 @@ public class MainFrame extends JFrame {
 
 		panel = new JPanel();
 		mainMenuPanel = new MainMenuPanel();
+		viewStoryPanel = new ViewStoryPanel();
 		chooseFriendPanel = new ChooseFriendPanel();
 		chooseModePanel = new ChooseModePanel();
 
@@ -53,11 +57,12 @@ public class MainFrame extends JFrame {
 		this.add(panel);
 
 		panel.add(mainMenuPanel, "main menu");
+		panel.add(viewStoryPanel, "view story");
 		panel.add(chooseModePanel, "choose mode");
 		//panel.add(beginnerModePanel = new BeginnerModePanel(), "beginner");
 		//panel.add(advancedModePanel = new AdvancedModePanel(), "advanced");
 
-		cardLayout.show(panel, "main menu");
+		showMainMenu();
 
 	}
 
@@ -92,6 +97,7 @@ public class MainFrame extends JFrame {
 	}
 
 	public void showMainMenu() {
+		mainMenuPanel.refresh();
 		cardLayout.show(panel, "main menu");
 	}
 
@@ -105,6 +111,15 @@ public class MainFrame extends JFrame {
 
 	public BeginnerModePanel getBeginnerModePanel() {
 		return beginnerModePanel;
+	}
+
+	public void showViewStory(Story story) {
+		viewStoryPanel.setStory(story);
+		cardLayout.show(panel, "view story");
+	}
+
+	public ViewStoryPanel getViewStoryPanel() {
+		return viewStoryPanel;
 	}
 
 }

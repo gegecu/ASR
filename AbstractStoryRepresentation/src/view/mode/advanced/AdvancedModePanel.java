@@ -7,6 +7,7 @@ import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
 
 import javax.swing.ButtonModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
@@ -106,7 +107,7 @@ public class AdvancedModePanel extends ModePanel {
 		helpButton.setFont(new Font("Arial", Font.BOLD, 40));
 		helpButton.setBorder(new RoundedBorder(Color.BLACK, 3, 12));
 
-		saveButton.setText("S");
+		saveButton.setIcon(new ImageIcon("res/save.png"));
 		saveButton.setFocusPainted(false);
 		saveButton.setBackground(Color.decode("#36B214"));
 		saveButton.setForeground(Color.BLACK);

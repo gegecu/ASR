@@ -48,7 +48,8 @@ public class AskMeDialog extends JDialog {
 		gotItButton.setBackground(Color.decode("#36B214"));
 		gotItButton.setForeground(Color.BLACK);
 		gotItButton.setFont(new Font("Arial", Font.BOLD, 30));
-		gotItButton.setBorder(new RoundedBorder(Color.BLACK, 3, 12, 10, 10, 10, 10));
+		gotItButton.setBorder(
+				new RoundedBorder(Color.BLACK, 3, 12, 10, 10, 10, 10));
 		gotItButton.addActionListener((e) -> {
 			result = TypeOfHelp.CANCEL;
 			dispose();
@@ -59,7 +60,8 @@ public class AskMeDialog extends JDialog {
 		ideasButton.setBackground(Color.decode("#36B214"));
 		ideasButton.setForeground(Color.BLACK);
 		ideasButton.setFont(new Font("Arial", Font.BOLD, 30));
-		ideasButton.setBorder(new RoundedBorder(Color.BLACK, 3, 12, 10, 10, 10, 10));
+		ideasButton.setBorder(
+				new RoundedBorder(Color.BLACK, 3, 12, 10, 10, 10, 10));
 		ideasButton.addActionListener((e) -> {
 			result = TypeOfHelp.QUESTION_ANSWER;
 			dispose();
@@ -70,7 +72,8 @@ public class AskMeDialog extends JDialog {
 		suggestionsButton.setBackground(Color.decode("#36B214"));
 		suggestionsButton.setForeground(Color.BLACK);
 		suggestionsButton.setFont(new Font("Arial", Font.BOLD, 30));
-		suggestionsButton.setBorder(new RoundedBorder(Color.BLACK, 3, 12, 10, 10, 10, 10));
+		suggestionsButton.setBorder(
+				new RoundedBorder(Color.BLACK, 3, 12, 10, 10, 10, 10));
 		suggestionsButton.addActionListener((e) -> {
 			result = TypeOfHelp.SUGGESTIONS;
 			dispose();
@@ -92,7 +95,7 @@ public class AskMeDialog extends JDialog {
 		setResizable(false);
 		setMinimumSize(getSize());
 		setTitle("Choose Type Of Help");
-		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		setLocationRelativeTo(null);
 		setModal(true);
 
