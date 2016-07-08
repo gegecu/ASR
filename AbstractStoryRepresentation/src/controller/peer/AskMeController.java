@@ -21,7 +21,8 @@ public class AskMeController implements ActionListener {
 
 	private HelpDialog dialog = null;
 	private HelpAnswer answer;
-	private WaitDialog waitDialog;
+	private WaitDialog thinkingWaitDialog;
+	private WaitDialog processingWaitDialog;
 	private String helpText;
 	private TypeOfHelp typeOfHelp;
 	private Semaphore processed;
@@ -32,24 +33,51 @@ public class AskMeController implements ActionListener {
 	private PromptChooser promptChooser;
 	private TextGeneration currentTextGenerator;
 
+	private Semaphore submitSemaphore;
+
 	public AskMeController(StorySegmentGenerator storySegmentGenerator,
 			PromptChooser promptChooser, SubmitController submitController) {
-		this.waitDialog = new WaitDialog(
-				"Alice is thinking ... Please Wait. =)");
+		this.processingWaitDialog = new WaitDialog(
+				"I am understanding your story ... Please Wait. =)");
+		this.thinkingWaitDialog = new WaitDialog(
+				"I am thinking ... Please Wait. =)");
 		this.processed = new Semaphore(0);
 		this.promptChooser = promptChooser;
 		this.storySegmentGenerator = storySegmentGenerator;
 		this.submitController = submitController;
+		this.submitSemaphore = submitController.getSubmitSemaphore();
+	}
+
+	private void waitToFinishStoryProcessing() {
+
+		new SwingWorker<Void, Void>() {
+
+			@Override
+			protected Void doInBackground() throws Exception {
+				submitSemaphore.acquire();
+				return null;
+			}
+			
+			@Override
+			protected void done() {
+				submitSemaphore.release();
+				processingWaitDialog.setVisible(false);
+			}
+
+		}.execute();
+
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 
+		waitToFinishStoryProcessing();
+		processingWaitDialog.setVisible(true);
 		typeOfHelp = new AskMeDialog().showDialog();
 
 		if (AskMeDialog.TypeOfHelp.CANCEL != typeOfHelp) {
 
-			helpText = "Test";
+			helpText = "";
 
 			switch (typeOfHelp) {
 				case QUESTION_ANSWER :
@@ -68,7 +96,7 @@ public class AskMeController implements ActionListener {
 
 				processTextGeneration();
 				processed.release(1);
-				waitDialog.setVisible(true);
+				thinkingWaitDialog.setVisible(true);
 
 				answer = dialog.showDialog();
 
@@ -124,7 +152,7 @@ public class AskMeController implements ActionListener {
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-				waitDialog.setVisible(false);
+				thinkingWaitDialog.setVisible(false);
 			}
 
 		}.execute();

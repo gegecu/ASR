@@ -2,6 +2,7 @@ import java.sql.SQLException;
 
 import org.apache.log4j.Logger;
 
+import edu.stanford.nlp.pipeline.Annotation;
 import model.instance.AbstractSequenceClassifierInstance;
 import model.instance.DictionariesInstance;
 import model.instance.SenticNetParserInstance;
@@ -27,7 +28,8 @@ public class Main {
 
 				long t = System.currentTimeMillis();
 
-				StanfordCoreNLPInstance.getInstance();
+				StanfordCoreNLPInstance.getInstance()
+						.annotate(new Annotation(""));;
 				DictionariesInstance.getInstance();
 				AbstractSequenceClassifierInstance.getInstance();
 				SenticNetParserInstance.getInstance();
