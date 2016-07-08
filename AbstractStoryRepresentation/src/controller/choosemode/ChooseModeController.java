@@ -42,6 +42,7 @@ public class ChooseModeController implements ActionListener {
 							mainFrame.showAdvancedMode();
 							break;
 					}
+					
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

@@ -57,7 +57,7 @@ public class AskMeController implements ActionListener {
 				submitSemaphore.acquire();
 				return null;
 			}
-			
+
 			@Override
 			protected void done() {
 				submitSemaphore.release();
@@ -102,18 +102,17 @@ public class AskMeController implements ActionListener {
 
 				if (typeOfHelp == TypeOfHelp.SUGGESTIONS) {
 					if (answer == HelpAnswer.ACCEPT) {
-						((StorySegmentGenerator)currentTextGenerator).addUsed(helpText);
+						((StorySegmentGenerator) currentTextGenerator)
+								.addUsed(helpText);
 						submitController.processStory(helpText);
 					}
 				} else if (typeOfHelp == TypeOfHelp.QUESTION_ANSWER) {
 					QuestionAnswerDialog tempDialog = ((QuestionAnswerDialog) dialog);
 					if (answer == HelpAnswer.ACCEPT) {
 						String inputText = tempDialog.getInputText();
-						boolean isAnswerCorrect = submitController
-								.verifyAnswer(inputText);
-						if (!isAnswerCorrect) {
-							answer = HelpAnswer.WRONG_ANSWER;
-						}
+						processPromptAnswer(inputText);
+						processed.release(1);
+						processingWaitDialog.setVisible(true);
 					} else if (answer == HelpAnswer.CANCEL
 							|| answer == HelpAnswer.REJECT) {
 						promptChooser.ignored();
@@ -128,6 +127,37 @@ public class AskMeController implements ActionListener {
 
 	}
 
+	private void processPromptAnswer(String inputText) {
+
+		new SwingWorker<Void, Void>() {
+
+			@Override
+			protected Void doInBackground() throws Exception {
+
+				try {
+					processed.acquire();
+					boolean isAnswerCorrect = submitController
+							.verifyAnswer(inputText);
+					if (!isAnswerCorrect) {
+						answer = HelpAnswer.WRONG_ANSWER;
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+
+				return null;
+
+			}
+
+			@Override
+			protected void done() {
+				processingWaitDialog.setVisible(false);
+			}
+
+		}.execute();
+
+	}
+
 	private void processTextGeneration() {
 
 		new SwingWorker<Void, Void>() {
@@ -136,6 +166,7 @@ public class AskMeController implements ActionListener {
 			protected Void doInBackground() throws Exception {
 
 				try {
+					processed.acquire();
 					helpText = currentTextGenerator.generateText() + "";
 					dialog.setHelpText(helpText);
 				} catch (Exception e) {
@@ -148,11 +179,6 @@ public class AskMeController implements ActionListener {
 
 			@Override
 			protected void done() {
-				try {
-					processed.acquire();
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
 				thinkingWaitDialog.setVisible(false);
 			}
 

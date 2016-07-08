@@ -29,7 +29,7 @@ public class Main {
 				long t = System.currentTimeMillis();
 
 				StanfordCoreNLPInstance.getInstance()
-						.annotate(new Annotation(""));;
+						.annotate(new Annotation("Hello World!"));;
 				DictionariesInstance.getInstance();
 				AbstractSequenceClassifierInstance.getInstance();
 				SenticNetParserInstance.getInstance();
