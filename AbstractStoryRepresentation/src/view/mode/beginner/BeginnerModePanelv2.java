@@ -151,7 +151,7 @@ public class BeginnerModePanelv2 extends ModePanel {
 		helpButton.setBorder(
 				new RoundedBorder(Color.decode("#E4211B"), 3, 12, 0, 0, 0, 0));
 
-		saveButton.setIcon(new ImageIcon("save.png"));
+		saveButton.setIcon(new ImageIcon("resv2/save.png"));
 		saveButton.setFocusPainted(false);
 		saveButton.setBackground(Color.decode("#B5E61B"));
 		saveButton.setForeground(Color.decode("#28B149"));
