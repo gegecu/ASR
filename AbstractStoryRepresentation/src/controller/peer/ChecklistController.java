@@ -33,7 +33,7 @@ public class ChecklistController implements ActionListener {
 				}
 				break;
 			case ChecklistPanel.MIDDLE :
-				if (checklist.isMiddleComplete()) { 
+				if (checklist.isMiddleComplete()) {
 					asr.setPartOfStory(ChecklistPanel.END);
 					checklistPanel.end();
 				}

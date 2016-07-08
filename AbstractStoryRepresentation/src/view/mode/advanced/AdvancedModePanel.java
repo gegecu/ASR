@@ -123,6 +123,7 @@ public class AdvancedModePanel extends ModePanel {
 				new RoundedBorder(Color.BLACK, 3, 12, 15, 10, 15, 10));
 
 		titleField.setPlaceHolder("Enter Title Here");
+		titleField.setCharacterLimit(100);
 		titleField.setFont(new Font("Arial", Font.BOLD, 40));
 		titleField.setBorder(
 				new RoundedBorder(Color.BLACK, 3, 12, 20, 10, 20, 10));

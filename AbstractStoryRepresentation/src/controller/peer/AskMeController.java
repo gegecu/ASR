@@ -13,7 +13,6 @@ import view.mode.dialog.AskMeDialog;
 import view.mode.dialog.AskMeDialog.TypeOfHelp;
 import view.mode.dialog.HelpDialog;
 import view.mode.dialog.HelpDialog.HelpAnswer;
-import view.mode.dialog.IdeaDialog;
 import view.mode.dialog.QuestionAnswerDialog;
 import view.mode.dialog.SuggestionDialog;
 import view.mode.dialog.WaitDialog;
@@ -53,16 +52,16 @@ public class AskMeController implements ActionListener {
 			helpText = "Test";
 
 			switch (typeOfHelp) {
-			case QUESTION_ANSWER:
-				currentTextGenerator = promptChooser;
-				dialog = new QuestionAnswerDialog();
-				break;
-			case SUGGESTIONS:
-				currentTextGenerator = storySegmentGenerator;
-				dialog = new SuggestionDialog();
-				break;
-			default:
-				break;
+				case QUESTION_ANSWER :
+					currentTextGenerator = promptChooser;
+					dialog = new QuestionAnswerDialog();
+					break;
+				case SUGGESTIONS :
+					currentTextGenerator = storySegmentGenerator;
+					dialog = new SuggestionDialog();
+					break;
+				default :
+					break;
 			}
 
 			do {

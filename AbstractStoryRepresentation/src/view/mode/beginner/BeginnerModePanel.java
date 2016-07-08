@@ -90,8 +90,10 @@ public class BeginnerModePanel extends ModePanel {
 		log.debug("========== New Story ==========");
 
 		checklistController = new ChecklistController(asr, cl, checkListPanel);
-		submitController = new SubmitController(asr, tu, promptChooser, checklistController);
-		askMeController = new AskMeController(ssg, promptChooser, submitController);
+		submitController = new SubmitController(asr, tu, promptChooser,
+				checklistController);
+		askMeController = new AskMeController(ssg, promptChooser,
+				submitController);
 		saveController = new SaveController(titleField,
 				storyInputPanel.getInputArea());
 		cancelController = new CancelController();
@@ -170,6 +172,7 @@ public class BeginnerModePanel extends ModePanel {
 				new RoundedBorder(Color.BLACK, 3, 12, 15, 10, 15, 10));
 
 		titleField.setPlaceHolder("Enter Title Here");
+		titleField.setCharacterLimit(100);
 		titleField.setFont(new Font("Arial", Font.BOLD, 40));
 		titleField.setBorder(
 				new RoundedBorder(Color.BLACK, 3, 12, 20, 10, 20, 10));
