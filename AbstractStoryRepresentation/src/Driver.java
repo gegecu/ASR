@@ -99,7 +99,7 @@ public class Driver {
 							System.out.println(
 									"action: " + p.getVerb().getAction());
 							System.out.println(
-									"isNegated: " + p.getVerb().isNegated());
+									"isNegated: " + p.isNegated());
 
 							System.out.println("receivers: ");
 							for (Map.Entry<String, Noun> entry2 : p

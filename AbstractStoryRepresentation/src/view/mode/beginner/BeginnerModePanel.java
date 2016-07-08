@@ -28,7 +28,6 @@ import controller.peer.SaveController;
 import controller.peer.SubmitController;
 import model.story_representation.AbstractStoryRepresentation;
 import model.story_representation.Checklist;
-import model.text_generation.DirectivesGenerator;
 import model.text_generation.StorySegmentGenerator;
 import model.text_generation.prompts.PromptChooser;
 import model.text_understanding.TextUnderstanding;
@@ -72,7 +71,6 @@ public class BeginnerModePanel extends ModePanel {
 	private AbstractStoryRepresentation asr;
 	private Checklist cl;
 	private TextUnderstanding tu;
-	private DirectivesGenerator dg;
 	private StorySegmentGenerator ssg;
 	private PromptChooser promptChooser;
 
@@ -87,15 +85,16 @@ public class BeginnerModePanel extends ModePanel {
 		asr = new AbstractStoryRepresentation();
 		cl = new Checklist(asr);
 		tu = new TextUnderstanding(asr);
-		dg = new DirectivesGenerator(asr);
 		ssg = new StorySegmentGenerator(asr);
 		promptChooser = new PromptChooser(asr);
 
 		log.debug("========== New Story ==========");
 
 		checklistController = new ChecklistController(asr, cl, checkListPanel);
-		submitController = new SubmitController(asr, tu, promptChooser, checklistController);
-		askMeController = new AskMeController(dg, ssg, promptChooser, submitController);
+		submitController = new SubmitController(asr, tu, promptChooser,
+				checklistController);
+		askMeController = new AskMeController(ssg, promptChooser,
+				submitController);
 		saveController = new SaveController(titleField,
 				storyInputPanel.getInputArea());
 		cancelController = new CancelController();
@@ -174,6 +173,7 @@ public class BeginnerModePanel extends ModePanel {
 				new RoundedBorder(Color.BLACK, 3, 12, 15, 10, 15, 10));
 
 		titleField.setPlaceHolder("Enter Title Here");
+		titleField.setCharacterLimit(100);
 		titleField.setFont(new Font("Arial", Font.BOLD, 40));
 		titleField.setBorder(
 				new RoundedBorder(Color.BLACK, 3, 12, 20, 10, 20, 10));

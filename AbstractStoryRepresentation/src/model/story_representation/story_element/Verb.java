@@ -5,14 +5,12 @@ import java.util.List;
 
 public class Verb {
 	private String action;
-	private boolean negated;
 	private String auxiliary;
 	private List<String> details; //in format can function as direct object
 	
 	public Verb(String action) {
 		this.action = action;
 		this.auxiliary = "";
-		this.negated = false;
 		this.details = new ArrayList<String>();
 	}
 	
@@ -33,12 +31,6 @@ public class Verb {
 	}
 	public void setAction(String action) {
 		this.action = action;
-	}
-	public boolean isNegated() {
-		return negated;
-	}
-	public void setNegated(boolean negated) {
-		this.negated = negated;
 	}
 	
 	

@@ -54,6 +54,7 @@ public class StorySentence {
 		return this.predicates.size();
 	}
 
+	//unsure
 	public List<String> getAllNounsInStorySentence() {
 
 		Set<String> nounId = new HashSet<String>();

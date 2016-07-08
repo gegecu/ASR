@@ -105,6 +105,7 @@ public class Extractor {
 			log.debug(sentence.toString());
 
 			StorySentence storySentence = new StorySentence();
+			
 			List<TypedDependency> listDependencies = new ArrayList<TypedDependency>(
 					dependencies.typedDependencies());
 			Collections.sort(listDependencies, new TypedDependencyComparator());
@@ -246,7 +247,7 @@ public class Extractor {
 				Event p = storySentence.getPredicate(tdGovId);
 				System.out.println(tdGovId + " " + p);
 				p.getConcepts().clear();
-				p.getVerb().setNegated(true);
+				p.setNegated(true);
 	
 				if (!p.getDirectObjects().isEmpty()) {
 					for(Map.Entry<String, Noun> dobj: p.getDirectObjects().entrySet()) {
@@ -262,6 +263,7 @@ public class Extractor {
 			else {
 				Description d = storySentence.getDescription(tdGovId);
 				d.getConcepts().clear();
+				d.setNegated(true);
 				if(d.getReference("HasA") != null) {
 					for(Map.Entry<String, Noun> possession: d.getReference("HasA").entrySet()) {
 						for(Map.Entry<String, Noun> doer : d.getManyDoers().entrySet()) {
@@ -270,6 +272,11 @@ public class Extractor {
 								doer.getValue().getReferences().remove("HasA");
 						}
 							possession.getValue().getReference("IsOwnedBy").remove(doer.getKey());
+							
+							if(possession.getValue().getReference("IsOwnedBy").isEmpty()) {
+								possession.getValue().getReferences().remove("IsOwnedBy");
+							}
+							
 							d.addReference("NotHasA", possession.getKey(), possession.getValue());
 					}
 							
@@ -278,6 +285,7 @@ public class Extractor {
 					}
 					d.getReferences().remove("HasA");
 				}
+				storySentence.addDescription(tdGovId, d);
 			}
 		}
 		else if (tdGovTag.contains("NN")) {
@@ -295,6 +303,7 @@ public class Extractor {
 			}
 
 			d.getConcepts().clear();
+			d.setNegated(true);
 
 			d.addReference("NotIsA", tdGovId,
 					d.getReference("IsA").remove(tdGovId));
@@ -323,6 +332,7 @@ public class Extractor {
 			d.addAttribute("NotHasProperty", tdGovLemma);
 
 			d.getConcepts().clear();
+			d.setNegated(true);
 
 			if (d.getAttribute("HasProperty").isEmpty()) {
 				d.getAttributes().remove("HasProperty");
@@ -426,7 +436,7 @@ public class Extractor {
 
 			Event predicate = storySentence.getPredicate(tdGovId);
 
-			if (!predicate.getVerb().isNegated() && predicate != null) {
+			if (!predicate.isNegated() && predicate != null) {
 
 				Description description = storySentence.getDescription(tdDepId);
 
@@ -577,8 +587,6 @@ public class Extractor {
 					}
 				}
 				
-				
-				
 				description.addDoer(entry.getKey(), entry.getValue());
 				description.addAttribute("HasProperty", tdDepLemma);
 				description.addConcept(cp.createConceptAsAdjective(tdDepLemma));
@@ -663,7 +671,7 @@ public class Extractor {
 				if(emotion == 1){//negative
 					//to do polarity modifications
 					//System.out.println("hates negated");
-					event.getVerb().setNegated(true);
+					event.setNegated(true);
 				}
 				else if(emotion == 2){//positive
 					//to do polarity modifications
@@ -685,11 +693,6 @@ public class Extractor {
 				event.addConcept(t.dep().lemma() + " " + t.gov().lemma());
 			}
 		}
-	}
-	
-	private float computePolarityWithEmotion(String emotion, String action){
-		//improve computation, as of now augment value by 0.25
-		return (float) 0;
 	}
 	
 	/** if verb indicates emotion  */

@@ -16,7 +16,6 @@ import model.story_representation.story_element.noun.Noun;
 import model.story_representation.story_element.story_sentence.Description;
 import model.story_representation.story_element.story_sentence.Event;
 import model.story_representation.story_element.story_sentence.StorySentence;
-import model.text_generation.DirectivesGenerator;
 
 public class AbstractStoryRepresentation {
 	
@@ -97,7 +96,7 @@ public class AbstractStoryRepresentation {
 			}
 
 			log.debug("action: " + p.getVerb().getAction());
-			log.debug("isNegated: " + p.getVerb().isNegated());
+			log.debug("isNegated: " + p.isNegated());
 
 			log.debug("receivers: ");
 			for (Map.Entry<String, Noun> entry2 : p
@@ -162,7 +161,7 @@ public class AbstractStoryRepresentation {
 
 		for (Entry<String, Description> entry : storySentence
 				.getManyDescriptions().entrySet()) {
-			//log.debug(entry.getKey());
+			log.debug("isNegated: " + entry.getValue().isNegated());
 
 			for (Map.Entry<String, Noun> doer : entry.getValue()
 					.getManyDoers().entrySet()) {

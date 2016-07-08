@@ -14,7 +14,10 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
+import javax.swing.text.PlainDocument;
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
@@ -115,7 +118,8 @@ public class AutoResizingTextFieldWithPlaceHolder extends JTextField {
 			int newFontSize = (int) (fieldFont.getSize() * widthRatio);
 			int fontSizeToUse = Math.min(newFontSize, height);
 
-			super.setFont(fieldFont.deriveFont(fieldFont.getStyle(), fontSizeToUse));
+			super.setFont(
+					fieldFont.deriveFont(fieldFont.getStyle(), fontSizeToUse));
 
 		}
 
@@ -124,7 +128,8 @@ public class AutoResizingTextFieldWithPlaceHolder extends JTextField {
 			FontMetrics fontMetrics = g.getFontMetrics();
 			Graphics2D g2 = (Graphics2D) g.create();
 			g2.setColor(placeHolderColor);
-			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+					RenderingHints.VALUE_ANTIALIAS_ON);
 			int x = getPlaceHolderPosX(fontMetrics);
 			int y = getPlaceHolderPosY(fontMetrics);
 			g2.drawString(placeHolder, x, y);
@@ -145,18 +150,19 @@ public class AutoResizingTextFieldWithPlaceHolder extends JTextField {
 		int x = 0;
 
 		switch (getHorizontalAlignment()) {
-			case SwingConstants.LEFT:
-			case SwingConstants.LEADING:
+			case SwingConstants.LEFT :
+			case SwingConstants.LEADING :
 				x = getBorder().getBorderInsets(getParent()).left;
 				break;
-			case SwingConstants.TRAILING:
+			case SwingConstants.TRAILING :
 
-			case SwingConstants.RIGHT:
+			case SwingConstants.RIGHT :
 				x = getWidth() - getBorder().getBorderInsets(getParent()).right
 						- (fontMetrics.stringWidth(placeHolder));
 				break;
-			case SwingConstants.CENTER:
-				x = (this.getWidth()) / 2 - (fontMetrics.stringWidth(placeHolder) / 2);
+			case SwingConstants.CENTER :
+				x = (this.getWidth()) / 2
+						- (fontMetrics.stringWidth(placeHolder) / 2);
 				break;
 		}
 
@@ -166,8 +172,36 @@ public class AutoResizingTextFieldWithPlaceHolder extends JTextField {
 
 	private int getPlaceHolderPosY(FontMetrics fontMetrics) {
 
-		int y = ((getHeight() - fontMetrics.getHeight()) / 2) + fontMetrics.getAscent();
+		int y = ((getHeight() - fontMetrics.getHeight()) / 2)
+				+ fontMetrics.getAscent();
 		return y;
+
+	}
+
+	public void setCharacterLimit(int limit) {
+		this.setDocument(new JTextFieldLimit(limit));
+	}
+
+	private class JTextFieldLimit extends PlainDocument {
+
+		private int limit;
+
+		public JTextFieldLimit(int limit) {
+			super();
+			this.limit = limit;
+		}
+
+		public void insertString(int offset, String str, AttributeSet attr)
+				throws BadLocationException {
+
+			if (str == null)
+				return;
+
+			if ((getLength() + str.length()) <= limit) {
+				super.insertString(offset, str, attr);
+			}
+
+		}
 
 	}
 
