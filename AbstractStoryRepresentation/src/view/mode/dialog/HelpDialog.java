@@ -31,7 +31,7 @@ public abstract class HelpDialog extends JDialog {
 	protected abstract void addUXFeatures();
 
 	public final void setHelpText(String helpText) {
-		storyViewPanel.setStory(helpText);
+		storyViewPanel.setStoryText(helpText);
 	}
 
 	public final HelpAnswer showDialog() {

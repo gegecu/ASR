@@ -11,6 +11,12 @@ public class Story implements Comparable<Story> {
 		this.storyTitle = storyTitle;
 	}
 
+	public Story(int storyId, String storyTitle, String storyText) {
+		this.storyId = storyId;
+		this.storyTitle = storyTitle;
+		this.storyText = storyText;
+	}
+
 	public int getStoryId() {
 		return storyId;
 	}

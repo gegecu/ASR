@@ -101,9 +101,9 @@ public class ChooseModePanel extends TemplatePanel {
 
 		JPanel panel1 = new JPanel(new MigLayout("insets 10 10 5 10"));
 		panel1.setBackground(Color.decode("#609AD1"));
-		panel1.add(cancelButton, "w 15%, growy");
-		panel1.add(aliceHeaderPanel, "w 70%, growy");
-		panel1.add(helpButton, "w 15%, growy, wrap");
+		panel1.add(cancelButton, "w 14%, growy");
+		panel1.add(aliceHeaderPanel, "w 72%, growy");
+		panel1.add(helpButton, "w 14%, growy, wrap");
 
 		JPanel panel2 = new JPanel(
 				new MigLayout("center, insets 10 0 0 0", "[]20[]", ""));

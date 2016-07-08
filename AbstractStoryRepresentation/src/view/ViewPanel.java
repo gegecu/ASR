@@ -47,6 +47,37 @@ public abstract class ViewPanel extends TemplatePanel {
 						+ panelWidthPercentage + "%");
 	}
 
+	/**
+	 * @param panelWidthPercentage
+	 * @param verticalScrollBarWidthPercentage
+	 * @param paddingTop
+	 *            top padding inside the panel
+	 * @param paddingLeft
+	 *            left padding inside the panel
+	 * @param paddingBottom
+	 *            bottom padding inside the panel
+	 * @param paddingRight
+	 *            right padding inside the panel
+	 */
+	public ViewPanel(int panelWidthPercentage,
+			int verticalScrollBarWidthPercentage, int paddingTop,
+			int paddingLeft, int paddingBottom, int paddingRight) {
+
+		MigLayout layout = ((MigLayout) getLayout());
+		layout.setComponentConstraints(verticalScrollBar,
+				layout.getComponentConstraints(verticalScrollBar) + ", w "
+						+ verticalScrollBarWidthPercentage + "%");
+		layout.setComponentConstraints(foregroundPanel,
+				layout.getComponentConstraints(foregroundPanel) + ", w "
+						+ panelWidthPercentage + "%");
+
+		layout = ((MigLayout) foregroundPanel.getLayout());
+		layout.setLayoutConstraints(layout.getLayoutConstraints() + ", "
+				+ String.format("insets %d %d %d %d", paddingTop, paddingLeft,
+						paddingBottom, paddingRight));
+
+	}
+
 	@Override
 	protected void initializeUI() {
 

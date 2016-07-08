@@ -57,20 +57,20 @@ public class AskMeController implements ActionListener {
 			helpText = "Test";
 
 			switch (typeOfHelp) {
-			case IDEAS:
-				currentTextGenerator = directivesGenerator;
-				dialog = new IdeaDialog();
-				break;
-			case QUESTION_ANSWER:
-				currentTextGenerator = promptChooser;
-				dialog = new QuestionAnswerDialog();
-				break;
-			case SUGGESTIONS:
-				currentTextGenerator = storySegmentGenerator;
-				dialog = new SuggestionDialog();
-				break;
-			default:
-				break;
+				case IDEAS :
+					currentTextGenerator = directivesGenerator;
+					dialog = new IdeaDialog();
+					break;
+				case QUESTION_ANSWER :
+					currentTextGenerator = promptChooser;
+					dialog = new QuestionAnswerDialog();
+					break;
+				case SUGGESTIONS :
+					currentTextGenerator = storySegmentGenerator;
+					dialog = new SuggestionDialog();
+					break;
+				default :
+					break;
 			}
 
 			do {
@@ -114,13 +114,16 @@ public class AskMeController implements ActionListener {
 
 			@Override
 			protected Void doInBackground() throws Exception {
+
 				try {
 					helpText = currentTextGenerator.generateText() + "";
 					dialog.setHelpText(helpText);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+
 				return null;
+
 			}
 
 			@Override
