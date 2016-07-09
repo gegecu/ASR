@@ -193,10 +193,12 @@ public class Extractor {
 						tdGovId);
 				}
 				else {
-					extractXcompActionDependency(td, storySentence, tdDepId, tdGovId, listDependencies);
+					extractCompActionDependency(td, storySentence, tdDepId, tdGovId, listDependencies);
 				}
 			}
-			
+			else if (tdReln.equals("ccomp")){
+				extractCompActionDependency(td, storySentence, tdDepId, tdGovId, listDependencies);
+			}
 			/** extract amod "IsA" ('adjective noun' format) **/
 			else if (tdReln.equals("amod")) {
 				extractAmodPropertyDependency(td, storySentence, tdDepId,
@@ -208,9 +210,7 @@ public class Extractor {
 						tdGovId);
 			}
 			/** extract location **/
-			else if (tdReln.equals("nmod:at") || tdReln.equals("nmod:near")
-					|| tdReln.equals("nmod:to") || tdReln.equals("nmod:in")
-					|| tdReln.equals("nmod:on")) {
+			else if (tdReln.contains("nmod") && !tdReln.equals("nmod:poss")) {
 				extractLocationDependency(td, storySentence, tdDepId, tdGovId);
 			}
 			/** extract possession **/
@@ -410,6 +410,7 @@ public class Extractor {
 		
 	}
 
+	//only handles existing verbs(predicates) in asr
 	private void extractLocationDependency(TypedDependency td,
 			StorySentence storySentence, String tdDepId, String tdGovId) {
 
@@ -438,7 +439,7 @@ public class Extractor {
 
 			Event predicate = storySentence.getPredicate(tdGovId);
 
-			if (!predicate.isNegated() && predicate != null) {
+			if (predicate != null && !predicate.isNegated()) {
 
 				Description description = storySentence.getDescription(tdDepId);
 
@@ -454,11 +455,17 @@ public class Extractor {
 				}
 
 				//caution might conflict with xcomp action
-				predicate.addDirectObject(tdDepId, noun);
+				//predicate.addDirectObject(tdDepId, noun); //changed to details(prepphrase)
 				log.debug("Location: " + tdDepLemma);
-
+				String prepPhrase = createPrepositionalPhrase(td);
+				String verbPhrase = tdDepLemma + " " + prepPhrase;
+				
+				predicate.getVerb().addPrepositionalPhrase(prepPhrase);
+				predicate.addConcept(verbPhrase); //using original preposition
 				predicate.addConcept(
-						cp.createConceptAsInfinitive(tdGovLemma, tdDepLemma));
+						cp.createConceptAsInfinitive(tdGovLemma, tdDepLemma)); //using to as preposition
+				predicate.addConcept(tdDepLemma); //location itself as concept
+				
 			}
 		}
 
@@ -472,7 +479,17 @@ public class Extractor {
 		//		}
 
 	}
-
+	
+	/** create prepositional phrase from nmod dependency */
+	private String createPrepositionalPhrase(TypedDependency td){
+		//String phrase = "";
+		String preposition = td.reln().toString().replace("nmod", "");
+		preposition = preposition.replace(":", "");
+		if(preposition.equals("")){
+			preposition = "to";
+		}
+		return preposition + " " + td.dep().lemma();
+	}
 	private void extractAdvmodPropertyDependency(TypedDependency td,
 			StorySentence storySentence, String tdDepId, String tdGovId) {
 
@@ -510,6 +527,14 @@ public class Extractor {
 				description.addConcept(cp.createConceptAsAdjective(tdDepLemma));
 				storySentence.getManyPredicates().remove(tdGovId);
 
+			}
+			else { //add as adverb in verb class		
+				Event event = storySentence.getPredicate(tdGovId);
+				if(event == null){ //verify if create new event is conflicting
+					event = new Event(tdGovId);
+					storySentence.addPredicate(tdGovId, event);
+				}
+				event.getVerb().addAdverb(tdDepLemma);
 			}
 		}
 
@@ -635,8 +660,8 @@ public class Extractor {
 
 	}
 
-	//gege does not understand :(
-	private void extractXcompActionDependency(TypedDependency td,
+	//handles verbs found in complements (would not exist as predicate in asr, just as 'details')
+	private void extractCompActionDependency(TypedDependency td,
 			StorySentence storySentence, String tdDepId, String tdGovId, List<TypedDependency> listDependencies){
 		
 		String tdDepLemma = td.dep().lemma();
@@ -651,45 +676,35 @@ public class Extractor {
 		
 		if (tdDepTag.contains("VB")) {
 			
-			String xcompAction = tdDepLemma;
-			Verb temp = new Verb(xcompAction);
 			//exhaust details of complement
 			List<TypedDependency> nmodTags = findDependencies(td.dep(), "gov", "nmod", listDependencies);
-			for(TypedDependency t: nmodTags){
-				String preposition = t.reln().toString().replace("nmod", "");
-				preposition = preposition.replace(":", "");
-				if(preposition.equals("")){
-					preposition = "to";
-				}
-				String append = preposition + " " + t.dep().lemma();
-				temp.addDetail(append);
-				event.addConcept(t.gov().lemma());
-				event.addConcept(cp.createConceptAsPrepPhrase(tdDepLemma, preposition, t.dep().lemma()));
-				xcompAction += " " + append;
+			for(TypedDependency t: nmodTags){				
+				String prepphrase = createPrepositionalPhrase(t);
+				String verbPhrase = tdDepLemma + " " + prepphrase;
+				
+				event.getVerb().addClausalComplement(verbPhrase);//add phrase as detail 
+				event.addConcept(t.gov().lemma());//add location as concept
+				event.addConcept(verbPhrase); //
 			}
+			
 			//check for negation/positives
 			int emotion = emotionIndicator(tdGovLemma);
 			if(emotion != 0){
 				if(emotion == 1){//negative
 					//to do polarity modifications
-					//System.out.println("hates negated");
 					event.setNegated(true);
 				}
 				else if(emotion == 2){//positive
 					//to do polarity modifications
 				}
-				//event.setVerb(temp);
 			}
-			else {//no emotion
-				event.getVerb().addDetail(xcompAction);
-				event.addConcept(xcompAction);
-			}
+
 //			System.out.println(xcompAction);
 //			for(String s: event.getConcepts()){
 //				System.out.println("conc: " + s);
 //			}
 		}
-		else if(tdDepTag.contains("NN")){
+		else if(tdDepTag.contains("NN")){ //for example: wants to 'be friends' (cop + noun format)
 			List<TypedDependency> copulaTags = findDependencies(td.dep(), "gov", "cop", listDependencies);
 			for(TypedDependency t: copulaTags){
 				event.addConcept(t.dep().lemma() + " " + t.gov().lemma());
