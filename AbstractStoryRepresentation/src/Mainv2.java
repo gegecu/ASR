@@ -5,7 +5,7 @@ import view.MainFrame;
 public class Mainv2 {
 
 	// Just for checking UI
-	
+
 	public static void main(String[] args) throws SQLException {
 
 		//new IdeaDialog().showDialog();

@@ -210,12 +210,17 @@ public class Extractor {
 						tdGovId);
 			}
 			/** extract location **/
-			else if (tdReln.contains("nmod") && !tdReln.equals("nmod:poss")) {
-				extractLocationDependency(td, storySentence, tdDepId, tdGovId);
-			}
-			/** extract possession **/
-			else if (tdReln.equals("nmod:poss")) {
-				extractPossesionDependency(td, storySentence, tdDepId, tdGovId);
+			else if (tdReln.contains("nmod")) {
+				/** extract possession **/
+				if (tdReln.equals("nmod:poss") || tdReln.equals("nmod:of")) {
+					extractPossesionDependency(td, storySentence, tdDepId, tdGovId);
+				}
+				else if (tdReln.equals("nmod:tmod")) {
+					//temporal modifier, not sure what to do yet. Just to exclude in location check
+				}
+				else { //all prepositions that suggest location (at, in , to , under...)
+					extractLocationDependency(td, storySentence, tdDepId, tdGovId);
+				}	
 			}
 
 			/** extract negation **/
