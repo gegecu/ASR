@@ -19,10 +19,10 @@ public abstract class Prompt {
 	protected String currentPrompt;
 	protected Preprocessing preprocess;
 	
-	public Prompt() {
+	public Prompt(Queue<String> history) {
 		super();
 		this.pipeline = StanfordCoreNLPInstance.getInstance();
-		this.history = new LinkedList();
+		this.history = history;
 		this.preprocess = new Preprocessing();
 	}
 	

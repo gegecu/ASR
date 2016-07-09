@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 
 import simplenlg.features.Feature;
 import simplenlg.features.Tense;
@@ -30,6 +31,12 @@ import model.utility.TypedDependencyComparator;
 
 public class GeneralPrompt extends Prompt {
 
+	public GeneralPrompt(Queue<String> history) {
+		super(history);
+		// TODO Auto-generated constructor stub
+	}
+
+
 	private String[] nounStartDirective = { "Describe <noun>.",
 			"Tell me more about <noun>.", "Write more about <noun>.",
 			"I want to hear more about <noun>.",
@@ -39,12 +46,7 @@ public class GeneralPrompt extends Prompt {
 	public String generateText(Noun noun) {
 		// TODO Auto-generated method stub
 		String directive = findDirective(noun, new ArrayList(Arrays.asList(nounStartDirective)));
-		this.history.add(directive);
 		currentNoun = noun;
-		
-		if (history.size() > 3) {
-			history.remove();
-		}
 		currentPrompt = directive;
 		
 		return directive;
@@ -99,7 +101,9 @@ public class GeneralPrompt extends Prompt {
 			//If user inputs, pronoun, it is correct because John and he are same but not John and her
 			//Describe John Roberts. He is fat or John Roberts is fat. but cannot be John is fat because in TU cannot be coreferenced anyway
 			
-			coref = preprocess.preprocess(currentPrompt + " " + sentence.toString());
+			preprocess.preprocess(currentPrompt + " " + sentence.toString());
+			
+			coref = preprocess.getCoref();
 			
 			int countSame = 0;
 			for(Map.Entry<String, String> entry: coref.entrySet()) {

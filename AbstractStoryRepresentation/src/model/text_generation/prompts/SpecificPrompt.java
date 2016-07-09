@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 
 import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
 import edu.stanford.nlp.pipeline.Annotation;
@@ -29,8 +30,8 @@ public class SpecificPrompt extends Prompt {
 	private String currentTopic;
 	private boolean isWrong;
 
-	public SpecificPrompt() {
-		super();
+	public SpecificPrompt(Queue<String> history) {
+		super(history);
 		answered = new HashMap<>();
 		isWrong = false;
 	}
@@ -57,8 +58,9 @@ public class SpecificPrompt extends Prompt {
 		
 		currentNoun = noun;
 		List<String> availableTopics = availableTopics(noun);
+		currentPrompt = null;
 
-		if (!availableTopics.isEmpty()) {
+		while (!availableTopics.isEmpty() && currentPrompt == null) {
 			int random = Randomizer.random(1, availableTopics.size());
 
 			String toBeReplaced = "";
@@ -79,6 +81,11 @@ public class SpecificPrompt extends Prompt {
 			currentTopic = availableTopics.get(random - 1);
 			currentPrompt = "What is the " + availableTopics.get(random - 1)
 					+ " of " + toBeReplaced + noun.getId() + "?";
+			
+			if(history.contains(currentPrompt)) {
+				currentPrompt = null;
+				continue;
+			}
 
 			System.out.println(currentPrompt);
 			
@@ -104,8 +111,9 @@ public class SpecificPrompt extends Prompt {
 		List<CoreMap> sentences = document.get(SentencesAnnotation.class);
 		for (CoreMap sentence : sentences) {
 
-			coref = preprocess
-					.preprocess(currentPrompt + " " + sentence.toString());
+			preprocess.preprocess(currentPrompt + " " + sentence.toString());
+			
+			coref = preprocess.getCoref();
 
 			SemanticGraph dependencies = sentence
 					.get(CollapsedCCProcessedDependenciesAnnotation.class);

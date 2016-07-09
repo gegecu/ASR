@@ -1,6 +1,7 @@
 package model.text_understanding;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,6 +34,12 @@ public class Preprocessing {
 	private Map<String, String> coref;
 	
 	private String updatedText;
+	
+	public static void main(String[] args) {
+		Preprocessing p = new Preprocessing();
+		p.preprocess("Moira and Gege cried. Moira and Gege got injured.");
+	}
+	
 
 	public Preprocessing() {
 		this.pipeline = StanfordCoreNLPInstance.getInstance();
@@ -216,7 +223,7 @@ public class Preprocessing {
 	                System.out.println(reprMent);
 	                
 	                boolean found = false;
-	                for(int i = reprMent.headIndex; i<reprMent.endIndex; i++){
+	                for(int i = reprMent.startIndex; i<reprMent.endIndex; i++){
 	                	
 	                	System.out.println(reprMent.sentNum + ", " + token.sentIndex());
 	                	
