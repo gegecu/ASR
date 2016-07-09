@@ -34,8 +34,10 @@ public class TextUnderstanding {
 
 		log.debug("Input of User : " + text);
 
+		preprocessingModule.preprocess(text);
+		
 		List<StorySentence> extractedStorySentences = extractionModule
-				.extract(text, preprocessingModule.preprocess(text));
+				.extract(preprocessingModule.getUpdatedString(), preprocessingModule.getCoref());
 
 		for (StorySentence storySentence : extractedStorySentences) {
 			asr.addEvent(storySentence);

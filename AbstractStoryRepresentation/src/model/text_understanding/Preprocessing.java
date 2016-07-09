@@ -1,6 +1,7 @@
 package model.text_understanding;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,8 +13,13 @@ import org.languagetool.rules.RuleMatch;
 import edu.stanford.nlp.dcoref.CorefChain;
 import edu.stanford.nlp.dcoref.CorefChain.CorefMention;
 import edu.stanford.nlp.dcoref.CorefCoreAnnotations;
+import edu.stanford.nlp.dcoref.CorefCoreAnnotations.CorefChainAnnotation;
+import edu.stanford.nlp.ling.CoreAnnotations;
+import edu.stanford.nlp.ling.CoreAnnotations.TokensAnnotation;
+import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
+import edu.stanford.nlp.util.CoreMap;
 import model.instance.JLanguageToolInstance;
 import model.instance.StanfordCoreNLPInstance;
 import model.story_representation.AbstractStoryRepresentation;
@@ -23,15 +29,30 @@ public class Preprocessing {
 	private static Logger log = Logger.getLogger(Preprocessing.class.getName());
 
 	private StanfordCoreNLP pipeline;
+	
+	private Map<String, String> coref;
+	
+	private String updatedText;
 
 	public Preprocessing() {
 		this.pipeline = StanfordCoreNLPInstance.getInstance();
+		this.coref = new HashMap();
+		this.updatedText = "";
 	}
 
-	public Map<String, String> preprocess(String text) {
+	public void preprocess(String text) {
 		//result = normalize(result);
-		return coreference(text);
+		updatedText = doTest(text);
+		coref = coreference(updatedText);
 		//result = normalize(result);
+	}
+	
+	public Map<String, String> getCoref() {
+		return this.coref;
+	}
+	
+	public String getUpdatedString() {
+		return this.updatedText;
 	}
 
 	private String normalize(String text) {
@@ -152,5 +173,144 @@ public class Preprocessing {
 
 	}
 	
+	private String doTest(String text){
+	    Annotation doc = new Annotation(text);
+	    pipeline.annotate(doc);
+	
+	
+	    //get coref mapping
+	    Map<Integer, CorefChain> corefs = doc.get(CorefChainAnnotation.class);
+	    
+	    //sentence segment
+	    List<CoreMap> sentences = doc.get(CoreAnnotations.SentencesAnnotation.class);
+	
+	    //whole sentence or updated sentence later
+	    List<String> resolved = new ArrayList<String>();
+	
+	    for (CoreMap sentence : sentences) {
+	
+	    	//tokens for a sentence
+	        List<CoreLabel> tokens = sentence.get(CoreAnnotations.TokensAnnotation.class);
+	
+	        for (CoreLabel token : tokens) {
+	
+	        	//token belongs to which chain of coref
+	            Integer corefClustId= token.get(CorefCoreAnnotations.CorefClusterIdAnnotation.class);
+	            System.out.println(token.word() +  " --> corefClusterID = " + corefClustId);
+	
+	
+	            CorefChain chain = corefs.get(corefClustId);
+	            System.out.println("matched chain = " + chain);
+	
+	
+	            if(chain==null || chain.getMentionsInTextualOrder().size() == 1){
+	                resolved.add(token.word());
+	            }else{
+	
+	                int sentINdx = chain.getRepresentativeMention().sentNum -1;
+	                CoreMap corefSentence = sentences.get(sentINdx);
+	                List<CoreLabel> corefSentenceTokens = corefSentence.get(TokensAnnotation.class);
+	
+	                String newwords = "";
+	                CorefMention reprMent = chain.getRepresentativeMention();
+	                System.out.println(reprMent);
+	                
+	                boolean found = false;
+	                for(int i = reprMent.headIndex; i<reprMent.endIndex; i++){
+	                	
+	                	System.out.println(reprMent.sentNum + ", " + token.sentIndex());
+	                	
+	                	if(reprMent.sentNum != token.sentIndex() + 1) {
+	                	
+		                    CoreLabel matchedLabel = corefSentenceTokens.get(i-1); //resolved.add(tokens.get(i).word());
+		                    
+		                    if(token.tag().contains("NN")) {
+		                    	
+		                    	if (!found) {
+
+		                			resolved.add(token.word());
+		                			found = true;
+		                		}
+		                    	continue;
+		                    }
+		                    
+		                    if(i != reprMent.endIndex -1) {
+		                    	resolved.add(matchedLabel.word());
+		        				
+		 	                    newwords+=matchedLabel.word();
+		                    }
+		                    
+		                    else {
+		                    	if(matchedLabel.tag().equals("POS")) {
+		                    		if(token.tag().equals("PRP$")) {
+				                    	resolved.add(matchedLabel.word());
+				        				
+				 	                    newwords+=matchedLabel.word();
+		                    		}
+		                    		else {
+		                    			
+		                    		}
+			                    }
+		                    	else if(token.tag().equals("PRP$")) {
+		                    		System.out.println("WHY");
+		                    		
+		                    		resolved.add(reprMent.mentionSpan + "'s");
+			        				
+			 	                    newwords+=reprMent.mentionSpan + "'s ";
+		                    	}
+		                    	
+		                    	else {
+		                    		resolved.add(matchedLabel.word());
+			        				
+			 	                    newwords+=matchedLabel.word();
+		                    	}
+		                    }
+		                }
+
+	                	else {
+	                		
+	                		CoreLabel matchedLabel = corefSentenceTokens.get(i-1); 
+                			
+               			 	if(token.tag().equals("PRP$")) {
+		                    		
+               			 		if(i == reprMent.endIndex - 1) {
+               			 			resolved.add(reprMent.mentionSpan + "'s");
+		        				
+               			 			newwords+=reprMent.mentionSpan + "'s ";
+               			 		}
+		                    	
+		                    }
+	                		
+               			 	else if (!found) {
+
+	                			resolved.add(token.word());
+	                			found = true;
+	                		}
+	                	}
+	                }
+
+	                System.out.println("converting " + token.word() + " to " + newwords);
+	            }
+	
+	
+	            System.out.println();
+	            System.out.println();
+	            System.out.println("-----------------------------------------------------------------");
+	
+	        }
+	
+	    }
+	
+	
+	    String resolvedStr ="";
+	    System.out.println();
+	    for (String str : resolved) {
+	        resolvedStr+=str+" ";
+	    }
+	    System.out.println(resolvedStr);
+	    
+	    return resolvedStr;
+	
+	}
 
 }

@@ -391,7 +391,9 @@ public class Extractor {
 
 			asr.addNoun(tdGovId, noun2);
 		}
-
+		
+		System.out.println(tdGovId);
+		
 		noun.addReference("HasA", tdDepId, noun2);
 		noun2.addReference("IsOwnedBy", tdGovId, noun);
 		
