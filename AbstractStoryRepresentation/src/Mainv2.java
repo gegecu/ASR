@@ -1,5 +1,9 @@
 import java.sql.SQLException;
 
+import javax.swing.JTextArea;
+
+import org.languagetool.gui.GrammarChecker;
+
 import view.MainFrame;
 
 public class Mainv2 {
@@ -8,6 +12,7 @@ public class Mainv2 {
 
 	public static void main(String[] args) throws SQLException {
 
+		new GrammarChecker(new JTextArea());
 		//new IdeaDialog().showDialog();
 		MainFrame mainFrame = new MainFrame();
 		mainFrame.getChooseModePanel().setMainFrame(mainFrame);

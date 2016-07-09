@@ -1,6 +1,9 @@
 import java.sql.SQLException;
 
+import javax.swing.JTextArea;
+
 import org.apache.log4j.Logger;
+import org.languagetool.gui.GrammarChecker;
 
 import edu.stanford.nlp.pipeline.Annotation;
 import model.instance.AbstractSequenceClassifierInstance;
@@ -29,13 +32,19 @@ public class Main {
 				long t = System.currentTimeMillis();
 
 				StanfordCoreNLPInstance.getInstance()
-						.annotate(new Annotation("Hello World!"));;
+						.annotate(new Annotation("Hello World!"));
+				new GrammarChecker(new JTextArea());
 				DictionariesInstance.getInstance();
 				AbstractSequenceClassifierInstance.getInstance();
 				SenticNetParserInstance.getInstance();
 
-				log.debug("---- done loading libraries in "
-						+ (System.currentTimeMillis() - t) + " ms ----");
+				long t2 = System.currentTimeMillis();
+
+				log.debug("---- done loading libraries in " + (t2 - t)
+						+ " ms ----");
+
+				System.out.println("---- done loading libraries in " + (t2 - t)
+						+ " ms ----");
 
 			}
 
