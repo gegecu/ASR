@@ -3,11 +3,14 @@ package view.mode.dialog;
 import java.awt.Color;
 import java.awt.Font;
 
+import javax.swing.ButtonModel;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import net.miginfocom.swing.MigLayout;
 import view.utilities.RoundedBorder;
@@ -90,6 +93,8 @@ public class AskMeDialog extends JDialog {
 
 		panel.add(panel1, "h 50%, w 100%, align center, grow, wrap");
 
+		addUIEffects();
+		
 		add(panel);
 		pack();
 		setResizable(false);
@@ -98,6 +103,61 @@ public class AskMeDialog extends JDialog {
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		setLocationRelativeTo(null);
 		setModal(true);
+
+	}
+
+	private void addUIEffects() {
+
+		gotItButton.getModel().addChangeListener(new ChangeListener() {
+
+			private RoundedBorder border = (RoundedBorder) gotItButton
+					.getBorder();
+
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				ButtonModel model = (ButtonModel) e.getSource();
+				if (true == model.isRollover()) {
+					border.setThickness(5);
+				} else if (false == model.isRollover()) {
+					border.setThickness(3);
+				}
+			}
+
+		});
+
+		ideasButton.getModel().addChangeListener(new ChangeListener() {
+
+			private RoundedBorder border = (RoundedBorder) ideasButton
+					.getBorder();
+
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				ButtonModel model = (ButtonModel) e.getSource();
+				if (true == model.isRollover()) {
+					border.setThickness(5);
+				} else if (false == model.isRollover()) {
+					border.setThickness(3);
+				}
+			}
+
+		});
+
+		suggestionsButton.getModel().addChangeListener(new ChangeListener() {
+
+			private RoundedBorder border = (RoundedBorder) suggestionsButton
+					.getBorder();
+
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				ButtonModel model = (ButtonModel) e.getSource();
+				if (true == model.isRollover()) {
+					border.setThickness(5);
+				} else if (false == model.isRollover()) {
+					border.setThickness(3);
+				}
+			}
+
+		});
 
 	}
 
