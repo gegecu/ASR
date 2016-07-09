@@ -23,9 +23,10 @@ import org.apache.log4j.Logger;
 
 import controller.peer.AskMeController;
 import controller.peer.CancelController;
-import controller.peer.ChecklistController;
 import controller.peer.SaveController;
 import controller.peer.SubmitController;
+import controller.peer.checklist.BeginnerChecklistController;
+import controller.peer.checklist.ChecklistController;
 import model.story_representation.AbstractStoryRepresentation;
 import model.story_representation.Checklist;
 import model.text_generation.StorySegmentGenerator;
@@ -70,8 +71,8 @@ public class BeginnerModePanel extends ModePanel {
 
 	private AbstractStoryRepresentation asr;
 	private Checklist cl;
-	private TextUnderstanding tu;
-	private StorySegmentGenerator ssg;
+	private TextUnderstanding textUnderstanding;
+	private StorySegmentGenerator storySegmentGenerator;
 	private PromptChooser promptChooser;
 
 	private AskMeController askMeController;
@@ -84,20 +85,22 @@ public class BeginnerModePanel extends ModePanel {
 
 		asr = new AbstractStoryRepresentation();
 		cl = new Checklist(asr);
-		tu = new TextUnderstanding(asr);
-		ssg = new StorySegmentGenerator(asr);
+		textUnderstanding = new TextUnderstanding(asr);
+		storySegmentGenerator = new StorySegmentGenerator(asr);
 		promptChooser = new PromptChooser(asr);
 
-		log.debug("========== New Story ==========");
+		log.debug("========== New Beginner Story ==========");
 
-		checklistController = new ChecklistController(asr, cl, checkListPanel);
-		submitController = new SubmitController(asr, tu, promptChooser,
-				checklistController);
-		askMeController = new AskMeController(ssg, promptChooser,
-				submitController);
 		saveController = new SaveController(titleField,
-				storyInputPanel.getInputArea());
-		cancelController = new CancelController();
+				storyViewPanel.getStoryViewArea());
+		cancelController = new CancelController(titleField,
+				storyViewPanel.getStoryViewArea());
+		checklistController = new BeginnerChecklistController(asr, cl,
+				checkListPanel, saveController);
+		submitController = new SubmitController(asr, textUnderstanding,
+				promptChooser, checklistController);
+		askMeController = new AskMeController(storySegmentGenerator,
+				promptChooser, submitController);
 
 		addAskMeActionListener(askMeController);
 		addSubmitActionListener(submitController);
@@ -105,12 +108,6 @@ public class BeginnerModePanel extends ModePanel {
 		addSaveButtonActionListener(saveController);
 		addCancelButtonActionListener(cancelController);
 
-	}
-
-	@Override
-	public void reinitialize() {
-		// TODO Auto-generated method stub
-		super.reinitialize();
 	}
 
 	@Override
@@ -386,7 +383,8 @@ public class BeginnerModePanel extends ModePanel {
 
 	public void addCheckListActionListener(
 			ChecklistController checklistController) {
-		nextButton.addActionListener(checklistController);
+		nextButton.addActionListener(
+				(BeginnerChecklistController) checklistController);
 	}
 
 	public void setMainFrame(MainFrame mainFrame) {

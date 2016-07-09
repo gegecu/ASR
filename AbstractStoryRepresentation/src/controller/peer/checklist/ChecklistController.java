@@ -1,27 +1,24 @@
-package controller.peer;
+package controller.peer.checklist;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
+import controller.peer.SaveController;
 import model.story_representation.AbstractStoryRepresentation;
 import model.story_representation.Checklist;
 import view.mode.beginner.ChecklistPanel;
 
-public class ChecklistController implements ActionListener {
+public abstract class ChecklistController {
 
-	private Checklist checklist;
-	private AbstractStoryRepresentation asr;
-	private ChecklistPanel checklistPanel;
+	protected Checklist checklist;
+	protected AbstractStoryRepresentation asr;
+	protected SaveController saveController;
 
 	public ChecklistController(AbstractStoryRepresentation asr,
-			Checklist checklist, ChecklistPanel checklistPanel) {
+			Checklist checklist, SaveController saveController) {
 		this.asr = asr;
 		this.checklist = checklist;
-		this.checklistPanel = checklistPanel;
+		this.saveController = saveController;
 	}
 
-	@Override
-	public void actionPerformed(ActionEvent arg0) {
+	protected void doTheThing() {
 
 		String partOfStory = asr.getCurrentPartOfStory();
 
@@ -29,13 +26,11 @@ public class ChecklistController implements ActionListener {
 			case ChecklistPanel.START :
 				if (checklist.isBeginningComplete()) {
 					asr.setPartOfStory(ChecklistPanel.MIDDLE);
-					checklistPanel.middle();
 				}
 				break;
 			case ChecklistPanel.MIDDLE :
 				if (checklist.isMiddleComplete()) {
 					asr.setPartOfStory(ChecklistPanel.END);
-					checklistPanel.end();
 				}
 				break;
 			case ChecklistPanel.END :
@@ -44,10 +39,6 @@ public class ChecklistController implements ActionListener {
 
 	}
 
-	public void updateChecklist() {
-		if (checklistPanel != null) {
-			checklistPanel.updateChecklist(asr, checklist);
-		}
-	}
+	public abstract void updateChecklist();
 
 }

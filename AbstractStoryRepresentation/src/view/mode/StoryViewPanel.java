@@ -83,6 +83,10 @@ public class StoryViewPanel extends ViewPanel {
 		return storyViewArea.getText();
 	}
 
+	public JTextArea getStoryViewArea() {
+		return storyViewArea;
+	}
+
 	public void setTextColor(Color fg) {
 		storyViewArea.setForeground(fg);
 	}

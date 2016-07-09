@@ -11,7 +11,7 @@ public class MySQLConnector {
 	private String dbName = "alice?autoReconnect=true&useSSL=false";
 	private String driver = "com.mysql.jdbc.Driver";
 	private String userName = "root";
-	private String password = "1234";
+	private String password = "";
 	private Connection connection;
 	private static MySQLConnector db = new MySQLConnector();
 

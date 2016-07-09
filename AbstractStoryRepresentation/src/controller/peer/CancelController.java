@@ -9,31 +9,15 @@ import javax.swing.JTextField;
 import model.story_database.Story;
 import model.story_database.StoryDAO;
 import view.MainFrame;
+import view.mode.dialog.YesNoDialog;
 
 public class CancelController implements ActionListener {
 
 	private MainFrame mainFrame;
-	private JTextField storyTitleField;
-	private JTextArea storyArea;
+	private JTextField titleField;
+	private JTextArea storyViewArea;
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-
-		boolean cancel = false;// alert sure delete all progress
-
-		if (cancel) {
-			Story story = new Story(0, storyTitleField.getText(),
-					storyArea.getText());
-			StoryDAO.saveUnfinishedStory(story);
-		}
-
-		mainFrame.showMainMenu();
-
-	}
-
-	public void setMainFrame(MainFrame mainFrame) {
-		this.mainFrame = mainFrame;
-	}
+	private YesNoDialog cancelDialog;
 
 	/**
 	 * @param storyTitleField
@@ -41,9 +25,31 @@ public class CancelController implements ActionListener {
 	 * @param storyArea
 	 *            the JTextArea for the whole story
 	 */
-	public void setFields(JTextField storyTitleField, JTextArea storyArea) {
-		this.storyArea = storyArea;
-		this.storyTitleField = storyTitleField;
+	public CancelController(JTextField titleField, JTextArea storyViewArea) {
+		this.titleField = titleField;
+		this.storyViewArea = storyViewArea;
+		this.cancelDialog = new YesNoDialog("Cancel Story",
+				"This will not save your story.");
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+
+		boolean cancel = cancelDialog.showDialog();
+
+		if (cancel) {
+			if (!storyViewArea.getText().isEmpty()) {
+				Story story = new Story(titleField.getText(),
+						storyViewArea.getText());
+				StoryDAO.saveUnfinishedStory(story);
+			}
+			mainFrame.showMainMenu();
+		}
+
+	}
+
+	public void setMainFrame(MainFrame mainFrame) {
+		this.mainFrame = mainFrame;
 	}
 
 }

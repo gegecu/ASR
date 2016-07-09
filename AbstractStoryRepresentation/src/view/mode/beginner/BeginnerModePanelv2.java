@@ -24,9 +24,10 @@ import org.apache.log4j.Logger;
 
 import controller.peer.AskMeController;
 import controller.peer.CancelController;
-import controller.peer.ChecklistController;
 import controller.peer.SaveController;
 import controller.peer.SubmitController;
+import controller.peer.checklist.BeginnerChecklistController;
+import controller.peer.checklist.ChecklistController;
 import model.story_representation.AbstractStoryRepresentation;
 import model.story_representation.Checklist;
 import model.text_generation.StorySegmentGenerator;
@@ -98,8 +99,9 @@ public class BeginnerModePanelv2 extends ModePanel {
 		//		submitController = new SubmitController(asr, tu, checklistController);
 		//		askMeController = new AskMeController(dg, ssg, submitController);
 		saveController = new SaveController(titleField,
-				storyInputPanel.getInputArea());
-		cancelController = new CancelController();
+				null);
+		cancelController = new CancelController(titleField,
+				null);
 		//
 		//		addAskMeActionListener(askMeController);
 		//		addSubmitActionListener(submitController);
@@ -420,7 +422,8 @@ public class BeginnerModePanelv2 extends ModePanel {
 
 	public void addCheckListActionListener(
 			ChecklistController checklistController) {
-		nextButton.addActionListener(checklistController);
+		nextButton.addActionListener(
+				(BeginnerChecklistController) checklistController);
 	}
 
 	public void setMainFrame(MainFrame mainFrame) {

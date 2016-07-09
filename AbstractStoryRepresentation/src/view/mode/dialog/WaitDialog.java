@@ -10,7 +10,6 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.SwingWorker;
 
 import net.miginfocom.swing.MigLayout;
 import view.utilities.AutoResizingLabel;
@@ -22,13 +21,10 @@ public class WaitDialog extends JDialog {
 
 	private JLabel waitLabel;
 	private JPanel panel;
-	private WaitDialog waitDialog;
 	private FontMetrics fontMetrics;
 
-	@SuppressWarnings("serial")
 	public WaitDialog(String dialogText) {
 
-		waitDialog = this;
 		panel = new JPanel();
 		waitLabel = new AutoResizingLabel();
 
@@ -55,16 +51,6 @@ public class WaitDialog extends JDialog {
 		setLocationRelativeTo(null);
 		setModal(true);
 
-	}
-
-	public void showDialog() {
-		new SwingWorker<Void, Void>() {
-			@Override
-			protected Void doInBackground() throws Exception {
-				waitDialog.setVisible(true);
-				return null;
-			}
-		}.execute();
 	}
 
 }

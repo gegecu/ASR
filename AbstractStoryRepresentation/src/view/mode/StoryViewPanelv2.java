@@ -41,7 +41,7 @@ public class StoryViewPanelv2 extends ViewPanelv2 {
 
 		// border layout because miglayout doesn't resize
 		scrollPane.setViewportView(storyViewArea);
-		
+
 		storyViewArea.setText("The quick brown fox jumped over the lazy dog.");
 
 	}
@@ -74,6 +74,10 @@ public class StoryViewPanelv2 extends ViewPanelv2 {
 
 	public String getStory() {
 		return storyViewArea.getText();
+	}
+
+	public void setTextColor(Color fg) {
+		storyViewArea.setForeground(fg);
 	}
 
 }
