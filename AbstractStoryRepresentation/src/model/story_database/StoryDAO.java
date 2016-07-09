@@ -23,7 +23,6 @@ public class StoryDAO {
 
 		Connection connection = null;
 		PreparedStatement ps = null;
-		ResultSet rs = null;
 		boolean result = true;
 
 		try {
@@ -33,7 +32,7 @@ public class StoryDAO {
 			ps.setString(1, story.getStoryTitle());
 			ps.setString(2, story.getStoryText());
 
-			rs = ps.executeQuery();
+			ps.executeUpdate();
 
 		} catch (SQLException e) {
 			result = false;
@@ -44,8 +43,6 @@ public class StoryDAO {
 					ps.close();
 				if (connection != null)
 					connection.close();
-				if (rs != null)
-					rs.close();
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -68,7 +65,6 @@ public class StoryDAO {
 
 		Connection connection = null;
 		PreparedStatement ps = null;
-		ResultSet rs = null;
 		boolean result = true;
 
 		try {
@@ -78,7 +74,7 @@ public class StoryDAO {
 			ps.setString(1, story.getStoryTitle());
 			ps.setString(2, story.getStoryText());
 
-			rs = ps.executeQuery();
+			ps.executeUpdate();
 
 		} catch (SQLException e) {
 			result = false;
@@ -89,8 +85,6 @@ public class StoryDAO {
 					ps.close();
 				if (connection != null)
 					connection.close();
-				if (rs != null)
-					rs.close();
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -153,7 +147,6 @@ public class StoryDAO {
 
 		Connection connection = null;
 		PreparedStatement ps = null;
-		ResultSet rs = null;
 		boolean result = true;
 
 		try {
@@ -162,7 +155,7 @@ public class StoryDAO {
 			ps = connection.prepareStatement(query);
 			ps.setInt(1, storyId);
 
-			rs = ps.executeQuery();
+			ps.executeUpdate();
 
 		} catch (SQLException e) {
 			result = false;
@@ -173,8 +166,6 @@ public class StoryDAO {
 					ps.close();
 				if (connection != null)
 					connection.close();
-				if (rs != null)
-					rs.close();
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -191,7 +182,7 @@ public class StoryDAO {
 	 */
 	public static Story getStoryText(int storyId) {
 
-		String query = "SELECT `id`, `title`, `story` FROM `stories` WHERE `id` = ?";
+		String query = "SELECT `id`, `title`, `text` FROM `stories` WHERE `id` = ?";
 
 		Connection connection = null;
 		PreparedStatement ps = null;

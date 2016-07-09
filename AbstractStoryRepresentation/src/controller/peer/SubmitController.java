@@ -9,6 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.swing.SwingWorker;
 
+import controller.peer.checklist.ChecklistController;
 import model.story_representation.AbstractStoryRepresentation;
 import model.text_generation.prompts.PromptChooser;
 import model.text_understanding.TextUnderstanding;

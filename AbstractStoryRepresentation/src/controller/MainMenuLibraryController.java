@@ -17,31 +17,14 @@ public class MainMenuLibraryController implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-
 		Story story = null;
-
-		String t = "";
-		for (int i = 0; i < 10; i++) {
-			t += "test ";
-		}
-		story = new Story(1, "test", t);
-
-		// story = StoryDAO.getStoryText(Integer.parseInt(e.getActionCommand()));
-
+		story = StoryDAO.getStoryText(Integer.parseInt(e.getActionCommand()));
 		mainFrame.showViewStory(story);
-
 	}
 
 	public void refreshLibrary() {
 
 		mainMenuLibraryPanel.clearLibraryPanel();
-
-		for (int i = 0; i < 10; i++) {
-			mainMenuLibraryPanel.addStory("test", "test");
-		}
-
-		if (true)
-			return;
 
 		List<Story> stories = StoryDAO.getSavedStories();
 		for (Story story : stories) {

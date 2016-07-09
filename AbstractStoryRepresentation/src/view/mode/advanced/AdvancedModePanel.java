@@ -15,11 +15,14 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.MouseInputAdapter;
 
+import org.apache.log4j.Logger;
+
 import controller.peer.AskMeController;
 import controller.peer.CancelController;
-import controller.peer.ChecklistController;
 import controller.peer.SaveController;
 import controller.peer.SubmitController;
+import controller.peer.checklist.AdvancedChecklistController;
+import controller.peer.checklist.ChecklistController;
 import model.story_representation.AbstractStoryRepresentation;
 import model.text_generation.StorySegmentGenerator;
 import model.text_generation.prompts.PromptChooser;
@@ -42,6 +45,9 @@ import view.utilities.RoundedBorder;
 @SuppressWarnings("serial")
 public class AdvancedModePanel extends ModePanel {
 
+	private static Logger log = Logger
+			.getLogger(AdvancedModePanel.class.getName());
+
 	private JButton helpButton;
 	private JButton askMeButton;
 
@@ -54,8 +60,8 @@ public class AdvancedModePanel extends ModePanel {
 	private boolean titleFieldFocused = false;
 
 	private AbstractStoryRepresentation asr;
-	private TextUnderstanding tu;
-	private StorySegmentGenerator ssg;
+	private TextUnderstanding textUnderstanding;
+	private StorySegmentGenerator storySegmentGenerator;
 	private PromptChooser promptChooser;
 
 	private AskMeController askMeController;
@@ -67,14 +73,23 @@ public class AdvancedModePanel extends ModePanel {
 
 	public AdvancedModePanel() {
 
-		checklistController = new ChecklistController(asr, null, null);
-		submitController = new SubmitController(asr, tu, promptChooser,
-				checklistController);
-		askMeController = new AskMeController(ssg, promptChooser,
-				submitController);
+		//asr = new AbstractStoryRepresentation();
+		//textUnderstanding = new TextUnderstanding(asr);
+		//storySegmentGenerator = new StorySegmentGenerator(asr);
+		//promptChooser = new PromptChooser(asr);
+
+		log.debug("========== New Advanced Story ==========");
+
 		saveController = new SaveController(titleField,
-				storyInputPanel.getInputArea());
-		cancelController = new CancelController();
+				storyViewPanel.getStoryViewArea());
+		cancelController = new CancelController(titleField,
+				storyViewPanel.getStoryViewArea());
+		checklistController = new AdvancedChecklistController(asr, null,
+				saveController);
+		submitController = new SubmitController(asr, textUnderstanding,
+				promptChooser, checklistController);
+		askMeController = new AskMeController(storySegmentGenerator,
+				promptChooser, submitController);
 
 		addAskMeController(askMeController);
 		addSubmitController(submitController);
