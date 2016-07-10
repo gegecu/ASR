@@ -26,7 +26,6 @@ import controller.peer.CancelController;
 import controller.peer.SaveController;
 import controller.peer.SubmitController;
 import controller.peer.checklist.BeginnerChecklistController;
-import controller.peer.checklist.ChecklistController;
 import model.story_representation.AbstractStoryRepresentation;
 import model.story_representation.Checklist;
 import model.text_generation.StorySegmentGenerator;
@@ -77,7 +76,7 @@ public class BeginnerModePanel extends ModePanel {
 	private PromptChooser promptChooser;
 
 	private AskMeController askMeController;
-	private ChecklistController checklistController;
+	private BeginnerChecklistController checklistController;
 	private SubmitController submitController;
 	private SaveController saveController;
 	private CancelController cancelController;
@@ -384,9 +383,8 @@ public class BeginnerModePanel extends ModePanel {
 	}
 
 	public void addCheckListActionListener(
-			ChecklistController checklistController) {
-		nextButton.addActionListener(
-				(BeginnerChecklistController) checklistController);
+			BeginnerChecklistController checklistController) {
+		nextButton.addActionListener(checklistController);
 	}
 
 	public void setMainFrame(MainFrame mainFrame) {
