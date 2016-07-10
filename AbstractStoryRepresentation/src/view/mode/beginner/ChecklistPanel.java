@@ -380,8 +380,8 @@ public class ChecklistPanel extends TemplatePanel {
 				break;
 		}
 
-		progressLabel.setText(
-				String.format("Progress %.2f%%", noOfProgress / noOfItems));
+		progressLabel.setText(String.format("Progress %.2f%%",
+				(noOfProgress / noOfItems) * 100));
 
 		switch (partOfStory) {
 			case ChecklistPanel.START :
