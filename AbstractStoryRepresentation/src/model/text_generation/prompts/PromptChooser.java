@@ -46,11 +46,11 @@ public class PromptChooser extends TextGeneration {
 	private SpecificPrompt specificPrompt;
 	private SpecialPrompt specialPrompt;
 	private Prompt currentPrompt;
-	private int descriptionThreshold;
 	private String currentId;
 	private Queue<String> history;
 	private boolean answeredCorrect;
 	private StanfordCoreNLP pipeline;
+	private boolean isLoop;
 
 	public PromptChooser(AbstractStoryRepresentation asr) {
 		super(asr);
@@ -73,16 +73,23 @@ public class PromptChooser extends TextGeneration {
 
 			while (output == null) {
 
-				if (currentPrompt != null
-						&& currentPrompt instanceof SpecificPrompt) {
-					if (((SpecificPrompt) currentPrompt).getIsWrong()) {
-						currentPrompt = specificPrompt;
-						output = currentPrompt.generateText(null);
-						break;
-					}
-				}
+//				if (currentPrompt != null
+//						&& currentPrompt instanceof SpecificPrompt) {
+//					if (((SpecificPrompt) currentPrompt).getIsWrong()) {
+//						currentPrompt = specificPrompt;
+//						output = currentPrompt.generateText(null);
+//						break;
+//					}
+//				}
 
-				String nounid = findNounId();
+				String nounid = "";
+				if(isLoop) {
+					nounid = currentId;
+				}
+				else {
+					nounid = findNounId();
+				}
+//				String nounid = findNounId();
 				Noun noun = asr.getNoun(nounid);
 				currentId = nounid;
 
@@ -124,6 +131,7 @@ public class PromptChooser extends TextGeneration {
 		Noun noun = asr.getNoun(currentId);
 
 		answeredCorrect = false;
+		isLoop = false;
 
 		if (asr.getCurrentPartOfStory().equals("start")) {
 			if (currentPrompt instanceof GeneralPrompt) {
@@ -137,6 +145,7 @@ public class PromptChooser extends TextGeneration {
 								|| noun instanceof Unknown)) {
 							log.debug(currentId);
 							restrictedInGeneral.add(currentId);
+							isLoop = true;
 						}
 
 					}
@@ -156,6 +165,7 @@ public class PromptChooser extends TextGeneration {
 					}
 				} else {
 					((SpecificPrompt) currentPrompt).setIsWrongIgnored(true);
+					isLoop = true;
 				}
 			}
 		} else {
@@ -170,6 +180,11 @@ public class PromptChooser extends TextGeneration {
 		if (currentPrompt instanceof SpecificPrompt) {
 			((SpecificPrompt) currentPrompt).setIsWrongIgnored(false);
 		}
+		isLoop = false;
+	}
+	
+	public boolean getIsLoop() {
+		return this.isLoop;
 	}
 
 	public String incompleteAnswer(String input) {
