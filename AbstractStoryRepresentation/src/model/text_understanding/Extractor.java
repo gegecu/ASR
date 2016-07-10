@@ -418,7 +418,7 @@ public class Extractor {
 	//only handles existing verbs(predicates) in asr
 	private void extractLocationDependency(TypedDependency td,
 			StorySentence storySentence, String tdDepId, String tdGovId) {
-
+		System.out.println("in nmod");
 		String tdDepTag = td.dep().tag();
 		String tdDepLemma = td.dep().lemma();
 		String tdGovTag = td.gov().tag();
@@ -440,37 +440,37 @@ public class Extractor {
 
 		}
 
-		if (noun != null && noun instanceof Location) {
+		if (noun != null) {
 
 			Event predicate = storySentence.getPredicate(tdGovId);
 
-			if (predicate != null && !predicate.isNegated()) {
+			if (predicate != null) {
 
 				Description description = storySentence.getDescription(tdDepId);
 
 				if (description == null) {
 					description = new Description();
 				}
-
-				for (Map.Entry<String, Noun> entry : storySentence
-						.getPredicate(tdGovId).getManyDoers().entrySet()) {
-					entry.getValue().addReference("AtLocation", tdDepId, noun);
-					description.addReference("AtLocation", tdDepId, noun);
-					description.addDoer(entry.getKey(), entry.getValue());
+				if(noun instanceof Location  && !predicate.isNegated()) {
+					for (Map.Entry<String, Noun> entry : storySentence
+							.getPredicate(tdGovId).getManyDoers().entrySet()) {
+						entry.getValue().addReference("AtLocation", tdDepId, noun);
+						description.addReference("AtLocation", tdDepId, noun);
+						description.addDoer(entry.getKey(), entry.getValue());
+					}
+	
+					predicate.addLocation(tdDepId, noun); //changed to locations in storysentence
+					log.debug("Location: " + tdDepLemma);
+					predicate.addConcept(
+							cp.createConceptAsInfinitive(tdGovLemma, tdDepLemma)); //using to as preposition
 				}
-
-				//caution might conflict with xcomp action
-				predicate.addLocation(tdDepId, noun); //changed to locations in storysentence
-				log.debug("Location: " + tdDepLemma);
+				
+				//if not a location still add details anyway
 				String prepPhrase = createPrepositionalPhrase(td);
 				String verbPhrase = tdDepLemma + " " + prepPhrase;
-				
 				predicate.getVerb().addPrepositionalPhrase(prepPhrase);
 				predicate.addConcept(verbPhrase); //using original preposition
-				predicate.addConcept(
-						cp.createConceptAsInfinitive(tdGovLemma, tdDepLemma)); //using to as preposition
-				predicate.addConcept(tdDepLemma); //location itself as concept
-				
+				predicate.addConcept(tdDepLemma); //object itself as concept				
 			}
 		}
 
