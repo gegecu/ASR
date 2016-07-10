@@ -11,8 +11,8 @@ import javax.swing.SwingConstants;
 
 import net.miginfocom.swing.MigLayout;
 import view.TemplatePanel;
-import view.utilities.AutoResizingLabel;
-import view.utilities.RoundedBorder;
+import view.utility.AutoResizingLabel;
+import view.utility.RoundedBorder;
 
 /**
  * @author Alice

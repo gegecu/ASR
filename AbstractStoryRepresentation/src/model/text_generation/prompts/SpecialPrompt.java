@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
 import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
@@ -20,6 +22,7 @@ import edu.stanford.nlp.trees.TypedDependency;
 import edu.stanford.nlp.util.CoreMap;
 import model.instance.StanfordCoreNLPInstance;
 import model.story_representation.AbstractStoryRepresentation;
+import model.story_representation.story_element.Verb;
 import model.story_representation.story_element.noun.Character;
 import model.story_representation.story_element.noun.Location;
 import model.story_representation.story_element.noun.Noun;
@@ -36,14 +39,16 @@ import simplenlg.phrasespec.VPPhraseSpec;
 import simplenlg.realiser.english.Realiser;
 
 public class SpecialPrompt {
-	
+
+	private static Logger log = Logger.getLogger(SpecialPrompt.class.getName());
+
 	private String[] causeEffectDirective = {
 			"Tell me more why <noun> <action>.",
 			"Write more about why <noun> <action>.",
 			"Write the reason why <noun> <action>."};
 
 	private String[] causeEffectAlternative = {"Tell me more what happened."};
-	
+
 	private AbstractStoryRepresentation asr;
 	private Queue<String> history;
 	private NLGFactory nlgFactory;
@@ -52,8 +57,9 @@ public class SpecialPrompt {
 	private Preprocessing preprocess;
 	private List<Noun> doers;
 	private String currentPrompt;
-	
-	public SpecialPrompt(Queue<String> history, AbstractStoryRepresentation asr, NLGFactory nlgFactory, Realiser realiser) {
+
+	public SpecialPrompt(Queue<String> history, AbstractStoryRepresentation asr,
+			NLGFactory nlgFactory, Realiser realiser) {
 		this.asr = asr;
 		this.nlgFactory = nlgFactory;
 		this.realiser = realiser;
@@ -62,7 +68,7 @@ public class SpecialPrompt {
 		this.preprocess = new Preprocessing();
 		this.doers = new ArrayList();
 	}
-	
+
 	public String capableOf() {
 
 		StorySentence storySentence = asr.getCurrentStorySentence();
@@ -87,41 +93,41 @@ public class SpecialPrompt {
 
 				List<Noun> doers = new ArrayList<>(
 						predicate.getManyDoers().values());
-				
+
 				this.doers = doers;
 
-				System.out.println(doers.size());
-				
+				log.debug(doers.size());
+
 				directive = directive.replace("<noun>",
 						SurfaceRealizer.wordsConjunction(doers));
-				
+
 				String action = "";
-				
+
 				Collection<Noun> directObjects = predicate.getDirectObjects()
 						.values();
 
-				if(!predicate.isNegated()) {
-				
+				if (!predicate.isNegated()) {
+
 					VPPhraseSpec verb = nlgFactory
 							.createVerbPhrase(predicate.getVerb().getAction());
 
 					if (directObjects.size() > 0) {
 						verb.setFeature(Feature.TENSE, Tense.PAST);
 						action = realiser.realise(verb).toString();
-	
+
 					} else {
 						verb.setFeature(Feature.PROGRESSIVE, true);
 						action = realiser.realise(verb).toString();
 					}
-				}
-				else {
-					VPPhraseSpec verb = nlgFactory.createVerbPhrase(predicate.getVerb().getAction());
+				} else {
+					VPPhraseSpec verb = nlgFactory
+							.createVerbPhrase(predicate.getVerb().getAction());
 					verb.setFeature(Feature.TENSE, Tense.PRESENT);
 					verb.setFeature(Feature.NEGATED, true);
 					action = realiser.realise(verb).toString();
 				}
-				
-				if(directObjects.size() > 0) {
+
+				if (directObjects.size() > 0) {
 					Noun noun = directObjects.iterator().next();
 					if (noun instanceof Location) {
 						action += " to " + noun.getId();
@@ -135,7 +141,7 @@ public class SpecialPrompt {
 				}
 
 				directive = directive.replace("<action>", action);
-				
+
 				if (history.contains(directive)) {
 					directive = null;
 				}
@@ -153,50 +159,49 @@ public class SpecialPrompt {
 		if (history.contains(directive)) {
 			directive = null;
 		}
-		
+
 		currentPrompt = directive;
 
 		return directive;
 
 	}
-	
+
 	public boolean checkAnswer(String input) {
 		int counter = 0;
-		
+
 		Set<String> currentDoerNames = new HashSet();
-		
-		for(Noun doer: doers) {
+
+		for (Noun doer : doers) {
 			currentDoerNames.add(doer.getId());
 		}
-		
+
 		Map<String, String> coref;
 
-		
 		preprocess.preprocess(currentPrompt + " " + input);
 		String updatedText = preprocess.getUpdatedString();
 		coref = preprocess.getCoref();
-		
+
 		Annotation document = new Annotation(updatedText);
 		pipeline.annotate(document);
-		
+
 		boolean skipped = false;
-	
+
 		List<CoreMap> sentences = document.get(SentencesAnnotation.class);
 		for (CoreMap sentence : sentences) {
-			
+
 			//skip first sentence
-			if(!skipped) {
+			if (!skipped) {
 				skipped = true;
 				continue;
 			}
-			
+
 			SemanticGraph dependencies = sentence
 					.get(CollapsedCCProcessedDependenciesAnnotation.class);
 
 			List<TypedDependency> listDependencies = new ArrayList<TypedDependency>(
 					dependencies.typedDependencies());
 			Collections.sort(listDependencies, new TypedDependencyComparator());
-			
+
 			for (TypedDependency td : listDependencies) {
 
 				//What is the color of the ball? It is red. cannot be He is red.
@@ -209,7 +214,7 @@ public class SpecialPrompt {
 				}
 
 				if (coref.size() - countSame >= 1) {
-					
+
 					String noun = "";
 
 					if (td.reln().toString().contains("nsubj")) {
@@ -221,23 +226,23 @@ public class SpecialPrompt {
 							noun = td.dep().lemma() + " " + noun;
 						}
 					}
-					
-					if(currentDoerNames.contains(noun)) {
-						System.out.println("counter++");
+
+					if (currentDoerNames.contains(noun)) {
+						log.debug("counter++");
 						counter++;
 					}
 
 				}
 
 			}
-			
-			if(counter == doers.size()) {
-				System.out.println("counter: " + counter);
+
+			if (counter == doers.size()) {
+				log.debug("counter: " + counter);
 				return true;
 			}
-			
+
 			break;
-			
+
 		}
 
 		return false;

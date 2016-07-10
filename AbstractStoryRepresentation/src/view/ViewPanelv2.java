@@ -14,8 +14,8 @@ import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 
 import net.miginfocom.swing.MigLayout;
-import view.utilities.CustomScrollBarUI;
-import view.utilities.RoundedBorder;
+import view.utility.CustomScrollBarUI;
+import view.utility.RoundedBorder;
 
 /**
  * @author Alice

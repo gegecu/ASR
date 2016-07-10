@@ -11,6 +11,7 @@ import model.instance.DictionariesInstance;
 import model.instance.SenticNetParserInstance;
 import model.instance.StanfordCoreNLPInstance;
 import model.knowledge_base.MySQLConnector;
+import utility.EvaluationLog;
 import view.MainFrame;
 
 public class Main {
@@ -19,6 +20,7 @@ public class Main {
 
 	public static void main(String[] args) throws SQLException {
 
+		EvaluationLog.log("");
 		log.debug("\n\n");
 
 		System.out.println("Checking Connection To Database ...");

@@ -10,7 +10,7 @@ import javax.swing.JPanel;
 
 import net.miginfocom.swing.MigLayout;
 import view.mode.StoryViewPanel;
-import view.utilities.RoundedBorder;
+import view.utility.RoundedBorder;
 
 public class DescriptionDialog extends JDialog {
 

@@ -33,16 +33,17 @@ import model.text_generation.StorySegmentGenerator;
 import model.text_generation.prompts.PromptChooser;
 import model.text_understanding.TextUnderstanding;
 import net.miginfocom.swing.MigLayout;
+import utility.EvaluationLog;
 import view.MainFrame;
 import view.mode.AlicePanel;
 import view.mode.ModePanel;
 import view.mode.StoryInputPanel;
 import view.mode.StoryViewPanel;
-import view.utilities.AutoResizingButton;
-import view.utilities.AutoResizingLabel;
-import view.utilities.AutoResizingTextFieldWithPlaceHolder;
-import view.utilities.CancelButton;
-import view.utilities.RoundedBorder;
+import view.utility.AutoResizingButton;
+import view.utility.AutoResizingLabel;
+import view.utility.AutoResizingTextFieldWithPlaceHolder;
+import view.utility.CancelButton;
+import view.utility.RoundedBorder;
 
 /**
  * @author Alice
@@ -90,6 +91,7 @@ public class BeginnerModePanel extends ModePanel {
 		promptChooser = new PromptChooser(asr);
 
 		log.debug("========== New Beginner Story ==========");
+		EvaluationLog.log("========== New Beginner Story ==========");
 
 		saveController = new SaveController(titleField,
 				storyViewPanel.getStoryViewArea());

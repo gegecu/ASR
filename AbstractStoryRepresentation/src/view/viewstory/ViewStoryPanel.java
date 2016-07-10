@@ -14,10 +14,10 @@ import net.miginfocom.swing.MigLayout;
 import view.MainFrame;
 import view.TemplatePanel;
 import view.mode.StoryViewPanel;
-import view.utilities.AutoResizingButton;
-import view.utilities.AutoResizingTextFieldWithPlaceHolder;
-import view.utilities.CancelButton;
-import view.utilities.RoundedBorder;
+import view.utility.AutoResizingButton;
+import view.utility.AutoResizingTextFieldWithPlaceHolder;
+import view.utility.CancelButton;
+import view.utility.RoundedBorder;
 
 public class ViewStoryPanel extends TemplatePanel {
 

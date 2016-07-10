@@ -16,7 +16,7 @@ import controller.MainMenuLibraryController;
 import net.miginfocom.swing.MigLayout;
 import view.MainFrame;
 import view.ViewPanel;
-import view.utilities.AutoResizingButton;
+import view.utility.AutoResizingButton;
 
 /**
  * @author Alice

@@ -12,8 +12,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import net.miginfocom.swing.MigLayout;
-import view.utilities.AutoResizingLabel;
-import view.utilities.RoundedBorder;
+import view.utility.AutoResizingLabel;
+import view.utility.RoundedBorder;
 
 public class WaitDialog extends JDialog {
 

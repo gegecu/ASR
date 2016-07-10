@@ -9,7 +9,7 @@ import java.awt.Font;
 import javax.swing.JTextArea;
 
 import view.ViewPanel;
-import view.utilities.AutoResizingTextAreaWithPlaceHolder;
+import view.utility.AutoResizingTextAreaWithPlaceHolder;
 
 /**
  * @author Alice

@@ -6,9 +6,12 @@ import java.util.concurrent.Semaphore;
 
 import javax.swing.SwingWorker;
 
+import org.apache.log4j.Logger;
+
 import model.text_generation.StorySegmentGenerator;
 import model.text_generation.TextGeneration;
 import model.text_generation.prompts.PromptChooser;
+import utility.EvaluationLog;
 import view.mode.dialog.AskMeDialog;
 import view.mode.dialog.AskMeDialog.TypeOfHelp;
 import view.mode.dialog.HelpDialog;
@@ -18,6 +21,9 @@ import view.mode.dialog.SuggestionDialog;
 import view.mode.dialog.WaitDialog;
 
 public class AskMeController implements ActionListener {
+
+	private static Logger log = Logger
+			.getLogger(AskMeController.class.getName());
 
 	private HelpDialog dialog = null;
 	private HelpAnswer answer;
@@ -83,10 +89,17 @@ public class AskMeController implements ActionListener {
 				case QUESTION_ANSWER :
 					currentTextGenerator = promptChooser;
 					dialog = new QuestionAnswerDialog();
+					log.debug("*child asks for help. Chooses to user prompts*");
+					EvaluationLog.log(
+							"\n\t*child asks for help. Chooses to user prompts*");
 					break;
 				case SUGGESTIONS :
 					currentTextGenerator = storySegmentGenerator;
 					dialog = new SuggestionDialog();
+					log.debug(
+							"*child asks for help. Chooses to use story segments*");
+					EvaluationLog.log(
+							"\n\t*child asks for help. Chooses to use story segments*");
 					break;
 				default :
 					break;
@@ -101,23 +114,59 @@ public class AskMeController implements ActionListener {
 				answer = dialog.showDialog();
 
 				if (typeOfHelp == TypeOfHelp.SUGGESTIONS) {
-					if (answer == HelpAnswer.ACCEPT) {
-						((StorySegmentGenerator) currentTextGenerator)
-								.addUsed(helpText);
-						submitController.processStory(helpText);
+
+					log.debug("Story Segment Generated: " + helpText);
+					EvaluationLog.log("\tStory Segment Generated: " + helpText);
+
+					switch (answer) {
+						case ACCEPT :
+							log.debug("Child Used The Story Segment");
+							storySegmentGenerator.addUsed(helpText);
+							submitController.processStory(helpText);
+							break;
+						case REJECT :
+							log.debug("Child Asked For Other Story Segment");
+							break;
+						case CANCEL :
+							log.debug("Child Got It");
+							break;
+						case WRONG_ANSWER :
+							break;
 					}
+
 				} else if (typeOfHelp == TypeOfHelp.QUESTION_ANSWER) {
+
+					log.debug("Prompt Generated: " + helpText);
+					EvaluationLog.log("\tPrompt Generated: " + helpText);
+
 					QuestionAnswerDialog tempDialog = ((QuestionAnswerDialog) dialog);
-					if (answer == HelpAnswer.ACCEPT) {
-						String inputText = tempDialog.getInputText();
-						processPromptAnswer(inputText);
-						processed.release(1);
-						processingWaitDialog.setVisible(true);
-					} else if (answer == HelpAnswer.CANCEL
-							|| answer == HelpAnswer.REJECT) {
-						promptChooser.ignored();
+
+					switch (answer) {
+						case ACCEPT :
+							String inputText = tempDialog.getInputText();
+							log.debug("\tChild Answered : " + inputText);
+							EvaluationLog.log("\tChild Answered : " + helpText);
+							processPromptAnswer(inputText);
+							processed.release(1);
+							processingWaitDialog.setVisible(true);
+							if (answer == HelpAnswer.WRONG_ANSWER) {
+								log.debug("Child Answer was wrong");
+							}
+							break;
+						case REJECT :
+							log.debug("Child Asked For Other Prompt");
+							promptChooser.ignored();
+							break;
+						case CANCEL :
+							log.debug("Child Got It");
+							promptChooser.ignored();
+							break;
+						default :
+							break;
 					}
+
 					tempDialog.clearInputText();
+
 				}
 
 			} while (answer == HelpAnswer.REJECT

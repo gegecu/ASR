@@ -29,9 +29,6 @@ import simplenlg.phrasespec.VPPhraseSpec;
 
 public class StorySegmentGenerator extends TextGeneration {
 
-	private static Logger log = Logger.getLogger(StorySegmentGenerator.class
-			.getName());
-
 	private String[] atLocationStorySegmentStart = {
 			"There is <start> in <end>.", "<end> has <start>." };
 
@@ -114,7 +111,6 @@ public class StorySegmentGenerator extends TextGeneration {
 				history.remove();
 			}
 			
-			log.debug("text gen: " + response.get(keys.get(random - 1)));
 			return response.get(keys.get(random - 1));
 		} else {
 			return null;

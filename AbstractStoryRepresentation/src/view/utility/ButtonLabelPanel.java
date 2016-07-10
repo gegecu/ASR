@@ -1,7 +1,7 @@
 /**
  * 
  */
-package view.utilities;
+package view.utility;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;

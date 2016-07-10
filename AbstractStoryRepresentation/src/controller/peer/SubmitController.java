@@ -9,14 +9,20 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.swing.SwingWorker;
 
+import org.apache.log4j.Logger;
+
 import controller.peer.checklist.ChecklistController;
 import model.story_representation.AbstractStoryRepresentation;
 import model.text_generation.prompts.PromptChooser;
 import model.text_understanding.TextUnderstanding;
+import utility.EvaluationLog;
 import view.mode.StoryInputPanel;
 import view.mode.StoryViewPanel;
 
 public class SubmitController implements ActionListener {
+
+	private static Logger log = Logger
+			.getLogger(SubmitController.class.getName());
 
 	private StoryInputPanel storyInputPanel;
 	private StoryViewPanel storyViewPanel;
@@ -54,6 +60,8 @@ public class SubmitController implements ActionListener {
 	public void actionPerformed(ActionEvent arg0) {
 		String text = storyInputPanel.getInputStorySegment();
 		if (!text.trim().isEmpty()) {
+			log.debug("Input of User : " + text);
+			EvaluationLog.log("\nChild wrote : " + text);
 			processStory(text);
 		}
 	}

@@ -16,9 +16,9 @@ import net.miginfocom.swing.MigLayout;
 import view.MainFrame;
 import view.TemplatePanel;
 import view.menu.AliceHeaderPanel;
-import view.utilities.AutoResizingButton;
-import view.utilities.CancelButton;
-import view.utilities.RoundedBorder;
+import view.utility.AutoResizingButton;
+import view.utility.CancelButton;
+import view.utility.RoundedBorder;
 
 /**
  * @author Alice

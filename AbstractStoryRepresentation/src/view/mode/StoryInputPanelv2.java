@@ -24,9 +24,9 @@ import org.languagetool.gui.GrammarChecker;
 import controller.peer.SubmitController;
 import net.miginfocom.swing.MigLayout;
 import view.TemplatePanel;
-import view.utilities.AutoResizingButton;
-import view.utilities.AutoResizingTextAreaWithPlaceHolder;
-import view.utilities.RoundedBorder;
+import view.utility.AutoResizingButton;
+import view.utility.AutoResizingTextAreaWithPlaceHolder;
+import view.utility.RoundedBorder;
 
 /**
  * @author Alice

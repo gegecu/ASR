@@ -1,7 +1,7 @@
 /**
  * 
  */
-package view.utilities;
+package view.utility;
 
 import java.awt.BasicStroke;
 import java.awt.Color;

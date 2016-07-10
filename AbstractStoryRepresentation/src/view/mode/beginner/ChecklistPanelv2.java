@@ -18,9 +18,9 @@ import model.story_representation.AbstractStoryRepresentation;
 import model.story_representation.Checklist;
 import net.miginfocom.swing.MigLayout;
 import view.TemplatePanel;
-import view.utilities.AutoResizingButton;
-import view.utilities.AutoResizingLabel;
-import view.utilities.RoundedBorder;
+import view.utility.AutoResizingButton;
+import view.utility.AutoResizingLabel;
+import view.utility.RoundedBorder;
 
 public class ChecklistPanelv2 extends TemplatePanel {
 

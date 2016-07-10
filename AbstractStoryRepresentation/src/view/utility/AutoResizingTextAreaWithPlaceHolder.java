@@ -1,4 +1,7 @@
-package view.utilities;
+/**
+ * 
+ */
+package view.utility;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -9,25 +12,21 @@ import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
-import javax.swing.JTextField;
+import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
-import javax.swing.SwingConstants;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
-import javax.swing.text.AttributeSet;
-import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
-import javax.swing.text.PlainDocument;
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
 
 /**
- * @author Alice
- * @since December 30, 2015
+ * @author User
+ *
  */
 @SuppressWarnings("serial")
-public class AutoResizingTextFieldWithPlaceHolder extends JTextField {
+public class AutoResizingTextAreaWithPlaceHolder extends JTextArea {
 
 	private final String HelloWorld = "HELLO WORLD";
 	private String placeHolder = "";
@@ -37,7 +36,7 @@ public class AutoResizingTextFieldWithPlaceHolder extends JTextField {
 	private double ratio;
 	private Color placeHolderColor = Color.GRAY;
 
-	private Font fieldFont;
+	private Font areaFont;
 	private int baseWidth = Integer.MIN_VALUE;
 	private int baseHeight = Integer.MIN_VALUE;
 
@@ -45,7 +44,14 @@ public class AutoResizingTextFieldWithPlaceHolder extends JTextField {
 
 	private UndoManager undo;
 
-	public AutoResizingTextFieldWithPlaceHolder() {
+	public AutoResizingTextAreaWithPlaceHolder() {
+
+		setForeground(Color.BLACK);
+
+	}
+
+	public void addUndoRedoManager() {
+
 		undo = new UndoManager();
 		Document doc = getDocument();
 		doc.addUndoableEditListener(new UndoableEditListener() {
@@ -75,14 +81,7 @@ public class AutoResizingTextFieldWithPlaceHolder extends JTextField {
 			}
 		});
 		getInputMap().put(KeyStroke.getKeyStroke("control Y"), "Redo");
-	}
 
-	public void setPlaceHolder(String placeHolder) {
-		this.placeHolder = placeHolder;
-	}
-
-	public void setPlaceHolderColor(Color placeHolderColor) {
-		this.placeHolderColor = placeHolderColor;
 	}
 
 	@Override
@@ -100,12 +99,12 @@ public class AutoResizingTextFieldWithPlaceHolder extends JTextField {
 		if (true == fontChanged) {
 
 			fontChanged = false;
-			fieldFont = getFont();
+			areaFont = getFont();
 
 			height = getHeight();
 			width = getWidth();
 
-			stringWidth = getFontMetrics(fieldFont).stringWidth(HelloWorld);
+			stringWidth = getFontMetrics(areaFont).stringWidth(HelloWorld);
 
 			ratio = (double) baseWidth / (double) stringWidth;
 
@@ -115,28 +114,32 @@ public class AutoResizingTextFieldWithPlaceHolder extends JTextField {
 			width = getWidth();
 
 			double widthRatio = (double) width / (double) stringWidth / ratio;
-			int newFontSize = (int) (fieldFont.getSize() * widthRatio);
+			int newFontSize = (int) (areaFont.getSize() * widthRatio);
 			int fontSizeToUse = Math.min(newFontSize, height);
 
 			super.setFont(
-					fieldFont.deriveFont(fieldFont.getStyle(), fontSizeToUse));
+					areaFont.deriveFont(areaFont.getStyle(), fontSizeToUse));
 
 		}
 
 		if (0 < placeHolder.length() && true == getText().isEmpty()) {
 
-			FontMetrics fontMetrics = g.getFontMetrics();
+			FontMetrics fm = g.getFontMetrics();
 			Graphics2D g2 = (Graphics2D) g.create();
 			g2.setColor(placeHolderColor);
 			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 					RenderingHints.VALUE_ANTIALIAS_ON);
-			int x = getPlaceHolderPosX(fontMetrics);
-			int y = getPlaceHolderPosY(fontMetrics);
+			int x = 0;
+			int y = fm.getAscent();
 			g2.drawString(placeHolder, x, y);
 			g2.dispose();
 
 		}
 
+	}
+
+	public void setPlaceHolder(String placeHolder) {
+		this.placeHolder = placeHolder;
 	}
 
 	@Override
@@ -145,64 +148,8 @@ public class AutoResizingTextFieldWithPlaceHolder extends JTextField {
 		fontChanged = true;
 	}
 
-	private int getPlaceHolderPosX(FontMetrics fontMetrics) {
-
-		int x = 0;
-
-		switch (getHorizontalAlignment()) {
-			case SwingConstants.LEFT :
-			case SwingConstants.LEADING :
-				x = getBorder().getBorderInsets(getParent()).left;
-				break;
-			case SwingConstants.TRAILING :
-
-			case SwingConstants.RIGHT :
-				x = getWidth() - getBorder().getBorderInsets(getParent()).right
-						- (fontMetrics.stringWidth(placeHolder));
-				break;
-			case SwingConstants.CENTER :
-				x = (this.getWidth()) / 2
-						- (fontMetrics.stringWidth(placeHolder) / 2);
-				break;
-		}
-
-		return x;
-
-	}
-
-	private int getPlaceHolderPosY(FontMetrics fontMetrics) {
-
-		int y = ((getHeight() - fontMetrics.getHeight()) / 2)
-				+ fontMetrics.getAscent();
-		return y;
-
-	}
-
-	public void setCharacterLimit(int limit) {
-		this.setDocument(new JTextFieldLimit(limit));
-	}
-
-	private class JTextFieldLimit extends PlainDocument {
-
-		private int limit;
-
-		public JTextFieldLimit(int limit) {
-			super();
-			this.limit = limit;
-		}
-
-		public void insertString(int offset, String str, AttributeSet attr)
-				throws BadLocationException {
-
-			if (str == null)
-				return;
-
-			if ((getLength() + str.length()) <= limit) {
-				super.insertString(offset, str, attr);
-			}
-
-		}
-
+	public void setPlaceHolderColor(Color color) {
+		this.placeHolderColor = color;
 	}
 
 }

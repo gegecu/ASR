@@ -203,11 +203,11 @@ public class Preprocessing {
 	
 	        	//token belongs to which chain of coref
 	            Integer corefClustId= token.get(CorefCoreAnnotations.CorefClusterIdAnnotation.class);
-	            System.out.println(token.word() +  " --> corefClusterID = " + corefClustId);
+	            log.debug(token.word() +  " --> corefClusterID = " + corefClustId);
 	
 	
 	            CorefChain chain = corefs.get(corefClustId);
-	            System.out.println("matched chain = " + chain);
+	            log.debug("matched chain = " + chain);
 	
 	
 	            if(chain==null || chain.getMentionsInTextualOrder().size() == 1){
@@ -220,12 +220,12 @@ public class Preprocessing {
 	
 	                String newwords = "";
 	                CorefMention reprMent = chain.getRepresentativeMention();
-	                System.out.println(reprMent);
+	                log.debug(reprMent);
 	                
 	                boolean found = false;
 	                for(int i = reprMent.startIndex; i<reprMent.endIndex; i++){
 	                	
-	                	System.out.println(reprMent.sentNum + ", " + token.sentIndex());
+	                	log.debug(reprMent.sentNum + ", " + token.sentIndex());
 	                	
 	                	if(reprMent.sentNum != token.sentIndex() + 1) {
 	                	
@@ -259,7 +259,7 @@ public class Preprocessing {
 		                    		}
 			                    }
 		                    	else if(token.tag().equals("PRP$")) {
-		                    		System.out.println("WHY");
+		                    		log.debug("WHY");
 		                    		
 		                    		resolved.add(reprMent.mentionSpan + "'s");
 			        				
@@ -296,13 +296,13 @@ public class Preprocessing {
 	                	}
 	                }
 
-	                System.out.println("converting " + token.word() + " to " + newwords);
+	                log.debug("converting " + token.word() + " to " + newwords);
 	            }
 	
 	
-	            System.out.println();
-	            System.out.println();
-	            System.out.println("-----------------------------------------------------------------");
+	            log.debug("");
+	            log.debug("");
+	            log.debug("-----------------------------------------------------------------");
 	
 	        }
 	
@@ -310,11 +310,11 @@ public class Preprocessing {
 	
 	
 	    String resolvedStr ="";
-	    System.out.println();
+	    log.debug("");
 	    for (String str : resolved) {
 	        resolvedStr+=str+" ";
 	    }
-	    System.out.println(resolvedStr);
+	    log.debug(resolvedStr);
 	    
 	    return resolvedStr;
 	

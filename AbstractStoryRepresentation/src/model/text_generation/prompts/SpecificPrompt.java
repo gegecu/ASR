@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 
+import org.apache.log4j.Logger;
+
 import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.semgraph.SemanticGraph;
@@ -24,6 +26,9 @@ import model.utility.TypedDependencyComparator;
 
 public class SpecificPrompt extends Prompt {
 
+	private static Logger log = Logger
+			.getLogger(SpecificPrompt.class.getName());
+
 	private String[] objectTopics = {"color", "shape", "size", "texture"};
 	private String[] personTopics = {"attitude", "nationality", "talent"};
 	private Map<Noun, List<String>> answered;
@@ -38,24 +43,23 @@ public class SpecificPrompt extends Prompt {
 
 	@Override
 	public String generateText(Noun noun) {
-		if(!isWrong) {
+		if (!isWrong) {
 			return checkAvailableTopics(noun);
-		}
-		else {
+		} else {
 			return generateWrongPrompts();
 		}
 	}
-	
+
 	public void setIsWrongIgnored(boolean isWrong) {
 		this.isWrong = isWrong;
 	}
-	
+
 	public boolean getIsWrong() {
 		return this.isWrong;
 	}
 
 	private String checkAvailableTopics(Noun noun) {
-		
+
 		currentNoun = noun;
 		List<String> availableTopics = availableTopics(noun);
 		currentPrompt = null;
@@ -77,18 +81,17 @@ public class SpecificPrompt extends Prompt {
 				toBeReplaced = (noun.getIsCommon() ? "the " : "");
 			}
 
-			
 			currentTopic = availableTopics.get(random - 1);
 			currentPrompt = "What is the " + availableTopics.get(random - 1)
 					+ " of " + toBeReplaced + noun.getId() + "?";
-			
-			if(history.contains(currentPrompt)) {
+
+			if (history.contains(currentPrompt)) {
 				currentPrompt = null;
 				continue;
 			}
 
-			System.out.println(currentPrompt);
-			
+			log.debug(currentPrompt);
+
 			return currentPrompt;
 
 		}
@@ -112,7 +115,7 @@ public class SpecificPrompt extends Prompt {
 		for (CoreMap sentence : sentences) {
 
 			preprocess.preprocess(currentPrompt + " " + sentence.toString());
-			
+
 			coref = preprocess.getCoref();
 
 			SemanticGraph dependencies = sentence
@@ -134,7 +137,7 @@ public class SpecificPrompt extends Prompt {
 				}
 
 				if (coref.size() - countSame >= 1) {
-					
+
 					noun = currentNoun.getId();
 
 					if (td.reln().toString().equals("nsubj")) {
@@ -178,18 +181,18 @@ public class SpecificPrompt extends Prompt {
 
 	private List<String> availableTopics(Noun noun) {
 		String[] topics = null;
-		
+
 		if (noun instanceof Object) {
 			topics = objectTopics;
 		} else if (noun instanceof Character) {
 			topics = personTopics;
 		}
-		
+
 		List<String> answeredTopics = answered.get(noun);
 		if (answeredTopics == null) {
 			answeredTopics = new ArrayList<>();
 		}
-		
+
 		//check all anyway to be sure because TU sometime fails
 		for (List<String> attributes : noun.getAttributes().values()) {
 			for (String attribute : attributes) {
@@ -200,7 +203,7 @@ public class SpecificPrompt extends Prompt {
 				}
 			}
 		}
-	
+
 		//need to check references because possible error in TU ball isA round
 		for (Map.Entry<String, Map<String, Noun>> entry : noun.getReferences()
 				.entrySet()) {
@@ -213,38 +216,40 @@ public class SpecificPrompt extends Prompt {
 				}
 			}
 		}
-		
+
 		List<String> availableTopics = null;
 		if (noun instanceof Object) {
 			availableTopics = new ArrayList<>(Arrays.asList(objectTopics));
 		} else if (noun instanceof Character) {
 			availableTopics = new ArrayList<>(Arrays.asList(personTopics));
 		}
-		
+
 		availableTopics.removeAll(answeredTopics);
 		return availableTopics;
 	}
-	
+
 	public boolean checkifCompleted() {
 		return availableTopics(currentNoun).isEmpty();
 	}
-	
+
 	private String generateWrongPrompts() {
-		
+
 		String prompt = "";
-		
-		List<Concept> concepts = ConceptNetDAO.getConceptFrom(currentTopic, "IsA");
-		
-		if(concepts != null && !concepts.isEmpty()) {
+
+		List<Concept> concepts = ConceptNetDAO.getConceptFrom(currentTopic,
+				"IsA");
+
+		if (concepts != null && !concepts.isEmpty()) {
 			int randomConcept = Randomizer.random(1, concepts.size());
-			prompt = "An example of " + currentTopic + " is " + concepts.get(randomConcept).getStart() + ". ";
-		}
-		else {
+			prompt = "An example of " + currentTopic + " is "
+					+ concepts.get(randomConcept).getStart() + ". ";
+		} else {
 			//ignore
 			this.isWrong = false;
 		}
-		
-		prompt += "What is the " + currentTopic + " of " + currentNoun.getId() + "?";
+
+		prompt += "What is the " + currentTopic + " of " + currentNoun.getId()
+				+ "?";
 
 		return prompt;
 	}

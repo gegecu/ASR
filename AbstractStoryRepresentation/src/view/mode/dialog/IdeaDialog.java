@@ -11,7 +11,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.miginfocom.swing.MigLayout;
-import view.utilities.RoundedBorder;
+import view.utility.RoundedBorder;
 
 @SuppressWarnings("serial")
 public class IdeaDialog extends HelpDialog {

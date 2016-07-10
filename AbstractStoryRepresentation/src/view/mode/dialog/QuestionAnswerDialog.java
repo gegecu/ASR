@@ -17,8 +17,8 @@ import javax.swing.event.MouseInputAdapter;
 import org.languagetool.gui.GrammarChecker;
 
 import net.miginfocom.swing.MigLayout;
-import view.utilities.AutoResizingTextAreaWithPlaceHolder;
-import view.utilities.RoundedBorder;
+import view.utility.AutoResizingTextAreaWithPlaceHolder;
+import view.utility.RoundedBorder;
 
 @SuppressWarnings("serial")
 public class QuestionAnswerDialog extends HelpDialog {

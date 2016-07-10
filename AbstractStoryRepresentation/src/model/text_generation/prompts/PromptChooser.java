@@ -20,6 +20,7 @@ import edu.stanford.nlp.trees.TypedDependency;
 import edu.stanford.nlp.util.CoreMap;
 import model.instance.StanfordCoreNLPInstance;
 import model.story_representation.AbstractStoryRepresentation;
+import model.story_representation.story_element.Verb;
 import model.story_representation.story_element.noun.Character;
 import model.story_representation.story_element.noun.Location;
 import model.story_representation.story_element.noun.Noun;
@@ -36,6 +37,9 @@ import simplenlg.features.Tense;
 import simplenlg.phrasespec.VPPhraseSpec;
 
 public class PromptChooser extends TextGeneration {
+
+	private static Logger log = Logger.getLogger(PromptChooser.class.getName());
+
 	private Set<String> restrictedInGeneral;
 	private Set<String> restrictedInSpecific;
 	private GeneralPrompt generalPrompt;
@@ -47,9 +51,6 @@ public class PromptChooser extends TextGeneration {
 	private Queue<String> history;
 	private boolean answeredCorrect;
 	private StanfordCoreNLP pipeline;
-
-	private static Logger log = Logger.getLogger(PromptChooser.class.getName());
-
 
 	public PromptChooser(AbstractStoryRepresentation asr) {
 		super(asr);
@@ -69,21 +70,22 @@ public class PromptChooser extends TextGeneration {
 
 		if (asr.getCurrentPartOfStory()
 				.equals(AbstractStoryRepresentation.start)) {
-			
-			while(output == null) {
-			
-				if(currentPrompt != null && currentPrompt instanceof SpecificPrompt) {
-					if(((SpecificPrompt) currentPrompt).getIsWrong()) {
+
+			while (output == null) {
+
+				if (currentPrompt != null
+						&& currentPrompt instanceof SpecificPrompt) {
+					if (((SpecificPrompt) currentPrompt).getIsWrong()) {
 						currentPrompt = specificPrompt;
 						output = currentPrompt.generateText(null);
 						break;
 					}
 				}
-				
+
 				String nounid = findNounId();
 				Noun noun = asr.getNoun(nounid);
 				currentId = nounid;
-	
+
 				if (restrictedInGeneral.contains(nounid)) {
 					if (noun instanceof Object || noun instanceof Character) {
 						currentPrompt = specificPrompt;
@@ -91,10 +93,10 @@ public class PromptChooser extends TextGeneration {
 				} else {
 					currentPrompt = generalPrompt;
 				}
-	
+
 				output = currentPrompt.generateText(noun);
-				
-				if(currentPrompt instanceof SpecificPrompt) {
+
+				if (currentPrompt instanceof SpecificPrompt) {
 					if (((SpecificPrompt) currentPrompt).checkifCompleted()) {
 						restrictedInGeneral.remove(currentId);
 						restrictedInSpecific.add(currentId);
@@ -105,23 +107,17 @@ public class PromptChooser extends TextGeneration {
 		} else {
 			output = specialPrompt.capableOf();
 		}
-		
+
 		history.add(output);
 		if (history.size() > 3) {
 			history.remove();
 		}
 
-		log.debug("text gen: " + output);
-
 		return output;
 
 	}
 
-	
-
 	public boolean checkAnswer(String input) {
-
-		log.debug("answer in prompt: " + input);
 
 		String temp = incompleteAnswer(input);
 
@@ -129,28 +125,28 @@ public class PromptChooser extends TextGeneration {
 
 		answeredCorrect = false;
 
-		if(asr.getCurrentPartOfStory().equals("start")) {
+		if (asr.getCurrentPartOfStory().equals("start")) {
 			if (currentPrompt instanceof GeneralPrompt) {
 				//wrong answer
 				if (!currentPrompt.checkAnswer(temp)) {
-	
+
 					//forever in general prompts, never add in restrictedGeneral because all specific answered
 					if (!restrictedInSpecific.contains(currentId)) {
 						// answered wrong, not yet completed q/a and not object or person
 						if (!(noun instanceof Location
 								|| noun instanceof Unknown)) {
-							System.out.println(currentId);
+							log.debug(currentId);
 							restrictedInGeneral.add(currentId);
 						}
-	
+
 					}
-	
+
 				} else {
 					answeredCorrect = true;
 				}
-	
+
 			} else if (currentPrompt instanceof SpecificPrompt) {
-	
+
 				//correct answer
 				if (currentPrompt.checkAnswer(temp)) {
 					answeredCorrect = true;
@@ -158,22 +154,20 @@ public class PromptChooser extends TextGeneration {
 						restrictedInGeneral.remove(currentId);
 						restrictedInSpecific.add(currentId);
 					}
-				}
-				else {
+				} else {
 					((SpecificPrompt) currentPrompt).setIsWrongIgnored(true);
 				}
 			}
-		}
-		else {
+		} else {
 			answeredCorrect = specialPrompt.checkAnswer(input);
 		}
 
 		return answeredCorrect;
 
 	}
-	
+
 	public void ignored() {
-		if(currentPrompt instanceof SpecificPrompt) {
+		if (currentPrompt instanceof SpecificPrompt) {
 			((SpecificPrompt) currentPrompt).setIsWrongIgnored(false);
 		}
 	}
@@ -193,7 +187,8 @@ public class PromptChooser extends TextGeneration {
 
 			if (listDependencies.size() == 1) {
 				return "The " + asr.getNoun(currentId).getId() + " is "
-						+ listDependencies.get(0).dep().lemma().toLowerCase() + ".";
+						+ listDependencies.get(0).dep().lemma().toLowerCase()
+						+ ".";
 			}
 		}
 
@@ -205,7 +200,7 @@ public class PromptChooser extends TextGeneration {
 
 		List<String> nounId = this.getNouns();
 		int random = Randomizer.random(1, nounId.size());
-		return nounId.get(random-1);
+		return nounId.get(random - 1);
 	}
 
 }

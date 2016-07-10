@@ -250,7 +250,7 @@ public class Extractor {
 			
 			if(!(tdGovLemma.equalsIgnoreCase("has") || tdGovLemma.equalsIgnoreCase("have"))) {
 				Event p = storySentence.getPredicate(tdGovId);
-				System.out.println(tdGovId + " " + p);
+				log.debug(tdGovId + " " + p);
 				p.getConcepts().clear();
 				p.setNegated(true);
 	
@@ -397,7 +397,7 @@ public class Extractor {
 			asr.addNoun(tdGovId, noun2);
 		}
 		
-		System.out.println(tdGovId);
+		log.debug(tdGovId);
 		
 		noun.addReference("HasA", tdDepId, noun2);
 		noun2.addReference("IsOwnedBy", tdGovId, noun);
@@ -967,7 +967,7 @@ public class Extractor {
 
 				event.addDoer(tdDepId, noun);
 				event.addConcept(cp.createConceptAsVerb(tdGovLemma));
-				System.out.println(tdGovId);
+				log.debug(tdGovId);
 				storySentence.addPredicate(tdGovId, event);
 
 			}

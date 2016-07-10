@@ -6,13 +6,19 @@ import java.awt.event.ActionListener;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import org.apache.log4j.Logger;
+
 import model.story_database.Story;
 import model.story_database.StoryDAO;
+import utility.EvaluationLog;
 import view.MainFrame;
 import view.mode.dialog.OkDialog;
 import view.mode.dialog.YesNoDialog;
 
 public class SaveController implements ActionListener {
+
+	private static Logger log = Logger
+			.getLogger(SaveController.class.getName());
 
 	private MainFrame mainFrame;
 	private JTextField titleField;
@@ -54,7 +60,17 @@ public class SaveController implements ActionListener {
 			Story story = new Story(titleField.getText(),
 					storyViewArea.getText());
 			if (StoryDAO.saveStory(story)) {
+
+				log.debug("Child Saved The Story : " + story);
+				log.debug("WHOLE STORY OF CHILD: \n\tTitle: "
+						+ story.getStoryTitle() + "\nStory: "
+						+ story.getStoryText());
+				EvaluationLog.log("WHOLE STORY OF CHILD: \n\tTitle: "
+						+ story.getStoryTitle() + "\n\tStory: "
+						+ story.getStoryText() + "\n");
+
 				mainFrame.showMainMenu();
+
 			} else {
 				databaseErrorDialog.setVisible(true);
 			}

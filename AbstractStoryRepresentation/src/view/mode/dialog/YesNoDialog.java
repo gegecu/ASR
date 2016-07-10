@@ -20,9 +20,9 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.miginfocom.swing.MigLayout;
-import view.utilities.AutoResizingButton;
-import view.utilities.AutoResizingLabel;
-import view.utilities.RoundedBorder;
+import view.utility.AutoResizingButton;
+import view.utility.AutoResizingLabel;
+import view.utility.RoundedBorder;
 
 public class YesNoDialog extends JDialog {
 

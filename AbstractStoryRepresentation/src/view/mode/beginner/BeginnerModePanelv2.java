@@ -38,10 +38,10 @@ import view.mode.AlicePanelv2;
 import view.mode.ModePanel;
 import view.mode.StoryInputPanelv2;
 import view.mode.StoryViewPanelv2;
-import view.utilities.AutoResizingButton;
-import view.utilities.AutoResizingLabel;
-import view.utilities.AutoResizingTextFieldWithPlaceHolder;
-import view.utilities.RoundedBorder;
+import view.utility.AutoResizingButton;
+import view.utility.AutoResizingLabel;
+import view.utility.AutoResizingTextFieldWithPlaceHolder;
+import view.utility.RoundedBorder;
 
 /**
  * @author Alice
