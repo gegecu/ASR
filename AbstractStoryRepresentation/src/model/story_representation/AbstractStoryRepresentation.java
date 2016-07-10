@@ -40,7 +40,7 @@ public class AbstractStoryRepresentation {
 		this.storySentences = new LinkedHashMap<String, List<StorySentence>>();
 		this.nouns = new HashMap<String, Noun>();
 		this.conflict = null;
-		this.partOfStory = "start";
+		this.partOfStory = start;
 	}
 
 	public Conflict getConflict() {

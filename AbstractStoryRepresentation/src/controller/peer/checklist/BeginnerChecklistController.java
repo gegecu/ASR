@@ -24,8 +24,6 @@ public class BeginnerChecklistController extends ChecklistController
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 
-		doTheThing();
-
 		String partOfStory = asr.getCurrentPartOfStory();
 
 		switch (partOfStory) {
@@ -42,6 +40,8 @@ public class BeginnerChecklistController extends ChecklistController
 			case ChecklistPanel.END :
 				break;
 		}
+
+		doTheThing();
 
 	}
 
