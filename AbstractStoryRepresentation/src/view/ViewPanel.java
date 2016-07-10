@@ -4,6 +4,7 @@
 package view;
 
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
@@ -23,7 +24,7 @@ import view.utility.RoundedBorder;
  * @since December 30, 2015
  */
 @SuppressWarnings("serial")
-public abstract class ViewPanel extends TemplatePanel {
+public class ViewPanel extends TemplatePanel {
 
 	protected JScrollPane scrollPane;
 	protected JScrollBar verticalScrollBar;
@@ -190,6 +191,10 @@ public abstract class ViewPanel extends TemplatePanel {
 	protected void addUXFeatures() {
 		// TODO Auto-generated method stub
 
+	}
+
+	public Container getScrollPanePanel() {
+		return scrollPanePanel;
 	}
 
 }
