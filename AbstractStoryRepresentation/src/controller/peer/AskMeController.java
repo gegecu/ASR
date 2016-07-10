@@ -170,7 +170,7 @@ public class AskMeController implements ActionListener {
 				}
 
 			} while (answer == HelpAnswer.REJECT
-					|| answer == HelpAnswer.WRONG_ANSWER);
+					|| promptChooser.getIsLoop());
 
 		}
 
