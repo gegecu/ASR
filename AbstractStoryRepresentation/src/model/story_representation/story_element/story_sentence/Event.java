@@ -10,11 +10,13 @@ public class Event extends Clause {
 
 	private Map<String, Noun> receivers;
 	private Map<String, Noun> directObjects;
+	private Map<String, Noun> locations;
 	private Verb verb;
 
 	public Event(String action) {
 		this.receivers = new HashMap<String, Noun>();
 		this.directObjects = new HashMap<String, Noun>();
+		this.locations = new HashMap<String, Noun>();
 		this.verb = new Verb(action);
 
 	}
@@ -50,7 +52,15 @@ public class Event extends Clause {
 	public void addDirectObject(String id, Noun noun) {
 		this.directObjects.put(id, noun);
 	}
-
+	public void addLocation (String id, Noun noun){
+		this.locations.put(id, noun);
+	}
+	public Map<String,Noun> getLocations(){
+		return this.locations;
+	}
+	public Noun getLocation(String id){
+		return this.locations.get(id);
+	}
 	public Noun removeDirectObject(String id) {
 		return this.directObjects.remove(id);
 	}

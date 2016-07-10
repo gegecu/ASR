@@ -62,6 +62,7 @@ public class StorySentence {
 			nounId.addAll(predicate.getManyDoers().keySet());
 			nounId.addAll(predicate.getDirectObjects().keySet());
 			nounId.addAll(predicate.getReceivers().keySet());
+			nounId.addAll(predicate.getLocations().keySet());
 		}
 
 		for (Description d : this.description.values()) {

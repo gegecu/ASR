@@ -42,12 +42,18 @@ public class SpecialPrompt {
 
 	private static Logger log = Logger.getLogger(SpecialPrompt.class.getName());
 
+	//fixed some grammar issues
 	private String[] causeEffectDirective = {
-			"Tell me more why <noun> <action>.",
+			"Tell me why <noun> <action>.",
+			"Why did <noun> <action>?",
+			"Explain why <noun> <action>.",
 			"Write more about why <noun> <action>.",
 			"Write the reason why <noun> <action>."};
 
-	private String[] causeEffectAlternative = {"Tell me more what happened."};
+	private String[] causeEffectAlternative = {
+			"Tell me more about what happened.", 
+			"Tell me what happened next.",
+			"Then what happened?"};
 
 	private AbstractStoryRepresentation asr;
 	private Queue<String> history;

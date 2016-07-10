@@ -460,7 +460,7 @@ public class Extractor {
 				}
 
 				//caution might conflict with xcomp action
-				//predicate.addDirectObject(tdDepId, noun); //changed to details(prepphrase)
+				predicate.addLocation(tdDepId, noun); //changed to locations in storysentence
 				log.debug("Location: " + tdDepLemma);
 				String prepPhrase = createPrepositionalPhrase(td);
 				String verbPhrase = tdDepLemma + " " + prepPhrase;
