@@ -67,22 +67,30 @@ public class PromptChooser extends TextGeneration {
 	public String generateText() {
 
 		String output = null;
+		int i = 0;
 
 		if (asr.getCurrentPartOfStory()
 				.equals(AbstractStoryRepresentation.start)) {
 
-			while (output == null) {
-
+			while (output == null && i < 10) {
+				i++;
 //				if (currentPrompt != null
 //						&& currentPrompt instanceof SpecificPrompt) {
 //					if (((SpecificPrompt) currentPrompt).getIsWrong()) {
 //						currentPrompt = specificPrompt;
-//						output = currentPrompt.generateText(null);
+//						output = currentPrompt.generateText(asr.getNoun(currentId));
 //						break;
+//					}
+//					else {
+//						output = currentPrompt.generateText(asr.getNoun(currentId));
 //					}
 //				}
 
+				i++;
+				System.out.println(isLoop);
+				
 				String nounid = "";
+				
 				if(isLoop) {
 					nounid = currentId;
 				}
@@ -180,7 +188,10 @@ public class PromptChooser extends TextGeneration {
 		if (currentPrompt instanceof SpecificPrompt) {
 			((SpecificPrompt) currentPrompt).setIsWrongIgnored(false);
 		}
-		isLoop = false;
+	}
+	
+	public void stopLoop() {
+		this.isLoop = false;
 	}
 	
 	public boolean getIsLoop() {

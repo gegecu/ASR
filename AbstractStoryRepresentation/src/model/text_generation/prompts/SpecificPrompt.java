@@ -81,8 +81,8 @@ public class SpecificPrompt extends Prompt {
 				toBeReplaced = (noun.getIsCommon() ? "the " : "");
 			}
 
-			currentTopic = availableTopics.get(random - 1);
-			currentPrompt = "What is the " + availableTopics.get(random - 1)
+			currentTopic = availableTopics.remove(random - 1);
+			currentPrompt = "What is the " + currentTopic
 					+ " of " + toBeReplaced + noun.getId() + "?";
 
 			if (history.contains(currentPrompt)) {

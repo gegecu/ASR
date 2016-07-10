@@ -160,6 +160,7 @@ public class AskMeController implements ActionListener {
 						case CANCEL :
 							log.debug("Child Got It");
 							promptChooser.ignored();
+							promptChooser.stopLoop();
 							break;
 						default :
 							break;
