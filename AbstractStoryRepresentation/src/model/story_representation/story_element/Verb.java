@@ -1,5 +1,6 @@
 package model.story_representation.story_element;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,14 +19,20 @@ public class Verb {
 	private Set<String> adverbs;
 	private Set<String> clausalComplements;
 
-	public Set<String> getAdverbs() {
-		return adverbs;
+	public ArrayList<String> getAdverbs() {
+		ArrayList<String> list = new ArrayList();
+		list.addAll(adverbs);
+		return list;
 	}
-	public Set<String> getPrepositionalPhrases() {
-		return prepositionalPhrases;
+	public ArrayList<String> getPrepositionalPhrases() {
+		ArrayList<String> list = new ArrayList();
+		list.addAll(prepositionalPhrases);
+		return list;
 	}
-	public Set<String> getClausalComplements() {
-		return clausalComplements;
+	public ArrayList<String> getClausalComplements() {
+		ArrayList<String> list = new ArrayList();
+		list.addAll(clausalComplements);
+		return list;
 	}
 	public String getAuxiliary() {
 		return auxiliary;
@@ -43,6 +50,7 @@ public class Verb {
 		log.debug(action + " : " + "adding phrase: " + phrase);
 		prepositionalPhrases.add(phrase);
 	}
+	
 	public void addAdverb(String adverb) {
 		log.debug(action + " : " + "adding adv: " + adverb);
 		adverbs.add(adverb);
@@ -51,6 +59,7 @@ public class Verb {
 		log.debug(action + " : " + "adding comp: " + comp);
 		clausalComplements.add(comp);
 	}
+	
 	public void setAuxiliary(String aux) {
 		this.auxiliary = aux;
 	}

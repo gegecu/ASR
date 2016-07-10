@@ -45,7 +45,6 @@ public class SpecialPrompt {
 	//fixed some grammar issues
 	private String[] causeEffectDirective = {
 			"Tell me why <noun> <action>.",
-			"Why did <noun> <action>?",
 			"Explain why <noun> <action>.",
 			"Write more about why <noun> <action>.",
 			"Write the reason why <noun> <action>."};
@@ -91,6 +90,13 @@ public class SpecialPrompt {
 			int randomPredicate = Randomizer.random(1, predicates.size());
 			Event predicate = predicates.remove(randomPredicate - 1);
 
+			ArrayList<String> complements = new ArrayList<>(predicate
+					.getVerb().getClausalComplements());
+			ArrayList<String> adverbs = new ArrayList<>(predicate.getVerb()
+					.getAdverbs());
+			ArrayList<String> prepositionals = new ArrayList<>(predicate
+					.getVerb().getPrepositionalPhrases());
+			
 			while (!directives.isEmpty() && directive == null) {
 
 				int randomCapableOfQuestion = Randomizer.random(1,
@@ -111,12 +117,26 @@ public class SpecialPrompt {
 
 				Collection<Noun> directObjects = predicate.getDirectObjects()
 						.values();
+				
+				
+				VPPhraseSpec verb = nlgFactory
+						.createVerbPhrase(predicate.getVerb().getAction());
 
+				int random = 0;
+				if(!complements.isEmpty()){
+					random = Randomizer.random(1, complements.size());
+					verb.addComplement(complements.remove(random));
+				}
+				if(!adverbs.isEmpty()){
+					random = Randomizer.random(1, adverbs.size());
+					verb.addModifier(adverbs.remove(random));
+				}
+				if(!prepositionals.isEmpty()){
+					random = Randomizer.random(1, prepositionals.size());
+					verb.addComplement(prepositionals.remove(random));
+				}
+				
 				if (!predicate.isNegated()) {
-
-					VPPhraseSpec verb = nlgFactory
-							.createVerbPhrase(predicate.getVerb().getAction());
-
 					if (directObjects.size() > 0) {
 						verb.setFeature(Feature.TENSE, Tense.PAST);
 						action = realiser.realise(verb).toString();
@@ -126,8 +146,6 @@ public class SpecialPrompt {
 						action = realiser.realise(verb).toString();
 					}
 				} else {
-					VPPhraseSpec verb = nlgFactory
-							.createVerbPhrase(predicate.getVerb().getAction());
 					verb.setFeature(Feature.TENSE, Tense.PRESENT);
 					verb.setFeature(Feature.NEGATED, true);
 					action = realiser.realise(verb).toString();
