@@ -12,7 +12,6 @@ import java.awt.event.MouseEvent;
 import javax.swing.ButtonModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
@@ -39,7 +38,6 @@ import view.mode.ModePanel;
 import view.mode.StoryInputPanel;
 import view.mode.StoryViewPanel;
 import view.utility.AutoResizingButton;
-import view.utility.AutoResizingLabel;
 import view.utility.AutoResizingTextFieldWithPlaceHolder;
 import view.utility.CancelButton;
 import view.utility.RoundedBorder;
@@ -56,13 +54,11 @@ public class BeginnerModePanel extends ModePanel {
 
 	private JButton helpButton;
 	private JButton askMeButton;
-	private JButton nextButton;
 
 	private StoryViewPanel storyViewPanel;
 
 	private AutoResizingTextFieldWithPlaceHolder titleField;
 
-	private JLabel guideLabel;
 	private ChecklistPanel checkListPanel;
 
 	private StoryInputPanel storyInputPanel;
@@ -118,11 +114,9 @@ public class BeginnerModePanel extends ModePanel {
 		helpButton = new AutoResizingButton();
 		saveButton = new AutoResizingButton();
 		askMeButton = new AutoResizingButton();
-		nextButton = new AutoResizingButton();
 		titleField = new AutoResizingTextFieldWithPlaceHolder();
 		storyViewPanel = new StoryViewPanel(92, 8);
-		guideLabel = new AutoResizingLabel();
-		checkListPanel = new ChecklistPanel(85, 15);
+		checkListPanel = new ChecklistPanel();
 
 		backButton.setText("");
 		backButton.setFocusPainted(false);
@@ -154,21 +148,7 @@ public class BeginnerModePanel extends ModePanel {
 		askMeButton.setBorder(
 				new RoundedBorder(Color.BLACK, 3, 12, 15, 10, 15, 10));
 
-		guideLabel.setText("To Do List");
-		guideLabel.setForeground(Color.BLACK);
-		guideLabel.setFont(new Font("Arial", Font.BOLD, 36));
-		guideLabel.setHorizontalAlignment(SwingConstants.CENTER);
-
 		checkListPanel.setBackground(Color.decode("#36B214"));
-
-		nextButton.setText("Next Part");
-		nextButton.setFocusPainted(false);
-		nextButton.setBackground(Color.GREEN);
-		nextButton.setForeground(Color.BLACK);
-		nextButton.setHorizontalAlignment(SwingConstants.CENTER);
-		nextButton.setFont(new Font("Arial", Font.BOLD, 25));
-		nextButton.setBorder(
-				new RoundedBorder(Color.BLACK, 3, 12, 15, 10, 15, 10));
 
 		titleField.setPlaceHolder("Enter Title Here");
 		titleField.setCharacterLimit(100);
@@ -193,9 +173,7 @@ public class BeginnerModePanel extends ModePanel {
 
 		JPanel panel2 = new JPanel(new MigLayout("insets 5 0 0 0"));
 		panel2.setBackground(Color.decode("#36B214"));
-		panel2.add(guideLabel, "h 15%, w 95%, wrap");
-		panel2.add(checkListPanel, "h 65%, w 100%, wrap");
-		panel2.add(nextButton, "h 15%, w 100%, wrap");
+		panel2.add(checkListPanel, "h 100%, w 100%, wrap");
 
 		JPanel panel3 = new JPanel(new MigLayout("insets 0"));
 		panel3.setBackground(Color.decode("#36B214"));
@@ -295,23 +273,6 @@ public class BeginnerModePanel extends ModePanel {
 
 		});
 
-		nextButton.getModel().addChangeListener(new ChangeListener() {
-
-			private RoundedBorder border = (RoundedBorder) nextButton
-					.getBorder();
-
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				ButtonModel model = (ButtonModel) e.getSource();
-				if (true == model.isRollover()) {
-					border.setThickness(5);
-				} else if (false == model.isRollover()) {
-					border.setThickness(3);
-				}
-			}
-
-		});
-
 		titleField.addFocusListener(new FocusListener() {
 
 			private RoundedBorder border = (RoundedBorder) titleField
@@ -360,8 +321,6 @@ public class BeginnerModePanel extends ModePanel {
 
 	@Override
 	protected void addUXFeatures() {
-		// TODO Auto-generated method stub
-
 	}
 
 	public void addAskMeActionListener(AskMeController askMeController) {
@@ -384,7 +343,7 @@ public class BeginnerModePanel extends ModePanel {
 
 	public void addCheckListActionListener(
 			BeginnerChecklistController checklistController) {
-		nextButton.addActionListener(checklistController);
+		checkListPanel.addCheckListActionListener(checklistController);
 	}
 
 	public void setMainFrame(MainFrame mainFrame) {
