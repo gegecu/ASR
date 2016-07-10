@@ -39,6 +39,7 @@ import model.story_representation.story_element.story_sentence.Description;
 import model.story_representation.story_element.story_sentence.Event;
 import model.story_representation.story_element.story_sentence.StorySentence;
 import model.utility.PartOfSpeechComparator;
+import model.utility.SurfaceRealizer;
 import model.utility.TypedDependencyComparator;
 
 @SuppressWarnings("rawtypes")
@@ -170,7 +171,7 @@ public class Extractor {
 			}
 			/** get doer or subject **/
 			else if (tdReln.contains("nsubj")) {
-				extractDoerDependency(td, storySentence, tdDepId, tdGovId);
+				extractDoerDependency(td, storySentence, tdDepId, tdGovId, listDependencies);
 			}
 			/** get auxpass "HasProperty" (to create get + verb concepts) **/
 			else if (tdReln.equals("auxpass")) {
@@ -219,7 +220,7 @@ public class Extractor {
 					//temporal modifier, not sure what to do yet. Just to exclude in location check
 				}
 				else { //all prepositions that suggest location (at, in , to , under...)
-					extractLocationDependency(td, storySentence, tdDepId, tdGovId);
+					extractLocationDependency(td, storySentence, tdDepId, tdGovId, listDependencies);
 				}	
 			}
 
@@ -417,7 +418,7 @@ public class Extractor {
 
 	//only handles existing verbs(predicates) in asr
 	private void extractLocationDependency(TypedDependency td,
-			StorySentence storySentence, String tdDepId, String tdGovId) {
+			StorySentence storySentence, String tdDepId, String tdGovId, List<TypedDependency> listDependencies) {
 		System.out.println("in nmod");
 		String tdDepTag = td.dep().tag();
 		String tdDepLemma = td.dep().lemma();
@@ -426,18 +427,14 @@ public class Extractor {
 		String tdReln = td.reln().toString();
 
 		Noun noun = asr.getNoun(tdDepId);
-
 		if (noun == null) {
-
 			if (tdDepTag.equals("NNP")) {
 				noun = extractCategory(getNER(tdDepLemma), tdDepLemma);
 				noun.setProper();
 			} else if (tdDepTag.contains("NN")) {
 				noun = extractCategory(getSRL(tdDepLemma), tdDepLemma);
 			}
-
 			asr.addNoun(tdDepId, noun);
-
 		}
 
 		if (noun != null) {
@@ -466,10 +463,8 @@ public class Extractor {
 				}
 				
 				//if not a location still add details anyway
-				String prepPhrase = createPrepositionalPhrase(td);
-				String verbPhrase = tdDepLemma + " " + prepPhrase;
-				predicate.getVerb().addPrepositionalPhrase(prepPhrase);
-				predicate.addConcept(verbPhrase); //using original preposition
+				predicate.getVerb().addPrepositionalPhrase(createPrepositionalPhrase(td, listDependencies, true));
+				predicate.addConcept(tdDepLemma + " " + createPrepositionalPhrase(td, listDependencies, false)); 
 				predicate.addConcept(tdDepLemma); //object itself as concept				
 			}
 		}
@@ -485,15 +480,23 @@ public class Extractor {
 
 	}
 	
-	/** create prepositional phrase from nmod dependency */
-	private String createPrepositionalPhrase(TypedDependency td){
-		//String phrase = "";
+	/** create prepositional phrase from nmod dependency. provides surface type and concept type using boolean*/
+	private String createPrepositionalPhrase(TypedDependency td, List<TypedDependency> listDependencies, Boolean surface){
+		
 		String preposition = td.reln().toString().replace("nmod", "");
 		preposition = preposition.replace(":", "");
 		if(preposition.equals("")){
 			preposition = "to";
 		}
-		return preposition + " " + td.dep().lemma();
+		if(surface){
+			String det = "the";
+			List<TypedDependency> dets = findDependencies(td.dep(), "gov", "det", listDependencies);
+			for(TypedDependency t:dets){
+				det = t.dep().lemma();
+				return preposition + " " + det + " " +  td.dep().lemma();
+			}
+		}
+		return preposition + " " +  td.dep().lemma();
 	}
 	private void extractAdvmodPropertyDependency(TypedDependency td,
 			StorySentence storySentence, String tdDepId, String tdGovId) {
@@ -683,13 +686,30 @@ public class Extractor {
 			
 			//exhaust details of complement
 			List<TypedDependency> nmodTags = findDependencies(td.dep(), "gov", "nmod", listDependencies);
-			for(TypedDependency t: nmodTags){				
-				String prepphrase = createPrepositionalPhrase(t);
-				String verbPhrase = tdDepLemma + " " + prepphrase;
-				
-				event.getVerb().addClausalComplement(verbPhrase);//add phrase as detail 
-				event.addConcept(t.gov().lemma());//add location as concept
-				event.addConcept(verbPhrase); //
+			for (TypedDependency t : nmodTags) {
+				// add as noun
+				String nounLemma = t.dep().lemma();
+				String tDepId = (t.dep().sentIndex() + 1) + " "
+						+ t.dep().index();
+				Noun noun = asr.getNoun(tDepId);
+				if (noun == null) {
+					if (t.dep().tag().equals("NNP")) {
+						noun = extractCategory(getNER(nounLemma), nounLemma);
+						noun.setProper();
+					} else if (t.dep().tag().contains("NN")) {
+						noun = extractCategory(getSRL(nounLemma), nounLemma);
+					}
+					asr.addNoun(tDepId, noun);
+				}
+
+				event.getVerb().addClausalComplement(
+						td.dep().originalText()
+								+ " "
+								+ createPrepositionalPhrase(t,
+										listDependencies, true));
+				event.addConcept(t.gov().lemma());
+				event.addConcept(tdDepLemma + " "
+						+ createPrepositionalPhrase(t, listDependencies, false));
 			}
 			
 			//check for negation/positives
@@ -890,7 +910,7 @@ public class Extractor {
 	}
 
 	private void extractDoerDependency(TypedDependency td,
-			StorySentence storySentence, String tdDepId, String tdGovId) {
+			StorySentence storySentence, String tdDepId, String tdGovId, List<TypedDependency> listDependencies) {
 
 		String tdDepTag = td.dep().tag();
 		String tdDepLemma = td.dep().lemma();
@@ -964,7 +984,13 @@ public class Extractor {
 				if (event == null) {
 					event = new Event(tdGovLemma);
 				}
-
+				
+				event.getVerb().setPOS(tdGovTag);
+				//find auxiliary
+				List<TypedDependency> auxs = findDependencies(td.dep(),"gov", "aux", listDependencies); 
+				for(TypedDependency t: auxs){
+					event.getVerb().addAuxiliary(t.dep().lemma());
+				}
 				event.addDoer(tdDepId, noun);
 				event.addConcept(cp.createConceptAsVerb(tdGovLemma));
 				log.debug(tdGovId);
@@ -1025,7 +1051,7 @@ public class Extractor {
 		}
 
 	}
-
+	
 	private void extractCompoundDependency(TypedDependency td, String tdGovId) {
 
 		String tdDepTag = td.dep().tag();

@@ -90,10 +90,10 @@ public class SurfaceRealizer {
 		String temp = word.toLowerCase();
 		for (String vowel : vowels) {
 			if (temp.startsWith(vowel)) {
-				return "an " + temp;
+				return "an " + word;
 			}
 		}
-		return "a " + temp;
+		return "a " + word;
 
 	}
 

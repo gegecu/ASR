@@ -35,6 +35,7 @@ import model.utility.TypedDependencyComparator;
 import simplenlg.features.Feature;
 import simplenlg.features.Tense;
 import simplenlg.framework.NLGFactory;
+import simplenlg.phrasespec.SPhraseSpec;
 import simplenlg.phrasespec.VPPhraseSpec;
 import simplenlg.realiser.english.Realiser;
 
@@ -43,12 +44,20 @@ public class SpecialPrompt {
 	private static Logger log = Logger.getLogger(SpecialPrompt.class.getName());
 
 	//fixed some grammar issues
+	
+	//strictly noun + action format
 	private String[] causeEffectDirective = {
 			"Tell me why <noun> <action>.",
 			"Explain why <noun> <action>.",
 			"Write more about why <noun> <action>.",
 			"Write the reason why <noun> <action>."};
 
+	private String[] causeEffectDirectivePhraseFormat = {
+			"Tell me why <phrase>.",
+			"Explain why <phrase>.",
+			"Write more about why <phrase>.",
+			"Write the reason why <phrase>."};
+	
 	private String[] causeEffectAlternative = {
 			"Tell me more about what happened.", 
 			"Tell me what happened next.",
@@ -80,7 +89,7 @@ public class SpecialPrompt {
 		List<Event> predicates = new ArrayList<>(
 				storySentence.getManyPredicates().values());
 		List<String> directives = new ArrayList<>(
-				Arrays.asList(this.causeEffectDirective));
+				Arrays.asList(this.causeEffectDirectivePhraseFormat));//changed
 
 		String directive = null;
 
@@ -90,12 +99,9 @@ public class SpecialPrompt {
 			int randomPredicate = Randomizer.random(1, predicates.size());
 			Event predicate = predicates.remove(randomPredicate - 1);
 
-			ArrayList<String> complements = new ArrayList<>(predicate
-					.getVerb().getClausalComplements());
-			ArrayList<String> adverbs = new ArrayList<>(predicate.getVerb()
-					.getAdverbs());
-			ArrayList<String> prepositionals = new ArrayList<>(predicate
-					.getVerb().getPrepositionalPhrases());
+			ArrayList<String> complements = predicate.getVerb().getClausalComplements();
+			ArrayList<String> adverbs = predicate.getVerb().getAdverbs();
+			ArrayList<String> prepositionals = predicate.getVerb().getPrepositionalPhrases();
 			
 			while (!directives.isEmpty() && directive == null) {
 
@@ -110,62 +116,67 @@ public class SpecialPrompt {
 
 				log.debug(doers.size());
 
-				directive = directive.replace("<noun>",
-						SurfaceRealizer.wordsConjunction(doers));
+//				directive = directive.replace("<noun>",
+//						SurfaceRealizer.wordsConjunction(doers));
 
 				String action = "";
 
 				Collection<Noun> directObjects = predicate.getDirectObjects()
 						.values();
-				
+				SPhraseSpec p = nlgFactory.createClause();
+				p.setSubject(SurfaceRealizer.wordsConjunction(doers));
 				
 				VPPhraseSpec verb = nlgFactory
 						.createVerbPhrase(predicate.getVerb().getAction());
-
+				
+				//determine tense/form
+				String tense = predicate.getVerb().getTense();
+				if(predicate.getVerb().isProgressive()){
+					p.setFeature(Feature.PROGRESSIVE, true);
+				}
+				p.setFeature(Feature.TENSE, Tense.PAST);
+				if(tense.equals("present")){
+					p.setFeature(Feature.TENSE, Tense.PRESENT);
+				}
+				else if(tense.equals("future")){
+					p.setFeature(Feature.TENSE, Tense.FUTURE);
+					p.setFeature(Feature.PROGRESSIVE, false);//future tense progressive sounds confusing
+				}
+				if(predicate.isNegated()) {
+					verb.setFeature(Feature.NEGATED, true);
+				}
+				
+				
+				if (directObjects.size() > 0) {
+					Noun noun = directObjects.iterator().next();
+					//direct objects do not store locations anymore
+					if (noun instanceof Character
+							&& !noun.getIsCommon()) {
+						p.setObject(noun.getId());
+					} else {
+						p.setObject("the" + noun.getId());//'the' generally works best
+					}
+				}
+				
+				//add details
 				int random = 0;
 				if(!complements.isEmpty()){
 					random = Randomizer.random(1, complements.size());
-					verb.addComplement(complements.remove(random));
+					verb.addComplement(complements.get(random-1));
 				}
 				if(!adverbs.isEmpty()){
 					random = Randomizer.random(1, adverbs.size());
-					verb.addModifier(adverbs.remove(random));
+					verb.addModifier(adverbs.get(random-1));
 				}
 				if(!prepositionals.isEmpty()){
 					random = Randomizer.random(1, prepositionals.size());
-					verb.addComplement(prepositionals.remove(random));
+					verb.addComplement(prepositionals.get(random-1));
 				}
 				
-				if (!predicate.isNegated()) {
-					if (directObjects.size() > 0) {
-						verb.setFeature(Feature.TENSE, Tense.PAST);
-						action = realiser.realise(verb).toString();
-
-					} else {
-						verb.setFeature(Feature.PROGRESSIVE, true);
-						action = realiser.realise(verb).toString();
-					}
-				} else {
-					verb.setFeature(Feature.TENSE, Tense.PRESENT);
-					verb.setFeature(Feature.NEGATED, true);
-					action = realiser.realise(verb).toString();
-				}
-
-				if (directObjects.size() > 0) {
-					Noun noun = directObjects.iterator().next();
-					if (noun instanceof Location) {
-						action += " to " + noun.getId();
-					} else if (noun instanceof Character
-							&& !noun.getIsCommon()) {
-						action += " " + noun.getId();
-					} else {
-						action += " "
-								+ SurfaceRealizer.determinerFixer(noun.getId());
-					}
-				}
-
-				directive = directive.replace("<action>", action);
-
+				p.setVerb(verb);
+				action = realiser.realise(p).toString();
+				directive = directive.replace("<phrase>", action); //trial
+				System.out.println(directive);
 				if (history.contains(directive)) {
 					directive = null;
 				}
