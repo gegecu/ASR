@@ -6,14 +6,15 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionListener;
 
-import javax.swing.BorderFactory;
 import javax.swing.ButtonModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.plaf.basic.BasicProgressBarUI;
 
 import org.apache.log4j.Logger;
 
@@ -39,210 +40,36 @@ public class ChecklistPanel extends TemplatePanel {
 
 	private JPanel panel;
 	private JPanel checklistCardPanel;
-	private JPanel progressBarPanel;
-	private JLabel guideLabel;
+	private JLabel toDoLabel;
 
 	/* start */
 	private JPanel startPanel;
-	private JPanel startProgressBarPart;
 	private AutoResizingButton character;
 	private AutoResizingButton location;
 	private AutoResizingButton conflict;
 
 	/* middle */
 	private JPanel middlePanel;
-	private JPanel middleProgressBarPart;
 	private AutoResizingButton seriesOfActions;
 
 	/* end */
 	private JPanel endPanel;
-	private JPanel endProgressBarPart;
 	private AutoResizingButton resolution;
 
 	private ViewPanel viewPanel;
 	private CardLayout cardLayout;
 	private JButton nextButton;
 
+	/* progress bar related */
+	private JPanel progressBarPanel;
 	private JLabel progressLabel;
+	private JProgressBar progressBar;
 
 	private double noOfProgress = 0;
 	private double noOfItems = 5;
 
-	public ChecklistPanel() {
-		initialize();
-		addDescriptions();
-		addUIEffects();
-	}
-
-	private void initialize() {
-
-		panel = new JPanel();
-		checklistCardPanel = new JPanel();
-		viewPanel = new ViewPanel(88, 12);
-		progressBarPanel = new JPanel();
-
-		guideLabel = new AutoResizingLabel();
-		progressLabel = new AutoResizingLabel();
-
-		startPanel = new JPanel();
-		startProgressBarPart = new JPanel();
-		nextButton = new AutoResizingButton();
-		character = new AutoResizingButton();
-		location = new AutoResizingButton();
-		conflict = new AutoResizingButton();
-
-		middlePanel = new JPanel();
-		middleProgressBarPart = new JPanel();
-		seriesOfActions = new AutoResizingButton();
-
-		endPanel = new JPanel();
-		endProgressBarPart = new JPanel();
-		resolution = new AutoResizingButton();
-
-		cardLayout = new CardLayout();
-		checklistCardPanel.setLayout(cardLayout);
-
-		setLayout(new BorderLayout());
-		setBackground(Color.decode("#36B214"));
-
-		panel.setLayout(new MigLayout("insets 0"));
-		panel.setBackground(Color.decode("#36B214"));
-
-		/** Checklist Related **/
-
-		guideLabel.setText("To Do List");
-		guideLabel.setForeground(Color.BLACK);
-		guideLabel.setFont(new Font("Arial", Font.BOLD, 36));
-		guideLabel.setHorizontalAlignment(SwingConstants.CENTER);
-
-		viewPanel.setBackground(Color.decode("#36B214"));
-
-		startPanel.setLayout(new MigLayout("insets 5 0 0 0, gapy 10"));
-		startPanel.setBackground(Color.WHITE);
-
-		character.setText("Character");
-		character.setFont(new Font("Arial", Font.BOLD, 25));
-		character.setFocusPainted(false);
-		character.setBackground(Color.WHITE);
-		character.setForeground(Color.BLACK);
-		character.setHorizontalAlignment(SwingConstants.CENTER);
-		character.setBorder(new RoundedBorder(Color.BLACK, 3, 0, 5, 10, 5, 10));
-
-		location.setText("Location");
-		location.setFont(new Font("Arial", Font.BOLD, 25));
-		location.setFocusPainted(false);
-		location.setBackground(Color.WHITE);
-		location.setForeground(Color.BLACK);
-		location.setHorizontalAlignment(SwingConstants.CENTER);
-		location.setBorder(new RoundedBorder(Color.BLACK, 3, 0, 5, 10, 5, 10));
-
-		conflict.setText("Conflict");
-		conflict.setFont(new Font("Arial", Font.BOLD, 25));
-		conflict.setFocusPainted(false);
-		conflict.setBackground(Color.WHITE);
-		conflict.setForeground(Color.BLACK);
-		conflict.setHorizontalAlignment(SwingConstants.CENTER);
-		conflict.setBorder(new RoundedBorder(Color.BLACK, 3, 0, 5, 10, 5, 10));
-
-		startPanel.add(character, "w 100%, grow, wrap");
-		startPanel.add(location, "w 100%, grow, wrap");
-		startPanel.add(conflict, "w 100%, grow, wrap");
-
-		middlePanel.setLayout(new MigLayout("insets 10 0 0 0, gapy 10"));
-		middlePanel.setBackground(Color.WHITE);
-
-		seriesOfActions.setText("2 Events");
-		seriesOfActions.setFont(new Font("Arial", Font.BOLD, 25));
-		seriesOfActions.setFocusPainted(false);
-		seriesOfActions.setBackground(Color.WHITE);
-		seriesOfActions.setForeground(Color.BLACK);
-		seriesOfActions.setHorizontalAlignment(SwingConstants.CENTER);
-		seriesOfActions
-				.setBorder(new RoundedBorder(Color.BLACK, 3, 0, 5, 10, 5, 10));
-
-		middlePanel.add(seriesOfActions, "w 100%, grow, wrap");
-
-		endPanel.setLayout(new MigLayout("insets 10 0 0 0, gapy 10"));
-		endPanel.setBackground(Color.WHITE);
-
-		resolution.setText("Resolution");
-		resolution.setFont(new Font("Arial", Font.BOLD, 22));
-		resolution.setFocusPainted(false);
-		resolution.setBackground(Color.WHITE);
-		resolution.setForeground(Color.BLACK);
-		resolution.setHorizontalAlignment(SwingConstants.CENTER);
-		resolution
-				.setBorder(new RoundedBorder(Color.BLACK, 3, 0, 5, 10, 5, 10));
-
-		endPanel.add(resolution, "w 100%, grow, wrap");
-
-		checklistCardPanel.add(startPanel, ChecklistPanel.START);
-		checklistCardPanel.add(middlePanel, ChecklistPanel.MIDDLE);
-		checklistCardPanel.add(endPanel, ChecklistPanel.END);
-
-		viewPanel.getScrollPanePanel().add(checklistCardPanel);
-
-		nextButton.setText("Next Part");
-		nextButton.setFocusPainted(false);
-		nextButton.setBackground(Color.GREEN);
-		nextButton.setForeground(Color.BLACK);
-		nextButton.setHorizontalAlignment(SwingConstants.CENTER);
-		nextButton.setFont(new Font("Arial", Font.BOLD, 25));
-		nextButton.setBorder(
-				new RoundedBorder(Color.BLACK, 3, 12, 15, 10, 15, 10));
-
-		/** Progress Bar Related **/
-
-		progressLabel.setText("Progress 0%");
-		progressLabel.setForeground(Color.BLACK);
-		progressLabel.setFont(new Font("Arial", Font.BOLD, 25));
-
-		progressBarPanel.setLayout(
-				new MigLayout("insets 0, gapy 0, gapx 0, center center"));
-		progressBarPanel.setBackground(Color.decode("#36B214"));
-
-		startProgressBarPart.setBorder(
-				BorderFactory.createMatteBorder(3, 3, 3, 3, Color.BLACK));
-		startProgressBarPart.setBackground(Color.WHITE);
-
-		middleProgressBarPart.setBorder(
-				BorderFactory.createMatteBorder(3, 0, 3, 3, Color.BLACK));
-		middleProgressBarPart.setBackground(Color.WHITE);
-
-		endProgressBarPart.setBorder(
-				BorderFactory.createMatteBorder(3, 0, 3, 3, Color.BLACK));
-		endProgressBarPart.setBackground(Color.WHITE);
-
-		progressBarPanel.add(startProgressBarPart, "h 100%, w 31.5%, grow");
-		progressBarPanel.add(middleProgressBarPart, "h 100%, w 31.5%, grow");
-		progressBarPanel.add(endProgressBarPart, "h 100%, w 31.5%, grow");
-
-		start();
-
-		panel.add(progressLabel, "h 12%, w 100%, grow, wrap");
-		panel.add(progressBarPanel, "h 14%, w 100%, center, grow, wrap");
-		panel.add(guideLabel, "h 12%, w 95%, wrap");
-		panel.add(viewPanel, "h 62%, w 100%, grow, wrap");
-		panel.add(nextButton, "h 12%, w 100%, grow, wrap");
-
-		add(panel, BorderLayout.CENTER);
-
-	}
-
-	private void addDescriptions() {
-
-		character.addDescription("Character",
-				"The beginning of the story must have at least 1 character.\n\nExample: There is a boy named John.");
-		location.addDescription("Location",
-				"The beginning of the story must have at least 1 location.\n\nExample: John went to the park.");
-
-	}
-
 	@Override
 	protected void addUIEffects() {
-
-		if (character == null)
-			return;
 
 		character.getModel().addChangeListener(new ChangeListener() {
 
@@ -346,6 +173,175 @@ public class ChecklistPanel extends TemplatePanel {
 
 	}
 
+	@Override
+	protected void initializeUI() {
+
+		panel = new JPanel();
+		checklistCardPanel = new JPanel();
+		viewPanel = new ViewPanel(88, 12);
+		progressBarPanel = new JPanel();
+
+		toDoLabel = new AutoResizingLabel();
+		progressLabel = new AutoResizingLabel();
+		progressBar = new JProgressBar();
+
+		startPanel = new JPanel();
+		nextButton = new AutoResizingButton();
+		character = new AutoResizingButton();
+		location = new AutoResizingButton();
+		conflict = new AutoResizingButton();
+
+		middlePanel = new JPanel();
+		seriesOfActions = new AutoResizingButton();
+
+		endPanel = new JPanel();
+		resolution = new AutoResizingButton();
+
+		cardLayout = new CardLayout();
+		checklistCardPanel.setLayout(cardLayout);
+
+		setLayout(new BorderLayout());
+		setBackground(Color.decode("#36B214"));
+
+		panel.setLayout(new MigLayout("insets 0"));
+		panel.setBackground(Color.decode("#36B214"));
+
+		/** Checklist Related **/
+
+		toDoLabel.setText("To Do List");
+		toDoLabel.setForeground(Color.BLACK);
+		toDoLabel.setFont(new Font("Arial", Font.BOLD, 30));
+		toDoLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
+		viewPanel.setBackground(Color.decode("#36B214"));
+
+		startPanel.setLayout(new MigLayout("insets 5 0 0 0, gapy 10"));
+		startPanel.setBackground(Color.WHITE);
+
+		character.setText("Character");
+		character.setFont(new Font("Arial", Font.BOLD, 25));
+		character.setFocusPainted(false);
+		character.setBackground(Color.WHITE);
+		character.setForeground(Color.BLACK);
+		character.setHorizontalAlignment(SwingConstants.CENTER);
+		character.setBorder(new RoundedBorder(Color.BLACK, 3, 0, 5, 10, 5, 10));
+
+		location.setText("Location");
+		location.setFont(new Font("Arial", Font.BOLD, 25));
+		location.setFocusPainted(false);
+		location.setBackground(Color.WHITE);
+		location.setForeground(Color.BLACK);
+		location.setHorizontalAlignment(SwingConstants.CENTER);
+		location.setBorder(new RoundedBorder(Color.BLACK, 3, 0, 5, 10, 5, 10));
+
+		conflict.setText("Conflict");
+		conflict.setFont(new Font("Arial", Font.BOLD, 25));
+		conflict.setFocusPainted(false);
+		conflict.setBackground(Color.WHITE);
+		conflict.setForeground(Color.BLACK);
+		conflict.setHorizontalAlignment(SwingConstants.CENTER);
+		conflict.setBorder(new RoundedBorder(Color.BLACK, 3, 0, 5, 10, 5, 10));
+
+		startPanel.add(character, "w 100%, grow, wrap");
+		startPanel.add(location, "w 100%, grow, wrap");
+		startPanel.add(conflict, "w 100%, grow, wrap");
+
+		middlePanel.setLayout(new MigLayout("insets 10 0 0 0, gapy 10"));
+		middlePanel.setBackground(Color.WHITE);
+
+		seriesOfActions.setText("2 Events");
+		seriesOfActions.setFont(new Font("Arial", Font.BOLD, 25));
+		seriesOfActions.setFocusPainted(false);
+		seriesOfActions.setBackground(Color.WHITE);
+		seriesOfActions.setForeground(Color.BLACK);
+		seriesOfActions.setHorizontalAlignment(SwingConstants.CENTER);
+		seriesOfActions
+				.setBorder(new RoundedBorder(Color.BLACK, 3, 0, 5, 10, 5, 10));
+
+		middlePanel.add(seriesOfActions, "w 100%, grow, wrap");
+
+		endPanel.setLayout(new MigLayout("insets 10 0 0 0, gapy 10"));
+		endPanel.setBackground(Color.WHITE);
+
+		resolution.setText("Resolution");
+		resolution.setFont(new Font("Arial", Font.BOLD, 22));
+		resolution.setFocusPainted(false);
+		resolution.setBackground(Color.WHITE);
+		resolution.setForeground(Color.BLACK);
+		resolution.setHorizontalAlignment(SwingConstants.CENTER);
+		resolution
+				.setBorder(new RoundedBorder(Color.BLACK, 3, 0, 5, 10, 5, 10));
+
+		endPanel.add(resolution, "w 100%, grow, wrap");
+
+		checklistCardPanel.add(startPanel, ChecklistPanel.START);
+		checklistCardPanel.add(middlePanel, ChecklistPanel.MIDDLE);
+		checklistCardPanel.add(endPanel, ChecklistPanel.END);
+
+		viewPanel.getScrollPanePanel().add(checklistCardPanel);
+
+		nextButton.setText("Next Part");
+		nextButton.setFocusPainted(false);
+		nextButton.setBackground(Color.GREEN);
+		nextButton.setForeground(Color.BLACK);
+		nextButton.setHorizontalAlignment(SwingConstants.CENTER);
+		nextButton.setFont(new Font("Arial", Font.BOLD, 25));
+		nextButton.setBorder(
+				new RoundedBorder(Color.BLACK, 3, 12, 15, 10, 15, 10));
+
+		/** Progress Bar Related **/
+
+		progressLabel.setText("Progress");
+		progressLabel.setForeground(Color.BLACK);
+		progressLabel.setFont(new Font("Arial", Font.BOLD, 25));
+
+		progressBarPanel.setLayout(
+				new MigLayout("insets 0, gapy 0, gapx 0, center center"));
+		progressBarPanel.setBackground(Color.decode("#36B214"));
+
+		progressBar.setUI(new BasicProgressBarUI() {
+			protected Color getSelectionBackground() {
+				return Color.BLACK;
+			}
+			protected Color getSelectionForeground() {
+				return Color.BLACK;
+			}
+		});
+		progressBar.setForeground(Color.decode("#5BC0DE"));
+		progressBar.setValue(0);
+		progressBar.setStringPainted(true);
+		progressBar.setFont(new Font("Arial", Font.BOLD, 16));
+		progressBar
+				.setBorder(new RoundedBorder(Color.BLACK, 3, 12, 0, 0, 0, 0));
+
+		progressBarPanel.add(progressBar, "h 100%, w 94%, grow");
+
+		start();
+
+		panel.add(progressLabel, "h 10%, w 100%, grow, wrap");
+		panel.add(progressBarPanel, "h 10%, w 100%, center, grow, wrap");
+		panel.add(toDoLabel, "h 10%, w 85%, wrap");
+		panel.add(viewPanel, "h 55%, w 100%, grow, wrap");
+		panel.add(nextButton, "h 15%, w 100%, grow, wrap");
+
+		add(panel, BorderLayout.CENTER);
+
+	}
+
+	@Override
+	protected void addUXFeatures() {
+
+		character.addDescription("Character",
+				"The beginning of the story must have at least 1 character.\n\nExample: There is a boy named John.");
+		location.addDescription("Location",
+				"The beginning of the story must have at least 1 location.\n\nExample: John went to the Philippines.");
+		conflict.addDescription("Conflict", "");
+		seriesOfActions.addDescription("2 Events",
+				"The middle of the story must have at least 2 events.\n\nExample: John ate kakanin.");
+		resolution.addDescription("Resolution", "");
+
+	}
+
 	public void start() {
 		cardLayout.show(checklistCardPanel, ChecklistPanel.START);
 	}
@@ -380,30 +376,19 @@ public class ChecklistPanel extends TemplatePanel {
 				break;
 		}
 
-		progressLabel.setText(String.format("Progress %.2f%%",
-				(noOfProgress / noOfItems) * 100));
+		progressBar.setValue((int) ((noOfProgress / noOfItems) * 100));
 
 		switch (partOfStory) {
 			case ChecklistPanel.START :
 				character.setChecked(checklist.isCharacterExist());
 				location.setChecked(checklist.isLocationExist());
 				conflict.setChecked(checklist.isConflictExist());
-				if (checklist.isBeginningComplete()) {
-					startProgressBarPart.setBackground(Color.GREEN);
-				}
 				break;
 			case ChecklistPanel.MIDDLE :
-				log.debug(checklist.isSeriesActionExist());
 				seriesOfActions.setChecked(checklist.isSeriesActionExist());
-				if (checklist.isMiddleComplete()) {
-					middleProgressBarPart.setBackground(Color.GREEN);
-				}
 				break;
 			case ChecklistPanel.END :
 				resolution.setChecked(checklist.isResolutionExist());
-				if (checklist.isEndingComplete()) {
-					endProgressBarPart.setBackground(Color.GREEN);
-				}
 				break;
 		}
 
@@ -425,18 +410,6 @@ public class ChecklistPanel extends TemplatePanel {
 				log.debug("End complete? " + checklist.isEndingComplete());
 				break;
 		}
-
-	}
-
-	@Override
-	protected void initializeUI() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	protected void addUXFeatures() {
-		// TODO Auto-generated method stub
 
 	}
 
