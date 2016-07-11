@@ -16,6 +16,7 @@ import model.story_representation.story_element.noun.Character;
 import model.story_representation.story_element.noun.Location;
 import model.story_representation.story_element.noun.Noun;
 import model.story_representation.story_element.story_sentence.Clause;
+import model.story_representation.story_element.story_sentence.Description;
 import model.story_representation.story_element.story_sentence.Event;
 import model.story_representation.story_element.story_sentence.StorySentence;
 import model.utility.Randomizer;
@@ -30,19 +31,23 @@ public class StorySegmentGenerator extends TextGeneration {
 			"There is <start> in <end>.", "<end> has <start>."};
 
 	private String[] atLocationStorySegmentDirectObject = {
-			"<doer> is in <end>."};
+			"<doer> is in <end>.", "<doer> went to <end>"};
+	
+	private String[] atLocationStorySegmentDoerAction = {
+			"<doer> saw <start> in <end>." ,"<doer> found <start> in <end>."
+	};
 
 	private String[] hasAStorySegment = {"<start> has <end>."};
 
 	private String[] isAStorySegment = {"<start> is <end>."};
 
-	private String[] hasPropertyStorySegment = {"<start> can be <end>."};
+	private String[] hasPropertyStorySegment = {"<start> can be <end>.", "<start> is <end>."};
 
-	private String[] causesNoun = {"<start> produces <end>."};
+	private String[] causesNoun = {"<start> caused <end>."};
 
 	private String[] causesVerb = {"<doer> <end> <object>."};
 
-	private String[] causesAdjective = {"<doer> became <end>."};
+	private String[] causesAdjective = {"<doer> became <end>.", "<doer> is now <end>.", "<doer> is <end>."};
 
 	private Queue<Integer> history;
 
@@ -77,7 +82,7 @@ public class StorySegmentGenerator extends TextGeneration {
 			if (atLocationDobj != null) {
 				response.putAll(atLocationDobj);
 			}
-
+			
 			Map<Integer, String> hasA = hasA();
 			if (hasA != null) {
 				response.putAll(hasA);
@@ -95,6 +100,11 @@ public class StorySegmentGenerator extends TextGeneration {
 
 		} else {
 
+			Map<Integer, String> atLocationDoerAction = atLocationDoerAction();
+			if (atLocationDoerAction != null) {
+				response.putAll(atLocationDoerAction);
+			}
+			
 			Map<Integer, String> causes = causes();
 			if (causes != null) {
 				response.putAll(causes);
@@ -199,7 +209,7 @@ public class StorySegmentGenerator extends TextGeneration {
 						if (this.used.contains(storySegment)) {
 							continue;
 						}
-
+						System.out.println("atlocdobj: " + storySegment);
 						output.put(concept.getId(), storySegment);
 						found = true;
 						return output;
@@ -211,6 +221,7 @@ public class StorySegmentGenerator extends TextGeneration {
 		return null;
 	}
 
+	
 	/**
 	 * The room has a chair. possible storySegment There is a chair in room.
 	 ***/
@@ -292,7 +303,109 @@ public class StorySegmentGenerator extends TextGeneration {
 						if (this.used.contains(storySegment)) {
 							continue;
 						}
+						System.out.println("atloc: " + storySegment);
+						output.put(concept.getId(), storySegment);
+						return output;
 
+					}
+				}
+			}
+		}
+
+		return null;
+
+	}
+	private Map<Integer, String> atLocationDoerAction() {
+		Map<Integer, String> output = new HashMap<>();
+
+		StorySentence storySentence = asr.getCurrentStorySentence();
+		List<Clause> clauses = new ArrayList<Clause>();
+		clauses.addAll(storySentence.getManyDescriptions().values());
+		clauses.addAll(storySentence.getManyPredicates().values());
+		
+		if (storySentence != null) {
+
+			Location location = Utilities.getLocation(storySentence, asr);
+
+			if (location != null) {
+
+				String[] words = location.getId().split(" ");
+				String word = words[words.length - 1];
+				List<Concept> concepts = ConceptNetDAO.getConceptFrom(word,
+						"AtLocation");
+
+				List<Noun> doers = new ArrayList<>();
+				//int randomClause = Randomizer.random(1, clauses.size());
+				for(Clause c: clauses){
+					for (Noun noun : c.getManyDoers().values()) {
+						//System.out.println((Description) c);
+						Map<String, Noun> locs = noun.getReference("AtLocation");
+						for (Map.Entry<String, Noun> entry : locs.entrySet()) {
+						   // System.out.println("key=" + entry.getKey() + ", value=" + entry.getValue());
+						    //System.out.println(entry.getValue().getId() + "," + word);
+						    if(entry.getValue().getId().contains(word)){
+						    	doers.add(noun);
+						    }
+						}
+					}
+				}
+				
+				String characters = SurfaceRealizer.wordsConjunction(doers);
+				if (characters.isEmpty()) {
+					return null;
+				}
+				if (concepts != null) {
+
+					while (!concepts.isEmpty()) {
+
+						int randomConcept = Randomizer.random(1,
+								concepts.size());
+						Concept concept = concepts.remove(randomConcept - 1);
+						if (history.contains(concept.getId())) {
+							continue;
+						}
+
+						int randomSentence = Randomizer.random(1,
+								this.atLocationStorySegmentDoerAction.length);
+
+						String storySegment = this.atLocationStorySegmentDoerAction[randomSentence
+								- 1];
+						String start = concept.getStart();
+						start = concept.getStartPOS().equals("proper noun")
+								? (start.substring(0, 1).toUpperCase()
+										+ start.substring(1))
+								: SurfaceRealizer.determinerFixer(start);
+
+						// refactor pls
+						String end = "";
+						Map<String, Noun> ownersMap = location
+								.getReference("IsOwnedBy");
+						if (ownersMap != null) {
+							List<Noun> owners = new ArrayList<>(
+									ownersMap.values());
+							if (owners != null) {
+								end = owners.get(owners.size() - 1).getId()
+										+ "'s ";
+								end += location.getId();
+							}
+						} else {
+							end = (location.getIsCommon()
+									? "the "
+									: location.getId());
+						}
+
+						storySegment = storySegment.replace("<start>", start);
+						storySegment = storySegment.replace("<doer>",
+								characters);
+						storySegment = storySegment.replace("<end>", end);
+						storySegment = storySegment.substring(0, 1)
+								.toUpperCase() + storySegment.substring(1);
+
+						// this.history.add(concept.getId());
+						if (this.used.contains(storySegment)) {
+							continue;
+						}
+						//System.out.println("atlocdoers: " + storySegment);
 						output.put(concept.getId(), storySegment);
 						return output;
 
@@ -394,6 +507,7 @@ public class StorySegmentGenerator extends TextGeneration {
 					}
 
 					output.put(concept.getId(), storySegment);
+					
 					return output;
 
 				}

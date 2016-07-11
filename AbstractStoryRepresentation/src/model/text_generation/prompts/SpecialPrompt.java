@@ -13,6 +13,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
+import edu.stanford.nlp.dcoref.Dictionaries;
 import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
@@ -20,6 +21,7 @@ import edu.stanford.nlp.semgraph.SemanticGraph;
 import edu.stanford.nlp.semgraph.SemanticGraphCoreAnnotations.CollapsedCCProcessedDependenciesAnnotation;
 import edu.stanford.nlp.trees.TypedDependency;
 import edu.stanford.nlp.util.CoreMap;
+import model.instance.DictionariesInstance;
 import model.instance.StanfordCoreNLPInstance;
 import model.story_representation.AbstractStoryRepresentation;
 import model.story_representation.story_element.Verb;
@@ -43,7 +45,7 @@ import simplenlg.realiser.english.Realiser;
 public class SpecialPrompt {
 
 	private static Logger log = Logger.getLogger(SpecialPrompt.class.getName());
-
+	private Dictionaries dictionary = DictionariesInstance.getInstance();
 	//fixed some grammar issues
 	
 	//strictly noun + action format
@@ -66,7 +68,7 @@ public class SpecialPrompt {
 			"Then what happened?"};
 
 	private String[] locationVerbs = {
-			"go", "climb", "run", "walk", "swim", "travel"
+			"go", "climb", "run", "walk", "swim", "travel", "sleep", "sit"
 	};
 	private AbstractStoryRepresentation asr;
 	private Queue<String> history;
@@ -178,7 +180,7 @@ public class SpecialPrompt {
 				verb.addModifier(details.remove(random-1));
 			}
 			
-			//if something is found to function as direct object
+			//if something is found to function as direct object, why/how question
 			if (directObjects.size() > 0 || !complements.isEmpty() || !prepositionals.isEmpty()) {
 				Noun noun = directObjects.iterator().next();
 				if (noun instanceof Character
@@ -193,20 +195,30 @@ public class SpecialPrompt {
 					verb.addComplement(complements.get(random-1));
 				}
 				p.setVerb(verb);
-				String action = "";
-				while (!directives.isEmpty() && directive == null) {
-					int randomCapableOfQuestion = Randomizer.random(1,
-							directives.size());
-					directive = directives.remove(randomCapableOfQuestion - 1);
-					action = realiser.realise(p).toString();
-					directive = directive.replace("<phrase>", action);
+				int randomize = Randomizer.random(0,1);
+				if(randomize == 0){
+					String action = "";
+					while (!directives.isEmpty() && directive == null) {
+						int randomCapableOfQuestion = Randomizer.random(1,
+								directives.size());
+						directive = directives.remove(randomCapableOfQuestion - 1);
+						action = realiser.realise(p).toString();
+						directive = directive.replace("<phrase>", action);
+						if (history.contains(directive)) {
+							directive = null;
+						}
+					}
+				}
+				else{
+					p.setFeature(Feature.INTERROGATIVE_TYPE, InterrogativeType.HOW);
+					directive = realiser.realiseSentence(p);
 					if (history.contains(directive)) {
 						directive = null;
 					}
 				}
 			}
 			else {
-				//System.out.println("WH question..");
+				//System.out.println("what/where question..");
 				p.setVerb(verb);
 				if(Arrays.asList(locationVerbs).contains(predicate.getVerb().getAction())){
 					p.setFeature(Feature.INTERROGATIVE_TYPE, InterrogativeType.WHERE);
