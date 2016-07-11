@@ -12,13 +12,14 @@ import model.text_generation.StorySegmentGenerator;
 import model.text_generation.TextGeneration;
 import model.text_generation.prompts.PromptChooser;
 import utility.EvaluationLog;
-import view.mode.dialog.AskMeDialog;
-import view.mode.dialog.AskMeDialog.TypeOfHelp;
-import view.mode.dialog.HelpDialog;
-import view.mode.dialog.HelpDialog.HelpAnswer;
-import view.mode.dialog.QuestionAnswerDialog;
-import view.mode.dialog.SuggestionDialog;
 import view.mode.dialog.WaitDialog;
+import view.mode.dialog.help.AskMeDialog;
+import view.mode.dialog.help.AskMeDialog.TypeOfHelp;
+import view.mode.dialog.help.HelpDialog;
+import view.mode.dialog.help.HelpDialog.HelpAnswer;
+import view.mode.dialog.help.NoIdeaDialog;
+import view.mode.dialog.help.QuestionAnswerDialog;
+import view.mode.dialog.help.SuggestionDialog;
 
 public class AskMeController implements ActionListener {
 
@@ -155,7 +156,6 @@ public class AskMeController implements ActionListener {
 							break;
 						case REJECT :
 							log.debug("Child Asked For Other Prompt");
-							promptChooser.ignored();
 							break;
 						case CANCEL :
 							log.debug("Child Got It");
@@ -168,10 +168,14 @@ public class AskMeController implements ActionListener {
 
 					tempDialog.clearInputText();
 
+				} else if (typeOfHelp == TypeOfHelp.NO_IDEA) {
+
+					log.debug("*No Suggestion Was Generated.*");
+					EvaluationLog.log("*No Suggestion Was Generated.*");
+
 				}
 
-			} while (answer == HelpAnswer.REJECT
-					|| promptChooser.getIsLoop());
+			} while (answer == HelpAnswer.REJECT || promptChooser.getIsLoop());
 
 		}
 
@@ -217,7 +221,12 @@ public class AskMeController implements ActionListener {
 
 				try {
 					processed.acquire();
-					helpText = currentTextGenerator.generateText() + "";
+					helpText = currentTextGenerator.generateText();
+					if (helpText == null) {
+						typeOfHelp = TypeOfHelp.NO_IDEA;
+						dialog = new NoIdeaDialog();
+						helpText = TextGeneration.defaultResponse;
+					}
 					dialog.setHelpText(helpText);
 				} catch (Exception e) {
 					e.printStackTrace();

@@ -1,4 +1,4 @@
-package view.mode.dialog;
+package view.mode.dialog.help;
 
 import javax.swing.JDialog;
 
@@ -30,8 +30,9 @@ public abstract class HelpDialog extends JDialog {
 
 	protected abstract void addUXFeatures();
 
-	public final void setHelpText(String helpText) {
+	public final HelpDialog setHelpText(String helpText) {
 		storyViewPanel.setStoryText(helpText);
+		return this;
 	}
 
 	public final HelpAnswer showDialog() {

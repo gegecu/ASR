@@ -12,6 +12,8 @@ import simplenlg.realiser.english.Realiser;
 
 public abstract class TextGeneration {
 
+	public static final String defaultResponse = "I can't think of anything. Tell me more.";
+
 	protected Lexicon lexicon;
 	protected NLGFactory nlgFactory;
 	protected Realiser realiser;
