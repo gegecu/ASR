@@ -1,4 +1,4 @@
-package view.mode.dialog;
+package view.mode.dialog.help;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -19,7 +19,7 @@ import view.utility.RoundedBorder;
 public class AskMeDialog extends JDialog {
 
 	public static enum TypeOfHelp {
-		IDEAS, SUGGESTIONS, CANCEL, QUESTION_ANSWER;
+		NO_IDEA, IDEAS, SUGGESTIONS, CANCEL, QUESTION_ANSWER;
 	};
 
 	private JPanel panel;

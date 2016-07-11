@@ -1,4 +1,4 @@
-package view.mode.dialog;
+package view.mode.dialog.help;
 
 import java.awt.Color;
 import java.awt.Dimension;
