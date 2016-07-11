@@ -185,7 +185,7 @@ public class SpecialPrompt {
 						&& !noun.getIsCommon()) {
 					p.setObject(noun.getId());
 				} else {
-					p.setObject("the" + noun.getId());//'the' generally works best
+					p.setObject("the " + noun.getId());//'the' generally works best
 				}
 				
 				if(!complements.isEmpty()){//show complement if exists

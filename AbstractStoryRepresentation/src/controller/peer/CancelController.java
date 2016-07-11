@@ -50,10 +50,10 @@ public class CancelController implements ActionListener {
 						storyViewArea.getText());
 
 				log.debug("Child Cancelled The Story : " + story);
-				log.debug("WHOLE STORY OF CHILD: \n\tTitle: "
+				log.debug("\nWHOLE STORY OF CHILD: \n\tTitle: "
 						+ story.getStoryTitle() + "\nStory: "
 						+ story.getStoryText());
-				EvaluationLog.log("WHOLE STORY OF CHILD: \n\tTitle: "
+				EvaluationLog.log("\nWHOLE STORY OF CHILD: \n\tTitle: "
 						+ story.getStoryTitle() + "\n\tStory: "
 						+ story.getStoryText() + "\n");
 

@@ -48,6 +48,8 @@ public class StorySegmentGenerator extends TextGeneration {
 
 	private Set<String> used;
 
+	private int historySizeThreshold = 2;
+
 	public StorySegmentGenerator(AbstractStoryRepresentation asr) {
 		super(asr);
 		this.history = new LinkedList<Integer>();
@@ -105,13 +107,13 @@ public class StorySegmentGenerator extends TextGeneration {
 			int random = Randomizer.random(1, keys.size());
 			history.add(keys.get(random - 1));
 
-			if (history.size() > 3) {
+			if (history.size() > historySizeThreshold) {
 				history.remove();
 			}
 
 			return response.get(keys.get(random - 1));
 		} else {
-			return "I can't think of something";
+			return null;
 		}
 
 	}

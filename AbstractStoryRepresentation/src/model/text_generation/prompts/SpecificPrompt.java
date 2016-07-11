@@ -82,8 +82,8 @@ public class SpecificPrompt extends Prompt {
 			}
 
 			currentTopic = availableTopics.remove(random - 1);
-			currentPrompt = "What is the " + currentTopic
-					+ " of " + toBeReplaced + noun.getId() + "?";
+			currentPrompt = "What is the " + currentTopic + " of "
+					+ toBeReplaced + noun.getId() + "?";
 
 			if (history.contains(currentPrompt)) {
 				currentPrompt = null;

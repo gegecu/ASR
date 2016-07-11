@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.jena.atlas.logging.Log;
 import org.apache.log4j.Logger;
 
 import model.story_representation.story_element.Conflict;
