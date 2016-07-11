@@ -113,7 +113,7 @@ public class StorySegmentGenerator extends TextGeneration {
 			
 			return response.get(keys.get(random - 1));
 		} else {
-			return null;
+			return "I can't think of something";
 		}
 
 	}
