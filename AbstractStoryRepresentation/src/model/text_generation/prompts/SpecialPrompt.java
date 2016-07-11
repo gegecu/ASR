@@ -33,6 +33,7 @@ import model.utility.Randomizer;
 import model.utility.SurfaceRealizer;
 import model.utility.TypedDependencyComparator;
 import simplenlg.features.Feature;
+import simplenlg.features.InterrogativeType;
 import simplenlg.features.Tense;
 import simplenlg.framework.NLGFactory;
 import simplenlg.phrasespec.SPhraseSpec;
@@ -52,6 +53,7 @@ public class SpecialPrompt {
 			"Write more about why <noun> <action>.",
 			"Write the reason why <noun> <action>."};
 
+	//used to improve grammar across different verb forms
 	private String[] causeEffectDirectivePhraseFormat = {
 			"Tell me why <phrase>.",
 			"Explain why <phrase>.",
@@ -63,6 +65,9 @@ public class SpecialPrompt {
 			"Tell me what happened next.",
 			"Then what happened?"};
 
+	private String[] locationVerbs = {
+			"go", "climb", "run", "walk", "swim", "travel"
+	};
 	private AbstractStoryRepresentation asr;
 	private Queue<String> history;
 	private NLGFactory nlgFactory;
@@ -99,108 +104,123 @@ public class SpecialPrompt {
 			int randomPredicate = Randomizer.random(1, predicates.size());
 			Event predicate = predicates.remove(randomPredicate - 1);
 
-			ArrayList<String> complements = predicate.getVerb().getClausalComplements();
-			ArrayList<String> adverbs = predicate.getVerb().getAdverbs();
-			ArrayList<String> prepositionals = predicate.getVerb().getPrepositionalPhrases();
+			directive = generatePrompt(directives, predicate);
 			
-			while (!directives.isEmpty() && directive == null) {
-
+			if (predicates.isEmpty() && directive == null) {
 				int randomCapableOfQuestion = Randomizer.random(1,
-						directives.size());
-				directive = directives.remove(randomCapableOfQuestion - 1);
+						this.causeEffectAlternative.length);
+				directive = this.causeEffectAlternative[randomCapableOfQuestion
+						- 1];
+			}
+	
+			if (history.contains(directive)) {
+				directive = null;
+			}
+	
+			currentPrompt = directive;
+		}
+		return directive;
+	
+	
+	}
+	
+	private String generatePrompt(List<String> directives, Event predicate){
+		//System.out.println("generating prompt..");
+		String directive = null;
+		ArrayList<String> complements = predicate.getVerb().getClausalComplements();
+		ArrayList<String> adverbs = predicate.getVerb().getAdverbs();
+		ArrayList<String> prepositionals = predicate.getVerb().getPrepositionalPhrases();
+		ArrayList<String> details = new ArrayList();
+		//details.addAll(complements);
+		details.addAll(adverbs);
+		details.addAll(prepositionals);
 
-				List<Noun> doers = new ArrayList<>(
-						predicate.getManyDoers().values());
+			List<Noun> doers = new ArrayList<>(
+					predicate.getManyDoers().values());
 
-				this.doers = doers;
+			this.doers = doers;
 
-				log.debug(doers.size());
+			log.debug(doers.size());
 
-//				directive = directive.replace("<noun>",
-//						SurfaceRealizer.wordsConjunction(doers));
+//			directive = directive.replace("<noun>",
+//					SurfaceRealizer.wordsConjunction(doers)); //changed to p.setsubj
 
-				String action = "";
-
-				Collection<Noun> directObjects = predicate.getDirectObjects()
-						.values();
-				SPhraseSpec p = nlgFactory.createClause();
-				p.setSubject(SurfaceRealizer.wordsConjunction(doers));
-				
-				VPPhraseSpec verb = nlgFactory
-						.createVerbPhrase(predicate.getVerb().getAction());
-				
-				//determine tense/form
-				String tense = predicate.getVerb().getTense();
-				if(predicate.getVerb().isProgressive()){
-					p.setFeature(Feature.PROGRESSIVE, true);
+			Collection<Noun> directObjects = predicate.getDirectObjects()
+					.values();
+			SPhraseSpec p = nlgFactory.createClause();
+			p.setSubject(SurfaceRealizer.wordsConjunction(doers));
+			
+			VPPhraseSpec verb = nlgFactory
+					.createVerbPhrase(predicate.getVerb().getAction());
+			
+			//determine tense/form
+			String tense = predicate.getVerb().getTense();
+			if(predicate.getVerb().isProgressive()){
+				p.setFeature(Feature.PROGRESSIVE, true);
+			}
+			p.setFeature(Feature.TENSE, Tense.PAST);
+			if(tense.equals("present")){
+				p.setFeature(Feature.TENSE, Tense.PRESENT);
+			}
+			else if(tense.equals("future")){
+				p.setFeature(Feature.TENSE, Tense.FUTURE);
+				p.setFeature(Feature.PROGRESSIVE, false);//future tense progressive sounds confusing
+			}
+			if(predicate.isNegated()) {
+				verb.setFeature(Feature.NEGATED, true);
+			}
+			
+			//add details
+			int random = 0;
+			//adverbs and prepositionals combined into a single list
+			if(!details.isEmpty()){ 
+				random = Randomizer.random(1, details.size());
+				verb.addModifier(details.remove(random-1));
+			}
+			
+			//if something is found to function as direct object
+			if (directObjects.size() > 0 || !complements.isEmpty() || !prepositionals.isEmpty()) {
+				Noun noun = directObjects.iterator().next();
+				if (noun instanceof Character
+						&& !noun.getIsCommon()) {
+					p.setObject(noun.getId());
+				} else {
+					p.setObject("the" + noun.getId());//'the' generally works best
 				}
-				p.setFeature(Feature.TENSE, Tense.PAST);
-				if(tense.equals("present")){
-					p.setFeature(Feature.TENSE, Tense.PRESENT);
-				}
-				else if(tense.equals("future")){
-					p.setFeature(Feature.TENSE, Tense.FUTURE);
-					p.setFeature(Feature.PROGRESSIVE, false);//future tense progressive sounds confusing
-				}
-				if(predicate.isNegated()) {
-					verb.setFeature(Feature.NEGATED, true);
-				}
 				
-				
-				if (directObjects.size() > 0) {
-					Noun noun = directObjects.iterator().next();
-					//direct objects do not store locations anymore
-					if (noun instanceof Character
-							&& !noun.getIsCommon()) {
-						p.setObject(noun.getId());
-					} else {
-						p.setObject("the" + noun.getId());//'the' generally works best
-					}
-				}
-				
-				//add details
-				int random = 0;
-				if(!complements.isEmpty()){
+				if(!complements.isEmpty()){//show complement if exists
 					random = Randomizer.random(1, complements.size());
 					verb.addComplement(complements.get(random-1));
 				}
-				if(!adverbs.isEmpty()){
-					random = Randomizer.random(1, adverbs.size());
-					verb.addModifier(adverbs.get(random-1));
-				}
-				if(!prepositionals.isEmpty()){
-					random = Randomizer.random(1, prepositionals.size());
-					verb.addComplement(prepositionals.get(random-1));
-				}
-				
 				p.setVerb(verb);
-				action = realiser.realise(p).toString();
-				directive = directive.replace("<phrase>", action); //trial
-				System.out.println(directive);
+				String action = "";
+				while (!directives.isEmpty() && directive == null) {
+					int randomCapableOfQuestion = Randomizer.random(1,
+							directives.size());
+					directive = directives.remove(randomCapableOfQuestion - 1);
+					action = realiser.realise(p).toString();
+					directive = directive.replace("<phrase>", action);
+					if (history.contains(directive)) {
+						directive = null;
+					}
+				}
+			}
+			else {
+				//System.out.println("WH question..");
+				p.setVerb(verb);
+				if(Arrays.asList(locationVerbs).contains(predicate.getVerb().getAction())){
+					p.setFeature(Feature.INTERROGATIVE_TYPE, InterrogativeType.WHERE);
+				}
+				else {
+					p.setFeature(Feature.INTERROGATIVE_TYPE, InterrogativeType.WHAT_OBJECT);
+				}
+				directive = realiser.realiseSentence(p);
 				if (history.contains(directive)) {
 					directive = null;
 				}
-
 			}
-		}
-
-		if (predicates.isEmpty() && directive == null) {
-			int randomCapableOfQuestion = Randomizer.random(1,
-					this.causeEffectAlternative.length);
-			directive = this.causeEffectAlternative[randomCapableOfQuestion
-					- 1];
-		}
-
-		if (history.contains(directive)) {
-			directive = null;
-		}
-
-		currentPrompt = directive;
-
 		return directive;
-
 	}
-
 	public boolean checkAnswer(String input) {
 		int counter = 0;
 

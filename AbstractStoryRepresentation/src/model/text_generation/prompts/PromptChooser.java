@@ -67,13 +67,14 @@ public class PromptChooser extends TextGeneration {
 	public String generateText() {
 
 		String output = null;
-		int i = 0;
 
 		if (asr.getCurrentPartOfStory()
 				.equals(AbstractStoryRepresentation.start)) {
+			
+			List<String> nounId = this.getNouns();
+			
 
-			while (output == null && i < 10) {
-				i++;
+			while (output == null && !nounId.isEmpty()) {
 //				if (currentPrompt != null
 //						&& currentPrompt instanceof SpecificPrompt) {
 //					if (((SpecificPrompt) currentPrompt).getIsWrong()) {
@@ -86,7 +87,6 @@ public class PromptChooser extends TextGeneration {
 //					}
 //				}
 
-				i++;
 				System.out.println(isLoop);
 				
 				String nounid = "";
@@ -95,7 +95,7 @@ public class PromptChooser extends TextGeneration {
 					nounid = currentId;
 				}
 				else {
-					nounid = findNounId();
+					nounid = nounId.remove(Randomizer.random(1, nounId.size()) - 1);
 				}
 //				String nounid = findNounId();
 				Noun noun = asr.getNoun(nounid);
@@ -222,11 +222,5 @@ public class PromptChooser extends TextGeneration {
 
 	}
 
-	private String findNounId() {
-
-		List<String> nounId = this.getNouns();
-		int random = Randomizer.random(1, nounId.size());
-		return nounId.get(random - 1);
-	}
 
 }

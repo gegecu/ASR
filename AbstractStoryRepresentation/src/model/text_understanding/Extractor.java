@@ -419,7 +419,7 @@ public class Extractor {
 	//only handles existing verbs(predicates) in asr
 	private void extractLocationDependency(TypedDependency td,
 			StorySentence storySentence, String tdDepId, String tdGovId, List<TypedDependency> listDependencies) {
-		System.out.println("in nmod");
+		
 		String tdDepTag = td.dep().tag();
 		String tdDepLemma = td.dep().lemma();
 		String tdGovTag = td.gov().tag();

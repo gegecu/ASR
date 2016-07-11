@@ -63,18 +63,15 @@ public class Verb {
 	
 	public void addPrepositionalPhrase(String phrase) {
 		log.debug(action + " : " + "adding phrase: " + phrase);
-		System.out.println(action + " : " + "adding phrase: " + phrase);
 		prepositionalPhrases.add(phrase);
 	}
 	
 	public void addAdverb(String adverb) {
 		log.debug(action + " : " + "adding adv: " + adverb);
-		System.out.println(action + " : " + "adding adv: " + adverb);
 		adverbs.add(adverb);
 	}
 	public void addClausalComplement(String comp) {
 		log.debug(action + " : " + "adding comp: " + comp);
-		System.out.println(action + " : " + "adding comp: " + comp);
 		clausalComplements.add(comp);
 	}
 	
@@ -100,7 +97,7 @@ public class Verb {
 	}
 	public String getTense() {
 		getVerbForm();
-		System.out.println("form/tense: " + form + ", " + tense);
+		//System.out.println("form/tense: " + form + ", " + tense);
 		return this.tense;
 	}
 	
@@ -121,28 +118,27 @@ public class Verb {
 			form = "base";
 			evaluateTense();
 		}
-		System.out.println("form: " + form);
 	}
 	
 	private void evaluateTense(){
 		
 		for(String aux: auxiliary){
 			if(Arrays.asList(presentTenseAuxs).contains(aux)){
-				System.out.println("present: " + aux);
+				//System.out.println("present: " + aux);
 				tense = "present";
 				break;
 			}
 		}
 		for(String aux: auxiliary){
 			if(Arrays.asList(pastTenseAuxs).contains(aux)){
-				System.out.println("past: " + aux);
+				//System.out.println("past: " + aux);
 				tense = "past";
 				break;
 			}
 		}
 		for(String aux: auxiliary){
 			if(Arrays.asList(futureTenseAuxs).contains(aux)){
-				System.out.println("future: " + aux);
+				//System.out.println("future: " + aux);
 				tense = "future";
 			}
 		}
