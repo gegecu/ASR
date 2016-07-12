@@ -17,6 +17,7 @@ import edu.stanford.nlp.semgraph.SemanticGraph;
 import edu.stanford.nlp.semgraph.SemanticGraphCoreAnnotations.CollapsedCCProcessedDependenciesAnnotation;
 import edu.stanford.nlp.trees.TypedDependency;
 import edu.stanford.nlp.util.CoreMap;
+import model.instance.DictionariesInstance;
 import model.story_representation.AbstractStoryRepresentation;
 import model.story_representation.story_element.noun.Character;
 import model.story_representation.story_element.noun.Location;
@@ -112,7 +113,25 @@ public class GeneralPrompt extends Prompt {
 				}
 			}
 			
+			SemanticGraph dependencies = sentence
+					.get(CollapsedCCProcessedDependenciesAnnotation.class);
+
+			List<TypedDependency> listDependencies = new ArrayList<TypedDependency>(
+					dependencies.typedDependencies());
+			Collections.sort(listDependencies, new TypedDependencyComparator());
+			
 			if(coref.size() - countSame >= 1) {
+
+				for (TypedDependency td : listDependencies) {
+					if (td.reln().toString().equals("nsubj")) {
+						//noun = td.dep().lemma();
+						// John cried is correct, but John is <blank> is wrong
+						if(!DictionariesInstance.getInstance().copulas.contains(td.gov().lemma())) {
+							return true;
+						}
+					}
+				}
+				
 				return true;
 			}
 			// get first sentence of answer only.
