@@ -1,8 +1,6 @@
 package model.text_generation.prompts;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,21 +18,13 @@ import edu.stanford.nlp.trees.TypedDependency;
 import edu.stanford.nlp.util.CoreMap;
 import model.instance.StanfordCoreNLPInstance;
 import model.story_representation.AbstractStoryRepresentation;
-import model.story_representation.story_element.Verb;
 import model.story_representation.story_element.noun.Character;
 import model.story_representation.story_element.noun.Location;
 import model.story_representation.story_element.noun.Noun;
 import model.story_representation.story_element.noun.Object;
 import model.story_representation.story_element.noun.Unknown;
-import model.story_representation.story_element.story_sentence.Event;
-import model.story_representation.story_element.story_sentence.StorySentence;
 import model.text_generation.TextGeneration;
-import model.text_generation.Utilities;
 import model.utility.Randomizer;
-import model.utility.SurfaceRealizer;
-import simplenlg.features.Feature;
-import simplenlg.features.Tense;
-import simplenlg.phrasespec.VPPhraseSpec;
 
 public class PromptChooser extends TextGeneration {
 
@@ -51,6 +41,8 @@ public class PromptChooser extends TextGeneration {
 	private boolean answeredCorrect;
 	private StanfordCoreNLP pipeline;
 	private boolean isLoop;
+
+	private int historySizeThreshold = 2;
 
 	public PromptChooser(AbstractStoryRepresentation asr) {
 		super(asr);
@@ -70,34 +62,31 @@ public class PromptChooser extends TextGeneration {
 
 		if (asr.getCurrentPartOfStory()
 				.equals(AbstractStoryRepresentation.start)) {
-			
+
 			List<String> nounId = this.getNouns();
-			
 
 			while (output == null && !nounId.isEmpty()) {
-//				if (currentPrompt != null
-//						&& currentPrompt instanceof SpecificPrompt) {
-//					if (((SpecificPrompt) currentPrompt).getIsWrong()) {
-//						currentPrompt = specificPrompt;
-//						output = currentPrompt.generateText(asr.getNoun(currentId));
-//						break;
-//					}
-//					else {
-//						output = currentPrompt.generateText(asr.getNoun(currentId));
-//					}
-//				}
+				//				if (currentPrompt != null
+				//						&& currentPrompt instanceof SpecificPrompt) {
+				//					if (((SpecificPrompt) currentPrompt).getIsWrong()) {
+				//						currentPrompt = specificPrompt;
+				//						output = currentPrompt.generateText(asr.getNoun(currentId));
+				//						break;
+				//					}
+				//					else {
+				//						output = currentPrompt.generateText(asr.getNoun(currentId));
+				//					}
+				//				}
 
-				System.out.println(isLoop);
-				
 				String nounid = "";
-				
-				if(isLoop) {
+
+				if (isLoop) {
 					nounid = currentId;
+				} else {
+					nounid = nounId
+							.remove(Randomizer.random(1, nounId.size()) - 1);
 				}
-				else {
-					nounid = nounId.remove(Randomizer.random(1, nounId.size()) - 1);
-				}
-//				String nounid = findNounId();
+				//				String nounid = findNounId();
 				Noun noun = asr.getNoun(nounid);
 				currentId = nounid;
 
@@ -124,7 +113,7 @@ public class PromptChooser extends TextGeneration {
 		}
 
 		history.add(output);
-		if (history.size() > 3) {
+		if (history.size() >= historySizeThreshold) {
 			history.remove();
 		}
 
@@ -189,11 +178,11 @@ public class PromptChooser extends TextGeneration {
 			((SpecificPrompt) currentPrompt).setIsWrongIgnored(false);
 		}
 	}
-	
+
 	public void stopLoop() {
 		this.isLoop = false;
 	}
-	
+
 	public boolean getIsLoop() {
 		return this.isLoop;
 	}
@@ -221,6 +210,5 @@ public class PromptChooser extends TextGeneration {
 		return input;
 
 	}
-
 
 }

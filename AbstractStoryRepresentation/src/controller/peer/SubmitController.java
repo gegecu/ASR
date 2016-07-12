@@ -26,6 +26,7 @@ public class SubmitController implements ActionListener {
 
 	private StoryInputPanel storyInputPanel;
 	private StoryViewPanel storyViewPanel;
+	@SuppressWarnings("unused")
 	private AbstractStoryRepresentation asr;
 	private TextUnderstanding tu;
 	private PromptChooser promptChooser;
