@@ -98,19 +98,19 @@ public class MainMenuPanel extends TemplatePanel {
 		// middle panel
 		mainMenuLibraryPanel.setBackground(Color.decode("#36B214"));
 
-		// bottom panel
+		// bottom panel []push[]
 		JPanel panel2 = new JPanel(
-				new MigLayout("insets 0 10 10 10", "[]push[]", ""));
+				new MigLayout("insets 0 0 10 5, right", "", ""));
 		panel2.setBackground(Color.decode("#36B214"));
-		panel2.add(helpButton, "w 15%, h 100%");
-		panel2.add(writeStoryButton, "w 40%, h 100%, growy");
+		//panel2.add(helpButton, "w 15%, h 100%");
+		panel2.add(writeStoryButton, "w 40%, h 100%, right, grow");
 
 		// green panel
 		JPanel panel3 = new JPanel(new MigLayout("insets 15 15 5 15"));
 		panel3.setBackground(Color.decode("#36B214"));
 		panel3.setBorder(new RoundedBorder(Color.BLACK, 3, 12));
-		panel3.add(mainMenuLibraryPanel, "w 100%, h 90%, wrap");
-		panel3.add(panel2, "w 100%, h 10%, wrap");
+		panel3.add(mainMenuLibraryPanel, "w 100%, h 80%, wrap");
+		panel3.add(panel2, "w 100%, h 20%, wrap");
 
 		add(panel1, "w 100%, h 10%, grow, wrap");
 		add(panel3, "w 100%, h 90%, grow, wrap");

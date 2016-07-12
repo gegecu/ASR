@@ -167,8 +167,8 @@ public class BeginnerModePanel extends ModePanel {
 		JPanel panel1 = new JPanel(new MigLayout());
 		panel1.setBackground(Color.decode("#5B9CD2"));
 		panel1.add(backButton, "h 100%, w 12%, grow");
-		panel1.add(titleField, "h 100%, w 64%, grow");
-		panel1.add(helpButton, "h 100%, w 12%, grow");
+		panel1.add(titleField, "h 100%, w 76%, grow");
+		//panel1.add(helpButton, "h 100%, w 12%, grow");
 		panel1.add(saveButton, "h 100%, w 12%, grow");
 
 		JPanel panel2 = new JPanel(new MigLayout("insets 5 0 0 0"));
