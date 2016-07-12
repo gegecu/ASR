@@ -13,7 +13,7 @@ import model.story_database.StoryDAO;
 import utility.EvaluationLog;
 import view.MainFrame;
 import view.mode.dialog.OkDialog;
-import view.mode.dialog.YesNoDialog;
+import view.mode.dialog.OkCancelDialog;
 
 public class SaveController implements ActionListener {
 
@@ -27,7 +27,7 @@ public class SaveController implements ActionListener {
 	private OkDialog noTitleDialog;
 	private OkDialog noStoryDialog;
 
-	private YesNoDialog saveConfirmDialog;
+	private OkCancelDialog saveConfirmDialog;
 	private OkDialog databaseErrorDialog;
 
 	public SaveController(JTextField titleField, JTextArea textArea) {
@@ -37,7 +37,7 @@ public class SaveController implements ActionListener {
 				"You should have a title for your story. =)");
 		this.noStoryDialog = new OkDialog("No Story",
 				"You should write a story. =)");
-		this.saveConfirmDialog = new YesNoDialog("Save Story",
+		this.saveConfirmDialog = new OkCancelDialog("Save Story",
 				"You cannot edit your story after saving it.");
 		this.databaseErrorDialog = new OkDialog("Database Error",
 				"Something went wrong try again.");

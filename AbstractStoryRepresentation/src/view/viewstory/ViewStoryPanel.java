@@ -16,7 +16,6 @@ import view.TemplatePanel;
 import view.mode.StoryViewPanel;
 import view.utility.AutoResizingButton;
 import view.utility.AutoResizingTextFieldWithPlaceHolder;
-import view.utility.CancelButton;
 import view.utility.RoundedBorder;
 
 public class ViewStoryPanel extends TemplatePanel {
@@ -78,8 +77,8 @@ public class ViewStoryPanel extends TemplatePanel {
 		JPanel panel1 = new JPanel(new MigLayout("insets 10 10 5 10"));
 		panel1.setBackground(Color.decode("#609AD1"));
 		panel1.add(backButton, "w 13%, growy");
-		panel1.add(titleField, "w 87%, grow");
-		//panel1.add(deleteButton, "w 13%, grow");
+		panel1.add(titleField, "w 74%, grow");
+		panel1.add(deleteButton, "w 13%, grow");
 
 		JPanel panel3 = new JPanel(new MigLayout("insets 15 15 15 10"));
 		panel3.setBackground(Color.decode("#36B214"));
@@ -91,6 +90,7 @@ public class ViewStoryPanel extends TemplatePanel {
 
 		viewStoryController = new ViewStoryController();
 		backButton.addActionListener(viewStoryController);
+		deleteButton.addActionListener(viewStoryController);
 
 	}
 
@@ -107,6 +107,7 @@ public class ViewStoryPanel extends TemplatePanel {
 	public void setStory(Story story) {
 		titleField.setText(story.getStoryTitle());
 		storyViewPanel.setStoryText(story.getStoryText());
+		deleteButton.setActionCommand(String.valueOf(story.getStoryId()));
 	}
 
 	public void setMainFrame(MainFrame mainFrame) {

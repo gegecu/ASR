@@ -24,7 +24,7 @@ import view.utility.AutoResizingButton;
 import view.utility.AutoResizingLabel;
 import view.utility.RoundedBorder;
 
-public class YesNoDialog extends JDialog {
+public class OkCancelDialog extends JDialog {
 
 	private static final long serialVersionUID = 1L;
 
@@ -44,7 +44,7 @@ public class YesNoDialog extends JDialog {
 			BorderFactory.createLineBorder(Color.BLACK, 5),
 			BorderFactory.createEmptyBorder(3, 13, 3, 13));
 
-	public YesNoDialog(String dialogTitle, String dialogText) {
+	public OkCancelDialog(String dialogTitle, String dialogText) {
 
 		panel = new JPanel();
 		okLabel = new AutoResizingLabel();

@@ -12,7 +12,7 @@ import model.story_database.Story;
 import model.story_database.StoryDAO;
 import utility.EvaluationLog;
 import view.MainFrame;
-import view.mode.dialog.YesNoDialog;
+import view.mode.dialog.OkCancelDialog;
 
 public class CancelController implements ActionListener {
 
@@ -24,7 +24,7 @@ public class CancelController implements ActionListener {
 	private JTextField titleField;
 	private JTextArea storyViewArea;
 
-	private YesNoDialog cancelDialog;
+	private OkCancelDialog cancelDialog;
 
 	/**
 	 * @param storyTitleField
@@ -35,7 +35,7 @@ public class CancelController implements ActionListener {
 	public CancelController(JTextField titleField, JTextArea storyViewArea) {
 		this.titleField = titleField;
 		this.storyViewArea = storyViewArea;
-		this.cancelDialog = new YesNoDialog("Cancel Story",
+		this.cancelDialog = new OkCancelDialog("Cancel Story",
 				"This will not save your story.");
 	}
 
