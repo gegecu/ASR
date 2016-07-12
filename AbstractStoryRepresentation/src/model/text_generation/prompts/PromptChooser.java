@@ -142,9 +142,9 @@ public class PromptChooser extends TextGeneration {
 								|| noun instanceof Unknown)) {
 							log.debug(currentId);
 							restrictedInGeneral.add(currentId);
-							isLoop = true;
+							
 						}
-
+						isLoop = true;
 					}
 
 				} else {
