@@ -126,13 +126,13 @@ public class GeneralPrompt extends Prompt {
 					if (td.reln().toString().equals("nsubj")) {
 						//noun = td.dep().lemma();
 						// John cried is correct, but John is <blank> is wrong
+						
 						if(!DictionariesInstance.getInstance().copulas.contains(td.gov().lemma())) {
+							
 							return true;
 						}
 					}
 				}
-				
-				return true;
 			}
 			// get first sentence of answer only.
 
