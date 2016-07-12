@@ -82,8 +82,6 @@ public class SpecificPromptAnswerChecker extends PromptAnswerChecker {
 
 			}
 
-			//System.out.println("noun  " + noun + " " + currentNoun.getId() + " " + "answer " + topicAnswer + " " + currentTopic);
-
 			if (ConceptNetDAO.checkSRL(topicAnswer, "IsA", currentTopic)
 					&& noun.equals(currentNoun.getId())) {
 
@@ -105,4 +103,5 @@ public class SpecificPromptAnswerChecker extends PromptAnswerChecker {
 		return false;
 
 	}
+
 }

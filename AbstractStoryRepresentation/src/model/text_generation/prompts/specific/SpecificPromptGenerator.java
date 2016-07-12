@@ -9,9 +9,8 @@ import org.apache.log4j.Logger;
 
 import model.knowledge_base.conceptnet.Concept;
 import model.knowledge_base.conceptnet.ConceptNetDAO;
-import model.story_representation.story_element.noun.Character;
 import model.story_representation.story_element.noun.Noun;
-import model.story_representation.story_element.noun.Object;
+import model.story_representation.story_element.noun.Noun.TypeOfNoun;
 import model.text_generation.prompts.PromptGenerator;
 import model.utility.Randomizer;
 
@@ -19,6 +18,9 @@ public class SpecificPromptGenerator extends PromptGenerator {
 
 	private static Logger log = Logger
 			.getLogger(SpecificPromptGenerator.class.getName());
+
+	public static final List<TypeOfNoun> availableTopics = Arrays
+			.asList(new TypeOfNoun[]{TypeOfNoun.CHARACTER, TypeOfNoun.OBJECT});
 
 	private String[] objectTopics = {"color", "shape", "size", "texture"};
 	private String[] personTopics = {"attitude", "nationality", "talent"};
@@ -95,10 +97,15 @@ public class SpecificPromptGenerator extends PromptGenerator {
 
 		String[] topics = null;
 
-		if (noun instanceof Object) {
-			topics = objectTopics;
-		} else if (noun instanceof Character) {
-			topics = personTopics;
+		switch (noun.getType()) {
+			case CHARACTER :
+				topics = personTopics;
+				break;
+			case OBJECT :
+				topics = objectTopics;
+				break;
+			default :
+				break;
 		}
 
 		List<String> answeredTopics = answered.get(noun);
@@ -131,14 +138,21 @@ public class SpecificPromptGenerator extends PromptGenerator {
 		}
 
 		List<String> availableTopics = null;
-		if (noun instanceof Object) {
-			availableTopics = new ArrayList<>(Arrays.asList(objectTopics));
-		} else if (noun instanceof Character) {
-			availableTopics = new ArrayList<>(Arrays.asList(personTopics));
+
+		switch (noun.getType()) {
+			case CHARACTER :
+				availableTopics = new ArrayList<>(Arrays.asList(personTopics));
+				break;
+			case OBJECT :
+				availableTopics = new ArrayList<>(Arrays.asList(objectTopics));
+				break;
+			default :
+				break;
 		}
 
 		availableTopics.removeAll(answeredTopics);
 		return availableTopics;
+
 	}
 
 	public boolean checkifCompleted() {

@@ -18,7 +18,6 @@ public class Event extends Clause {
 		this.directObjects = new HashMap<String, Noun>();
 		this.locations = new HashMap<String, Noun>();
 		this.verb = new Verb(action);
-
 	}
 
 	public Verb getVerb() {

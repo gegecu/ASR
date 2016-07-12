@@ -9,7 +9,6 @@ import java.util.Queue;
 import org.apache.log4j.Logger;
 
 import model.story_representation.AbstractStoryRepresentation;
-import model.story_representation.story_element.noun.Character;
 import model.story_representation.story_element.noun.Noun;
 import model.story_representation.story_element.noun.Noun.TypeOfNoun;
 import model.story_representation.story_element.story_sentence.Event;
@@ -160,7 +159,7 @@ public class SpecialPromptGenerator {
 		if (directObjects.size() > 0 || !complements.isEmpty()
 				|| !prepositionals.isEmpty()) {
 			Noun noun = directObjects.iterator().next();
-			if (noun instanceof Character && !noun.getIsCommon()) {
+			if (noun.getType() == TypeOfNoun.CHARACTER && !noun.getIsCommon()) {
 				p.setObject(noun.getId());
 			} else {
 				p.setObject("the " + noun.getId());//'the' generally works best

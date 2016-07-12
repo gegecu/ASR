@@ -5,19 +5,16 @@ import java.util.Queue;
 
 import model.story_representation.AbstractStoryRepresentation;
 import model.story_representation.story_element.noun.Noun;
+import model.text_generation.prompts.PromptData;
 
-public class SpecialPromptData {
+public class SpecialPromptData extends PromptData {
 
 	private List<Noun> doers;
 	private String currentPrompt;
 
-	private Queue<String> history;
-	private AbstractStoryRepresentation asr;
-
 	public SpecialPromptData(Queue<String> history,
 			AbstractStoryRepresentation asr) {
-		this.history = history;
-		this.asr = asr;
+		super(history, asr);
 	}
 
 	public void setDoers(List<Noun> doers) {
@@ -34,14 +31,6 @@ public class SpecialPromptData {
 
 	public String getCurrentPrompt() {
 		return currentPrompt;
-	}
-
-	public AbstractStoryRepresentation getASR() {
-		return asr;
-	}
-
-	public Queue<String> getHistory() {
-		return history;
 	}
 
 }

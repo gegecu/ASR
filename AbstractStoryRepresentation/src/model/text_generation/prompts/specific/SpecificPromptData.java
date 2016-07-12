@@ -5,18 +5,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 
+import model.story_representation.AbstractStoryRepresentation;
 import model.story_representation.story_element.noun.Noun;
+import model.text_generation.prompts.PromptData;
 
-public class SpecificPromptData {
+public class SpecificPromptData extends PromptData {
 
 	private Map<Noun, List<String>> answered;
 	private String currentTopic;
 	private boolean isWrong;
 
-	private Queue<String> history;
-
-	public SpecificPromptData(Queue<String> history) {
-		this.history = history;
+	public SpecificPromptData(Queue<String> history,
+			AbstractStoryRepresentation asr) {
+		super(history, asr);
 		this.answered = new HashMap<>();
 	}
 
@@ -24,24 +25,20 @@ public class SpecificPromptData {
 		return answered;
 	}
 
-	public String getCurrentTopic() {
-		return currentTopic;
-	}
-
 	public void setCurrentTopic(String currentTopic) {
 		this.currentTopic = currentTopic;
 	}
 
-	public boolean isWrong() {
-		return isWrong;
+	public String getCurrentTopic() {
+		return currentTopic;
 	}
 
 	public void setWrong(boolean isWrong) {
 		this.isWrong = isWrong;
 	}
 
-	public Queue<String> getHistory() {
-		return history;
+	public boolean isWrong() {
+		return isWrong;
 	}
 
 }

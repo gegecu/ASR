@@ -18,11 +18,8 @@ import edu.stanford.nlp.trees.TypedDependency;
 import edu.stanford.nlp.util.CoreMap;
 import model.instance.StanfordCoreNLPInstance;
 import model.story_representation.AbstractStoryRepresentation;
-import model.story_representation.story_element.noun.Character;
-import model.story_representation.story_element.noun.Location;
 import model.story_representation.story_element.noun.Noun;
-import model.story_representation.story_element.noun.Object;
-import model.story_representation.story_element.noun.Unknown;
+import model.story_representation.story_element.noun.Noun.TypeOfNoun;
 import model.text_generation.TextGeneration;
 import model.text_generation.prompts.general.GeneralPromptAnswerChecker;
 import model.text_generation.prompts.general.GeneralPromptData;
@@ -79,13 +76,13 @@ public class PromptChooser extends TextGeneration {
 		pipeline = StanfordCoreNLPInstance.getInstance();
 
 		/* General Prompts */
-		generalPromptData = new GeneralPromptData(history);
+		generalPromptData = new GeneralPromptData(history, asr);
 		generalPromptAnswerChecker = new GeneralPromptAnswerChecker(
 				generalPromptData);
 		generalPromptGenerator = new GeneralPromptGenerator(generalPromptData);
 
 		/* Specific Prompts */
-		specificPromptData = new SpecificPromptData(history);
+		specificPromptData = new SpecificPromptData(history, asr);
 		specificPromptGenerator = new SpecificPromptGenerator(
 				specificPromptData);
 		specificPromptAnswerChecker = new SpecificPromptAnswerChecker(
@@ -125,7 +122,8 @@ public class PromptChooser extends TextGeneration {
 				currentId = nounid;
 
 				if (restrictedInGeneral.contains(nounid)) {
-					if (noun instanceof Object || noun instanceof Character) {
+					if (SpecificPromptGenerator.availableTopics
+							.contains(noun.getType())) {
 						currentPromptType = TypeOfPrompt.SPECIFIC;
 						currentPromptGenerator = specificPromptGenerator;
 						currentPromptAnswerChecker = specificPromptAnswerChecker;
@@ -184,8 +182,8 @@ public class PromptChooser extends TextGeneration {
 					//forever in general prompts, never add in restrictedGeneral because all specific answered
 					if (!restrictedInSpecific.contains(currentId)) {
 						// answered wrong, not yet completed q/a and not object or person
-						if (!(noun instanceof Location
-								|| noun instanceof Unknown)) {
+						if (!(noun.getType() == TypeOfNoun.LOCATION
+								|| noun.getType() == TypeOfNoun.UNKNOWN)) {
 							log.debug(currentId);
 							restrictedInGeneral.add(currentId);
 						}

@@ -15,6 +15,7 @@ import model.story_representation.AbstractStoryRepresentation;
 import model.story_representation.story_element.noun.Character;
 import model.story_representation.story_element.noun.Location;
 import model.story_representation.story_element.noun.Noun;
+import model.story_representation.story_element.noun.Noun.TypeOfNoun;
 import model.story_representation.story_element.story_sentence.Clause;
 import model.story_representation.story_element.story_sentence.Event;
 import model.story_representation.story_element.story_sentence.StorySentence;
@@ -66,7 +67,8 @@ public class StorySegmentGenerator extends TextGeneration {
 
 		Map<Integer, String> response = new HashMap<>();
 
-		if (asr.getCurrentPartOfStory().equals(AbstractStoryRepresentation.start)) {
+		if (asr.getCurrentPartOfStory()
+				.equals(AbstractStoryRepresentation.start)) {
 
 			Map<Integer, String> atLocation = atLocation();
 			if (atLocation != null) {
@@ -317,7 +319,8 @@ public class StorySegmentGenerator extends TextGeneration {
 			Noun noun = asr.getNoun(listOfNouns.remove(randomNoun - 1));
 			List<Concept> concepts = null;
 
-			if (noun instanceof Character && !noun.getIsCommon()) {
+			if (noun.getType() == TypeOfNoun.CHARACTER
+					&& !noun.getIsCommon()) {
 				concepts = ConceptNetDAO.getConceptTo("person", "HasA");
 			} else {
 				concepts = ConceptNetDAO.getConceptTo(noun.getId(), "HasA");
@@ -417,7 +420,8 @@ public class StorySegmentGenerator extends TextGeneration {
 			Noun noun = asr.getNoun(listOfNouns.remove(randomNoun - 1));
 			List<Concept> concepts = null;
 
-			if (noun instanceof Character && !noun.getIsCommon()) {
+			if (noun.getType() == TypeOfNoun.CHARACTER
+					&& !noun.getIsCommon()) {
 				concepts = ConceptNetDAO.getConceptTo("person", "IsA");
 			} else {
 				concepts = ConceptNetDAO.getConceptTo(noun.getId(), "IsA");
@@ -517,7 +521,8 @@ public class StorySegmentGenerator extends TextGeneration {
 			Noun noun = asr.getNoun(listOfNouns.remove(randomNoun - 1));
 			List<Concept> concepts = null;
 
-			if (noun instanceof Character && !noun.getIsCommon()) {
+			if (noun.getType() == TypeOfNoun.CHARACTER
+					&& !noun.getIsCommon()) {
 				concepts = ConceptNetDAO.getConceptTo("person", "HasProperty");
 			} else {
 				concepts = ConceptNetDAO.getConceptTo(noun.getId(),

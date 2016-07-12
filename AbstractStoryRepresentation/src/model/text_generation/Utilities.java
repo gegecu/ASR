@@ -8,6 +8,7 @@ import model.story_representation.AbstractStoryRepresentation;
 import model.story_representation.story_element.noun.Character;
 import model.story_representation.story_element.noun.Location;
 import model.story_representation.story_element.noun.Noun;
+import model.story_representation.story_element.noun.Noun.TypeOfNoun;
 import model.story_representation.story_element.story_sentence.Description;
 import model.story_representation.story_element.story_sentence.StorySentence;
 
@@ -22,7 +23,7 @@ public class Utilities {
 		for (Description description : storySentence.getManyDescriptions()
 				.values()) {
 			for (Noun noun : description.getManyDoers().values()) {
-				if (noun instanceof Character) {
+				if (noun.getType() == TypeOfNoun.CHARACTER) {
 					doers.add((Character) noun);
 				}
 			}
@@ -39,7 +40,7 @@ public class Utilities {
 		Location location = null;
 		for (String i : storySentence.getAllNounsInStorySentence()) {
 			Noun noun = asr.getNoun(i);
-			if (noun instanceof Location) {
+			if (noun.getType() == TypeOfNoun.LOCATION) {
 				location = (Location) noun;
 				return location;
 			}

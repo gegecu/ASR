@@ -4,9 +4,9 @@ import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 
-import model.story_representation.story_element.noun.Character;
 import model.story_representation.story_element.noun.Location;
 import model.story_representation.story_element.noun.Noun;
+import model.story_representation.story_element.noun.Noun.TypeOfNoun;
 import model.story_representation.story_element.story_sentence.StorySentence;
 
 public class Checklist {
@@ -38,7 +38,7 @@ public class Checklist {
 	private void characterExist() {
 		if (!this.isCharacterExist) {
 			for (Entry<String, Noun> entry : this.asr.getNounMap().entrySet()) {
-				if (entry.getValue() instanceof Character) {
+				if (entry.getValue().getType() == TypeOfNoun.CHARACTER) {
 					this.isCharacterExist = true;
 					break;
 				}
@@ -55,50 +55,8 @@ public class Checklist {
 
 		this.isLocationExist = false;
 
-		//		if(this.isCharacterExist() != false) {
-		//			List<Character> temp = new ArrayList<>();
-		//	
-		//			for (Entry<String, Noun> entry : this.asr.getNounMap().entrySet()) {
-		//				if (entry.getValue() instanceof Character) {
-		//					temp.add((Character) entry.getValue());
-		//				}
-		//			}
-		//	
-		//			List<Character> temp3 = new ArrayList<>();
-		//	
-		//			for (int i = 0; i < temp.size(); i++) {
-		//				Character c = (Character) temp.get(i);
-		//	
-		//				Map<String, Noun> temp2 = c.getReference("IsA");
-		//	
-		//				log.debug(c.getId());
-		//	
-		//				if (c.getReference("AtLocation") != null
-		//						&& !c.getReference("AtLocation").isEmpty()) {
-		//					log.debug(c.getId());
-		//					temp3.add(c);
-		//					if (temp2 != null) {
-		//						Collection<Noun> nouns = temp2.values();
-		//						for (Noun n : nouns) {
-		//							if (n instanceof Character) {
-		//								log.debug(n.getId());
-		//								temp3.add((Character) n);
-		//							}
-		//						}
-		//					}
-		//				}
-		//			}
-		//	
-		//			temp.removeAll(temp3);
-		//	
-		//			log.debug(temp.size());
-		//			if (temp.isEmpty()) {
-		//				this.isLocationExist = true;
-		//			}
-		//		}
-
 		for (Entry<String, Noun> entry : this.asr.getNounMap().entrySet()) {
-			if (entry.getValue() instanceof Location) {
+			if (entry.getValue().getType() == TypeOfNoun.LOCATION) {
 				this.isLocationExist = true;
 				break;
 			}

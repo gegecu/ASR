@@ -87,7 +87,7 @@ public abstract class Noun implements Comparable<Noun> {
 						+ noun.getReferences().values().size());
 	}
 
-	public TypeOfNoun getTypeOfNoun() {
+	public TypeOfNoun getType() {
 		return type;
 	}
 

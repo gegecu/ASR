@@ -2,16 +2,14 @@ package model.text_generation.prompts.general;
 
 import java.util.Queue;
 
-public class GeneralPromptData {
+import model.story_representation.AbstractStoryRepresentation;
+import model.text_generation.prompts.PromptData;
 
-	private Queue<String> history;
+public class GeneralPromptData extends PromptData {
 
-	public GeneralPromptData(Queue<String> history) {
-		this.history = history;
-	}
-
-	public Queue<String> getHistory() {
-		return history;
+	public GeneralPromptData(Queue<String> history,
+			AbstractStoryRepresentation asr) {
+		super(history, asr);
 	}
 
 }

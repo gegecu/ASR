@@ -15,7 +15,7 @@ public abstract class Clause {
 	protected boolean isNegated;
 
 	public Clause() {
-		this.polarity = 0;
+		this.polarity = 0.0f;
 		this.concepts = new ArrayList<String>();
 		this.doers = new HashMap<String, Noun>();
 		isNegated = false;
