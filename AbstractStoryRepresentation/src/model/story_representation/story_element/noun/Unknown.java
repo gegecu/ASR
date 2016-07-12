@@ -4,5 +4,6 @@ public class Unknown extends Noun {
 
 	public Unknown(String id) {
 		super(id);
+		this.type = TypeOfNoun.UNKNOWN;
 	}
 }

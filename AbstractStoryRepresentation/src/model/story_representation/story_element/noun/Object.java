@@ -4,5 +4,6 @@ public class Object extends Noun {
 
 	public Object(String id) {
 		super(id);
+		this.type = TypeOfNoun.OBJECT;
 	}
 }

@@ -7,6 +7,11 @@ import java.util.Map;
 
 public abstract class Noun implements Comparable<Noun> {
 
+	public enum TypeOfNoun {
+		CHARACTER, LOCATION, OBJECT, UNKNOWN;
+	}
+
+	protected TypeOfNoun type;
 	protected String id;
 	protected boolean isCommon;
 	protected Map<String, List<String>> attributes;
@@ -28,14 +33,15 @@ public abstract class Noun implements Comparable<Noun> {
 	}
 
 	public void addAttribute(String key, String attribute) {
-		List<String> temp = this.attributes.get(key);
 
+		List<String> temp = this.attributes.get(key);
 		if (temp == null) {
 			temp = new ArrayList<String>();
 			this.attributes.put(key, temp);
 		}
 		temp.remove(attribute);
 		temp.add(attribute);
+
 	}
 
 	public Map<String, List<String>> getAttributes() {
@@ -47,14 +53,15 @@ public abstract class Noun implements Comparable<Noun> {
 	}
 
 	public void addReference(String key, String nounId, Noun reference) {
-		Map<String, Noun> temp = this.references.get(key);
 
+		Map<String, Noun> temp = this.references.get(key);
 		if (temp == null) {
-			temp = new HashMap();
+			temp = new HashMap<>();
 			this.references.put(key, temp);
 		}
 		temp.remove(nounId);
 		temp.put(nounId, reference);
+
 	}
 
 	public Map<String, Map<String, Noun>> getReferences() {
@@ -78,6 +85,10 @@ public abstract class Noun implements Comparable<Noun> {
 				+ getReferences().values().size())
 				- (noun.getAttributes().values().size()
 						+ noun.getReferences().values().size());
+	}
+
+	public TypeOfNoun getTypeOfNoun() {
+		return type;
 	}
 
 }

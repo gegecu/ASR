@@ -1,49 +1,39 @@
-package model.text_generation.prompts;
+package model.text_generation.prompts.specific;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 
 import org.apache.log4j.Logger;
 
-import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
-import edu.stanford.nlp.pipeline.Annotation;
-import edu.stanford.nlp.semgraph.SemanticGraph;
-import edu.stanford.nlp.semgraph.SemanticGraphCoreAnnotations.CollapsedCCProcessedDependenciesAnnotation;
-import edu.stanford.nlp.trees.TypedDependency;
-import edu.stanford.nlp.util.CoreMap;
 import model.knowledge_base.conceptnet.Concept;
 import model.knowledge_base.conceptnet.ConceptNetDAO;
 import model.story_representation.story_element.noun.Character;
 import model.story_representation.story_element.noun.Noun;
 import model.story_representation.story_element.noun.Object;
+import model.text_generation.prompts.PromptGenerator;
 import model.utility.Randomizer;
-import model.utility.TypedDependencyComparator;
 
-public class SpecificPrompt extends Prompt {
+public class SpecificPromptGenerator extends PromptGenerator {
 
 	private static Logger log = Logger
-			.getLogger(SpecificPrompt.class.getName());
+			.getLogger(SpecificPromptGenerator.class.getName());
 
 	private String[] objectTopics = {"color", "shape", "size", "texture"};
 	private String[] personTopics = {"attitude", "nationality", "talent"};
 	private Map<Noun, List<String>> answered;
-	private String currentTopic;
-	private boolean isWrong;
+	private SpecificPromptData specificPromptData;
 
-	public SpecificPrompt(Queue<String> history) {
-		super(history);
-		answered = new HashMap<>();
-		isWrong = false;
+	public SpecificPromptGenerator(SpecificPromptData specificPromptData) {
+		super(specificPromptData.getHistory());
+		this.answered = specificPromptData.getAnswered();
+		this.specificPromptData = specificPromptData;
 	}
 
 	@Override
 	public String generateText(Noun noun) {
-		if (!isWrong) {
+		if (!specificPromptData.isWrong()) {
 			return checkAvailableTopics(noun);
 		} else {
 			return generateWrongPrompts();
@@ -51,11 +41,11 @@ public class SpecificPrompt extends Prompt {
 	}
 
 	public void setIsWrongIgnored(boolean isWrong) {
-		this.isWrong = isWrong;
+		specificPromptData.setWrong(isWrong);
 	}
 
 	public boolean getIsWrong() {
-		return this.isWrong;
+		return specificPromptData.isWrong();
 	}
 
 	private String checkAvailableTopics(Noun noun) {
@@ -81,7 +71,8 @@ public class SpecificPrompt extends Prompt {
 				toBeReplaced = (noun.getIsCommon() ? "the " : "");
 			}
 
-			currentTopic = availableTopics.remove(random - 1);
+			String currentTopic = availableTopics.remove(random - 1);
+			specificPromptData.setCurrentTopic(currentTopic);
 			currentPrompt = "What is the " + currentTopic + " of "
 					+ toBeReplaced + noun.getId() + "?";
 
@@ -100,86 +91,8 @@ public class SpecificPrompt extends Prompt {
 
 	}
 
-	// need to fix or think of another way because possible compound compound.
-	public boolean checkAnswer(String input) {
-
-		Map<String, String> coref;
-
-		String noun = "";
-		String topicAnswer = "";
-
-		Annotation document = new Annotation(input);
-		pipeline.annotate(document);
-
-		List<CoreMap> sentences = document.get(SentencesAnnotation.class);
-		for (CoreMap sentence : sentences) {
-
-			preprocess.preprocess(currentPrompt + " " + sentence.toString());
-
-			coref = preprocess.getCoref();
-
-			SemanticGraph dependencies = sentence
-					.get(CollapsedCCProcessedDependenciesAnnotation.class);
-
-			List<TypedDependency> listDependencies = new ArrayList<TypedDependency>(
-					dependencies.typedDependencies());
-			Collections.sort(listDependencies, new TypedDependencyComparator());
-
-			for (TypedDependency td : listDependencies) {
-
-				//What is the color of the ball? It is red. cannot be He is red.
-				//What is the nationality of John Roberts. He is Chinese or John Roberts is Chinese.
-				int countSame = 0;
-				for (Map.Entry<String, String> entry : coref.entrySet()) {
-					if (entry.getKey().equals(entry.getValue())) {
-						countSame++;
-					}
-				}
-
-				if (coref.size() - countSame >= 1) {
-
-					noun = currentNoun.getId();
-
-					if (td.reln().toString().equals("nsubj")) {
-						//noun = td.dep().lemma();
-						topicAnswer = td.gov().lemma();
-					}
-
-					if (td.reln().toString().equals("compound")) {
-						if (td.gov().lemma().equals(topicAnswer)) {
-							topicAnswer = td.dep().lemma() + " " + topicAnswer;
-						}
-					}
-
-				}
-
-			}
-
-			//System.out.println("noun  " + noun + " " + currentNoun.getId() + " " + "answer " + topicAnswer + " " + currentTopic);
-
-			if (ConceptNetDAO.checkSRL(topicAnswer, "IsA", currentTopic)
-					&& noun.equals(currentNoun.getId())) {
-
-				List<String> topics = answered.get(currentNoun);
-				if (topics == null) {
-					topics = new ArrayList<>();
-				}
-				topics.add(currentTopic);
-				answered.put(currentNoun, topics);
-				return true;
-
-			}
-
-			// get first sentence of answer only.
-			break;
-
-		}
-
-		return false;
-
-	}
-
 	private List<String> availableTopics(Noun noun) {
+
 		String[] topics = null;
 
 		if (noun instanceof Object) {
@@ -235,6 +148,7 @@ public class SpecificPrompt extends Prompt {
 	private String generateWrongPrompts() {
 
 		String prompt = "";
+		String currentTopic = specificPromptData.getCurrentTopic();
 
 		List<Concept> concepts = ConceptNetDAO.getConceptFrom(currentTopic,
 				"IsA");
@@ -245,7 +159,7 @@ public class SpecificPrompt extends Prompt {
 					+ concepts.get(randomConcept).getStart() + ". ";
 		} else {
 			//ignore
-			this.isWrong = false;
+			specificPromptData.setWrong(false);
 		}
 
 		prompt += "What is the " + currentTopic + " of " + currentNoun.getId()

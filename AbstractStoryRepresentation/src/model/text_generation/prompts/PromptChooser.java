@@ -24,35 +24,80 @@ import model.story_representation.story_element.noun.Noun;
 import model.story_representation.story_element.noun.Object;
 import model.story_representation.story_element.noun.Unknown;
 import model.text_generation.TextGeneration;
+import model.text_generation.prompts.general.GeneralPromptAnswerChecker;
+import model.text_generation.prompts.general.GeneralPromptData;
+import model.text_generation.prompts.general.GeneralPromptGenerator;
+import model.text_generation.prompts.special.SpecialPromptAnswerChecker;
+import model.text_generation.prompts.special.SpecialPromptData;
+import model.text_generation.prompts.special.SpecialPromptGenerator;
+import model.text_generation.prompts.specific.SpecificPromptAnswerChecker;
+import model.text_generation.prompts.specific.SpecificPromptData;
+import model.text_generation.prompts.specific.SpecificPromptGenerator;
 import model.utility.Randomizer;
 
 public class PromptChooser extends TextGeneration {
+
+	public enum TypeOfPrompt {
+		GENERAL, SPECIFIC, SPECIAL;
+	}
 
 	private static Logger log = Logger.getLogger(PromptChooser.class.getName());
 
 	private Set<String> restrictedInGeneral;
 	private Set<String> restrictedInSpecific;
-	private GeneralPrompt generalPrompt;
-	private SpecificPrompt specificPrompt;
-	private SpecialPrompt specialPrompt;
-	private Prompt currentPrompt;
 	private String currentId;
 	private Queue<String> history;
 	private boolean answeredCorrect;
 	private StanfordCoreNLP pipeline;
 	private boolean isLoop;
 
+	private TypeOfPrompt currentPromptType;
+	private PromptGenerator currentPromptGenerator;
+	private PromptAnswerChecker currentPromptAnswerChecker;
+
+	private GeneralPromptData generalPromptData;
+	private GeneralPromptAnswerChecker generalPromptAnswerChecker;
+	private GeneralPromptGenerator generalPromptGenerator;
+
+	private SpecificPromptData specificPromptData;
+	private SpecificPromptGenerator specificPromptGenerator;
+	private SpecificPromptAnswerChecker specificPromptAnswerChecker;
+
+	private SpecialPromptData specialPromptData;
+	private SpecialPromptAnswerChecker specialPromptAnswerChecker;
+	private SpecialPromptGenerator specialPromptGenerator;
+
 	private int historySizeThreshold = 2;
 
 	public PromptChooser(AbstractStoryRepresentation asr) {
+
 		super(asr);
+
 		history = new LinkedList<>();
-		generalPrompt = new GeneralPrompt(history);
-		specificPrompt = new SpecificPrompt(history);
-		specialPrompt = new SpecialPrompt(history, asr, nlgFactory, realiser);
 		restrictedInGeneral = new LinkedHashSet<>();
 		restrictedInSpecific = new LinkedHashSet<>();
 		pipeline = StanfordCoreNLPInstance.getInstance();
+
+		/* General Prompts */
+		generalPromptData = new GeneralPromptData(history);
+		generalPromptAnswerChecker = new GeneralPromptAnswerChecker(
+				generalPromptData);
+		generalPromptGenerator = new GeneralPromptGenerator(generalPromptData);
+
+		/* Specific Prompts */
+		specificPromptData = new SpecificPromptData(history);
+		specificPromptGenerator = new SpecificPromptGenerator(
+				specificPromptData);
+		specificPromptAnswerChecker = new SpecificPromptAnswerChecker(
+				specificPromptData);
+
+		/* Special Prompts */
+		specialPromptData = new SpecialPromptData(history, asr);
+		specialPromptAnswerChecker = new SpecialPromptAnswerChecker(
+				specialPromptData);
+		specialPromptGenerator = new SpecialPromptGenerator(specialPromptData,
+				nlgFactory, realiser);
+
 	}
 
 	@Override
@@ -66,17 +111,6 @@ public class PromptChooser extends TextGeneration {
 			List<String> nounId = this.getNouns();
 
 			while (output == null && !nounId.isEmpty()) {
-				//				if (currentPrompt != null
-				//						&& currentPrompt instanceof SpecificPrompt) {
-				//					if (((SpecificPrompt) currentPrompt).getIsWrong()) {
-				//						currentPrompt = specificPrompt;
-				//						output = currentPrompt.generateText(asr.getNoun(currentId));
-				//						break;
-				//					}
-				//					else {
-				//						output = currentPrompt.generateText(asr.getNoun(currentId));
-				//					}
-				//				}
 
 				String nounid = "";
 
@@ -86,30 +120,37 @@ public class PromptChooser extends TextGeneration {
 					nounid = nounId
 							.remove(Randomizer.random(1, nounId.size()) - 1);
 				}
-				//				String nounid = findNounId();
+
 				Noun noun = asr.getNoun(nounid);
 				currentId = nounid;
 
 				if (restrictedInGeneral.contains(nounid)) {
 					if (noun instanceof Object || noun instanceof Character) {
-						currentPrompt = specificPrompt;
+						currentPromptType = TypeOfPrompt.SPECIFIC;
+						currentPromptGenerator = specificPromptGenerator;
+						currentPromptAnswerChecker = specificPromptAnswerChecker;
 					}
 				} else {
-					currentPrompt = generalPrompt;
+					currentPromptType = TypeOfPrompt.GENERAL;
+					currentPromptGenerator = generalPromptGenerator;
+					currentPromptAnswerChecker = generalPromptAnswerChecker;
 				}
 
-				output = currentPrompt.generateText(noun);
+				output = currentPromptGenerator.generateText(noun);
 
-				if (currentPrompt instanceof SpecificPrompt) {
-					if (((SpecificPrompt) currentPrompt).checkifCompleted()) {
+				if (currentPromptType == TypeOfPrompt.SPECIFIC) {
+					if (specificPromptGenerator.checkifCompleted()) {
 						restrictedInGeneral.remove(currentId);
 						restrictedInSpecific.add(currentId);
 					}
 				}
+
 			}
 
 		} else {
-			output = specialPrompt.capableOf();
+			currentPromptType = TypeOfPrompt.SPECIAL;
+			output = specialPromptGenerator.generateText();
+			currentPromptAnswerChecker = specialPromptAnswerChecker;
 		}
 
 		history.add(output);
@@ -124,16 +165,21 @@ public class PromptChooser extends TextGeneration {
 	public boolean checkAnswer(String input) {
 
 		String temp = incompleteAnswer(input);
-
 		Noun noun = asr.getNoun(currentId);
 
 		answeredCorrect = false;
 		isLoop = false;
 
-		if (asr.getCurrentPartOfStory().equals("start")) {
-			if (currentPrompt instanceof GeneralPrompt) {
-				//wrong answer
-				if (!currentPrompt.checkAnswer(temp)) {
+		boolean isAnswerCorrect;
+
+		if (asr.getCurrentPartOfStory()
+				.equals(AbstractStoryRepresentation.start)) {
+
+			isAnswerCorrect = currentPromptAnswerChecker.checkAnswer(temp);
+
+			if (currentPromptType == TypeOfPrompt.GENERAL) {
+
+				if (isAnswerCorrect == false) {
 
 					//forever in general prompts, never add in restrictedGeneral because all specific answered
 					if (!restrictedInSpecific.contains(currentId)) {
@@ -142,7 +188,6 @@ public class PromptChooser extends TextGeneration {
 								|| noun instanceof Unknown)) {
 							log.debug(currentId);
 							restrictedInGeneral.add(currentId);
-							
 						}
 						isLoop = true;
 					}
@@ -151,22 +196,26 @@ public class PromptChooser extends TextGeneration {
 					answeredCorrect = true;
 				}
 
-			} else if (currentPrompt instanceof SpecificPrompt) {
+			} else if (currentPromptType == TypeOfPrompt.SPECIFIC) {
 
-				//correct answer
-				if (currentPrompt.checkAnswer(temp)) {
+				if (isAnswerCorrect) {
+
 					answeredCorrect = true;
-					if (((SpecificPrompt) currentPrompt).checkifCompleted()) {
+
+					if (specificPromptGenerator.checkifCompleted()) {
 						restrictedInGeneral.remove(currentId);
 						restrictedInSpecific.add(currentId);
 					}
+
 				} else {
-					((SpecificPrompt) currentPrompt).setIsWrongIgnored(true);
+					specificPromptGenerator.setIsWrongIgnored(true);
 					isLoop = true;
 				}
+
 			}
+
 		} else {
-			answeredCorrect = specialPrompt.checkAnswer(input);
+			answeredCorrect = currentPromptAnswerChecker.checkAnswer(input);
 		}
 
 		return answeredCorrect;
@@ -174,8 +223,8 @@ public class PromptChooser extends TextGeneration {
 	}
 
 	public void ignored() {
-		if (currentPrompt instanceof SpecificPrompt) {
-			((SpecificPrompt) currentPrompt).setIsWrongIgnored(false);
+		if (currentPromptType == TypeOfPrompt.SPECIFIC) {
+			specificPromptGenerator.setIsWrongIgnored(false);
 		}
 	}
 
@@ -198,13 +247,13 @@ public class PromptChooser extends TextGeneration {
 
 			List<TypedDependency> listDependencies = new ArrayList<TypedDependency>(
 					dependencies.typedDependencies());
-			//Collections.sort(listDependencies, new TypedDependencyComparator());
 
 			if (listDependencies.size() == 1) {
 				return "The " + asr.getNoun(currentId).getId() + " is "
 						+ listDependencies.get(0).dep().lemma().toLowerCase()
 						+ ".";
 			}
+
 		}
 
 		return input;

@@ -66,7 +66,7 @@ public class StorySegmentGenerator extends TextGeneration {
 
 		Map<Integer, String> response = new HashMap<>();
 
-		if (asr.getCurrentPartOfStory().equals("start")) {
+		if (asr.getCurrentPartOfStory().equals(AbstractStoryRepresentation.start)) {
 
 			Map<Integer, String> atLocation = atLocation();
 			if (atLocation != null) {

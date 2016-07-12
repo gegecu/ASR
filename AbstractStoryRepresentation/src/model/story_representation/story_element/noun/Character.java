@@ -4,6 +4,7 @@ public class Character extends Noun {
 
 	public Character(String id) {
 		super(id);
+		this.type = TypeOfNoun.CHARACTER;
 	}
 
 }
