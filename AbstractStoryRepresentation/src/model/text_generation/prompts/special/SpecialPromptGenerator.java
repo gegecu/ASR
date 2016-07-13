@@ -41,9 +41,9 @@ public class SpecialPromptGenerator {
 			"Tell me why <phrase>.", "Explain why <phrase>.",
 			"Write more about why <phrase>.", "Write the reason why <phrase>."};
 
-	private String[] causeEffectAlternative = {
-			"Tell me more about what happened.", "Tell me what happened next.",
-			"Then what happened?"};
+//	private String[] causeEffectAlternative = {
+//			"Tell me more about what happened.", "Tell me what happened next.",
+//			"Then what happened?"};
 
 	private String[] locationVerbs = {"go", "climb", "run", "walk", "swim",
 			"travel"};
@@ -82,10 +82,7 @@ public class SpecialPromptGenerator {
 			directive = generatePrompt(directives, predicate);
 
 			if (predicates.isEmpty() && directive == null) {
-				int randomCapableOfQuestion = Randomizer.random(1,
-						this.causeEffectAlternative.length);
-				directive = this.causeEffectAlternative[randomCapableOfQuestion
-						- 1];
+				return null;
 			}
 
 			if (history.contains(directive)) {

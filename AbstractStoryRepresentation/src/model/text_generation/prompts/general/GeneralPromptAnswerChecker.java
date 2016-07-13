@@ -60,15 +60,25 @@ public class GeneralPromptAnswerChecker extends PromptAnswerChecker {
 			Collections.sort(listDependencies, new TypedDependencyComparator());
 
 			if (coref.size() - countSame >= 1) {
+				
+				boolean found = false;
 
 				for (TypedDependency td : listDependencies) {
-					if (td.reln().toString().equals("nsubj")) {
+					if (td.reln().toString().contains("nsubj")) {
 						//noun = td.dep().lemma();
 						// John cried is correct, but John is <blank> is wrong
 
 						if (!DictionariesInstance.getInstance().copulas
 								.contains(td.gov().lemma())) {
-
+							return true;
+						}
+						else {
+							found = true;
+						}
+					}
+					else if (td.reln().toString().equals("xcomp")) {
+						if (DictionariesInstance.getInstance().copulas
+								.contains(td.gov().lemma()) && found) {
 							return true;
 						}
 					}

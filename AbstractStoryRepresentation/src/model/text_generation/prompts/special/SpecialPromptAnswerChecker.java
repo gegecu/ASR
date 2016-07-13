@@ -2,6 +2,7 @@ package model.text_generation.prompts.special;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,7 @@ import edu.stanford.nlp.semgraph.SemanticGraph;
 import edu.stanford.nlp.semgraph.SemanticGraphCoreAnnotations.CollapsedCCProcessedDependenciesAnnotation;
 import edu.stanford.nlp.trees.TypedDependency;
 import edu.stanford.nlp.util.CoreMap;
+import model.instance.DictionariesInstance;
 import model.instance.StanfordCoreNLPInstance;
 import model.story_representation.story_element.noun.Noun;
 import model.text_generation.prompts.PromptAnswerChecker;
@@ -43,6 +45,11 @@ public class SpecialPromptAnswerChecker extends PromptAnswerChecker {
 		String currentPrompt = specialPromptData.getCurrentPrompt();
 
 		int counter = 0;
+		int counter2 = 0;
+		
+		Map<String, Boolean> xcompChecker = new HashMap();
+		
+		
 		Set<String> currentDoerNames = new HashSet<>();
 		Map<String, String> coref;
 
@@ -58,6 +65,7 @@ public class SpecialPromptAnswerChecker extends PromptAnswerChecker {
 		pipeline.annotate(document);
 
 		boolean skipped = false;
+		boolean containsXComp = false;
 
 		List<CoreMap> sentences = document.get(SentencesAnnotation.class);
 		for (CoreMap sentence : sentences) {
@@ -67,6 +75,13 @@ public class SpecialPromptAnswerChecker extends PromptAnswerChecker {
 				skipped = true;
 				continue;
 			}
+			
+			int countSame = 0;
+			for (Map.Entry<String, String> entry : coref.entrySet()) {
+				if (entry.getKey().equals(entry.getValue())) {
+					countSame++;
+				}
+			}
 
 			SemanticGraph dependencies = sentence
 					.get(CollapsedCCProcessedDependenciesAnnotation.class);
@@ -74,44 +89,64 @@ public class SpecialPromptAnswerChecker extends PromptAnswerChecker {
 			List<TypedDependency> listDependencies = new ArrayList<TypedDependency>(
 					dependencies.typedDependencies());
 			Collections.sort(listDependencies, new TypedDependencyComparator());
+			
+			if (coref.size() - countSame >= 1) {
 
-			for (TypedDependency td : listDependencies) {
-
-				//What is the color of the ball? It is red. cannot be He is red.
-				//What is the nationality of John Roberts. He is Chinese or John Roberts is Chinese.
-				int countSame = 0;
-				for (Map.Entry<String, String> entry : coref.entrySet()) {
-					if (entry.getKey().equals(entry.getValue())) {
-						countSame++;
-					}
-				}
-
-				if (coref.size() - countSame >= 1) {
+				for (TypedDependency td : listDependencies) {
+	
+					//What is the color of the ball? It is red. cannot be He is red.
+					//What is the nationality of John Roberts. He is Chinese or John Roberts is Chinese.
 
 					String noun = "";
-
+	
 					if (td.reln().toString().contains("nsubj")) {
 						noun = td.dep().lemma();
+						
+						if (DictionariesInstance.getInstance().copulas
+								.contains(td.gov().lemma())) {
+							xcompChecker.put(Integer.toString(td.gov().index()), true);
+							containsXComp = true;
+						}
+						
+						if (currentDoerNames.contains(noun)) {
+							log.debug("counter++");
+							counter++;
+						}
 					}
-
-					if (td.reln().toString().equals("compound")) {
+	
+					else if (td.reln().toString().equals("compound")) {
 						if (td.gov().lemma().equals(noun)) {
 							noun = td.dep().lemma() + " " + noun;
 						}
+						
+						if (currentDoerNames.contains(noun)) {
+							log.debug("counter++");
+							counter++;
+						}
 					}
-
-					if (currentDoerNames.contains(noun)) {
-						log.debug("counter++");
-						counter++;
+					
+					else if (td.reln().toString().equals("xcomp")) {
+						if(DictionariesInstance.getInstance().copulas
+								.contains(td.gov().lemma()) && xcompChecker.get(Integer.toString(td.gov().index()))) {
+							counter2++;
+						}
 					}
-
 				}
 
 			}
 
 			if (counter == doers.size()) {
-				log.debug("counter: " + counter);
-				return true;
+				if(containsXComp) {
+					if(counter == doers.size()) {
+						return true;
+					}
+					else {
+						return false;
+					}
+				}
+				else {
+					return true;
+				}
 			}
 
 			break;

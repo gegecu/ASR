@@ -58,6 +58,10 @@ public class GeneralPromptGenerator extends PromptGenerator {
 
 			directive = directive.replace("<noun>",
 					toBeReplaced + noun.getId());
+			
+			if(history.contains(directive)) {
+				directive = null;
+			}
 
 		}
 
