@@ -48,7 +48,7 @@ public class SpecialPromptAnswerChecker extends PromptAnswerChecker {
 		int counter2 = 0;
 		
 		Map<String, Boolean> xcompChecker = new HashMap();
-		
+		Map<String, String> doerChecker = new HashMap();
 		
 		Set<String> currentDoerNames = new HashSet<>();
 		Map<String, String> coref;
@@ -96,33 +96,22 @@ public class SpecialPromptAnswerChecker extends PromptAnswerChecker {
 	
 					//What is the color of the ball? It is red. cannot be He is red.
 					//What is the nationality of John Roberts. He is Chinese or John Roberts is Chinese.
-
-					String noun = "";
-	
+					
 					if (td.reln().toString().contains("nsubj")) {
-						noun = td.dep().lemma();
-						
+						doerChecker.put(Integer.toString(td.dep().index()), td.dep().lemma());
+
 						if (DictionariesInstance.getInstance().copulas
 								.contains(td.gov().lemma())) {
 							xcompChecker.put(Integer.toString(td.gov().index()), true);
 							containsXComp = true;
 						}
 						
-						if (currentDoerNames.contains(noun)) {
-							log.debug("counter++");
-							counter++;
-						}
 					}
 	
 					else if (td.reln().toString().equals("compound")) {
-						if (td.gov().lemma().equals(noun)) {
-							noun = td.dep().lemma() + " " + noun;
-						}
 						
-						if (currentDoerNames.contains(noun)) {
-							log.debug("counter++");
-							counter++;
-						}
+						doerChecker.put(Integer.toString(td.gov().index()), td.dep().lemma() + " " + td.gov().lemma());
+
 					}
 					
 					else if (td.reln().toString().equals("xcomp")) {
@@ -134,10 +123,21 @@ public class SpecialPromptAnswerChecker extends PromptAnswerChecker {
 				}
 
 			}
+			
+			for(String doerName: doerChecker.values()) {
+				
+				if(currentDoerNames.contains(doerName)) {
+					System.out.println("in");
+					counter++;
+				}
+			}
 
 			if (counter == doers.size()) {
+				
+				System.out.println(counter);
+				
 				if(containsXComp) {
-					if(counter == doers.size()) {
+					if(counter2 == xcompChecker.size()) {
 						return true;
 					}
 					else {
