@@ -38,7 +38,8 @@ public class Checklist {
 	private void characterExist() {
 		if (!this.isCharacterExist) {
 			for (Entry<String, Noun> entry : this.asr.getNounMap().entrySet()) {
-				if (entry.getValue().getType() == TypeOfNoun.CHARACTER) {
+				if (entry.getValue() != null
+						&& entry.getValue().getType() == TypeOfNoun.CHARACTER) {
 					this.isCharacterExist = true;
 					break;
 				}
@@ -56,7 +57,8 @@ public class Checklist {
 		this.isLocationExist = false;
 
 		for (Entry<String, Noun> entry : this.asr.getNounMap().entrySet()) {
-			if (entry.getValue().getType() == TypeOfNoun.LOCATION) {
+			if (entry.getValue() != null
+					&& entry.getValue().getType() == TypeOfNoun.LOCATION) {
 				this.isLocationExist = true;
 				break;
 			}

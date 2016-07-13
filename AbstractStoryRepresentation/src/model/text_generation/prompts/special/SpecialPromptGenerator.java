@@ -156,8 +156,7 @@ public class SpecialPromptGenerator {
 		}
 
 		//if something is found to function as direct object
-		if (directObjects.size() > 0 || !complements.isEmpty()
-				|| !prepositionals.isEmpty()) {
+		if (!directObjects.isEmpty()) {
 			Noun noun = directObjects.iterator().next();
 			if (noun.getType() == TypeOfNoun.CHARACTER && !noun.getIsCommon()) {
 				p.setObject(noun.getId());
