@@ -3,10 +3,11 @@ package model.text_understanding;
 import java.util.ArrayList;
 import java.util.List;
 
+import model.instance.SenticNetParserInstance;
 import model.knowledge_base.conceptnet.ConceptNetDAO;
+import model.knowledge_base.senticnet.SenticNetParser;
 import model.story_representation.AbstractStoryRepresentation;
-import model.story_representation.story_element.Conflict;
-import model.story_representation.story_element.Resolution;
+import model.story_representation.story_element.SpecialClause;
 import model.story_representation.story_element.noun.Noun;
 import model.story_representation.story_element.story_sentence.Clause;
 import model.story_representation.story_element.story_sentence.StorySentence;
@@ -16,11 +17,13 @@ public class TextUnderstanding {
 	private Preprocessing preprocessingModule;
 	private Extractor extractionModule;
 	private AbstractStoryRepresentation asr;
+	private SenticNetParser snp;
 
 	public TextUnderstanding(AbstractStoryRepresentation asr) {
 		this.asr = asr;
 		preprocessingModule = new Preprocessing();
 		extractionModule = new Extractor(asr);
+		snp = SenticNetParserInstance.getInstance();
 	}
 
 	public void processInput(String text) {
@@ -36,19 +39,20 @@ public class TextUnderstanding {
 		}
 
 		if (asr.getCurrentPartOfStory().equals("start")) {
-			Conflict conflict = null;
+			SpecialClause conflict = null;
 			for (StorySentence storySentence : extractedStorySentences) {
 				conflict = checkForConflict(storySentence);
 			}
 			asr.setConflict(conflict);
 		} else if (asr.getCurrentPartOfStory().equals("end")) {
-			Resolution resolution = asr.getResolution();
+			SpecialClause resolution = asr.getResolution();
 			if (resolution == null) {
 				for (StorySentence storySentence : extractedStorySentences) {
-					resolution = checkForResolution(storySentence);
-					if (resolution == null) {
-						break;
-					}
+					resolution = checkForResolution(storySentence);	
+//					System.out.println(resolution.getMainConcept());
+//					if (resolution == null) {
+//						break;
+//					}
 				}
 			}
 			asr.setResolution(resolution);
@@ -58,66 +62,113 @@ public class TextUnderstanding {
 
 	}
 
-	private Conflict checkForConflict(StorySentence storySentence) {
-
-		Conflict conflict = asr.getConflict();
-
-		StorySentence possibleConflict = storySentence;
-
-		List<Clause> clauses = new ArrayList<Clause>();
-		clauses.addAll(possibleConflict.getManyPredicates().values());
-		clauses.addAll(possibleConflict.getManyDescriptions().values());
-
-		for (Clause clause : clauses) {
-			if (conflict == null) {
-				if (clause.getPolarity() <= -0.2) {
-					conflict = new Conflict(clause, null);
-				}
-			} else {
-				if ((clause.getPolarity() < conflict.getPolarity())) {
-					conflict = new Conflict(clause, null);
-				}
+	private SpecialClause checkForConflict(StorySentence storySentence) {
+		
+		List<Clause> clauses = new ArrayList();
+		clauses.addAll(storySentence.getManyDescriptions().values());
+		clauses.addAll(storySentence.getManyPredicates().values());
+		
+		float worstPolarity = 0;
+		float polarity = (float) -0.2; // need to be lower than or equal -0.2
+		String mainConcept = null;
+		Clause mainClause = null;
+		
+		//compare from previously set
+		if(asr.getConflict() != null) {
+			if(asr.getConflict().getPolarity() < polarity) {
+				polarity = asr.getConflict().getPolarity();
 			}
 		}
 
-		return conflict;
-
+		for(Clause clause: clauses) {
+		
+			List<String> concepts = clause.getConcepts();
+			
+			if(concepts != null) {
+				for(String concept: concepts) {
+					if(concept.contains("not")) {
+						polarity = snp.getPolarity(concept.replace(" ", "_")) * -1;
+					}
+					else {
+						polarity = snp.getPolarity(concept.replace(" ", "_"));
+					}
+					
+					if(polarity <= worstPolarity) {
+						worstPolarity = polarity;
+						mainConcept = concept;
+						mainClause = clause;
+					}
+				}
+			}
+		}
+		
+		if(mainClause != null) {
+			return new SpecialClause(mainClause, mainConcept, worstPolarity);
+		}
+		else {
+			return null;
+		}
 	}
 
-	private Resolution checkForResolution(StorySentence storySentence) {
+	private SpecialClause checkForResolution(StorySentence storySentence) {
 
-		Conflict conflict = asr.getConflict();
-		Resolution resolution = asr.getResolution();
-
-		StorySentence possibleResolution = storySentence;
-
-		List<Clause> clauses = new ArrayList<Clause>();
-		clauses.addAll(possibleResolution.getManyPredicates().values());
-		clauses.addAll(possibleResolution.getManyDescriptions().values());
-
-		List<Noun> doersInConflict = new ArrayList<Noun>();
-		doersInConflict.addAll(conflict.getClause().getManyDoers().values());
-		for (Clause clause : clauses) {
-			if (hasValidResolutionConcept(conflict, clause)) {
-				List<Noun> doersInResolution = new ArrayList<Noun>();
-				doersInResolution.addAll(clause.getManyDoers().values());
+		List<Clause> clauses = new ArrayList();
+		clauses.addAll(storySentence.getManyDescriptions().values());
+		clauses.addAll(storySentence.getManyPredicates().values());
+		
+		float bestPolarity = 0;
+		float polarity = 0;
+		String mainConcept = null;
+		Clause mainClause = null;
+		
+		for(Clause clause: clauses) {
+		
+			List<String> concepts = clause.getConcepts();
+		
+			if(concepts != null) {
+				
+				for(String concept: concepts) {
+					if(concept.contains("not")) {
+						polarity = snp.getPolarity(concept.replace(" ", "_")) * -1;
+					}
+					else {
+						polarity = snp.getPolarity(concept.replace(" ", "_"));
+					}
+					
+					if(polarity > bestPolarity) {
+						bestPolarity = polarity;
+						mainConcept = concept;
+						mainClause = clause;
+					}
+				}
+			}
+		}
+		
+		if(mainClause != null) {
+			SpecialClause conflict = asr.getConflict();
+			
+			boolean hasValidResolution = this.hasValidResolutionConcept(conflict, mainClause);
+			if(hasValidResolution) {
+				
+				List<Noun> doersInResolution = new ArrayList(mainClause.getManyDoers().values());
+				List<Noun> doersInConflict = new ArrayList(conflict.getClause().getManyDoers().values());
 				doersInResolution.retainAll(doersInConflict);
-				if (doersInResolution.size() > 0) {
-					resolution = new Resolution(clause);
-					break;
+				
+				if(doersInResolution.size() > 0) {
+					return new SpecialClause(mainClause, mainConcept, bestPolarity);
 				}
 			}
 		}
-
-		return resolution;
+		
+		return null;
 
 	}
 
-	private boolean hasValidResolutionConcept(Conflict conflict,
+	private boolean hasValidResolutionConcept(SpecialClause conflict,
 			Clause resolutionClause) {
 
 		//if conflict is from negation, resolution should be un-negated statement
-		if (conflict.isNegation()) {
+		if (conflict.getClause().isNegated()) {
 			List<String> concepts = resolutionClause.getConcepts();
 			//if(resolutionClause.isNegated())
 			for (String resolutionConcept : concepts) {

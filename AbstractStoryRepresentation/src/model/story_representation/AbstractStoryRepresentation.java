@@ -9,8 +9,7 @@ import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 
-import model.story_representation.story_element.Conflict;
-import model.story_representation.story_element.Resolution;
+import model.story_representation.story_element.SpecialClause;
 import model.story_representation.story_element.noun.Noun;
 import model.story_representation.story_element.story_sentence.Description;
 import model.story_representation.story_element.story_sentence.Event;
@@ -25,9 +24,13 @@ public class AbstractStoryRepresentation {
 
 	private Map<String, Noun> nouns;
 
-	private Conflict conflict;
-
-	private Resolution resolution;
+//	private Conflict conflict;
+//
+//	private Resolution resolution;
+	
+	private SpecialClause conflict;
+	
+	private SpecialClause resolution;
 
 	private String partOfStory;
 
@@ -39,14 +42,15 @@ public class AbstractStoryRepresentation {
 		this.storySentences = new LinkedHashMap<String, List<StorySentence>>();
 		this.nouns = new HashMap<String, Noun>();
 		this.conflict = null;
+		this.resolution = null;
 		this.partOfStory = start;
 	}
 
-	public Conflict getConflict() {
+	public SpecialClause getConflict() {
 		return this.conflict;
 	}
 
-	public Resolution getResolution() {
+	public SpecialClause getResolution() {
 		return this.resolution;
 	}
 
@@ -199,6 +203,12 @@ public class AbstractStoryRepresentation {
 					" polarity: " + description.getPolarity());
 		}
 		
+		if(this.conflict != null)
+			log.debug(this.getConflict().getMainConcept());
+		
+		if(this.resolution != null)
+			log.debug(this.getResolution().getMainConcept());
+		
 		log.debug("\n");
 	
 	}
@@ -258,11 +268,11 @@ public class AbstractStoryRepresentation {
 		this.partOfStory = partOfStory;
 	}
 
-	public void setConflict(Conflict conflict) {
+	public void setConflict(SpecialClause conflict) {
 		this.conflict = conflict;
 	}
 
-	public void setResolution(Resolution resolution) {
+	public void setResolution(SpecialClause resolution) {
 		this.resolution = resolution;
 	}
 

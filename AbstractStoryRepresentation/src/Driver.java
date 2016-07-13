@@ -9,7 +9,7 @@ import model.instance.SenticNetParserInstance;
 import model.knowledge_base.MySQLConnector;
 import model.story_representation.AbstractStoryRepresentation;
 import model.story_representation.Checklist;
-import model.story_representation.story_element.Conflict;
+import model.story_representation.story_element.SpecialClause;
 import model.story_representation.story_element.noun.Noun;
 import model.story_representation.story_element.story_sentence.Description;
 import model.story_representation.story_element.story_sentence.Event;
@@ -212,11 +212,11 @@ public class Driver {
 					//asr has no events but has so many descriptions for nouns
 				}
 
-				Conflict conflict = asr.getConflict();
+				SpecialClause conflict = asr.getConflict();
 				if (conflict != null) {
 					System.out.println("conflict's address: " + conflict);
 					System.out.println("expected conflict resolution: "
-							+ conflict.getExpectedResolutionConcept());
+							+ conflict.getMainConcept());
 				}
 
 				//			System.out.println("expected resolution concept: " + asr.getConflict().getExpectedResolutionConcept());

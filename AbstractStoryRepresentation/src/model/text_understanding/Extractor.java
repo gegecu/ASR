@@ -49,7 +49,7 @@ public class Extractor {
 	private StanfordCoreNLP pipeline;
 	private AbstractSequenceClassifier classifier;
 	private ConceptParser cp;
-	private SenticNetParser snp;
+//	private SenticNetParser snp;
 	private Dictionaries dictionary;
 	private AbstractStoryRepresentation asr;
 
@@ -72,7 +72,7 @@ public class Extractor {
 		this.pipeline = StanfordCoreNLPInstance.getInstance();
 		this.classifier = AbstractSequenceClassifierInstance.getInstance();
 		this.cp = new ConceptParser();
-		this.snp = SenticNetParserInstance.getInstance();
+//		this.snp = SenticNetParserInstance.getInstance();
 		this.dictionary = DictionariesInstance.getInstance();
 	}
 
@@ -116,14 +116,14 @@ public class Extractor {
 						listDependencies);//extract based on dependency
 			}
 
-			for (Event event : storySentence.getManyPredicates().values()) {
-				event.setPolarity(getPolarityOfEvent(event));
-			}
-
-			for (Description description : storySentence.getManyDescriptions()
-					.values()) {
-				description.setPolarity(getPolarityOfEvent(description));
-			}
+//			for (Event event : storySentence.getManyPredicates().values()) {
+//				event.setPolarity(getPolarityOfEvent(event));
+//			}
+//
+//			for (Description description : storySentence.getManyDescriptions()
+//					.values()) {
+//				description.setPolarity(getPolarityOfEvent(description));
+//			}
 
 			// asr.addEvent(storySentence);
 			extractedStorySentences.add(storySentence);
@@ -1163,31 +1163,31 @@ public class Extractor {
 
 	}
 
-	private float getPolarityOfEvent(Clause clause) {
-
-		List<String> concepts = clause.getConcepts();
-
-		if (concepts == null) {
-			return (float) 0;
-		}
-
-		float negated = -1;
-		float sumPolarity = 0;
-		for (String concept : concepts) {
-
-			if (!concept.contains("not")) {
-				sumPolarity += snp.getPolarity(concept.replace(" ", "_"));
-
-			} else {
-				String temp = concept.replace("not ", "");
-				temp = temp.replace(" ", "_");
-				sumPolarity += snp.getPolarity(temp) * negated;
-			}
-			log.debug(sumPolarity);
-		}
-
-		return sumPolarity / concepts.size();
-	}
+//	private float getPolarityOfEvent(Clause clause) {
+//
+//		List<String> concepts = clause.getConcepts();
+//
+//		if (concepts == null) {
+//			return (float) 0;
+//		}
+//
+//		float negated = -1;
+//		float sumPolarity = 0;
+//		for (String concept : concepts) {
+//
+//			if (!concept.contains("not")) {
+//				sumPolarity += snp.getPolarity(concept.replace(" ", "_"));
+//
+//			} else {
+//				String temp = concept.replace("not ", "");
+//				temp = temp.replace(" ", "_");
+//				sumPolarity += snp.getPolarity(temp) * negated;
+//			}
+//			log.debug(sumPolarity);
+//		}
+//
+//		return sumPolarity / concepts.size();
+//	}
 
 	private List<TypedDependency> findDependencies(IndexedWord iw,
 			String inputType, String rel, List<TypedDependency> list) {
