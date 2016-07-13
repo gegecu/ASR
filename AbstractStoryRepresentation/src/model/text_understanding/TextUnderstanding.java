@@ -93,7 +93,7 @@ public class TextUnderstanding {
 						polarity = snp.getPolarity(concept.replace(" ", "_"));
 					}
 					
-					if(polarity <= worstPolarity) {
+					if(polarity <= worstPolarity & ConceptNetDAO.resolutionExists(concept)) {
 						worstPolarity = polarity;
 						mainConcept = concept;
 						mainClause = clause;

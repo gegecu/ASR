@@ -195,6 +195,52 @@ public class ConceptNetDAO {
 		return concepts;
 
 	}
+	
+	public static boolean resolutionExists(String conflict) {
+		String query = "SELECT c1.concept AS lev1, c2.concept as lev2, c3.concept as lev3 "
+				+ "FROM concept_relations AS t1 "
+				+ "LEFT JOIN concepts AS c1 ON c1.id = t1.toID "
+				+ "LEFT JOIN concept_relations AS t2 ON t2.fromID = t1.toID "
+				+ "LEFT JOIN concepts AS c2 ON c2.id = t2.toID "
+				+ "LEFT JOIN concept_relations AS t3 ON t3.fromID = t2.toID "
+				+ "LEFT JOIN concepts AS c3 ON c3.id = t3.toID "
+				+ "WHERE t1.fromID in (SELECT id FROM CONCEPTS WHERE concept = ?)";
+		
+		Connection connection = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		boolean resolutionExist = false;
+		
+		try {
+
+			connection = MySQLConnector.getInstance().getConnection();
+			ps = connection.prepareStatement(query);
+			ps.setString(1, conflict);
+			rs = ps.executeQuery();
+
+			if(rs.next()) {
+				resolutionExist = true;
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (ps != null)
+					ps.close();
+				if (connection != null)
+					connection.close();
+				if (rs != null)
+					rs.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+
+		return resolutionExist;
+		
+		
+	}
 
 	public static boolean getFourHops(String conflict,
 			String possibleResolution) {
