@@ -69,7 +69,7 @@ public class TextUnderstanding {
 		clauses.addAll(storySentence.getManyPredicates().values());
 		
 		float worstPolarity = 0;
-		float polarity = (float) -0.2; // need to be lower than or equal -0.2
+		float polarity = 0;
 		String mainConcept = null;
 		Clause mainClause = null;
 		
@@ -93,7 +93,7 @@ public class TextUnderstanding {
 						polarity = snp.getPolarity(concept.replace(" ", "_"));
 					}
 					
-					if(polarity <= worstPolarity & ConceptNetDAO.resolutionExists(concept)) {
+					if(polarity <= worstPolarity && polarity <= -0.2  && ConceptNetDAO.resolutionExists(concept)) {
 						worstPolarity = polarity;
 						mainConcept = concept;
 						mainClause = clause;
