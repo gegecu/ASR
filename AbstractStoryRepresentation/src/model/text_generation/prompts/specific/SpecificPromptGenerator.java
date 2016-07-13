@@ -52,9 +52,10 @@ public class SpecificPromptGenerator extends PromptGenerator {
 
 	private String checkAvailableTopics(Noun noun) {
 
-		currentNoun = noun;
+		specificPromptData.setCurrentNoun(noun);
+		specificPromptData.setCurrentPrompt(null);
+		String currentPrompt = null;
 		List<String> availableTopics = availableTopics(noun);
-		currentPrompt = null;
 
 		while (!availableTopics.isEmpty() && currentPrompt == null) {
 			int random = Randomizer.random(1, availableTopics.size());
@@ -74,7 +75,6 @@ public class SpecificPromptGenerator extends PromptGenerator {
 			}
 
 			String currentTopic = availableTopics.remove(random - 1);
-			specificPromptData.setCurrentTopic(currentTopic);
 			currentPrompt = "What is the " + currentTopic + " of "
 					+ toBeReplaced + noun.getId() + "?";
 
@@ -84,6 +84,9 @@ public class SpecificPromptGenerator extends PromptGenerator {
 			}
 
 			log.debug(currentPrompt);
+
+			specificPromptData.setCurrentTopic(currentTopic);
+			specificPromptData.setCurrentPrompt(currentPrompt);
 
 			return currentPrompt;
 
@@ -156,7 +159,7 @@ public class SpecificPromptGenerator extends PromptGenerator {
 	}
 
 	public boolean checkifCompleted() {
-		return availableTopics(currentNoun).isEmpty();
+		return availableTopics(specificPromptData.getCurrentNoun()).isEmpty();
 	}
 
 	private String generateWrongPrompts() {
@@ -176,10 +179,11 @@ public class SpecificPromptGenerator extends PromptGenerator {
 			specificPromptData.setWrong(false);
 		}
 
-		prompt += "What is the " + currentTopic + " of " + currentNoun.getId()
-				+ "?";
+		prompt += "What is the " + currentTopic + " of "
+				+ specificPromptData.getCurrentNoun().getId() + "?";
 
 		return prompt;
+
 	}
 
 }

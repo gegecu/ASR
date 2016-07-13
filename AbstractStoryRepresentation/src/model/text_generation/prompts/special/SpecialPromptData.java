@@ -10,7 +10,6 @@ import model.text_generation.prompts.PromptData;
 public class SpecialPromptData extends PromptData {
 
 	private List<Noun> doers;
-	private String currentPrompt;
 
 	public SpecialPromptData(Queue<String> history,
 			AbstractStoryRepresentation asr) {
@@ -23,14 +22,6 @@ public class SpecialPromptData extends PromptData {
 
 	public List<Noun> getDoers() {
 		return doers;
-	}
-
-	public void setCurrentPrompt(String currentPrompt) {
-		this.currentPrompt = currentPrompt;
-	}
-
-	public String getCurrentPrompt() {
-		return currentPrompt;
 	}
 
 }

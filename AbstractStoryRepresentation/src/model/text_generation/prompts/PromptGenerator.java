@@ -12,8 +12,6 @@ public abstract class PromptGenerator {
 	protected Queue<String> history;
 	protected StanfordCoreNLP pipeline;
 	protected Preprocessing preprocess;
-	protected Noun currentNoun;
-	protected String currentPrompt;
 
 	public PromptGenerator(Queue<String> history) {
 		super();
@@ -23,9 +21,5 @@ public abstract class PromptGenerator {
 	}
 
 	public abstract String generateText(Noun noun);
-
-	public Noun getCurrentNoun() {
-		return this.currentNoun;
-	}
 
 }

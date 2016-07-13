@@ -27,8 +27,8 @@ public class GeneralPromptGenerator extends PromptGenerator {
 	public String generateText(Noun noun) {
 		String directive = findDirective(noun,
 				new ArrayList<>(Arrays.asList(nounStartDirective)));
-		currentNoun = noun;
-		currentPrompt = directive;
+		generalPromptData.setCurrentNoun(noun);
+		generalPromptData.setCurrentPrompt(directive);
 		return directive;
 	}
 

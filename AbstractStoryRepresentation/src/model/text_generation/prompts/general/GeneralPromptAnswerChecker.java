@@ -26,6 +26,8 @@ public class GeneralPromptAnswerChecker extends PromptAnswerChecker {
 	// need to fix or think of another way because possible compound compound.
 	public boolean checkAnswer(String answer) {
 
+		String currentPrompt = generalPromptData.getCurrentPrompt();
+		
 		Map<String, String> coref;
 
 		Annotation document = new Annotation(answer);
@@ -79,7 +81,7 @@ public class GeneralPromptAnswerChecker extends PromptAnswerChecker {
 		}
 
 		return false;
-		
+
 	}
 
 }

@@ -27,6 +27,8 @@ public class SpecificPromptAnswerChecker extends PromptAnswerChecker {
 	// need to fix or think of another way because possible compound compound.
 	public boolean checkAnswer(String answer) {
 
+		String currentPrompt = specificPromptData.getCurrentPrompt();
+		Noun currentNoun = specificPromptData.getCurrentNoun();
 		String currentTopic = specificPromptData.getCurrentTopic();
 		Map<Noun, List<String>> answered = specificPromptData.getAnswered();
 
