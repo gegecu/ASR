@@ -279,7 +279,7 @@ public class StorySegmentGenerator extends TextGeneration {
 							}
 						} else {
 							end = (location.getIsCommon()
-									? "the "
+									? "the " + location.getId()
 									: location.getId());
 						}
 
@@ -319,8 +319,7 @@ public class StorySegmentGenerator extends TextGeneration {
 			Noun noun = asr.getNoun(listOfNouns.remove(randomNoun - 1));
 			List<Concept> concepts = null;
 
-			if (noun.getType() == TypeOfNoun.CHARACTER
-					&& !noun.getIsCommon()) {
+			if (noun.getType() == TypeOfNoun.CHARACTER && !noun.getIsCommon()) {
 				concepts = ConceptNetDAO.getConceptTo("person", "HasA");
 			} else {
 				concepts = ConceptNetDAO.getConceptTo(noun.getId(), "HasA");
@@ -420,8 +419,7 @@ public class StorySegmentGenerator extends TextGeneration {
 			Noun noun = asr.getNoun(listOfNouns.remove(randomNoun - 1));
 			List<Concept> concepts = null;
 
-			if (noun.getType() == TypeOfNoun.CHARACTER
-					&& !noun.getIsCommon()) {
+			if (noun.getType() == TypeOfNoun.CHARACTER && !noun.getIsCommon()) {
 				concepts = ConceptNetDAO.getConceptTo("person", "IsA");
 			} else {
 				concepts = ConceptNetDAO.getConceptTo(noun.getId(), "IsA");
@@ -521,8 +519,7 @@ public class StorySegmentGenerator extends TextGeneration {
 			Noun noun = asr.getNoun(listOfNouns.remove(randomNoun - 1));
 			List<Concept> concepts = null;
 
-			if (noun.getType() == TypeOfNoun.CHARACTER
-					&& !noun.getIsCommon()) {
+			if (noun.getType() == TypeOfNoun.CHARACTER && !noun.getIsCommon()) {
 				concepts = ConceptNetDAO.getConceptTo("person", "HasProperty");
 			} else {
 				concepts = ConceptNetDAO.getConceptTo(noun.getId(),

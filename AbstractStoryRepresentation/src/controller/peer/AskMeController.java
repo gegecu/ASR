@@ -221,13 +221,9 @@ public class AskMeController implements ActionListener {
 
 				try {
 					processed.acquire();
+					helpText = "";
 					helpText = currentTextGenerator.generateText();
-					if (helpText == null) {
-						typeOfHelp = TypeOfHelp.NO_IDEA;
-						dialog = new NoIdeaDialog();
-						helpText = TextGeneration.defaultResponse;
-					}
-					dialog.setHelpText(helpText);
+					dialog.setHelpText(helpText + "");
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -238,6 +234,12 @@ public class AskMeController implements ActionListener {
 
 			@Override
 			protected void done() {
+				if (helpText == null || helpText.equals("")) {
+					typeOfHelp = TypeOfHelp.NO_IDEA;
+					dialog = new NoIdeaDialog();
+					helpText = TextGeneration.defaultResponse;
+				}
+				dialog.setHelpText(helpText + "");
 				thinkingWaitDialog.setVisible(false);
 			}
 
