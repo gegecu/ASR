@@ -171,23 +171,29 @@ public class SpecificPromptGenerator extends PromptGenerator {
 
 	private String generateWrongPrompts() {
 
-		String prompt = "";
+		String prompt = null;
 		String currentTopic = specificPromptData.getCurrentTopic();
 
 		List<Concept> concepts = ConceptNetDAO.getConceptFrom(currentTopic,
 				"IsA");
 
-		if (concepts != null && !concepts.isEmpty()) {
+		while (concepts != null && !concepts.isEmpty()) {
 			int randomConcept = Randomizer.random(1, concepts.size());
 			prompt = "An example of " + currentTopic + " is "
-					+ concepts.get(randomConcept).getStart() + ". ";
-		} else {
+					+ concepts.remove(randomConcept).getStart() + ". " + "What is the " + currentTopic + " of "
+					+ specificPromptData.getCurrentNoun().getId() + "?";
+			
+			if(history.contains(prompt)) {
+				prompt = null;
+				continue;
+			}
+			
+		} 
+		
+		if(prompt == null) {
 			//ignore
 			specificPromptData.setWrong(false);
 		}
-
-		prompt += "What is the " + currentTopic + " of "
-				+ specificPromptData.getCurrentNoun().getId() + "?";
 
 		return prompt;
 
