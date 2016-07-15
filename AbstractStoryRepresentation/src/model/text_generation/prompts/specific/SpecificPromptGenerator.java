@@ -2,8 +2,10 @@ package model.text_generation.prompts.specific;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -110,10 +112,15 @@ public class SpecificPromptGenerator extends PromptGenerator {
 			default :
 				break;
 		}
+		
+		Set<String> answeredTopics = null;
+		
+		if(answered.get(noun) != null) {
+			answeredTopics = new HashSet<>(answered.get(noun));
+		}
 
-		List<String> answeredTopics = answered.get(noun);
 		if (answeredTopics == null) {
-			answeredTopics = new ArrayList<>();
+			answeredTopics = new HashSet<>();
 		}
 
 		//check all anyway to be sure because TU sometime fails
