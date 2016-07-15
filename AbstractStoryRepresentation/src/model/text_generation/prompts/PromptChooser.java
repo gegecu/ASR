@@ -20,6 +20,9 @@ import model.instance.StanfordCoreNLPInstance;
 import model.story_representation.AbstractStoryRepresentation;
 import model.story_representation.story_element.noun.Noun;
 import model.story_representation.story_element.noun.Noun.TypeOfNoun;
+import model.story_representation.story_element.story_sentence.Clause;
+import model.story_representation.story_element.story_sentence.Description;
+import model.story_representation.story_element.story_sentence.Event;
 import model.text_generation.TextGeneration;
 import model.text_generation.prompts.general.GeneralPromptAnswerChecker;
 import model.text_generation.prompts.general.GeneralPromptData;
@@ -149,8 +152,23 @@ public class PromptChooser extends TextGeneration {
 			}
 
 		} else {
+			
+			List<Clause> clauses = new ArrayList();
+			clauses.addAll(asr.getCurrentStorySentence().getManyDescriptions().values());
+			clauses.addAll(asr.getCurrentStorySentence().getManyPredicates().values());
+			
+			while(output == null && !clauses.isEmpty()) {
+				int randomClause = Randomizer.random(1, clauses.size());
+				
+				output = specialPromptGenerator.generateText(clauses.remove(randomClause - 1));
+			}
+//			
+//			if(predicates.isEmpty()) {
+//				output = null;
+//			}
+//			
 			currentPromptType = TypeOfPrompt.SPECIAL;
-			output = specialPromptGenerator.generateText();
+			
 			currentPromptAnswerChecker = specialPromptAnswerChecker;
 		}
 
@@ -217,6 +235,10 @@ public class PromptChooser extends TextGeneration {
 
 		} else {
 			answeredCorrect = currentPromptAnswerChecker.checkAnswer(input);
+			
+			if(!answeredCorrect) {
+				isLoop = true;
+			}
 		}
 
 		return answeredCorrect;
