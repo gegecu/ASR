@@ -11,6 +11,7 @@ import javax.swing.SwingWorker;
 
 import org.apache.log4j.Logger;
 
+import controller.peer.checklist.BeginnerChecklistController;
 import controller.peer.checklist.ChecklistController;
 import model.story_representation.AbstractStoryRepresentation;
 import model.text_generation.prompts.PromptChooser;
@@ -98,6 +99,14 @@ public class SubmitController implements ActionListener {
 			protected void done() {
 				if (threadCount.decrementAndGet() == 0) {
 					submitSemaphore.release();
+					switch (checklistController.getType()) {
+						case BEGINNER :
+							BeginnerChecklistController cc = (BeginnerChecklistController) checklistController;
+							cc.showCongrats();
+							break;
+						case ADVANCED :
+							break;
+					}
 				}
 			}
 

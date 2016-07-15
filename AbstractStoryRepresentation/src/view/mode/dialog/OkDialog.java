@@ -41,7 +41,16 @@ public class OkDialog extends JDialog {
 			BorderFactory.createLineBorder(Color.BLACK, 5),
 			BorderFactory.createEmptyBorder(3, 13, 3, 13));
 
+	private String dialogTitle;
+	private String dialogText;
+
 	public OkDialog(String dialogTitle, String dialogText) {
+		this.dialogTitle = dialogTitle;
+		this.dialogText = dialogText;
+		initializeUI();
+	}
+
+	private void initializeUI() {
 
 		panel = new JPanel();
 		okLabel = new AutoResizingLabel();

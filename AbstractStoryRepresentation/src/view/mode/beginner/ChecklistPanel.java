@@ -281,6 +281,7 @@ public class ChecklistPanel extends TemplatePanel {
 		viewPanel.getScrollPanePanel().add(checklistCardPanel);
 
 		nextButton.setText("Next Part");
+		nextButton.setEnabled(false);
 		nextButton.setFocusPainted(false);
 		nextButton.setBackground(Color.GREEN);
 		nextButton.setForeground(Color.BLACK);
@@ -415,6 +416,10 @@ public class ChecklistPanel extends TemplatePanel {
 
 	public void addCheckListActionListener(ActionListener actionListener) {
 		nextButton.addActionListener(actionListener);
+	}
+
+	public JButton getNextButton() {
+		return nextButton;
 	}
 
 }

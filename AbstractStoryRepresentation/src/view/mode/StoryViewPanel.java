@@ -58,8 +58,8 @@ public class StoryViewPanel extends ViewPanel {
 		if (text.isEmpty()) {
 			storyViewArea.setText(story);
 		} else {
-			storyViewArea
-					.setText(text + (text.endsWith(".") ? " " : ". ") + story);
+			storyViewArea.setText(text.trim()
+					+ (text.endsWith(".") ? " " : ". ") + story.trim());
 		}
 	}
 

@@ -9,6 +9,7 @@ public class AdvancedChecklistController extends ChecklistController {
 	public AdvancedChecklistController(AbstractStoryRepresentation asr,
 			Checklist checklist, SaveController saveController) {
 		super(asr, checklist, saveController);
+		this.type = TypeOfChecklistController.ADVANCED;
 	}
 
 	@Override

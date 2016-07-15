@@ -93,7 +93,7 @@ public class BeginnerModePanel extends ModePanel {
 		cancelController = new CancelController(titleField,
 				storyViewPanel.getStoryViewArea());
 		checklistController = new BeginnerChecklistController(asr, cl,
-				checkListPanel, saveController);
+				checkListPanel, saveController, checkListPanel.getNextButton());
 		submitController = new SubmitController(asr, textUnderstanding,
 				promptChooser, checklistController);
 		askMeController = new AskMeController(storySegmentGenerator,

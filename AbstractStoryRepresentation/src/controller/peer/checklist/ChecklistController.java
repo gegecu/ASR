@@ -7,9 +7,15 @@ import view.mode.beginner.ChecklistPanel;
 
 public abstract class ChecklistController {
 
+	public enum TypeOfChecklistController {
+		BEGINNER, ADVANCED;
+	}
+
 	protected Checklist checklist;
 	protected AbstractStoryRepresentation asr;
 	protected SaveController saveController;
+
+	protected TypeOfChecklistController type;
 
 	public ChecklistController(AbstractStoryRepresentation asr,
 			Checklist checklist, SaveController saveController) {
@@ -40,5 +46,9 @@ public abstract class ChecklistController {
 	}
 
 	public abstract void updateChecklist();
+
+	public TypeOfChecklistController getType() {
+		return type;
+	}
 
 }
