@@ -161,6 +161,7 @@ public class SpecificPromptGenerator extends PromptGenerator {
 		}
 
 		availableTopics.removeAll(answeredTopics);
+		
 		return availableTopics;
 
 	}
@@ -180,7 +181,7 @@ public class SpecificPromptGenerator extends PromptGenerator {
 		while (concepts != null && !concepts.isEmpty()) {
 			int randomConcept = Randomizer.random(1, concepts.size());
 			prompt = "An example of " + currentTopic + " is "
-					+ concepts.remove(randomConcept).getStart() + ". " + "What is the " + currentTopic + " of "
+					+ concepts.remove(randomConcept-1).getStart() + ". " + "What is the " + currentTopic + " of "
 					+ specificPromptData.getCurrentNoun().getId() + "?";
 			
 			if(history.contains(prompt)) {

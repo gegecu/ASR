@@ -30,6 +30,7 @@ import model.text_generation.prompts.special.SpecialPromptGenerator;
 import model.text_generation.prompts.specific.SpecificPromptAnswerChecker;
 import model.text_generation.prompts.specific.SpecificPromptData;
 import model.text_generation.prompts.specific.SpecificPromptGenerator;
+import model.text_understanding.Preprocessing;
 import model.utility.Randomizer;
 
 public class PromptChooser extends TextGeneration {
@@ -46,6 +47,7 @@ public class PromptChooser extends TextGeneration {
 	private Queue<String> history;
 	private boolean answeredCorrect;
 	private StanfordCoreNLP pipeline;
+	private Preprocessing preprocess;
 	private boolean isLoop;
 
 	private TypeOfPrompt currentPromptType;
@@ -74,6 +76,7 @@ public class PromptChooser extends TextGeneration {
 		restrictedInGeneral = new LinkedHashSet<>();
 		restrictedInSpecific = new LinkedHashSet<>();
 		pipeline = StanfordCoreNLPInstance.getInstance();
+		preprocess = new Preprocessing();
 
 		/* General Prompts */
 		generalPromptData = new GeneralPromptData(history, asr);
@@ -235,10 +238,14 @@ public class PromptChooser extends TextGeneration {
 	}
 
 	public String incompleteAnswer(String input) {
+		
+		Annotation document;
+		List<CoreMap> sentences;
 
-		Annotation document = new Annotation(input);
+		//annotate to check if one word answer
+		document = new Annotation(input);
 		pipeline.annotate(document);
-		List<CoreMap> sentences = document.get(SentencesAnnotation.class);
+		sentences = document.get(SentencesAnnotation.class);
 		for (CoreMap sentence : sentences) {
 			SemanticGraph dependencies = sentence
 					.get(CollapsedCCProcessedDependenciesAnnotation.class);
@@ -247,14 +254,31 @@ public class PromptChooser extends TextGeneration {
 					dependencies.typedDependencies());
 
 			if (listDependencies.size() == 1) {
-				return "The " + asr.getNoun(currentId).getId() + " is "
+				input = "The " + asr.getNoun(currentId).getId() + " is "
 						+ listDependencies.get(0).dep().lemma().toLowerCase()
 						+ ".";
 			}
 
 		}
+		
+		preprocess.preprocess(history.peek() + " " + input);
+		String temp = preprocess.getUpdatedString();
+		
+		String output = "";
+		
+		//annotate again to get updated string after correcting the one word answer
+		document = new Annotation(temp);
+		pipeline.annotate(document);
+		sentences = document.get(SentencesAnnotation.class);
+		//skip first sentence because it is the prompt
+		for(int i = 1; i < sentences.size(); i++) {
+			String sentence = sentences.get(i).toString();
+			output += sentence.substring(0, 1).toUpperCase() + sentence.substring(1, sentence.length()-2) + sentence.substring(sentence.length()-1); 
+		}
 
-		return input;
+		System.out.println(output);
+		
+		return output;
 
 	}
 
