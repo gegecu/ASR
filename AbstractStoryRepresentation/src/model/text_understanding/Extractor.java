@@ -473,8 +473,11 @@ public class Extractor {
 				//if not a location still add details anyway
 				predicate.getVerb().addPrepositionalPhrase(
 						createPrepositionalPhrase(td, listDependencies, true));
+				
+				System.out.println(tdGovLemma);
+				
 				predicate.addConcept(
-						tdDepLemma + " " + createPrepositionalPhrase(td,
+						tdGovLemma + " " + createPrepositionalPhrase(td,
 								listDependencies, false));
 				predicate.addConcept(tdDepLemma); //object itself as concept				
 			}
