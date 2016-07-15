@@ -46,13 +46,11 @@ public class BeginnerChecklistController extends ChecklistController
 			case ChecklistPanel.START :
 				if (checklist.isBeginningComplete()) {
 					checklistPanel.middle();
-					nextButton.setEnabled(false);
 				}
 				break;
 			case ChecklistPanel.MIDDLE :
 				if (checklist.isMiddleComplete()) {
 					checklistPanel.end();
-					nextButton.setEnabled(false);
 				}
 				break;
 			case ChecklistPanel.END :
@@ -74,7 +72,6 @@ public class BeginnerChecklistController extends ChecklistController
 		switch (partOfStory) {
 			case ChecklistPanel.START :
 				if (checklist.isBeginningComplete() && !parts[0]) {
-					nextButton.setEnabled(true);
 					parts[0] = true;
 					new OkDialog("Congratulations!",
 							"Congrats! You finished the start part of your story.")
@@ -86,7 +83,6 @@ public class BeginnerChecklistController extends ChecklistController
 				break;
 			case ChecklistPanel.MIDDLE :
 				if (checklist.isMiddleComplete() && !parts[1]) {
-					nextButton.setEnabled(true);
 					parts[1] = true;
 					new OkDialog("Congratulations!",
 							"Congrats! You finished the middle part of your story.")
@@ -98,7 +94,6 @@ public class BeginnerChecklistController extends ChecklistController
 				break;
 			case ChecklistPanel.END :
 				if (checklist.isEndingComplete() && !parts[2]) {
-					nextButton.setEnabled(true);
 					parts[2] = true;
 					finishedDialog.setVisible(true);
 					finishedSaveDialog.setVisible(true);
