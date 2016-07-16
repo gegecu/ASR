@@ -313,20 +313,24 @@ public class Extractor {
 
 				d = storySentence.getDescription(temp);
 			}
+			
+			System.out.println(temp + ", " + d);
 
 			d.getConcepts().clear();
 			d.setNegated(true);
+			
+			System.out.println(d.getReference("IsA").get(temp));
 
-			d.addReference("NotIsA", tdGovId,
-					d.getReference("IsA").remove(tdGovId));
+			d.addReference("NotIsA", temp,
+					d.getReference("IsA").remove(temp));
 
 			if (d.getReference("IsA").isEmpty()) {
 				d.getReferences().remove("IsA");
 			}
 
 			for (Noun noun : d.getManyDoers().values()) {
-				noun.addReference("NotIsA", tdGovId,
-						noun.getReference("IsA").remove(tdGovId));
+				noun.addReference("NotIsA", temp,
+						noun.getReference("IsA").remove(temp));
 
 				if (noun.getReference("IsA").isEmpty()) {
 					noun.getReferences().remove("IsA");
@@ -334,6 +338,7 @@ public class Extractor {
 			}
 
 			d.addConcept(cp.createConceptAsRoleNegation(tdGovLemma));
+
 
 			storySentence.addDescription(temp, d);
 		}
@@ -1061,7 +1066,7 @@ public class Extractor {
 				}
 
 				description.addDoer(tdDepId, noun);
-				description.addReference("IsA", tdDepId, noun2);
+				description.addReference("IsA", tdGovIdNN, noun2);
 
 				description.addConcept(cp.createConceptAsAdjective(tdGovLemma));
 				description.addConcept(
