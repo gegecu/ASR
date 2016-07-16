@@ -335,10 +335,12 @@ public class ChecklistPanel extends TemplatePanel {
 				"The beginning of the story must have at least 1 character.\n\nExample: There is a boy named John.");
 		location.addDescription("Location",
 				"The beginning of the story must have at least 1 location.\n\nExample: John went to the Philippines.");
-		conflict.addDescription("Conflict", "");
+		conflict.addDescription("Conflict",
+				"The conflict is the problem in the story\n\nEx: John hates durian.");
 		seriesOfActions.addDescription("2 Events",
-				"The middle of the story must have at least 2 events.\n\nExample: John ate kakanin.");
-		resolution.addDescription("Resolution", "");
+				"The middle of the story must have at least 2 events.\n\nExample: John ate cake.");
+		resolution.addDescription("Resolution",
+				"The resolution is the \"happy ending\" of the story.\n\nEx: John loves durian.");
 
 	}
 
