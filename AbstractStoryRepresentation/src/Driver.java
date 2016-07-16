@@ -195,15 +195,15 @@ public class Driver {
 						for (Event predicate : e.getManyPredicates().values()) {
 							System.out.print(
 									"p_concepts: " + predicate.getConcepts());
-							System.out.println(
-									" polarity: " + predicate.getPolarity());
+//							System.out.println(
+//									" polarity: " + predicate.getPolarity());
 						}
 						for (Description description : e.getManyDescriptions()
 								.values()) {
 							System.out.print(
 									"n_concepts: " + description.getConcepts());
-							System.out.println(
-									" polarity: " + description.getPolarity());
+//							System.out.println(
+//									" polarity: " + description.getPolarity());
 						}
 						System.out.println();
 					}

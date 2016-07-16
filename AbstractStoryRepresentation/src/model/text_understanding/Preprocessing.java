@@ -112,6 +112,9 @@ public class Preprocessing {
 						 */ {
 					// if the other reference represents more than the main reference, flip
 					// possible collision, just make it map with list later
+					
+					System.out.println("flip");
+					
 					coreference.put(
 							cc.getRepresentativeMention().sentNum + " "
 									+ cc.getRepresentativeMention().headIndex,

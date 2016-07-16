@@ -9,13 +9,11 @@ import model.story_representation.story_element.noun.Noun;
 
 public abstract class Clause {
 
-	protected float polarity;
 	protected List<String> concepts;
 	protected Map<String, Noun> doers;
 	protected boolean isNegated;
 
 	public Clause() {
-		this.polarity = 0.0f;
 		this.concepts = new ArrayList<String>();
 		this.doers = new HashMap<String, Noun>();
 		isNegated = false;
@@ -27,14 +25,6 @@ public abstract class Clause {
 	
 	public void setNegated(boolean isNegated) {
 		this.isNegated = isNegated;
-	}
-	
-	public void setPolarity(float polarity) {
-		this.polarity = polarity;
-	}
-
-	public float getPolarity() {
-		return this.polarity;
 	}
 
 	public void addDoer(String nounId, Noun noun) {

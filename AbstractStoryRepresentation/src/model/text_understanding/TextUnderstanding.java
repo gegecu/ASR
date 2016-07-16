@@ -3,6 +3,8 @@ package model.text_understanding;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import model.instance.SenticNetParserInstance;
 import model.knowledge_base.conceptnet.ConceptNetDAO;
 import model.knowledge_base.senticnet.SenticNetParser;
@@ -13,6 +15,9 @@ import model.story_representation.story_element.story_sentence.Clause;
 import model.story_representation.story_element.story_sentence.StorySentence;
 
 public class TextUnderstanding {
+	
+	private static Logger log = Logger
+			.getLogger(TextUnderstanding.class.getName());
 
 	private static final double conflictMinimumPolarity = -0.2;
 
@@ -58,6 +63,15 @@ public class TextUnderstanding {
 				}
 			}
 			asr.setResolution(resolution);
+		}
+		
+		
+		if(asr.getConflict() != null) {
+			log.debug(asr.getConflict().getMainConcept() + ", " + asr.getConflict().getPolarity());
+		}
+		
+		if(asr.getConflict() != null) {
+			log.debug(asr.getResolution().getMainConcept() + ", " + asr.getResolution().getPolarity());
 		}
 
 		extractedStorySentences = null;

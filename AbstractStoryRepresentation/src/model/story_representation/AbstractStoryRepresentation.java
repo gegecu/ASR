@@ -164,11 +164,35 @@ public class AbstractStoryRepresentation {
 
 		for (Entry<String, Description> entry : storySentence
 				.getManyDescriptions().entrySet()) {
+			
 			log.debug("isNegated: " + entry.getValue().isNegated());
 
+			log.debug("doers: ");
+			
 			for (Map.Entry<String, Noun> doer : entry.getValue()
 					.getManyDoers().entrySet()) {
 				log.debug(doer.getValue().getId());
+				
+				log.debug("common noun? "
+						+ doer.getValue().getIsCommon());
+
+				log.debug("doers' attributes: ");
+				for (Map.Entry<String, List<String>> entry2 : doer.getValue().getAttributes().entrySet()) {
+					log.debug(entry2.getKey() + " ");
+					log.debug(entry2.getValue());
+					
+				}
+
+				log.debug("doers' references: ");
+				for (Map.Entry<String, Map<String, Noun>> entry2 : doer
+						.getValue().getReferences()
+						.entrySet()) {
+					log.debug(entry2.getKey() + " ");
+					for (Noun n : entry2.getValue().values()) {
+						log.debug(n.getId() + " ");
+					}
+					
+				}
 			}
 
 			log.debug("attributes ");
@@ -192,22 +216,24 @@ public class AbstractStoryRepresentation {
 		for (Event predicate : storySentence.getManyPredicates().values()) {
 			log.debug(
 					"p_concepts: " + predicate.getConcepts());
-			log.debug(
-					" polarity: " + predicate.getPolarity());
+//			log.debug(
+//					" polarity: " + predicate.getPolarity());
 		}
 		for (Description description : storySentence.getManyDescriptions()
 				.values()) {
 			log.debug(
 					"n_concepts: " + description.getConcepts());
-			log.debug(
-					" polarity: " + description.getPolarity());
+//			log.debug(
+//					" polarity: " + description.getPolarity());
 		}
 		
-		if(this.conflict != null)
-			log.debug(this.getConflict().getMainConcept());
+		if(this.getConflict() != null) {
+			log.debug(this.getConflict().getMainConcept() + ", " + this.getConflict().getPolarity());
+		}
 		
-		if(this.resolution != null)
-			log.debug(this.getResolution().getMainConcept());
+		if(this.getConflict() != null) {
+			log.debug(this.getResolution().getMainConcept() + ", " + this.getResolution().getPolarity());
+		}
 		
 		log.debug("\n");
 	
