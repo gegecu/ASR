@@ -489,7 +489,12 @@ public class Extractor {
 				predicate.addConcept(
 						tdGovLemma + " " + createPrepositionalPhrase(td,
 								listDependencies, false));
-				predicate.addConcept(tdDepLemma); //object itself as concept				
+				predicate.addConcept(tdDepLemma); //object itself as concept	
+				
+				
+				//unsure with id
+				storySentence.addDescription(tdDepId, description);
+				
 			}
 		}
 
@@ -542,6 +547,8 @@ public class Extractor {
 				if (description == null) {
 					description = new Description();
 				}
+				
+				System.out.println("in");
 
 				for (Map.Entry<String, Noun> entry : storySentence
 						.getPredicate(tdGovId).getManyDoers().entrySet()) {
@@ -566,6 +573,9 @@ public class Extractor {
 				description.addAttribute("HasProperty", tdDepLemma);
 				description.addConcept(cp.createConceptAsAdjective(tdDepLemma));
 				storySentence.getManyPredicates().remove(tdGovId);
+				
+				//still unsure with id
+				storySentence.addDescription(tdDepId, description);
 
 			} else { //add as adverb in verb class		
 				Event event = storySentence.getPredicate(tdGovId);
@@ -622,6 +632,8 @@ public class Extractor {
 		description.addConcept(cp.createConceptAsAdjective(tdDepLemma));
 		description
 				.addConcept(cp.createConceptAsPredicativeAdjective(tdDepLemma));
+		
+		storySentence.addDescription(tdDepId, description);
 
 	}
 
@@ -696,6 +708,8 @@ public class Extractor {
 		}
 
 		storySentence.getManyPredicates().remove(tdGovId);
+		
+		storySentence.addDescription(tdDepId, description);
 
 	}
 
@@ -794,6 +808,7 @@ public class Extractor {
 			if (tdDepTag.equals("NNP")) {
 				noun = extractCategory(getNER(tdDepLemma), tdDepLemma);
 				noun.setProper();
+				System.out.println(noun.getId());
 			} else if (tdDepTag.contains("NN")) {
 				noun = extractCategory(getSRL(tdDepLemma), tdDepLemma);
 			}
@@ -806,6 +821,7 @@ public class Extractor {
 
 		if (event == null) {
 			event = new Event(tdGovId);
+			storySentence.addPredicate(tdGovId, event);
 		}
 
 		if (noun != null) {
@@ -1009,7 +1025,7 @@ public class Extractor {
 				boolean hasARelation = tdGovLemma.equals("has")
 						|| tdGovLemma.equals("have");
 
-				if (!hasARelation || !dictionary.copulas.contains(tdGovLemma)) {
+				if ((!hasARelation) || (!dictionary.copulas.contains(tdGovLemma))) {
 					noun.addAttribute("CapableOf", tdGovLemma);
 					log.debug(noun.getId() + " capable of " + tdGovLemma);
 				}
