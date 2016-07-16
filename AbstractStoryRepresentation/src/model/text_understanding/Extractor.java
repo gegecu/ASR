@@ -319,7 +319,7 @@ public class Extractor {
 			d.getConcepts().clear();
 			d.setNegated(true);
 			
-			System.out.println(d.getReference("IsA").get(temp));
+//			System.out.println(d.getReference("IsA").get(temp));
 
 			d.addReference("NotIsA", temp,
 					d.getReference("IsA").remove(temp));
@@ -329,8 +329,13 @@ public class Extractor {
 			}
 
 			for (Noun noun : d.getManyDoers().values()) {
+				
+//				System.out.println(noun.getReference("IsA").get(temp));
+				
 				noun.addReference("NotIsA", temp,
 						noun.getReference("IsA").remove(temp));
+				
+//				System.out.println(noun.getReference("NotIsA").get(temp));
 
 				if (noun.getReference("IsA").isEmpty()) {
 					noun.getReferences().remove("IsA");
@@ -800,7 +805,7 @@ public class Extractor {
 		Event event = storySentence.getPredicate(tdGovId);
 
 		if (event == null) {
-			event = new Event(tdGovLemma);
+			event = new Event(tdGovId);
 		}
 
 		if (noun != null) {
@@ -851,6 +856,8 @@ public class Extractor {
 				storySentence.getManyPredicates().remove(tdGovId);
 
 			} else {
+				
+				System.out.println(noun.getId());
 
 				//create concept
 				event.addDirectObject(tdDepId, noun);
