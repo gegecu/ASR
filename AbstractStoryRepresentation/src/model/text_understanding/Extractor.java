@@ -580,7 +580,7 @@ public class Extractor {
 			} else { //add as adverb in verb class		
 				Event event = storySentence.getPredicate(tdGovId);
 				if (event == null) { //verify if create new event is conflicting
-					event = new Event(tdGovId);
+					event = new Event(tdGovLemma);
 					storySentence.addPredicate(tdGovId, event);
 				}
 				event.getVerb().addAdverb(tdDepLemma);
@@ -724,7 +724,7 @@ public class Extractor {
 
 		Event event = storySentence.getPredicate(tdGovId);
 		if (event == null) {
-			event = new Event(tdGovId);
+			event = new Event(tdGovLemma);
 			storySentence.addPredicate(tdGovId, event);
 		}
 
@@ -820,7 +820,7 @@ public class Extractor {
 		Event event = storySentence.getPredicate(tdGovId);
 
 		if (event == null) {
-			event = new Event(tdGovId);
+			event = new Event(tdGovLemma);
 			storySentence.addPredicate(tdGovId, event);
 		}
 
