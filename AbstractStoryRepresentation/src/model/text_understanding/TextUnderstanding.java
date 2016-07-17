@@ -70,7 +70,7 @@ public class TextUnderstanding {
 			log.debug(asr.getConflict().getMainConcept() + ", " + asr.getConflict().getPolarity());
 		}
 		
-		if(asr.getConflict() != null) {
+		if(asr.getResolution() != null) {
 			log.debug(asr.getResolution().getMainConcept() + ", " + asr.getResolution().getPolarity());
 		}
 
@@ -82,7 +82,7 @@ public class TextUnderstanding {
 
 		List<Clause> clauses = new ArrayList<>();
 		clauses.addAll(storySentence.getManyDescriptions().values());
-		clauses.addAll(storySentence.getManyPredicates().values());
+		clauses.addAll(storySentence.getManyEvents().values());
 
 		float worstPolarity = 0;
 		float polarity = 0;
@@ -135,7 +135,7 @@ public class TextUnderstanding {
 
 		List<Clause> clauses = new ArrayList<>();
 		clauses.addAll(storySentence.getManyDescriptions().values());
-		clauses.addAll(storySentence.getManyPredicates().values());
+		clauses.addAll(storySentence.getManyEvents().values());
 
 		float bestPolarity = 0;
 		float polarity = 0;

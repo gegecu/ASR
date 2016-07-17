@@ -35,11 +35,11 @@ public class StorySentence {
 		this.predicates.put(id, predicate);
 	}
 
-	public Event getPredicate(String id) {
+	public Event getEvent(String id) {
 		return this.predicates.get(id);
 	}
 
-	public Map<String, Event> getManyPredicates() {
+	public Map<String, Event> getManyEvents() {
 		return this.predicates;
 	}
 
@@ -58,7 +58,7 @@ public class StorySentence {
 	public List<String> getAllNounsInStorySentence() {
 
 		Set<String> nounId = new HashSet<String>();
-		for (Event predicate : this.getManyPredicates().values()) {
+		for (Event predicate : this.getManyEvents().values()) {
 			nounId.addAll(predicate.getManyDoers().keySet());
 			nounId.addAll(predicate.getDirectObjects().keySet());
 			nounId.addAll(predicate.getReceivers().keySet());

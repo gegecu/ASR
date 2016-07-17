@@ -12,6 +12,10 @@ public class TypedDependencyComparator implements Comparator<TypedDependency> {
 			return -1;
 		} else if (td2.reln().toString().contains("nsubj")) {
 			return 1;
+		} else if (td1.reln().toString().contains("conj")) {
+			return -1;
+		} else if (td2.reln().toString().contains("conj")) {
+			return 1;
 		} else if (td1.reln().toString().equals("dobj")) {
 			return -1;
 		} else if (td2.reln().toString().equals("dobj")) {

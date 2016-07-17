@@ -98,28 +98,29 @@ public class Preprocessing {
 				.get(CorefCoreAnnotations.CorefChainAnnotation.class)
 				.values()) {
 			for (CorefMention c1 : cc.getMentionsInTextualOrder()) {
-				if (c1.mentionType.representativeness < cc
-						.getRepresentativeMention().mentionType.representativeness
-						|| c1.mentionType.representativeness == cc
-								.getRepresentativeMention().mentionType.representativeness) {
+				// if (c1.mentionType.representativeness < cc
+				//		.getRepresentativeMention().mentionType.representativeness
+				//		|| c1.mentionType.representativeness == cc
+				//				.getRepresentativeMention().mentionType.representativeness) {
 					coreference.put(c1.sentNum + " " + c1.headIndex,
 							cc.getRepresentativeMention().sentNum + " "
 									+ cc.getRepresentativeMention().headIndex);
-				} else /*
-						 * (c1.mentionType.representativeness >
-						 * cc.getRepresentativeMention().mentionType.
-						 * representativeness)
-						 */ {
-					// if the other reference represents more than the main reference, flip
-					// possible collision, just make it map with list later
-					
-					System.out.println("flip");
-					
-					coreference.put(
-							cc.getRepresentativeMention().sentNum + " "
-									+ cc.getRepresentativeMention().headIndex,
-							c1.sentNum + " " + c1.headIndex);
-				}
+				//} else 
+				//	/*
+				//		 * (c1.mentionType.representativeness >
+				//		 * cc.getRepresentativeMention().mentionType.
+				//		 * representativeness)
+				//		 */ {
+				//	// if the other reference represents more than the main reference, flip
+				//	// possible collision, just make it map with list later
+				//	
+				//	System.out.println("flip");
+				//	
+				//	coreference.put(
+				//			cc.getRepresentativeMention().sentNum + " "
+				//					+ cc.getRepresentativeMention().headIndex,
+				//			c1.sentNum + " " + c1.headIndex);
+				//}
 			}
 		}
 

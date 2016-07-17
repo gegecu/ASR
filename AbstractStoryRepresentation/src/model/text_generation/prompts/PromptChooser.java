@@ -155,7 +155,7 @@ public class PromptChooser extends TextGeneration {
 			
 			List<Clause> clauses = new ArrayList();
 			clauses.addAll(asr.getCurrentStorySentence().getManyDescriptions().values());
-			clauses.addAll(asr.getCurrentStorySentence().getManyPredicates().values());
+			clauses.addAll(asr.getCurrentStorySentence().getManyEvents().values());
 			
 			while(output == null && !clauses.isEmpty()) {
 				int randomClause = Randomizer.random(1, clauses.size());

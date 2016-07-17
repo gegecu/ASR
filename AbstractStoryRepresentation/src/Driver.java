@@ -66,7 +66,7 @@ public class Driver {
 						System.out
 								.println("is valid event? " + e.isValidEvent());
 
-						for (Event p : e.getManyPredicates().values()) {
+						for (Event p : e.getManyEvents().values()) {
 							System.out.println("doers: ");
 							for (Map.Entry<String, Noun> entry : p
 									.getManyDoers().entrySet()) {
@@ -192,7 +192,7 @@ public class Driver {
 						System.out.println();
 						//System.out.println("polarity: " + e.getPolarity());
 						System.out.println("concepts per predicate");
-						for (Event predicate : e.getManyPredicates().values()) {
+						for (Event predicate : e.getManyEvents().values()) {
 							System.out.print(
 									"p_concepts: " + predicate.getConcepts());
 //							System.out.println(

@@ -50,6 +50,9 @@ public class Extractor {
 	private Dictionaries dictionary;
 	private AbstractStoryRepresentation asr;
 
+	private int counterTotal = 0;
+	private int counterCurrent = 0;
+
 	private static String[] SRL_ENTITY_LIST = {"person", "place", "object"};
 	private static String[] NER_ENTITY_LIST = {"person", "location", "date",
 			"organization", "time", "money", "percentage"};
@@ -148,6 +151,12 @@ public class Extractor {
 			//log.debug(td.dep().lemma() + " before : " + tdDepId);
 			//log.debug(td.gov().lemma() + "before : " + tdGovId);
 
+			for (TypedDependency i : listDependencies) {
+				if (i.reln().toString().equals("dobj")) {
+					counterTotal++;
+				}
+			}
+
 			if (coreference.get(tdDepId) != null) {
 				tdDepId = coreference.get(tdDepId);
 				log.debug("after : " + tdDepId);
@@ -222,14 +231,119 @@ public class Extractor {
 							tdGovId, listDependencies);
 				}
 			}
-
 			/** extract negation **/
 			else if (tdReln.equals("neg")) {
 				extractNegation(td, storySentence, tdDepId, tdGovId);
 			}
+			/** extract conjuction **/
+			else if (tdReln.contains("conj")) {
+				/** for noun & adjective only **/
+				if (tdReln.equals("conj:and")) {
+					if (tdDepTag.contains("NN") || tdDepTag.contains("JJ")) {
+						extractNNJJAndConjunction(td, storySentence, tdDepId,
+								tdGovId);
+					} else if (tdDepTag.contains("VB")) {
+						extractVBAndConjuction(td, storySentence, tdDepId,
+								tdGovId, listDependencies);
+					}
+				}
+			}
 
 		} catch (NullPointerException e) {
 			e.printStackTrace();
+		}
+
+	}
+
+	private void extractVBAndConjuction(TypedDependency td,
+			StorySentence storySentence, String tdDepId, String tdGovId,
+			List<TypedDependency> listDependencies) {
+
+		String tdDepTag = td.dep().tag();
+		String tdDepLemma = td.dep().lemma();
+		String tdGovTag = td.gov().tag();
+		String tdGovLemma = td.gov().lemma();
+		String tdReln = td.reln().toString();
+
+		Event govEvent = storySentence.getEvent(tdGovId);
+		Event depEvent = storySentence.getEvent(tdDepId);
+		if (depEvent == null) {
+			depEvent = new Event(tdDepLemma);
+		}
+
+		if (tdReln.equals("dobj")) {
+			counterCurrent++;
+		}
+
+		for (Map.Entry<String, Noun> entry : govEvent.getManyDoers()
+				.entrySet()) {
+			Noun doer = entry.getValue();
+			boolean hasARelation = tdDepLemma.equals("has")
+					|| tdDepLemma.equals("have");
+			if ((!hasARelation) || (!dictionary.copulas.contains(tdDepLemma))) {
+				doer.addAttribute("CapableOf", tdDepLemma);
+				log.debug(doer.getId() + " capable of " + tdDepLemma);
+			}
+			depEvent.getVerb().setPOS(tdDepTag);
+			//find auxiliary
+			List<TypedDependency> auxs = findDependencies(td.dep(), "gov",
+					"aux", listDependencies);
+			for (TypedDependency t : auxs) {
+				depEvent.getVerb().addAuxiliary(t.dep().lemma());
+			}
+			depEvent.addDoer(tdDepId, doer);
+			depEvent.addConcept(cp.createConceptAsVerb(tdDepLemma));
+			log.debug(tdDepId);
+			storySentence.addPredicate(tdDepId, depEvent);
+		}
+
+	}
+
+	private void extractNNJJAndConjunction(TypedDependency td,
+			StorySentence storySentence, String tdDepId, String tdGovId) {
+
+		String tdDepTag = td.dep().tag();
+		String tdDepLemma = td.dep().lemma();
+		String tdGovTag = td.gov().tag();
+		String tdGovLemma = td.gov().lemma();
+		String tdReln = td.reln().toString();
+
+		Description description = storySentence.getDescription(tdGovId);
+
+		Noun conjNN = asr.getNoun(tdDepId);
+		if (tdDepTag.contains("NN")) {
+			if (conjNN == null) {
+				if (tdDepTag.equals("NNP")) {
+					conjNN = extractCategory(getNER(tdDepLemma), tdDepLemma);
+					conjNN.setProper();
+				} else if (tdDepTag.contains("NN")) {
+					conjNN = extractCategory(getSRL(tdDepLemma), tdDepLemma);
+				}
+				asr.addNoun(tdDepId, conjNN);
+			}
+		}
+
+		if (description != null) {
+			Description d2 = new Description();
+			for (Map.Entry<String, Noun> entry : description.getManyDoers()
+					.entrySet()) {
+				Noun doer = entry.getValue();
+				if (tdDepTag.contains("NN")) {
+					doer.addReference("IsA", tdDepId, conjNN);
+					d2.addReference("IsA", tdDepId, conjNN);
+					d2.addConcept(cp.createConceptAsAdjective(tdDepLemma));
+					d2.addConcept(
+							cp.createConceptAsPredicativeAdjective(tdDepLemma));
+				} else if (tdDepTag.equals("JJ")) {
+					doer.addAttribute("HasProperty", tdDepLemma);
+					d2.addAttribute("HasProperty", tdDepLemma);
+					d2.addConcept(cp.createConceptAsAdjective(tdDepLemma));
+					d2.addConcept(
+							cp.createConceptAsPredicativeAdjective(tdDepLemma));
+				}
+				d2.addDoer(entry.getKey(), entry.getValue());
+			}
+			storySentence.addDescription(tdDepId, d2);
 		}
 
 	}
@@ -250,7 +364,7 @@ public class Extractor {
 
 			if (!(tdGovLemma.equalsIgnoreCase("has")
 					|| tdGovLemma.equalsIgnoreCase("have"))) {
-				Event p = storySentence.getPredicate(tdGovId);
+				Event p = storySentence.getEvent(tdGovId);
 				log.debug(tdGovId + " " + p);
 				p.getConcepts().clear();
 				p.setNegated(true);
@@ -296,8 +410,17 @@ public class Extractor {
 
 						d.addConcept(cp.createNegationVerbWithDirectObject(
 								tdGovLemma, possession.getValue().getId()));
+
+						Noun possessor = possession.getValue();
+						if (possessor.getReference("HasA") != null
+								&& possessor.getReference("HasA").isEmpty()) {
+							possessor.getReferences().remove("HasA");
+						}
 					}
-					d.getReferences().remove("HasA");
+					if (d.getReference("HasA") != null
+							&& d.getReference("HasA").isEmpty()) {
+						d.getReferences().remove("HasA");
+					}
 				}
 				storySentence.addDescription(tdGovId, d);
 			}
@@ -313,29 +436,28 @@ public class Extractor {
 
 				d = storySentence.getDescription(temp);
 			}
-			
-			System.out.println(temp + ", " + d);
+
+			System.out.println(temp + ", " + tdGovLemma);
 
 			d.getConcepts().clear();
 			d.setNegated(true);
-			
-//			System.out.println(d.getReference("IsA").get(temp));
 
-			d.addReference("NotIsA", temp,
-					d.getReference("IsA").remove(temp));
+			//			System.out.println(d.getReference("IsA").get(temp));
+
+			d.addReference("NotIsA", temp, d.getReference("IsA").remove(temp));
 
 			if (d.getReference("IsA").isEmpty()) {
 				d.getReferences().remove("IsA");
 			}
 
 			for (Noun noun : d.getManyDoers().values()) {
-				
-//				System.out.println(noun.getReference("IsA").get(temp));
-				
+
+				//				System.out.println(noun.getReference("IsA").get(temp));
+
 				noun.addReference("NotIsA", temp,
 						noun.getReference("IsA").remove(temp));
-				
-//				System.out.println(noun.getReference("NotIsA").get(temp));
+
+				//				System.out.println(noun.getReference("NotIsA").get(temp));
 
 				if (noun.getReference("IsA").isEmpty()) {
 					noun.getReferences().remove("IsA");
@@ -343,7 +465,6 @@ public class Extractor {
 			}
 
 			d.addConcept(cp.createConceptAsRoleNegation(tdGovLemma));
-
 
 			storySentence.addDescription(temp, d);
 		}
@@ -455,7 +576,7 @@ public class Extractor {
 
 		if (noun != null) {
 
-			Event predicate = storySentence.getPredicate(tdGovId);
+			Event predicate = storySentence.getEvent(tdGovId);
 
 			if (predicate != null) {
 
@@ -467,7 +588,7 @@ public class Extractor {
 				if (noun.getType() == TypeOfNoun.LOCATION
 						&& !predicate.isNegated()) {
 					for (Map.Entry<String, Noun> entry : storySentence
-							.getPredicate(tdGovId).getManyDoers().entrySet()) {
+							.getEvent(tdGovId).getManyDoers().entrySet()) {
 						entry.getValue().addReference("AtLocation", tdDepId,
 								noun);
 						description.addReference("AtLocation", tdDepId, noun);
@@ -483,18 +604,17 @@ public class Extractor {
 				//if not a location still add details anyway
 				predicate.getVerb().addPrepositionalPhrase(
 						createPrepositionalPhrase(td, listDependencies, true));
-				
+
 				System.out.println(tdGovLemma);
-				
+
 				predicate.addConcept(
 						tdGovLemma + " " + createPrepositionalPhrase(td,
 								listDependencies, false));
 				predicate.addConcept(tdDepLemma); //object itself as concept	
-				
-				
+
 				//unsure with id
 				storySentence.addDescription(tdDepId, description);
-				
+
 			}
 		}
 
@@ -532,6 +652,7 @@ public class Extractor {
 		}
 		return preposition + " " + td.dep().lemma();
 	}
+
 	private void extractAdvmodPropertyDependency(TypedDependency td,
 			StorySentence storySentence, String tdDepId, String tdGovId) {
 
@@ -547,11 +668,11 @@ public class Extractor {
 				if (description == null) {
 					description = new Description();
 				}
-				
+
 				System.out.println("in");
 
 				for (Map.Entry<String, Noun> entry : storySentence
-						.getPredicate(tdGovId).getManyDoers().entrySet()) {
+						.getEvent(tdGovId).getManyDoers().entrySet()) {
 					entry.getValue().addAttribute("HasProperty", tdDepLemma);
 
 					if (entry.getValue()
@@ -572,13 +693,13 @@ public class Extractor {
 
 				description.addAttribute("HasProperty", tdDepLemma);
 				description.addConcept(cp.createConceptAsAdjective(tdDepLemma));
-				storySentence.getManyPredicates().remove(tdGovId);
-				
+				storySentence.getManyEvents().remove(tdGovId);
+
 				//still unsure with id
 				storySentence.addDescription(tdDepId, description);
 
 			} else { //add as adverb in verb class		
-				Event event = storySentence.getPredicate(tdGovId);
+				Event event = storySentence.getEvent(tdGovId);
 				if (event == null) { //verify if create new event is conflicting
 					event = new Event(tdGovLemma);
 					storySentence.addPredicate(tdGovId, event);
@@ -632,7 +753,7 @@ public class Extractor {
 		description.addConcept(cp.createConceptAsAdjective(tdDepLemma));
 		description
 				.addConcept(cp.createConceptAsPredicativeAdjective(tdDepLemma));
-		
+
 		storySentence.addDescription(tdDepId, description);
 
 	}
@@ -649,7 +770,7 @@ public class Extractor {
 			description = new Description();
 		}
 
-		for (Map.Entry<String, Noun> entry : storySentence.getPredicate(tdGovId)
+		for (Map.Entry<String, Noun> entry : storySentence.getEvent(tdGovId)
 				.getManyDoers().entrySet()) {
 
 			if (tdDepTag.equals("JJ")) {
@@ -707,8 +828,8 @@ public class Extractor {
 			}
 		}
 
-		storySentence.getManyPredicates().remove(tdGovId);
-		
+		storySentence.getManyEvents().remove(tdGovId);
+
 		storySentence.addDescription(tdDepId, description);
 
 	}
@@ -722,7 +843,7 @@ public class Extractor {
 		String tdDepTag = td.dep().tag();
 		String tdGovLemma = td.gov().lemma();
 
-		Event event = storySentence.getPredicate(tdGovId);
+		Event event = storySentence.getEvent(tdGovId);
 		if (event == null) {
 			event = new Event(tdGovLemma);
 			storySentence.addPredicate(tdGovId, event);
@@ -817,7 +938,7 @@ public class Extractor {
 
 		}
 
-		Event event = storySentence.getPredicate(tdGovId);
+		Event event = storySentence.getEvent(tdGovId);
 
 		if (event == null) {
 			event = new Event(tdGovLemma);
@@ -836,7 +957,7 @@ public class Extractor {
 				}
 
 				for (Map.Entry<String, Noun> entry : storySentence
-						.getPredicate(tdGovId).getManyDoers().entrySet()) {
+						.getEvent(tdGovId).getManyDoers().entrySet()) {
 
 					if (noun != null) {
 
@@ -869,10 +990,12 @@ public class Extractor {
 				}
 
 				storySentence.addDescription(tdGovId, description);
-				storySentence.getManyPredicates().remove(tdGovId);
+
+				if (counterTotal == counterCurrent)
+					storySentence.getManyEvents().remove(tdGovId);
 
 			} else {
-				
+
 				System.out.println(noun.getId());
 
 				//create concept
@@ -920,7 +1043,7 @@ public class Extractor {
 
 			}
 
-			Event event = storySentence.getPredicate(tdGovId);
+			Event event = storySentence.getEvent(tdGovId);
 
 			if (event == null) {
 				event = new Event(td.gov().lemma());
@@ -940,7 +1063,7 @@ public class Extractor {
 		String tdDepLemma = td.dep().lemma();
 		String tdGovLemma = td.gov().lemma();
 
-		Event event = storySentence.getPredicate(tdGovId);
+		Event event = storySentence.getEvent(tdGovId);
 
 		if (tdDepLemma.equals("get")) {
 			//create concept
@@ -1025,12 +1148,13 @@ public class Extractor {
 				boolean hasARelation = tdGovLemma.equals("has")
 						|| tdGovLemma.equals("have");
 
-				if ((!hasARelation) || (!dictionary.copulas.contains(tdGovLemma))) {
+				if ((!hasARelation)
+						|| (!dictionary.copulas.contains(tdGovLemma))) {
 					noun.addAttribute("CapableOf", tdGovLemma);
 					log.debug(noun.getId() + " capable of " + tdGovLemma);
 				}
 
-				Event event = storySentence.getPredicate(tdGovId);
+				Event event = storySentence.getEvent(tdGovId);
 
 				if (event == null) {
 					event = new Event(tdGovLemma);
@@ -1250,4 +1374,5 @@ public class Extractor {
 		}
 		return false;
 	}
+
 }

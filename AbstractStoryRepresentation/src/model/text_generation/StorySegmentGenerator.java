@@ -141,7 +141,7 @@ public class StorySegmentGenerator extends TextGeneration {
 		StorySentence storySentence = asr.getCurrentStorySentence();
 
 		List<String> predicateIds = new ArrayList<>(
-				storySentence.getManyPredicates().keySet());
+				storySentence.getManyEvents().keySet());
 
 		boolean found = false;
 
@@ -149,7 +149,7 @@ public class StorySegmentGenerator extends TextGeneration {
 
 			int randomEvent = Randomizer.random(1, predicateIds.size());
 			Event event = storySentence
-					.getPredicate(predicateIds.remove(randomEvent - 1));
+					.getEvent(predicateIds.remove(randomEvent - 1));
 
 			List<String> directObjects = new ArrayList<String>(
 					event.getDirectObjects().keySet());
@@ -626,7 +626,7 @@ public class StorySegmentGenerator extends TextGeneration {
 		StorySentence storySentence = asr.getCurrentStorySentence();
 		List<Clause> clauses = new ArrayList<Clause>();
 		clauses.addAll(storySentence.getManyDescriptions().values());
-		clauses.addAll(storySentence.getManyPredicates().values());
+		clauses.addAll(storySentence.getManyEvents().values());
 
 		Set<Concept> temp = new HashSet<>();
 		boolean found = false;
