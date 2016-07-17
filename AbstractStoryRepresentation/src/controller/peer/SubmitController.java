@@ -123,9 +123,11 @@ public class SubmitController implements ActionListener {
 	}
 
 	public boolean verifyAnswer(String inputText) {
-		boolean isAnswerCorrect = promptChooser.checkAnswer(inputText);
+		
+		String input = promptChooser.incompleteAnswer(inputText);
+		boolean isAnswerCorrect = promptChooser.checkAnswer(input);
 		if (isAnswerCorrect) {
-			processStory(promptChooser.incompleteAnswer(inputText));
+			processStory(input);
 		}
 		return isAnswerCorrect;
 	}

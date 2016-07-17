@@ -183,7 +183,7 @@ public class PromptChooser extends TextGeneration {
 
 	public boolean checkAnswer(String input) {
 
-		String temp = incompleteAnswer(input);
+//		String temp = incompleteAnswer(input);
 		Noun noun = asr.getNoun(currentId);
 
 		answeredCorrect = false;
@@ -194,7 +194,7 @@ public class PromptChooser extends TextGeneration {
 		if (asr.getCurrentPartOfStory()
 				.equals(AbstractStoryRepresentation.start)) {
 
-			isAnswerCorrect = currentPromptAnswerChecker.checkAnswer(temp);
+			isAnswerCorrect = currentPromptAnswerChecker.checkAnswer(input);
 
 			if (currentPromptType == TypeOfPrompt.GENERAL) {
 
@@ -208,11 +208,14 @@ public class PromptChooser extends TextGeneration {
 							log.debug(currentId);
 							restrictedInGeneral.add(currentId);
 						}
-						isLoop = true;
+						//isLoop = true;
 					}
+					
+					isLoop = true;
 
 				} else {
 					answeredCorrect = true;
+					isLoop = false;
 				}
 
 			} else if (currentPromptType == TypeOfPrompt.SPECIFIC) {
@@ -220,6 +223,8 @@ public class PromptChooser extends TextGeneration {
 				if (isAnswerCorrect) {
 
 					answeredCorrect = true;
+					isLoop = false;
+					specificPromptGenerator.setIsWrongIgnored(false);
 
 					if (specificPromptGenerator.checkifCompleted()) {
 						restrictedInGeneral.remove(currentId);
@@ -238,6 +243,9 @@ public class PromptChooser extends TextGeneration {
 			
 			if(!answeredCorrect) {
 				isLoop = true;
+			}
+			else {
+				isLoop = false;
 			}
 		}
 
@@ -293,9 +301,24 @@ public class PromptChooser extends TextGeneration {
 		pipeline.annotate(document);
 		sentences = document.get(SentencesAnnotation.class);
 		//skip first sentence because it is the prompt
-		for(int i = 1; i < sentences.size(); i++) {
-			String sentence = sentences.get(i).toString();
-			output += sentence.substring(0, 1).toUpperCase() + sentence.substring(1, sentence.length()-2) + sentence.substring(sentence.length()-1); 
+		
+		int i = 1; 
+		
+		if(currentPromptType == TypeOfPrompt.SPECIFIC) {
+			if(specificPromptGenerator.getIsWrong()) {
+				// 2 sentences because there is additional sentence for example
+				
+				System.out.println("a");
+				
+				i = 2;
+			}
+		}
+		
+		
+		
+		for(int counter = i ; counter < sentences.size(); counter++) {
+			String sentence = sentences.get(counter).toString();
+			output += sentence.substring(0, 1).toUpperCase() + sentence.substring(1, sentence.length()-2) + sentence.substring(sentence.length()-1) + " "; 
 		}
 
 		System.out.println(output);
