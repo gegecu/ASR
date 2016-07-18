@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -53,6 +55,7 @@ public class Extractor {
 	private AbstractStoryRepresentation asr;
 
 	private Map<String, Integer> dobjMappingHasHave = new HashMap<>();
+	private Set<String> restrictedCapableOf = new HashSet<>();
 
 	private static String[] SRL_ENTITY_LIST = {"person", "place", "object"};
 	private static String[] NER_ENTITY_LIST = {"person", "location", "date",
@@ -75,6 +78,10 @@ public class Extractor {
 		this.cp = new ConceptParser();
 		//		this.snp = SenticNetParserInstance.getInstance();
 		this.dictionary = DictionariesInstance.getInstance();
+		
+		restrictedCapableOf.add("has");
+		restrictedCapableOf.add("have");
+		restrictedCapableOf.addAll(dictionary.copulas);
 	}
 
 	public List<StorySentence> extract(String text,
@@ -290,9 +297,13 @@ public class Extractor {
 		for (Map.Entry<String, Noun> entry : govClause.getManyDoers()
 				.entrySet()) {
 			Noun doer = entry.getValue();
-			boolean hasARelation = tdDepLemma.equals("has")
-					|| tdDepLemma.equals("have");
-			if ((!hasARelation) || (!dictionary.copulas.contains(tdDepLemma))) {
+			
+
+			
+//			boolean hasARelation = tdDepLemma.equals("has")
+//					|| tdDepLemma.equals("have");
+			
+			if (!this.restrictedCapableOf.contains(tdDepLemma.toLowerCase()))  {
 				doer.addAttribute("CapableOf", tdDepLemma);
 				log.debug(doer.getId() + " capable of " + tdDepLemma);
 			}
@@ -1188,11 +1199,10 @@ public class Extractor {
 			/** if verb **/
 			else if (tdGovTag.contains("VB")) {
 
-				boolean hasARelation = tdGovLemma.equals("has")
-						|| tdGovLemma.equals("have");
+//				boolean hasARelation = tdGovLemma.equals("has")
+//						|| tdGovLemma.equals("have");
 
-				if ((!hasARelation)
-						|| (!dictionary.copulas.contains(tdGovLemma))) {
+				if (!this.restrictedCapableOf.contains(tdGovLemma.toLowerCase())) {
 					noun.addAttribute("CapableOf", tdGovLemma);
 					log.debug(noun.getId() + " capable of " + tdGovLemma);
 				}
