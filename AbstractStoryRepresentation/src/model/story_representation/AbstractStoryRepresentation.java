@@ -215,7 +215,7 @@ public class AbstractStoryRepresentation {
 					+ this.getConflict().getPolarity());
 		}
 
-		if (this.getConflict() != null) {
+		if (this.getResolution() != null) {
 			log.debug(this.getResolution().getMainConcept() + ", "
 					+ this.getResolution().getPolarity());
 		}
