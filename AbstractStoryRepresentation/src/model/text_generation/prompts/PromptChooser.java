@@ -307,9 +307,6 @@ public class PromptChooser extends TextGeneration {
 		if(currentPromptType == TypeOfPrompt.SPECIFIC) {
 			if(specificPromptGenerator.getIsWrong()) {
 				// 2 sentences because there is additional sentence for example
-				
-				System.out.println("a");
-				
 				i = 2;
 			}
 		}

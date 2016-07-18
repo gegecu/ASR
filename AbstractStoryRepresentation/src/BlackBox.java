@@ -20,7 +20,7 @@ public class BlackBox {
 
 		if (!input)
 			scan = new Scanner(
-					new File("C:\\Users\\Hans\\Desktop\\Git\\conj2.txt"));
+					new File("C:\\Users\\Hans\\Desktop\\Git\\conj3.txt"));
 		else {
 			scan = new Scanner(System.in);
 		}

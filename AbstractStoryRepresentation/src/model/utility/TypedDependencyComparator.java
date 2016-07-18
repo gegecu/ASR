@@ -8,17 +8,24 @@ public class TypedDependencyComparator implements Comparator<TypedDependency> {
 
 	public int compare(TypedDependency td1, TypedDependency td2) {
 
-		if (td1.reln().toString().contains("nsubj")) {
-			return -1;
-		} else if (td2.reln().toString().contains("nsubj")) {
+		String td1Reln = td1.reln().toString();
+		String td2Reln = td2.reln().toString();
+
+		if (td1Reln.equals("neg")) {
 			return 1;
-		} else if (td1.reln().toString().contains("conj")) {
+		} else if (td2Reln.equals("neg")) {
 			return -1;
-		} else if (td2.reln().toString().contains("conj")) {
+		} else if (td1Reln.contains("nsubj")) {
+			return -1;
+		} else if (td2Reln.contains("nsubj")) {
 			return 1;
-		} else if (td1.reln().toString().equals("dobj")) {
+		} else if (td1Reln.contains("conj")) {
 			return -1;
-		} else if (td2.reln().toString().equals("dobj")) {
+		} else if (td2Reln.contains("conj")) {
+			return 1;
+		} else if (td1Reln.equals("dobj")) {
+			return -1;
+		} else if (td2Reln.equals("dobj")) {
 			return 1;
 		}
 
