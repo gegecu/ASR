@@ -3,6 +3,7 @@ package model.text_understanding;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -50,8 +51,7 @@ public class Extractor {
 	private Dictionaries dictionary;
 	private AbstractStoryRepresentation asr;
 
-	private int counterTotal = 0;
-	private int counterCurrent = 0;
+	private Map<String, Integer> dobjMappingHasHave = new HashMap();
 
 	private static String[] SRL_ENTITY_LIST = {"person", "place", "object"};
 	private static String[] NER_ENTITY_LIST = {"person", "location", "date",
@@ -110,6 +110,19 @@ public class Extractor {
 					dependencies.typedDependencies());
 			Collections.sort(listDependencies, new TypedDependencyComparator());
 			Collections.sort(listDependencies, new PartOfSpeechComparator());
+			
+			//fail implementation idk how to remedy
+			for (TypedDependency temp : listDependencies) {
+				if (temp.reln().toString().equals("dobj")) {
+					String tempId = (temp.gov().sentIndex() + 1) + " " + temp.gov().index();
+					if(this.dobjMappingHasHave.get(tempId) == null) {
+						this.dobjMappingHasHave.put(tempId, 1);
+					}
+					else {
+						this.dobjMappingHasHave.put(tempId, this.dobjMappingHasHave.get(tempId) + 1);
+					}
+				}
+			}
 
 			for (TypedDependency td : listDependencies) {
 				extractDependency(coreference, td, storySentence,
@@ -150,12 +163,6 @@ public class Extractor {
 
 			//log.debug(td.dep().lemma() + " before : " + tdDepId);
 			//log.debug(td.gov().lemma() + "before : " + tdGovId);
-
-			for (TypedDependency i : listDependencies) {
-				if (i.reln().toString().equals("dobj")) {
-					counterTotal++;
-				}
-			}
 
 			if (coreference.get(tdDepId) != null) {
 				tdDepId = coreference.get(tdDepId);
@@ -252,8 +259,9 @@ public class Extractor {
 		} catch (NullPointerException e) {
 			e.printStackTrace();
 		}
-
 	}
+	
+	
 
 	private void extractVBAndConjuction(TypedDependency td,
 			StorySentence storySentence, String tdDepId, String tdGovId,
@@ -271,9 +279,9 @@ public class Extractor {
 			depEvent = new Event(tdDepLemma);
 		}
 
-		if (tdReln.equals("dobj")) {
-			counterCurrent++;
-		}
+//		if (tdReln.equals("dobj")) {
+//			counterCurrent++;
+//		}
 
 		for (Map.Entry<String, Noun> entry : govEvent.getManyDoers()
 				.entrySet()) {
@@ -378,6 +386,19 @@ public class Extractor {
 				} else {
 					p.addConcept(cp.createNegationVerb(tdGovLemma));
 				}
+				
+				//went to China
+				if(tdGovLemma.equals("go")) {
+					for(Map.Entry<String, Noun> doer: p.getManyDoers().entrySet()) {
+						for(Map.Entry<String, Noun> location: p.getLocations().entrySet()) {
+							doer.getValue().getAttribute("AtLocation").remove(location.getKey());
+							
+							if(doer.getValue().getAttribute("AtLocation").isEmpty()) {
+								doer.getValue().getAttributes().remove("AtLocation");
+							}
+						}
+					}
+				}
 
 				storySentence.addPredicate(tdGovId, p);
 			} else {
@@ -385,38 +406,35 @@ public class Extractor {
 				d.getConcepts().clear();
 				d.setNegated(true);
 				if (d.getReference("HasA") != null) {
-					for (Map.Entry<String, Noun> possession : d
-							.getReference("HasA").entrySet()) {
-						for (Map.Entry<String, Noun> doer : d.getManyDoers()
-								.entrySet()) {
-							doer.getValue().getReference("HasA")
-									.remove(possession.getKey());
-							if (doer.getValue().getReference("HasA")
-									.isEmpty()) {
+					for (Map.Entry<String, Noun> possession : d.getReference("HasA").entrySet()) {
+						for (Map.Entry<String, Noun> doer : d.getManyDoers().entrySet()) {
+							doer.getValue().getReference("HasA").remove(possession.getKey());
+							if (doer.getValue().getReference("HasA").isEmpty()) {
 								doer.getValue().getReferences().remove("HasA");
 							}
-							possession.getValue().getReference("IsOwnedBy")
-									.remove(doer.getKey());
+							possession.getValue().getReference("IsOwnedBy").remove(doer.getKey());
 
-							if (possession.getValue().getReference("IsOwnedBy")
-									.isEmpty()) {
-								possession.getValue().getReferences()
-										.remove("IsOwnedBy");
+							if (possession.getValue().getReference("IsOwnedBy").isEmpty()) {
+								possession.getValue().getReferences().remove("IsOwnedBy");
 							}
 
-							d.addReference("NotHasA", possession.getKey(),
-									possession.getValue());
+							d.addReference("NotHasA", possession.getKey(), possession.getValue());
 						}
 
 						d.addConcept(cp.createNegationVerbWithDirectObject(
 								tdGovLemma, possession.getValue().getId()));
 
-						Noun possessor = possession.getValue();
-						if (possessor.getReference("HasA") != null
-								&& possessor.getReference("HasA").isEmpty()) {
-							possessor.getReferences().remove("HasA");
-						}
+//						Noun possessor = possession.getValue();
+//						if (possessor.getReference("HasA") != null
+//								&& possessor.getReference("HasA").isEmpty()) {
+//							possessor.getReferences().remove("HasA");
+//						}
 					}
+					
+					for(Map.Entry<String, Noun> entry: d.getReference("NotHasA").entrySet()) {
+						d.getReference("HasA").remove(entry.getKey());
+					}
+					
 					if (d.getReference("HasA") != null
 							&& d.getReference("HasA").isEmpty()) {
 						d.getReferences().remove("HasA");
@@ -938,19 +956,14 @@ public class Extractor {
 
 		}
 
-		Event event = storySentence.getEvent(tdGovId);
 
-		if (event == null) {
-			event = new Event(tdGovLemma);
-			storySentence.addPredicate(tdGovId, event);
-		}
 
 		if (noun != null) {
 
 			// we do not store NotHasA anyway
 			if (tdGovLemma.equals("has") || tdGovLemma.equals("have")) {
 
-				Description description = storySentence.getDescription(tdDepId);
+				Description description = storySentence.getDescription(tdGovId);
 
 				if (description == null) {
 					description = new Description();
@@ -991,10 +1004,25 @@ public class Extractor {
 
 				storySentence.addDescription(tdGovId, description);
 
-				if (counterTotal == counterCurrent)
-					storySentence.getManyEvents().remove(tdGovId);
+//				if (counterTotal == counterCurrent)
+//					storySentence.getManyEvents().remove(tdGovId);
+				if(this.dobjMappingHasHave.get(tdGovId) != null) {
+					System.out.println("a");
+					this.dobjMappingHasHave.put(tdGovId, this.dobjMappingHasHave.get(tdGovId)-1);
+					if(this.dobjMappingHasHave.get(tdGovId) == 0) {
+						System.out.println("a");
+						storySentence.getManyEvents().remove(tdGovId);
+					}
+				}
 
 			} else {
+				
+				Event event = storySentence.getEvent(tdGovId);
+
+				if (event == null) {
+					event = new Event(tdGovLemma);
+					storySentence.addPredicate(tdGovId, event);
+				}
 
 				System.out.println(noun.getId());
 
