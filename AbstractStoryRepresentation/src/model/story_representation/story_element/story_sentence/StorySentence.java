@@ -31,7 +31,7 @@ public class StorySentence {
 		return this.description;
 	}
 
-	public void addPredicate(String id, Event predicate) {
+	public void addEvent(String id, Event predicate) {
 		this.predicates.put(id, predicate);
 	}
 

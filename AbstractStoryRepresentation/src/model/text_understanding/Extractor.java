@@ -130,6 +130,7 @@ public class Extractor {
 						listDependencies);//extract based on dependency
 			}
 
+			// predicate -> event
 			//			for (Event event : storySentence.getManyPredicates().values()) {
 			//				event.setPolarity(getPolarityOfEvent(event));
 			//			}
@@ -301,7 +302,7 @@ public class Extractor {
 			depEvent.addDoer(entry.getKey(), doer);
 			depEvent.addConcept(cp.createConceptAsVerb(tdDepLemma));
 			log.debug(tdDepId);
-			storySentence.addPredicate(tdDepId, depEvent);
+			storySentence.addEvent(tdDepId, depEvent);
 		}
 
 	}
@@ -393,16 +394,15 @@ public class Extractor {
 						Noun doer = doerEntry.getValue();
 						for (Map.Entry<String, Noun> location : p.getLocations()
 								.entrySet()) {
-							doer.getAttribute("AtLocation")
+							doer.getReference("AtLocation")
 									.remove(location.getKey());
-							if (doer.getAttribute("AtLocation").isEmpty()) {
-								doer.getAttributes().remove("AtLocation");
+							if (doer.getReference("AtLocation").isEmpty()) {
+								doer.getReferences().remove("AtLocation");
 							}
 						}
 					}
 				}
-
-				storySentence.addPredicate(tdGovId, p);
+				storySentence.addEvent(tdGovId, p);
 			} else {
 				Description d = storySentence.getDescription(tdGovId);
 				d.getConcepts().clear();
@@ -605,17 +605,16 @@ public class Extractor {
 
 		if (noun != null) {
 
-			Event predicate = storySentence.getEvent(tdGovId);
+			Event event = storySentence.getEvent(tdGovId);
 
-			if (predicate != null) {
+			if (event != null) {
 
 				Description description = storySentence.getDescription(tdDepId);
 
 				if (description == null) {
 					description = new Description();
 				}
-				if (noun.getType() == TypeOfNoun.LOCATION
-						&& !predicate.isNegated()) {
+				if (noun.getType() == TypeOfNoun.LOCATION) {
 					for (Map.Entry<String, Noun> entry : storySentence
 							.getEvent(tdGovId).getManyDoers().entrySet()) {
 						entry.getValue().addReference("AtLocation", tdDepId,
@@ -624,22 +623,21 @@ public class Extractor {
 						description.addDoer(entry.getKey(), entry.getValue());
 					}
 
-					predicate.addLocation(tdDepId, noun); //changed to locations in storysentence
+					event.addLocation(tdDepId, noun); //changed to locations in storysentence
 					log.debug("Location: " + tdDepLemma);
-					predicate.addConcept(cp
-							.createConceptAsInfinitive(tdGovLemma, tdDepLemma)); //using to as preposition
+					event.addConcept(cp.createConceptAsInfinitive(tdGovLemma,
+							tdDepLemma)); //using to as preposition
 				}
 
 				//if not a location still add details anyway
-				predicate.getVerb().addPrepositionalPhrase(
+				event.getVerb().addPrepositionalPhrase(
 						createPrepositionalPhrase(td, listDependencies, true));
 
 				System.out.println(tdGovLemma);
 
-				predicate.addConcept(
-						tdGovLemma + " " + createPrepositionalPhrase(td,
-								listDependencies, false));
-				predicate.addConcept(tdDepLemma); //object itself as concept	
+				event.addConcept(tdGovLemma + " " + createPrepositionalPhrase(
+						td, listDependencies, false));
+				event.addConcept(tdDepLemma); //object itself as concept	
 
 				//unsure with id
 				storySentence.addDescription(tdDepId, description);
@@ -647,6 +645,7 @@ public class Extractor {
 			}
 		}
 
+		// predicate -> event
 		//		if (tdReln.equals("nmod:to") && tdGovTag.contains("VB")) {
 		//			//create concept
 		//			Event predicate = storySentence.getPredicate(tdGovId);
@@ -731,7 +730,7 @@ public class Extractor {
 				Event event = storySentence.getEvent(tdGovId);
 				if (event == null) { //verify if create new event is conflicting
 					event = new Event(tdGovLemma);
-					storySentence.addPredicate(tdGovId, event);
+					storySentence.addEvent(tdGovId, event);
 				}
 				event.getVerb().addAdverb(tdDepLemma);
 			}
@@ -863,7 +862,7 @@ public class Extractor {
 
 	}
 
-	//handles verbs found in complements (would not exist as predicate in asr, just as 'details')
+	//handles verbs found in complements (would not exist as event in asr, just as 'details')
 	private void extractCompActionDependency(TypedDependency td,
 			StorySentence storySentence, String tdDepId, String tdGovId,
 			List<TypedDependency> listDependencies) {
@@ -875,7 +874,7 @@ public class Extractor {
 		Event event = storySentence.getEvent(tdGovId);
 		if (event == null) {
 			event = new Event(tdGovLemma);
-			storySentence.addPredicate(tdGovId, event);
+			storySentence.addEvent(tdGovId, event);
 		}
 
 		if (tdDepTag.contains("VB")) {
@@ -1029,14 +1028,14 @@ public class Extractor {
 
 				if (event == null) {
 					event = new Event(tdGovLemma);
-					storySentence.addPredicate(tdGovId, event);
+					storySentence.addEvent(tdGovId, event);
 				}
 
 				System.out.println(noun.getId());
 
 				//create concept
 				event.addDirectObject(tdDepId, noun);
-				storySentence.addPredicate(tdGovId, event);
+				storySentence.addEvent(tdGovId, event);
 
 				if (noun.getType() == TypeOfNoun.CHARACTER) //if direct object is a person, change to someone
 					event.addConcept(cp.createConceptWithDirectObject(
@@ -1086,7 +1085,7 @@ public class Extractor {
 			}
 
 			event.addReceiver(tdDepId, noun);
-			storySentence.addPredicate(tdGovId, event);
+			storySentence.addEvent(tdGovId, event);
 
 			//log.debug("iobj: " + asr.getNoun(td.dep().lemma()).getId());
 		}
@@ -1105,7 +1104,7 @@ public class Extractor {
 			//create concept
 			if (event == null) {
 				event = new Event(tdGovLemma);
-				storySentence.addPredicate(tdGovId, event);
+				storySentence.addEvent(tdGovId, event);
 			}
 
 			event.addConcept(tdDepLemma + " " + td.gov().originalText());
@@ -1206,7 +1205,7 @@ public class Extractor {
 				event.addDoer(tdDepId, noun);
 				event.addConcept(cp.createConceptAsVerb(tdGovLemma));
 				log.debug(tdGovId);
-				storySentence.addPredicate(tdGovId, event);
+				storySentence.addEvent(tdGovId, event);
 
 			}
 			/** for isA type relation **/
