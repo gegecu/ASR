@@ -389,6 +389,8 @@ public class Extractor {
 
 				//went to China
 				if (tdGovLemma.equals("go")) {
+					Description d = storySentence.getDescription(tdGovId);
+					d.setNegated(true);
 					for (Map.Entry<String, Noun> doerEntry : p.getManyDoers()
 							.entrySet()) {
 						Noun doer = doerEntry.getValue();
@@ -396,10 +398,19 @@ public class Extractor {
 								.entrySet()) {
 							doer.getReference("AtLocation")
 									.remove(location.getKey());
-							if (doer.getReference("AtLocation").isEmpty()) {
-								doer.getReferences().remove("AtLocation");
-							}
+							d.getReference("AtLocation")
+									.remove(location.getKey());
+							d.addReference("NotAtLocation", location.getKey(),
+									location.getValue());
+							d.addConcept(cp.createNegationVerbWithLocation(
+									tdGovLemma, location.getValue().getId()));
 						}
+						if (doer.getReference("AtLocation").isEmpty()) {
+							doer.getReferences().remove("AtLocation");
+						}
+					}
+					if (d.getReference("AtLocation").isEmpty()) {
+						d.getReferences().remove("AtLocation");
 					}
 				}
 				storySentence.addEvent(tdGovId, p);
@@ -609,7 +620,7 @@ public class Extractor {
 
 			if (event != null) {
 
-				Description description = storySentence.getDescription(tdDepId);
+				Description description = storySentence.getDescription(tdGovId);
 
 				if (description == null) {
 					description = new Description();
@@ -640,7 +651,7 @@ public class Extractor {
 				event.addConcept(tdDepLemma); //object itself as concept	
 
 				//unsure with id
-				storySentence.addDescription(tdDepId, description);
+				storySentence.addDescription(tdGovId, description);
 
 			}
 		}
