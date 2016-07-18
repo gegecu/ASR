@@ -70,7 +70,7 @@ public class TextUnderstanding {
 			log.debug(asr.getConflict().getMainConcept() + ", " + asr.getConflict().getPolarity());
 		}
 		
-		if(asr.getConflict() != null) {
+		if(asr.getResolution() != null) {
 			log.debug(asr.getResolution().getMainConcept() + ", " + asr.getResolution().getPolarity());
 		}
 
