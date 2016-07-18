@@ -321,13 +321,22 @@ public class Extractor {
 		String tdReln = td.reln().toString();
 
 		Clause govClause = null;
+
+		String tdGovIdTemp = tdGovId;
+		if (tdGovTag.contains("NN")) {
+			tdGovIdTemp = (td.gov().sentIndex() + 1) + " " + td.gov().index();
+		}
 		if (tdGovTag.contains("VB")) {
-			govClause = storySentence.getEvent(tdGovId);
+			govClause = storySentence.getEvent(tdGovIdTemp);
 		} else {
-			govClause = storySentence.getDescription(tdGovId);
+			govClause = storySentence.getDescription(tdGovIdTemp);
 		}
 
-		Noun conjNN = asr.getNoun(tdDepId);
+		String tdDepIdTemp = tdDepId;
+		if (tdDepTag.contains("NN")) {
+			tdDepIdTemp = (td.dep().sentIndex() + 1) + " " + td.dep().index();
+		}
+		Noun conjNN = asr.getNoun(tdDepIdTemp);
 		if (tdDepTag.contains("NN")) {
 			if (conjNN == null) {
 				if (tdDepTag.equals("NNP")) {
@@ -336,7 +345,7 @@ public class Extractor {
 				} else if (tdDepTag.contains("NN")) {
 					conjNN = extractCategory(getSRL(tdDepLemma), tdDepLemma);
 				}
-				asr.addNoun(tdDepId, conjNN);
+				asr.addNoun(tdDepIdTemp, conjNN);
 			}
 		}
 
@@ -346,8 +355,8 @@ public class Extractor {
 					.entrySet()) {
 				Noun doer = entry.getValue();
 				if (tdDepTag.contains("NN")) {
-					doer.addReference("IsA", tdDepId, conjNN);
-					d2.addReference("IsA", tdDepId, conjNN);
+					doer.addReference("IsA", tdDepIdTemp, conjNN);
+					d2.addReference("IsA", tdDepIdTemp, conjNN);
 					d2.addConcept(cp.createConceptAsAdjective(tdDepLemma));
 					d2.addConcept(
 							cp.createConceptAsPredicativeAdjective(tdDepLemma));
@@ -360,7 +369,7 @@ public class Extractor {
 				}
 				d2.addDoer(entry.getKey(), entry.getValue());
 			}
-			storySentence.addDescription(tdDepId, d2);
+			storySentence.addDescription(tdDepIdTemp, d2);
 		}
 
 	}

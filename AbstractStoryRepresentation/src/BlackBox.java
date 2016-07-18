@@ -19,8 +19,7 @@ public class BlackBox {
 		boolean input = false;
 
 		if (!input)
-			scan = new Scanner(
-					new File("C:\\Users\\Hans\\Desktop\\Git\\bb.txt"));
+			scan = new Scanner(new File(""));
 		else {
 			scan = new Scanner(System.in);
 		}
@@ -34,13 +33,13 @@ public class BlackBox {
 
 		while (scan.hasNextLine()) {
 			String in = scan.nextLine();
-			log.debug(in);
 			try {
 				asr = new AbstractStoryRepresentation();
 				cl = new Checklist(asr);
 				textUnderstanding = new TextUnderstanding(asr);
 				textUnderstanding.processInput(in);
 				System.out.println(in);
+				log.debug(in);
 			} catch (Exception e) {
 				System.out.println("Error:" + in);
 				e.printStackTrace();
