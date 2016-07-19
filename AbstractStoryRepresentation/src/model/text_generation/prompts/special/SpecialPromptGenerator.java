@@ -228,10 +228,27 @@ public class SpecialPromptGenerator {
 		ArrayList<String> adverbs = predicate.getVerb().getAdverbs();
 		ArrayList<String> prepositionals = predicate.getVerb()
 				.getPrepositionalPhrases();
+		
+		//put directobjects as strings
+		Collection<Noun> dobjs = predicate.getDirectObjects().values();
+		ArrayList<String> directobjects = new ArrayList<String>();
+		if(!dobjs.isEmpty()){
+			Noun noun = dobjs.iterator().next();
+			if (noun.getType() == TypeOfNoun.CHARACTER && !noun.getIsCommon()) {
+				directobjects.add(noun.getId());
+			} else {
+				directobjects.add("the " + noun.getId());//'the' generally works best
+			}
+		}
+		
+		
 		ArrayList<String> details = new ArrayList<>();
-		//details.addAll(complements);
 		details.addAll(adverbs);
 		details.addAll(prepositionals);
+		
+		ArrayList<String> verbObjects = new ArrayList<>();
+		verbObjects.addAll(complements);
+		verbObjects.addAll(directobjects);
 
 		List<Noun> doers = new ArrayList<>(predicate.getManyDoers().values());
 
@@ -242,7 +259,6 @@ public class SpecialPromptGenerator {
 		//			directive = directive.replace("<noun>",
 		//					SurfaceRealizer.wordsConjunction(doers)); //changed to p.setsubj
 
-		Collection<Noun> directObjects = predicate.getDirectObjects().values();
 		SPhraseSpec p = nlgFactory.createClause();
 		p.setSubject(SurfaceRealizer.wordsConjunction(doers));
 
@@ -276,18 +292,15 @@ public class SpecialPromptGenerator {
 		}
 
 		//if something is found to function as direct object
-		if (!directObjects.isEmpty()) {
-			Noun noun = directObjects.iterator().next();
-			if (noun.getType() == TypeOfNoun.CHARACTER && !noun.getIsCommon()) {
-				p.setObject(noun.getId());
-			} else {
-				p.setObject("the " + noun.getId());//'the' generally works best
-			}
-
-			if (!complements.isEmpty()) {//show complement if exists
-				random = Randomizer.random(1, complements.size());
-				verb.addComplement(complements.get(random - 1));
-			}
+		if (!verbObjects.isEmpty()) {
+			
+//			if (!complements.isEmpty()) {//show complement if exists
+//				random = Randomizer.random(1, complements.size());
+//				verb.addComplement(complements.get(random - 1));
+//			}
+			random = Randomizer.random(1, verbObjects.size());
+			p.setObject(verbObjects.get(random - 1));
+			
 			p.setVerb(verb);
 			String action = "";
 			while (!directives.isEmpty() && directive == null) {
