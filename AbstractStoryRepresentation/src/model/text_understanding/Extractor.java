@@ -194,7 +194,7 @@ public class Extractor {
 				//log.debug("compound: " + asr.getNoun(td.gov().lemma()).getId());
 			}
 			/** get doer or subject **/
-			else if (tdReln.contains("nsubj")) {
+			else if (tdReln.equals("nsubj")|| tdReln.equals("nmod:agent")) {
 				extractDoerDependency(td, storySentence, tdDepId, tdGovId,
 						listDependencies);
 			}
@@ -208,7 +208,7 @@ public class Extractor {
 			}
 			/** get direct object **/
 			else if (tdReln.equals("dobj") || tdReln.equals("nmod:for")
-					|| tdReln.equals("nmod:agent")) {
+					|| tdReln.equals("nsubjpass")) {
 				extractDirectObjectDependency(td, storySentence, tdDepId,
 						tdGovId);
 			}
