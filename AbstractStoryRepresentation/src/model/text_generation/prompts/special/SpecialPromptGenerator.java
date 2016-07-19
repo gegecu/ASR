@@ -9,6 +9,7 @@ import java.util.Queue;
 
 import org.apache.log4j.Logger;
 
+import data_gen.Tagger;
 import model.story_representation.AbstractStoryRepresentation;
 import model.story_representation.story_element.noun.Noun;
 import model.story_representation.story_element.noun.Noun.TypeOfNoun;
@@ -237,6 +238,7 @@ public class SpecialPromptGenerator {
 				if (noun.getType() == TypeOfNoun.CHARACTER && !noun.getIsCommon()) {
 					directobjects.add(noun.getId());
 				} else {
+					//add if condition(if not a gerund)
 					directobjects.add("the " + noun.getId());//'the' generally works best
 				}
 			}
@@ -246,10 +248,16 @@ public class SpecialPromptGenerator {
 		ArrayList<String> details = new ArrayList<>();
 		details.addAll(adverbs);
 		details.addAll(prepositionals);
-		
+		for(String s: details){
+			System.out.print(s + ",");
+		}
+		System.out.println("***");
 		ArrayList<String> verbObjects = new ArrayList<>();
 		verbObjects.addAll(complements);
 		verbObjects.addAll(directobjects);
+		for(String s: verbObjects){
+			System.out.print(s + ",");
+		}
 
 		List<Noun> doers = new ArrayList<>(predicate.getManyDoers().values());
 
@@ -280,7 +288,7 @@ public class SpecialPromptGenerator {
 			p.setFeature(Feature.TENSE, Tense.FUTURE);
 			p.setFeature(Feature.PROGRESSIVE, false);//future tense progressive sounds confusing
 		}
-		if (predicate.isNegated()) {
+		if (predicate.getVerb().isNegated()) {
 			verb.setFeature(Feature.NEGATED, true);
 		}
 
