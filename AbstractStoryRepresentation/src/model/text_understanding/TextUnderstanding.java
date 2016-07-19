@@ -206,7 +206,7 @@ public class TextUnderstanding {
 				for (String conflictConcept : conflict.getClause()
 						.getConcepts()) {
 					String temp = conflictConcept.replace("not ", "");
-					if (resolutionConcept.equals(temp)) {
+					if (resolutionConcept.equals(temp) && !resolutionClause.isNegated()) {
 						return true;
 					}
 				}
