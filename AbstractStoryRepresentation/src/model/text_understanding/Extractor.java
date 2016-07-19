@@ -596,17 +596,17 @@ public class Extractor {
 
 		log.debug(tdGovId);
 
-		noun.addReference("HasA", tdDepId, noun2);
-		noun2.addReference("IsOwnedBy", tdGovId, noun);
+		noun.addReference("HasA", tdGovId, noun2);
+		noun2.addReference("IsOwnedBy", tdDepId, noun);
 
 		if (noun.getReference("NotHasA") != null) {
-			noun.getReference("NotHasA").remove(tdDepId);
+			noun.getReference("NotHasA").remove(tdGovId);
 
 			if (noun.getReference("NotHasA").isEmpty()) {
 				noun.getReferences().remove("NotHasA");
 			}
 		}
-
+		
 		//we're not storing NotHasA anyway	
 
 	}
