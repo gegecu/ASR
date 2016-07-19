@@ -233,11 +233,12 @@ public class SpecialPromptGenerator {
 		Collection<Noun> dobjs = predicate.getDirectObjects().values();
 		ArrayList<String> directobjects = new ArrayList<String>();
 		if(!dobjs.isEmpty()){
-			Noun noun = dobjs.iterator().next();
-			if (noun.getType() == TypeOfNoun.CHARACTER && !noun.getIsCommon()) {
-				directobjects.add(noun.getId());
-			} else {
-				directobjects.add("the " + noun.getId());//'the' generally works best
+			for(Noun noun: dobjs){
+				if (noun.getType() == TypeOfNoun.CHARACTER && !noun.getIsCommon()) {
+					directobjects.add(noun.getId());
+				} else {
+					directobjects.add("the " + noun.getId());//'the' generally works best
+				}
 			}
 		}
 		
