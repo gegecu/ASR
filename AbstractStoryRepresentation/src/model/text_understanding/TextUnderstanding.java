@@ -213,12 +213,13 @@ public class TextUnderstanding {
 			}
 		} else { //else check for 4 hops in conceptnet
 			List<String> concepts = resolutionClause.getConcepts();
-			for (String concept : concepts) {
-				for (String conflict2 : conflict.getClause().getConcepts()) {
-					if (ConceptNetDAO.getFourHops(conflict2, concept)) {
+			for (String resoConcept : concepts) {
+				//for (String conflict2 : conflict.getClause().getConcepts()) {
+				String confConcept = conflict.getMainConcept();
+					if (ConceptNetDAO.getFourHops(confConcept, resoConcept)) {
 						return true;
 					}
-				}
+				//}
 			}
 		}
 		return false;
