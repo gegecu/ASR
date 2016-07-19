@@ -905,6 +905,13 @@ public class Extractor {
 
 		if (tdDepTag.contains("VB")) {
 
+			//get mark, mark -> 'to' swim
+			List<TypedDependency> marks = findDependencies(td.dep(), "gov","mark",listDependencies);
+			String mark = "";
+			if(!marks.isEmpty()){
+				mark = marks.get(0).dep().originalText();
+			}
+			
 			//exhaust details of complement
 			List<TypedDependency> nmodTags = findDependencies(td.dep(), "gov",
 					"nmod", listDependencies);
@@ -931,6 +938,9 @@ public class Extractor {
 				event.addConcept(tdDepLemma + " " + createPrepositionalPhrase(t,
 						listDependencies, false));
 			}
+			if(nmodTags.isEmpty()){
+				event.getVerb().addClausalComplement(mark + " " + td.dep().originalText());
+			}
 
 			//check for negation/positives
 			int emotion = emotionIndicator(tdGovLemma);
@@ -946,8 +956,14 @@ public class Extractor {
 		} else if (tdDepTag.contains("NN")) { //for example: wants to 'be friends' (cop + noun format)
 			List<TypedDependency> copulaTags = findDependencies(td.dep(), "gov",
 					"cop", listDependencies);
+			List<TypedDependency> marks = findDependencies(td.dep(), "gov","mark",listDependencies);
+			String mark = "";
+			if(!marks.isEmpty()){
+				mark = marks.get(0).dep().originalText();
+			}
 			for (TypedDependency t : copulaTags) {
 				event.addConcept(t.dep().lemma() + " " + t.gov().lemma());
+				event.getVerb().addClausalComplement(mark + " " + t.dep().lemma() + " " + t.gov().lemma());
 			}
 		}
 	}
