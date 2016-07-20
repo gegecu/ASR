@@ -74,10 +74,10 @@ public class AdvancedModePanel extends ModePanel {
 
 	public AdvancedModePanel() {
 
-		//asr = new AbstractStoryRepresentation();
-		//textUnderstanding = new TextUnderstanding(asr);
-		//storySegmentGenerator = new StorySegmentGenerator(asr);
-		//promptChooser = new PromptChooser(asr);
+		asr = new AbstractStoryRepresentation();
+		textUnderstanding = new TextUnderstanding(asr);
+		storySegmentGenerator = new StorySegmentGenerator(asr);
+		promptChooser = new PromptChooser(asr);
 
 		log.debug("========== New Advanced Story ==========");
 		EvaluationLog.log("========== New Advanced Story ==========");

@@ -18,7 +18,7 @@ public abstract class TextGeneration {
 	protected NLGFactory nlgFactory;
 	protected Realiser realiser;
 	protected AbstractStoryRepresentation asr;
-	protected final int defaultThreshold = 7;
+	protected final int defaultThreshold = 3;
 	protected final int thresholdIncrement = 2;
 
 	public TextGeneration(AbstractStoryRepresentation asr) {
