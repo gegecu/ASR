@@ -657,6 +657,8 @@ public class Extractor {
 					log.debug("Location: " + tdDepLemma);
 					event.addConcept(cp.createConceptAsInfinitive(tdGovLemma,
 							tdDepLemma)); //using to as preposition
+					
+					storySentence.addDescription(tdGovId, description);
 				}
 
 				//if not a location still add details anyway
@@ -668,8 +670,6 @@ public class Extractor {
 				event.addConcept(tdDepLemma); //object itself as concept	
 
 				//unsure with id
-				storySentence.addDescription(tdGovId, description);
-
 			}
 		}
 
@@ -847,6 +847,11 @@ public class Extractor {
 				description.addConcept(cp.createConceptAsAdjective(tdDepLemma));
 				description.addConcept(
 						cp.createConceptAsPredicativeAdjective(tdDepLemma));
+				
+				storySentence.getManyEvents().remove(tdGovId);
+
+				storySentence.addDescription(tdDepId, description);
+
 
 			} else if (tdDepTag.contains("NN")) {
 				// n.addAttribute("IsA", td.dep().lemma());
@@ -877,15 +882,17 @@ public class Extractor {
 
 					description.addReference("IsA", tdDepId, noun2);
 					description.addConcept(cp.createConceptAsRole(tdDepLemma));
+					
+					storySentence.getManyEvents().remove(tdGovId);
+
+					storySentence.addDescription(tdDepId, description);
+
 				}
 
 			}
 		}
 
-		storySentence.getManyEvents().remove(tdGovId);
-
-		storySentence.addDescription(tdDepId, description);
-
+		
 	}
 
 	//handles verbs found in complements (would not exist as event in asr, just as 'details')
@@ -900,7 +907,7 @@ public class Extractor {
 		Event event = storySentence.getEvent(tdGovId);
 		if (event == null) {
 			event = new Event(tdGovLemma);
-			storySentence.addEvent(tdGovId, event);
+			
 		}
 
 		if (tdDepTag.contains("VB")) {
@@ -952,6 +959,8 @@ public class Extractor {
 					//to do polarity modifications
 				}
 			}
+			
+			storySentence.addEvent(tdGovId, event);
 
 		} else if (tdDepTag.contains("NN")) { //for example: wants to 'be friends' (cop + noun format)
 			List<TypedDependency> copulaTags = findDependencies(td.dep(), "gov",
@@ -965,6 +974,8 @@ public class Extractor {
 				event.addConcept(t.dep().lemma() + " " + t.gov().lemma());
 				event.getVerb().addClausalComplement(mark + " " + t.dep().lemma() + " " + t.gov().lemma());
 			}
+			
+			storySentence.addEvent(tdGovId, event);
 		}
 	}
 
@@ -1061,6 +1072,7 @@ public class Extractor {
 
 			} else {
 
+				//unsure sometimes has no doer
 				Event event = storySentence.getEvent(tdGovId);
 
 				if (event == null) {
@@ -1096,7 +1108,7 @@ public class Extractor {
 		String tdDepLemma = td.dep().lemma();
 		String tdGovTag = td.gov().tag();
 
-		if (tdDepTag.contains("NN") && tdGovTag.contains("VB")) {
+		if ((tdDepTag.contains("NN") || asr.getNoun(tdDepId) != null) && tdGovTag.contains("VB")) {
 
 			Noun noun = asr.getNoun(tdDepId);
 

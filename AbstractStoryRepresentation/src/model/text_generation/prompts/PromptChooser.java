@@ -273,22 +273,34 @@ public class PromptChooser extends TextGeneration {
 		List<CoreMap> sentences;
 
 		//annotate to check if one word answer
-		document = new Annotation(input);
-		pipeline.annotate(document);
-		sentences = document.get(SentencesAnnotation.class);
-		for (CoreMap sentence : sentences) {
-			SemanticGraph dependencies = sentence
-					.get(CollapsedCCProcessedDependenciesAnnotation.class);
-
-			List<TypedDependency> listDependencies = new ArrayList<TypedDependency>(
-					dependencies.typedDependencies());
-
-			if (listDependencies.size() == 1) {
-				input = "The " + asr.getNoun(currentId).getId() + " is "
-						+ listDependencies.get(0).dep().lemma().toLowerCase()
-						+ ".";
+		
+		if(currentPromptType == TypeOfPrompt.SPECIFIC) {
+			document = new Annotation(input);
+			pipeline.annotate(document);
+			sentences = document.get(SentencesAnnotation.class);
+			for (CoreMap sentence : sentences) {
+				SemanticGraph dependencies = sentence
+						.get(CollapsedCCProcessedDependenciesAnnotation.class);
+	
+				List<TypedDependency> listDependencies = new ArrayList<TypedDependency>(
+						dependencies.typedDependencies());
+	
+				if (listDependencies.size() == 1 && listDependencies.get(0).equals("root")) {
+					
+					Noun noun = asr.getNoun(currentId);
+					
+					input = "";
+				
+					if(noun.getIsCommon()) {
+						input += "The ";
+					}
+					
+					input += noun.getId() + " is "
+							+ listDependencies.get(0).dep().lemma().toLowerCase()
+							+ ".";
+				}
+	
 			}
-
 		}
 		
 		preprocess.preprocess(history.peek() + " " + input);
@@ -315,7 +327,13 @@ public class PromptChooser extends TextGeneration {
 		
 		for(int counter = i ; counter < sentences.size(); counter++) {
 			String sentence = sentences.get(counter).toString();
-			output += sentence.substring(0, 1).toUpperCase() + sentence.substring(1, sentence.length()-2) + sentence.substring(sentence.length()-1) + " "; 
+			
+			if(sentence.substring(sentence.length()-1).equals(".")) {
+				output += sentence.substring(0, 1).toUpperCase() + sentence.substring(1, sentence.length()-2) + sentence.substring(sentence.length()-1) + " "; 
+			}
+			else {
+				output += sentence.substring(0, 1).toUpperCase() + sentence.substring(1, sentence.length()) + " "; 
+			}
 		}
 
 		System.out.println(output);
