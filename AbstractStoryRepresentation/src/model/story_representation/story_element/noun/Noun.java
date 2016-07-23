@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class Noun implements Comparable<Noun> {
+public abstract class Noun {
 
 	public enum TypeOfNoun {
 		CHARACTER, LOCATION, OBJECT, UNKNOWN;
@@ -78,13 +78,6 @@ public abstract class Noun implements Comparable<Noun> {
 
 	public boolean getIsCommon() {
 		return this.isCommon;
-	}
-
-	public int compareTo(Noun noun) {
-		return (getAttributes().values().size()
-				+ getReferences().values().size())
-				- (noun.getAttributes().values().size()
-						+ noun.getReferences().values().size());
 	}
 
 	public TypeOfNoun getType() {

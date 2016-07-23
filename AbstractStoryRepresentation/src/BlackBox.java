@@ -33,13 +33,13 @@ public class BlackBox {
 
 		while (scan.hasNextLine()) {
 			String in = scan.nextLine();
+			log.debug(in);
 			try {
 				asr = new AbstractStoryRepresentation();
 				cl = new Checklist(asr);
 				textUnderstanding = new TextUnderstanding(asr);
 				textUnderstanding.processInput(in);
 				System.out.println(in);
-				log.debug(in);
 			} catch (Exception e) {
 				System.out.println("Error:" + in);
 				e.printStackTrace();
