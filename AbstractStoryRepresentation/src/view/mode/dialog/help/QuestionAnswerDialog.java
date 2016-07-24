@@ -78,7 +78,7 @@ public class QuestionAnswerDialog extends HelpDialog {
 		submitButton
 				.setBorder(new RoundedBorder(Color.BLACK, 3, 12, 5, 10, 5, 10));
 		submitButton.addActionListener((e) -> {
-			if (!storyInputArea.getText().isEmpty()) {
+			if (!storyInputArea.getText().trim().isEmpty()) {
 				result = HelpAnswer.ACCEPT;
 				dispose();
 			}
