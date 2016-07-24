@@ -38,7 +38,7 @@ public class Utilities {
 	public static Location getLocation(StorySentence storySentence,
 			AbstractStoryRepresentation asr) {
 		Location location = null;
-		for (String i : storySentence.getAllNounsInStorySentence()) {
+		for (String i : storySentence.getAllNouns()) {
 			Noun noun = asr.getNoun(i);
 			if (noun.getType() == TypeOfNoun.LOCATION) {
 				location = (Location) noun;

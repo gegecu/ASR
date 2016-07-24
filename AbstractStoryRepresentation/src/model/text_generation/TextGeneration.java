@@ -41,7 +41,7 @@ public abstract class TextGeneration {
 			while (result.isEmpty()) {
 
 				List<String> nounId = asr.getCurrentStorySentence()
-						.getAllNounsInStorySentence();
+						.getAllNouns();
 
 				while (!nounId.isEmpty()) {
 					String id = nounId.remove(0);

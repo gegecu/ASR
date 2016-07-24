@@ -55,7 +55,7 @@ public class StorySentence {
 	}
 
 	//unsure
-	public List<String> getAllNounsInStorySentence() {
+	public List<String> getAllNouns() {
 
 		Set<String> nounId = new HashSet<String>();
 		for (Event predicate : this.getManyEvents().values()) {

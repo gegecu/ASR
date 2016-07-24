@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -34,6 +35,8 @@ import model.story_representation.story_element.noun.Location;
 import model.story_representation.story_element.noun.Noun;
 import model.story_representation.story_element.noun.Object;
 import model.story_representation.story_element.noun.Unknown;
+import model.story_representation.story_element.story_sentence.Description;
+import model.story_representation.story_element.story_sentence.Event;
 import model.story_representation.story_element.story_sentence.StorySentence;
 import model.text_understanding.extractors.AdvmodPropertyExtractor;
 import model.text_understanding.extractors.AmodPropertyExtractor;
@@ -148,11 +151,41 @@ public class Extractor {
 						listDependencies);//extract based on dependency
 			}
 
+			removeClausesWithNoDoers(storySentence);
 			extractedStorySentences.add(storySentence);
 
 		}
 
 		return extractedStorySentences;
+
+	}
+
+	private void removeClausesWithNoDoers(StorySentence storySentence) {
+
+		List<String> forRemoval = new ArrayList<>();
+
+		Map<String, Event> events = storySentence.getManyEvents();
+		for (Entry<String, Event> e : events.entrySet()) {
+			if (e.getValue().getManyDoers().isEmpty()) {
+				forRemoval.add(e.getKey());
+			}
+		}
+		for (String remove : forRemoval) {
+			events.remove(remove);
+		}
+		forRemoval.clear();
+
+		Map<String, Description> descriptions = storySentence
+				.getManyDescriptions();
+		for (Entry<String, Description> e : descriptions.entrySet()) {
+			if (e.getValue().getManyDoers().isEmpty()) {
+				forRemoval.add(e.getKey());
+			}
+		}
+		for (String remove : forRemoval) {
+			descriptions.remove(remove);
+		}
+		forRemoval.clear();
 
 	}
 
