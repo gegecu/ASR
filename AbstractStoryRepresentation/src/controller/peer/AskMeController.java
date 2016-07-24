@@ -177,7 +177,7 @@ public class AskMeController implements ActionListener {
 
 			} while (typeOfHelp != TypeOfHelp.NO_IDEA
 					&& (answer == HelpAnswer.REJECT
-							|| (typeOfHelp == TypeOfHelp.IDEAS
+							|| (typeOfHelp == TypeOfHelp.QUESTION_ANSWER
 									&& promptChooser.getIsLoop())));
 
 		}
