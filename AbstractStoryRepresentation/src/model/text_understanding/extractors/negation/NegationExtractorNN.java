@@ -25,7 +25,6 @@ public class NegationExtractorNN {
 		//chances are restricted coref
 		if (d == null) {
 			temp = (td.gov().sentIndex() + 1) + " " + td.gov().index();
-
 			d = storySentence.getDescription(temp);
 		}
 

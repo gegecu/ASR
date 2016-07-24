@@ -32,7 +32,6 @@ public class DoerExtractor {
 		Noun noun = asr.getNoun(tdDepId);
 
 		if (noun == null) {
-
 			if (tdDepTag.equals("NNP")) {
 				noun = Extractor.extractCategory(Extractor.getNER(tdDepLemma),
 						tdDepLemma);
@@ -41,15 +40,12 @@ public class DoerExtractor {
 				noun = Extractor.extractCategory(Extractor.getSRL(tdDepLemma),
 						tdDepLemma);
 			}
-
-			if (noun != null) {
-				asr.addNoun(tdDepId, noun);
-			}
-
 		}
 
 		/** if noun exists **/
 		if (noun != null) {
+
+			asr.addNoun(tdDepId, noun);
 
 			/** if 'noun is adjective' format **/
 			if (tdGovTag.equals("JJ") || tdGovTag.equals("RB")) {
@@ -84,7 +80,10 @@ public class DoerExtractor {
 			/** if verb **/
 			else if (tdGovTag.contains("VB")) {
 
-				if (!restrictedCapableOf.contains(tdGovLemma.toLowerCase())) {
+				//				boolean hasARelation = tdGovLemma.equals("has")
+				//						|| tdGovLemma.equals("have");
+
+				if (restrictedCapableOf.contains(tdGovLemma.toLowerCase())) {
 					noun.addAttribute("CapableOf", tdGovLemma);
 					log.debug(noun.getId() + " capable of " + tdGovLemma);
 				}
@@ -160,6 +159,8 @@ public class DoerExtractor {
 
 			}
 
+		} else {
+			log.debug("Error for " + tdDepLemma + " " + tdGovLemma);
 		}
 
 	}

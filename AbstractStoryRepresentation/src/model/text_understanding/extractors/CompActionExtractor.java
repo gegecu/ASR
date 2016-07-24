@@ -40,7 +40,6 @@ public class CompActionExtractor {
 			//get mark, mark -> 'to' swim
 			List<TypedDependency> marks = Extractor.findDependencies(td.dep(),
 					"gov", "mark", listDependencies);
-
 			String mark = "";
 			if (!marks.isEmpty()) {
 				mark = marks.get(0).dep().originalText();
@@ -49,12 +48,13 @@ public class CompActionExtractor {
 			//exhaust details of complement
 			List<TypedDependency> nmodTags = Extractor.findDependencies(
 					td.dep(), "gov", "nmod", listDependencies);
-
-			// add as noun
 			for (TypedDependency t : nmodTags) {
+
+				// add as noun
 				String nounLemma = t.dep().lemma();
 				String tDepId = (t.dep().sentIndex() + 1) + " "
 						+ t.dep().index();
+
 				Noun noun = asr.getNoun(tDepId);
 				if (noun == null) {
 					if (t.dep().tag().equals("NNP")) {
@@ -75,6 +75,7 @@ public class CompActionExtractor {
 				event.addConcept(t.gov().lemma());
 				event.addConcept(tdDepLemma + " " + Extractor
 						.createPrepositionalPhrase(t, listDependencies, false));
+
 			}
 
 			if (nmodTags.isEmpty()) {
@@ -96,6 +97,7 @@ public class CompActionExtractor {
 			storySentence.addEvent(tdGovId, event);
 
 		}
+
 		//for example: wants to 'be friends' (cop + noun format)
 		else if (tdDepTag.contains("NN")) {
 
@@ -103,10 +105,12 @@ public class CompActionExtractor {
 					.findDependencies(td.dep(), "gov", "cop", listDependencies);
 			List<TypedDependency> marks = Extractor.findDependencies(td.dep(),
 					"gov", "mark", listDependencies);
+
 			String mark = "";
 			if (!marks.isEmpty()) {
 				mark = marks.get(0).dep().originalText();
 			}
+
 			for (TypedDependency t : copulaTags) {
 				event.addConcept(t.dep().lemma() + " " + t.gov().lemma());
 				event.getVerb().addClausalComplement(

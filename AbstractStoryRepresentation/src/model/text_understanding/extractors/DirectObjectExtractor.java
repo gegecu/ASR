@@ -79,6 +79,7 @@ public class DirectObjectExtractor {
 
 						noun.addReference("IsOwnedBy", entry.getKey(),
 								entry.getValue());
+						//log.debug(entry.getKey() + ", " + entry.getValue().getId());
 
 						description.addConcept(cp.createConceptWithDirectObject(
 								tdGovLemma, tdDepLemma));
@@ -123,6 +124,8 @@ public class DirectObjectExtractor {
 
 			}
 
+		} else {
+			log.debug("Error for " + tdDepLemma + " " + tdGovLemma);
 		}
 
 	}

@@ -42,10 +42,11 @@ public class LocationExtractor {
 				noun = Extractor.extractCategory(Extractor.getSRL(tdDepLemma),
 						tdDepLemma);
 			}
-			asr.addNoun(tdDepId, noun);
 		}
 
 		if (noun != null) {
+
+			asr.addNoun(tdDepId, noun);
 
 			Event event = storySentence.getEvent(tdGovId);
 
@@ -84,6 +85,9 @@ public class LocationExtractor {
 
 				//unsure with id
 			}
+
+		} else {
+			log.debug("Error for " + tdDepLemma + " " + tdGovLemma);
 		}
 
 	}

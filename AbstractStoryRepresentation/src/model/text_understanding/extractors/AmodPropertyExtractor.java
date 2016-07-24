@@ -36,10 +36,14 @@ public class AmodPropertyExtractor {
 						tdGovLemma);
 			}
 
-			asr.addNoun(tdGovId, noun);
-
 		}
 
+		if (noun == null) {
+			log.debug("Error for " + tdDepLemma + " " + tdGovLemma);
+			return;
+		}
+
+		asr.addNoun(tdGovId, noun);
 		noun.addAttribute("HasProperty", tdDepLemma);
 
 		if (noun.getAttribute("NotHasProperty") != null) {
@@ -49,8 +53,6 @@ public class AmodPropertyExtractor {
 				noun.getAttributes().remove("NotHasProperty");
 			}
 		}
-
-		//log.debug("amod " + noun.getId());
 
 		Description description = storySentence.getDescription(tdDepId);
 

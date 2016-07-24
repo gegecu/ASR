@@ -1,5 +1,6 @@
 package model.text_understanding.extractors;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -23,9 +24,9 @@ public class XcompPropertyExtractor {
 
 		String tdDepTag = td.dep().tag();
 		String tdDepLemma = td.dep().lemma();
+		String tdGovLemma = td.gov().lemma();
 
 		Description description = storySentence.getDescription(tdDepId);
-
 		if (description == null) {
 			description = new Description();
 		}
@@ -37,12 +38,12 @@ public class XcompPropertyExtractor {
 
 				entry.getValue().addAttribute("HasProperty", tdDepLemma);
 
-				if (entry.getValue().getAttribute("NotHasProperty") != null) {
-					entry.getValue().getAttribute("NotHasProperty")
-							.remove(tdDepLemma);
+				List<String> notHasPropertyAttr = entry.getValue()
+						.getAttribute("NotHasProperty");
 
-					if (entry.getValue().getAttribute("NotHasProperty")
-							.isEmpty()) {
+				if (notHasPropertyAttr != null) {
+					notHasPropertyAttr.remove(tdDepLemma);
+					if (notHasPropertyAttr.isEmpty()) {
 						entry.getValue().getAttributes()
 								.remove("NotHasProperty");
 					}
@@ -61,9 +62,7 @@ public class XcompPropertyExtractor {
 			} else if (tdDepTag.contains("NN")) {
 
 				Noun noun2 = asr.getNoun(tdDepId);
-
 				if (noun2 == null) {
-
 					if (tdDepTag.equals("NNP")) {
 						noun2 = Extractor.extractCategory(
 								Extractor.getNER(tdDepLemma), tdDepLemma);
@@ -72,12 +71,11 @@ public class XcompPropertyExtractor {
 						noun2 = Extractor.extractCategory(
 								Extractor.getSRL(tdDepLemma), tdDepLemma);
 					}
-
-					asr.addNoun(tdDepId, noun2);
-
 				}
 
 				if (noun2 != null) {
+
+					asr.addNoun(tdDepId, noun2);
 
 					entry.getValue().addReference("IsA", tdDepId, noun2);
 
@@ -93,9 +91,10 @@ public class XcompPropertyExtractor {
 					description.addConcept(cp.createConceptAsRole(tdDepLemma));
 
 					storySentence.getManyEvents().remove(tdGovId);
-
 					storySentence.addDescription(tdDepId, description);
 
+				} else {
+					log.debug("Error for " + tdDepLemma + " " + tdGovLemma);
 				}
 
 			}

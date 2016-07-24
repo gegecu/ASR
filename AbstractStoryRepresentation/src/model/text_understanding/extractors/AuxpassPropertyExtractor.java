@@ -1,7 +1,5 @@
 package model.text_understanding.extractors;
 
-import java.util.List;
-
 import org.apache.log4j.Logger;
 
 import edu.stanford.nlp.trees.TypedDependency;
@@ -30,9 +28,7 @@ public class AuxpassPropertyExtractor {
 				event = new Event(tdGovLemma);
 				storySentence.addEvent(tdGovId, event);
 			}
-
 			event.addConcept(tdDepLemma + " " + td.gov().originalText());
-
 		}
 
 		event.addConcept(cp.createConceptAsVerb(tdGovLemma));

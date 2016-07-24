@@ -31,7 +31,8 @@ public class AndConjunctionExtractorNNJJRB {
 		String tdGovIdTemp = tdGovId;
 		if (tdGovTag.contains("NN")) {
 			tdGovIdTemp = (td.gov().sentIndex() + 1) + " " + td.gov().index();
-		} else if (tdGovTag.contains("VB")) {
+		}
+		if (tdGovTag.contains("VB")) {
 			govClause = storySentence.getEvent(tdGovIdTemp);
 		} else {
 			govClause = storySentence.getDescription(tdGovIdTemp);
@@ -41,7 +42,6 @@ public class AndConjunctionExtractorNNJJRB {
 		if (tdDepTag.contains("NN")) {
 			tdDepIdTemp = (td.dep().sentIndex() + 1) + " " + td.dep().index();
 		}
-		
 		Noun conjNN = asr.getNoun(tdDepIdTemp);
 		if (tdDepTag.contains("NN")) {
 			if (conjNN == null) {

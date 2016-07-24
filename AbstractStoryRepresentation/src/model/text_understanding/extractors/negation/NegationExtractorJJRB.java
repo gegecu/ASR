@@ -39,11 +39,10 @@ public class NegationExtractorJJRB {
 		}
 
 		d.addConcept(cp.createConceptAsAdjectiveNegated(tdGovLemma));
-		d.addConcept(
-				cp.createConceptAsPredicativeAdjectiveNegated(tdGovLemma));
+		d.addConcept(cp.createConceptAsPredicativeAdjectiveNegated(tdGovLemma));
 
 		storySentence.addDescription(tdGovId, d);
-		
+
 	}
 
 }

@@ -57,10 +57,12 @@ public class QuestionAnswerDialog extends HelpDialog {
 
 		storyViewPanel.setForeground(Color.BLACK);
 		storyViewPanel.setFont(new Font("Arial", Font.BOLD, 28));
-		//helpTextPane.setEditable(false);
 
 		storyInputArea.setFont(new Font("Aria", Font.BOLD, 20));
 		storyInputArea.setPlaceHolder("Enter Answer Here");
+		storyInputArea.setLineWrap(true);
+		storyInputArea.setWrapStyleWord(true);
+		storyInputArea.setAutoscrolls(true);
 
 		storyInputPanel.setLayout(new MigLayout(""));
 		storyInputPanel.setBackground(Color.WHITE);
@@ -76,17 +78,10 @@ public class QuestionAnswerDialog extends HelpDialog {
 		submitButton
 				.setBorder(new RoundedBorder(Color.BLACK, 3, 12, 5, 10, 5, 10));
 		submitButton.addActionListener((e) -> {
-			// check if empty
 			if (!storyInputArea.getText().isEmpty()) {
 				result = HelpAnswer.ACCEPT;
 				dispose();
 			}
-			//	else {
-			//		RoundedBorder border = (RoundedBorder) storyInputPanel
-			//				.getBorder();
-			//		border.setColor(Color.RED);
-			//		storyInputPanel.repaint();
-			//	}
 		});
 
 		gotItButton.setText("Got It");
@@ -113,7 +108,8 @@ public class QuestionAnswerDialog extends HelpDialog {
 			dispose();
 		});
 
-		storyInputPanel.add(storyInputArea, "h 100%, w 100%, grow");
+		storyInputPanel.add(storyInputArea,
+				"h 100%, w 100%, hmax 100%, wmax 100%, grow");
 
 		JPanel panel1 = new JPanel();
 		panel1.setBackground(Color.WHITE);
@@ -124,7 +120,7 @@ public class QuestionAnswerDialog extends HelpDialog {
 		JPanel panel2 = new JPanel();
 		panel2.setBackground(Color.WHITE);
 		panel2.setLayout(new MigLayout("insets 0, gapy 0"));
-		panel2.add(storyInputPanel, "h 100%, w 75%, grow");
+		panel2.add(storyInputPanel, "h 100%, w 75%, wmax 75%, hmax 100%, grow");
 		panel2.add(submitButton, "h 100%, w 25%, grow,");
 
 		panel1.add(panel2, "h 45%, w 100%, grow, wrap");

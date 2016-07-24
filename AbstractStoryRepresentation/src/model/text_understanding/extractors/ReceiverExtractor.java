@@ -22,6 +22,7 @@ public class ReceiverExtractor {
 		String tdDepTag = td.dep().tag();
 		String tdDepLemma = td.dep().lemma();
 		String tdGovTag = td.gov().tag();
+		String tdGovLemma = td.gov().lemma();
 
 		if ((tdDepTag.contains("NN") || asr.getNoun(tdDepId) != null)
 				&& tdGovTag.contains("VB")) {
@@ -29,7 +30,6 @@ public class ReceiverExtractor {
 			Noun noun = asr.getNoun(tdDepId);
 
 			if (noun == null) {
-
 				if (tdDepTag.equals("NNP")) {
 					noun = Extractor.extractCategory(
 							Extractor.getNER(tdDepLemma), tdDepLemma);
@@ -38,19 +38,22 @@ public class ReceiverExtractor {
 					noun = Extractor.extractCategory(
 							Extractor.getSRL(tdDepLemma), tdDepLemma);
 				}
+			}
+
+			if (noun != null) {
 
 				asr.addNoun(tdDepId, noun);
 
+				Event event = storySentence.getEvent(tdGovId);
+				if (event == null) {
+					event = new Event(td.gov().lemma());
+				}
+				event.addReceiver(tdDepId, noun);
+				storySentence.addEvent(tdGovId, event);
+
+			} else {
+				log.debug("Error for " + tdDepLemma + " " + tdGovLemma);
 			}
-
-			Event event = storySentence.getEvent(tdGovId);
-
-			if (event == null) {
-				event = new Event(td.gov().lemma());
-			}
-
-			event.addReceiver(tdDepId, noun);
-			storySentence.addEvent(tdGovId, event);
 
 		}
 

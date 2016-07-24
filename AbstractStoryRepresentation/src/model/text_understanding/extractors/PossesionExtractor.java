@@ -25,9 +25,7 @@ public class PossesionExtractor {
 		String tdGovLemma = td.gov().lemma();
 
 		Noun noun = asr.getNoun(tdDepId);
-
 		if (noun == null) {
-
 			if (tdDepTag.equals("NNP")) {
 				noun = Extractor.extractCategory(Extractor.getNER(tdDepLemma),
 						tdDepLemma);
@@ -36,14 +34,10 @@ public class PossesionExtractor {
 				noun = Extractor.extractCategory(Extractor.getSRL(tdDepLemma),
 						tdDepLemma);
 			}
-
-			asr.addNoun(tdDepId, noun);
 		}
 
 		Noun noun2 = asr.getNoun(tdGovId);
-
 		if (noun2 == null) {
-
 			if (tdGovTag.equals("NNP")) {
 				noun2 = Extractor.extractCategory(Extractor.getNER(tdGovLemma),
 						tdGovLemma);
@@ -52,12 +46,17 @@ public class PossesionExtractor {
 				noun2 = Extractor.extractCategory(Extractor.getSRL(tdGovLemma),
 						tdGovLemma);
 			}
+		}
 
-			asr.addNoun(tdGovId, noun2);
+		if (noun == null || noun2 == null) {
+			log.debug("Error for " + tdDepLemma + " " + tdGovLemma);
+			return;
 		}
 
 		log.debug(tdGovId);
 
+		asr.addNoun(tdDepId, noun);
+		asr.addNoun(tdGovId, noun2);
 		noun.addReference("HasA", tdGovId, noun2);
 		noun2.addReference("IsOwnedBy", tdDepId, noun);
 

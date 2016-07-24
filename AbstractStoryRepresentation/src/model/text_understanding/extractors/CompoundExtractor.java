@@ -20,16 +20,13 @@ public class CompoundExtractor {
 		String tdGovTag = td.gov().tag();
 		String tdGovLemma = td.gov().lemma();
 
+		boolean properNouns = tdDepTag.equals("NNP") && tdGovTag.equals("NNP");
+		boolean commonNouns = tdDepTag.equals("NN") && tdGovTag.contains("NN");
 		String name = tdDepLemma + " " + tdGovLemma;
 
 		Noun noun = asr.getNoun(tdGovId);
 
 		if (noun == null) {
-
-			boolean properNouns = tdDepTag.equals("NNP")
-					&& tdGovTag.equals("NNP");
-			boolean commonNouns = tdDepTag.equals("NN")
-					&& tdGovTag.contains("NN");
 
 			if (properNouns) {
 				noun = Extractor.extractCategory(Extractor.getNER(name), name);
@@ -44,6 +41,8 @@ public class CompoundExtractor {
 
 		if (noun != null) {
 			asr.addNoun(tdGovId, noun);
+		} else {
+			log.debug("Error for " + tdDepLemma + " " + tdGovLemma);
 		}
 
 	}

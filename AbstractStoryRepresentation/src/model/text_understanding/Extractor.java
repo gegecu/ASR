@@ -261,7 +261,7 @@ public class Extractor {
 					} else if (tdDepTag.contains("VB")) {
 						AndConjuctionExtractorVB.extract(asr, cp, td,
 								storySentence, tdDepId, tdGovId,
-								listDependencies);
+								listDependencies, restrictedCapableOf);
 					}
 				}
 			}

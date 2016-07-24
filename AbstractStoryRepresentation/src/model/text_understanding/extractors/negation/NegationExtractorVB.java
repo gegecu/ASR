@@ -51,7 +51,9 @@ public class NegationExtractorVB {
 
 				for (Map.Entry<String, Noun> doerEntry : p.getManyDoers()
 						.entrySet()) {
+
 					Noun doer = doerEntry.getValue();
+
 					for (Map.Entry<String, Noun> location : p.getLocations()
 							.entrySet()) {
 						doer.getReference("AtLocation")
@@ -62,9 +64,11 @@ public class NegationExtractorVB {
 						d.addConcept(cp.createNegationVerbWithLocation(
 								tdGovLemma, location.getValue().getId()));
 					}
+
 					if (doer.getReference("AtLocation").isEmpty()) {
 						doer.getReferences().remove("AtLocation");
 					}
+
 				}
 
 				if (d.getReference("AtLocation").isEmpty()) {
@@ -91,14 +95,12 @@ public class NegationExtractorVB {
 
 						doer.getValue().getReference("HasA")
 								.remove(possession.getKey());
-
 						if (doer.getValue().getReference("HasA").isEmpty()) {
 							doer.getValue().getReferences().remove("HasA");
 						}
 
 						possession.getValue().getReference("IsOwnedBy")
 								.remove(doer.getKey());
-
 						if (possession.getValue().getReference("IsOwnedBy")
 								.isEmpty()) {
 							possession.getValue().getReferences()

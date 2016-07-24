@@ -34,6 +34,7 @@ public class AdvmodPropertyExtractor {
 		String tdGovLemma = td.gov().lemma();
 
 		if (tdDepTag.equals("RB")) {
+
 			if (dictionary.copulas.contains(tdGovLemma)) {
 
 				Description description = storySentence.getDescription(tdDepId);
@@ -69,7 +70,9 @@ public class AdvmodPropertyExtractor {
 				//still unsure with id
 				storySentence.addDescription(tdDepId, description);
 
-			} else { //add as adverb in verb class		
+			}
+			//add as adverb in verb class
+			else {
 				Event event = storySentence.getEvent(tdGovId);
 				if (event == null) { //verify if create new event is conflicting
 					event = new Event(tdGovLemma);
@@ -77,6 +80,7 @@ public class AdvmodPropertyExtractor {
 				}
 				event.getVerb().addAdverb(tdDepLemma);
 			}
+
 		}
 
 	}
