@@ -122,6 +122,9 @@ public class SpecialPromptGenerator {
 			String relation = relations.remove(randomRelations - 1);
 			
 			String doers = SurfaceRealizer.wordsConjunction(new ArrayList(description.getManyDoers().values()));
+			
+			specialPromptData.setDoers(new ArrayList(description.getManyDoers().values()));
+			
 			boolean plural = false;
 			
 			if(description.getManyDoers().size() > 1) {

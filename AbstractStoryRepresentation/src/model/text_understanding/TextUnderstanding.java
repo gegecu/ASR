@@ -46,20 +46,17 @@ public class TextUnderstanding {
 		}
 
 		if (asr.getCurrentPartOfStory().equals("start")) {
-			SpecialClause conflict = null;
 			for (StorySentence storySentence : extractedStorySentences) {
-				conflict = checkForConflict(storySentence);
+				SpecialClause conflict = checkForConflict(storySentence);
+				if(conflict != null) {
+					asr.setConflict(conflict);
+				}
 			}
-			asr.setConflict(conflict);
 		} else if (asr.getCurrentPartOfStory().equals("end")) {
 			SpecialClause resolution = asr.getResolution();
 			if (resolution == null) {
 				for (StorySentence storySentence : extractedStorySentences) {
 					resolution = checkForResolution(storySentence);
-					//					System.out.println(resolution.getMainConcept());
-					//					if (resolution == null) {
-					//						break;
-					//					}
 				}
 			}
 			asr.setResolution(resolution);
