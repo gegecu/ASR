@@ -7,9 +7,11 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
 
+import javax.swing.BorderFactory;
 import javax.swing.ButtonModel;
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.MouseInputAdapter;
@@ -29,6 +31,7 @@ public class QuestionAnswerDialog extends HelpDialog {
 	private JButton submitButton;
 	private AutoResizingTextAreaWithPlaceHolder storyInputArea;
 	private JPanel storyInputPanel;
+	private JScrollPane storyInputPane;
 	private GrammarChecker grammarChecker;
 
 	private boolean storyInputAreaFocused = false;
@@ -47,6 +50,7 @@ public class QuestionAnswerDialog extends HelpDialog {
 		submitButton = new JButton();
 
 		storyInputArea = new AutoResizingTextAreaWithPlaceHolder();
+		storyInputPane = new JScrollPane();
 		storyInputPanel = new JPanel();
 
 		grammarChecker = new GrammarChecker(storyInputArea);
@@ -63,6 +67,13 @@ public class QuestionAnswerDialog extends HelpDialog {
 		storyInputArea.setLineWrap(true);
 		storyInputArea.setWrapStyleWord(true);
 		storyInputArea.setAutoscrolls(true);
+
+		storyInputPane.setViewportView(storyInputArea);
+		storyInputPane.setVerticalScrollBarPolicy(
+				JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+		storyInputPane.setHorizontalScrollBarPolicy(
+				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		storyInputPane.setBorder(BorderFactory.createEmptyBorder());
 
 		storyInputPanel.setLayout(new MigLayout(""));
 		storyInputPanel.setBackground(Color.WHITE);
@@ -108,7 +119,7 @@ public class QuestionAnswerDialog extends HelpDialog {
 			dispose();
 		});
 
-		storyInputPanel.add(storyInputArea,
+		storyInputPanel.add(storyInputPane,
 				"h 100%, w 100%, hmax 100%, wmax 100%, grow");
 
 		JPanel panel1 = new JPanel();
@@ -131,12 +142,12 @@ public class QuestionAnswerDialog extends HelpDialog {
 		panel3.add(gotItButton, "h 100%, w 20%, grow");
 		panel3.add(otherSuggestionButton, "h 100%, w 40%, grow, wrap");
 
-		panel.add(panel1, "h 70%, w 100%, wrap");
-		panel.add(panel3, "h 30%, w 100%, align center, wrap");
+		panel.add(panel1, "h 71%, w 100%, wrap");
+		panel.add(panel3, "h 29%, w 100%, align center, wrap");
 
 		add(panel);
 		setResizable(false);
-		panel.setPreferredSize(new Dimension(600, 250));
+		panel.setPreferredSize(new Dimension(600, 270));
 		pack();
 		setTitle("Ideas");
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
