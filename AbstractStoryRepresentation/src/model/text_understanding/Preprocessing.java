@@ -62,31 +62,6 @@ public class Preprocessing {
 		return this.updatedText;
 	}
 
-	private String normalize(String text) {
-
-		JLanguageTool langTool = JLanguageToolInstance.getInstance();
-		String input = text;
-		List<RuleMatch> matches;
-
-		try {
-			matches = langTool.check(input);
-			RuleMatch match = matches.get(0);
-			while (!matches.isEmpty()
-					&& !match.getSuggestedReplacements().isEmpty()) {
-				input = input.substring(0, match.getColumn() - 1)
-						+ match.getSuggestedReplacements().get(0)
-						+ input.substring(match.getEndColumn() - 1);
-				matches = langTool.check(input);
-				log.debug(input);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		return input;
-
-	}
-
 	private Map<String, String> coreference(String text) {
 
 		Map<String, String> coreference = new HashMap<>();
