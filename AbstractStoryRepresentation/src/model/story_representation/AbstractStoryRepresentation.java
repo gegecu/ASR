@@ -54,7 +54,7 @@ public class AbstractStoryRepresentation {
 		return this.resolution;
 	}
 
-	public void addEvent(StorySentence storySentence) {
+	public void addStorySentence(StorySentence storySentence) {
 
 		List<StorySentence> storySentences = this.storySentences
 				.get(partOfStory);

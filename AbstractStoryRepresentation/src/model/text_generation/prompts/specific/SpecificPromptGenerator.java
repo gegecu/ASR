@@ -175,7 +175,7 @@ public class SpecificPromptGenerator extends PromptGenerator {
 		String prompt = null;
 		String currentTopic = specificPromptData.getCurrentTopic();
 
-		List<Concept> concepts = ConceptNetDAO.getConceptFrom(currentTopic,
+		List<Concept> concepts = ConceptNetDAO.getConceptsFrom(currentTopic,
 				"IsA");
 
 		while (concepts != null && !concepts.isEmpty()) {

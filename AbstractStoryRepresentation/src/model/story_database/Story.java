@@ -1,6 +1,6 @@
 package model.story_database;
 
-public class Story implements Comparable<Story> {
+public class Story {
 
 	private int storyId;
 	private String storyTitle;
@@ -26,8 +26,16 @@ public class Story implements Comparable<Story> {
 		return storyId;
 	}
 
+	public void setStoryId(int storyId) {
+		this.storyId = storyId;
+	}
+
 	public String getStoryTitle() {
 		return storyTitle;
+	}
+
+	public void setStoryTitle(String storyTitle) {
+		this.storyTitle = storyTitle;
 	}
 
 	public String getStoryText() {
@@ -36,11 +44,6 @@ public class Story implements Comparable<Story> {
 
 	public void setStoryText(String storyText) {
 		this.storyText = storyText;
-	}
-
-	@Override
-	public int compareTo(Story s) {
-		return storyId - s.storyId;
 	}
 
 }

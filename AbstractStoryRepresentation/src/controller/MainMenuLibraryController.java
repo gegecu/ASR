@@ -18,7 +18,7 @@ public class MainMenuLibraryController implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		Story story = null;
-		story = StoryDAO.getStoryText(Integer.parseInt(e.getActionCommand()));
+		story = StoryDAO.getStory(Integer.parseInt(e.getActionCommand()));
 		mainFrame.showViewStory(story);
 	}
 

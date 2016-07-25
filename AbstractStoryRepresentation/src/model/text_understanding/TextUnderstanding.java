@@ -16,7 +16,7 @@ import model.story_representation.story_element.story_sentence.Clause;
 import model.story_representation.story_element.story_sentence.StorySentence;
 
 public class TextUnderstanding {
-	
+
 	private static Logger log = Logger
 			.getLogger(TextUnderstanding.class.getName());
 
@@ -43,17 +43,19 @@ public class TextUnderstanding {
 				preprocessingModule.getCoref());
 
 		for (StorySentence storySentence : extractedStorySentences) {
-			asr.addEvent(storySentence);
+			asr.addStorySentence(storySentence);
 		}
 
-		if (asr.getCurrentPartOfStory().equals("start")) {
+		if (asr.getCurrentPartOfStory()
+				.equals(AbstractStoryRepresentation.start)) {
 			for (StorySentence storySentence : extractedStorySentences) {
 				SpecialClause conflict = checkForConflict(storySentence);
-				if(conflict != null) {
+				if (conflict != null) {
 					asr.setConflict(conflict);
 				}
 			}
-		} else if (asr.getCurrentPartOfStory().equals("end")) {
+		} else if (asr.getCurrentPartOfStory()
+				.equals(AbstractStoryRepresentation.middle)) {
 			SpecialClause resolution = asr.getResolution();
 			if (resolution == null) {
 				for (StorySentence storySentence : extractedStorySentences) {
@@ -62,14 +64,15 @@ public class TextUnderstanding {
 			}
 			asr.setResolution(resolution);
 		}
-		
-		
-		if(asr.getConflict() != null) {
-			log.debug(asr.getConflict().getMainConcept() + ", " + asr.getConflict().getPolarity());
+
+		if (asr.getConflict() != null) {
+			log.debug(asr.getConflict().getMainConcept() + ", "
+					+ asr.getConflict().getPolarity());
 		}
-		
-		if(asr.getResolution() != null) {
-			log.debug(asr.getResolution().getMainConcept() + ", " + asr.getResolution().getPolarity());
+
+		if (asr.getResolution() != null) {
+			log.debug(asr.getResolution().getMainConcept() + ", "
+					+ asr.getResolution().getPolarity());
 		}
 
 		extractedStorySentences = null;
@@ -110,10 +113,12 @@ public class TextUnderstanding {
 
 					if (polarity <= worstPolarity
 							&& polarity <= conflictMinimumPolarity
-							&& (ConceptNetDAO.resolutionExists(concept) || clause.isNegated())) {
-						System.out.println(ConceptNetDAO.resolutionExists(concept));
+							&& (ConceptNetDAO.checkResolutionExists(concept)
+									|| clause.isNegated())) {
+						System.out.println(
+								ConceptNetDAO.checkResolutionExists(concept));
 						System.out.println(polarity + ", " + concept);
-						
+
 						worstPolarity = polarity;
 						mainConcept = concept;
 						mainClause = clause;
@@ -142,32 +147,33 @@ public class TextUnderstanding {
 		SpecialClause conflict = asr.getConflict();
 
 		for (Clause clause : clauses) {
-			
+
 			System.out.println(conflict.getClause());
 
-			if(!conflict.getClause().isNegated()) {
+			if (!conflict.getClause().isNegated()) {
 				Set<String> concepts = clause.getConcepts();
-	
+
 				if (concepts != null) {
-	
+
 					for (String concept : concepts) {
 						if (concept.contains("not")) {
-							polarity = snp.getPolarity(concept.replace(" ", "_"))
-									* -1;
+							polarity = snp.getPolarity(
+									concept.replace(" ", "_")) * -1;
 						} else {
-							polarity = snp.getPolarity(concept.replace(" ", "_"));
+							polarity = snp
+									.getPolarity(concept.replace(" ", "_"));
 						}
-	
-						if (polarity > bestPolarity && this.hasValidResolutionConcept(conflict, clause)) {
+
+						if (polarity > bestPolarity && this
+								.hasValidResolutionConcept(conflict, clause)) {
 							bestPolarity = polarity;
 							mainConcept = concept;
 							mainClause = clause;
 						}
 					}
 				}
-			}
-			else {
-				if(this.hasValidResolutionConcept(conflict, clause)) {
+			} else {
+				if (this.hasValidResolutionConcept(conflict, clause)) {
 					bestPolarity = conflict.getPolarity() * -1;
 					mainConcept = conflict.getMainConcept().replace("not ", "");
 					mainClause = clause;
@@ -185,8 +191,7 @@ public class TextUnderstanding {
 			doersInResolution.retainAll(doersInConflict);
 
 			if (doersInResolution.size() > 0) {
-				return new SpecialClause(mainClause, mainConcept,
-						bestPolarity);
+				return new SpecialClause(mainClause, mainConcept, bestPolarity);
 			}
 		}
 		return null;
@@ -204,7 +209,8 @@ public class TextUnderstanding {
 				for (String conflictConcept : conflict.getClause()
 						.getConcepts()) {
 					String temp = conflictConcept.replace("not ", "");
-					if (resolutionConcept.equals(temp) && !resolutionClause.isNegated()) {
+					if (resolutionConcept.equals(temp)
+							&& !resolutionClause.isNegated()) {
 						return true;
 					}
 				}
@@ -214,9 +220,9 @@ public class TextUnderstanding {
 			for (String resoConcept : concepts) {
 				//for (String conflict2 : conflict.getClause().getConcepts()) {
 				String confConcept = conflict.getMainConcept();
-					if (ConceptNetDAO.getFourHops(confConcept, resoConcept)) {
-						return true;
-					}
+				if (ConceptNetDAO.checkFourHops(confConcept, resoConcept)) {
+					return true;
+				}
 				//}
 			}
 		}

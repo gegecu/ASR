@@ -24,7 +24,7 @@ import edu.stanford.nlp.semgraph.SemanticGraph;
 import edu.stanford.nlp.semgraph.SemanticGraphCoreAnnotations.CollapsedCCProcessedDependenciesAnnotation;
 import edu.stanford.nlp.trees.TypedDependency;
 import edu.stanford.nlp.util.CoreMap;
-import model.instance.AbstractSequenceClassifierInstance;
+import model.instance.CRFClassifierInstance;
 import model.instance.DictionariesInstance;
 import model.instance.StanfordCoreNLPInstance;
 import model.knowledge_base.conceptnet.ConceptNetDAO;
@@ -89,7 +89,7 @@ public class Extractor {
 		}
 		cp = new ConceptParser();
 		pipeline = StanfordCoreNLPInstance.getInstance();
-		classifier = AbstractSequenceClassifierInstance.getInstance();
+		classifier = CRFClassifierInstance.getInstance();
 		dictionary = DictionariesInstance.getInstance();
 	}
 

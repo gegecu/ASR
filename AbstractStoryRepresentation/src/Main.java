@@ -6,7 +6,7 @@ import org.apache.log4j.Logger;
 import org.languagetool.gui.GrammarChecker;
 
 import edu.stanford.nlp.pipeline.Annotation;
-import model.instance.AbstractSequenceClassifierInstance;
+import model.instance.CRFClassifierInstance;
 import model.instance.DictionariesInstance;
 import model.instance.SenticNetParserInstance;
 import model.instance.StanfordCoreNLPInstance;
@@ -37,7 +37,7 @@ public class Main {
 						.annotate(new Annotation("Hello World!"));
 				new GrammarChecker(new JTextArea());
 				DictionariesInstance.getInstance();
-				AbstractSequenceClassifierInstance.getInstance();
+				CRFClassifierInstance.getInstance();
 				SenticNetParserInstance.getInstance();
 
 				long t2 = System.currentTimeMillis();

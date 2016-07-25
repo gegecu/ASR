@@ -160,7 +160,7 @@ public class StorySegmentGenerator extends TextGeneration {
 						directObjects.remove(randomObject - 1));
 
 				List<Concept> concepts = ConceptNetDAO
-						.getConceptTo(dobj.getId(), "AtLocation");
+						.getConceptsTo(dobj.getId(), "AtLocation");
 
 				List<Noun> doers = new ArrayList<Noun>(
 						event.getManyDoers().values());
@@ -231,7 +231,7 @@ public class StorySegmentGenerator extends TextGeneration {
 
 				String[] words = location.getId().split(" ");
 				String word = words[words.length - 1];
-				List<Concept> concepts = ConceptNetDAO.getConceptFrom(word,
+				List<Concept> concepts = ConceptNetDAO.getConceptsFrom(word,
 						"AtLocation");
 
 				List<Noun> doers = Utilities.getDoers(storySentence);
@@ -320,9 +320,9 @@ public class StorySegmentGenerator extends TextGeneration {
 			List<Concept> concepts = null;
 
 			if (noun.getType() == TypeOfNoun.CHARACTER && !noun.getIsCommon()) {
-				concepts = ConceptNetDAO.getConceptTo("person", "HasA");
+				concepts = ConceptNetDAO.getConceptsTo("person", "HasA");
 			} else {
-				concepts = ConceptNetDAO.getConceptTo(noun.getId(), "HasA");
+				concepts = ConceptNetDAO.getConceptsTo(noun.getId(), "HasA");
 			}
 
 			if (concepts != null) {
@@ -420,9 +420,9 @@ public class StorySegmentGenerator extends TextGeneration {
 			List<Concept> concepts = null;
 
 			if (noun.getType() == TypeOfNoun.CHARACTER && !noun.getIsCommon()) {
-				concepts = ConceptNetDAO.getConceptTo("person", "IsA");
+				concepts = ConceptNetDAO.getConceptsTo("person", "IsA");
 			} else {
-				concepts = ConceptNetDAO.getConceptTo(noun.getId(), "IsA");
+				concepts = ConceptNetDAO.getConceptsTo(noun.getId(), "IsA");
 			}
 
 			if (concepts != null) {
@@ -520,9 +520,9 @@ public class StorySegmentGenerator extends TextGeneration {
 			List<Concept> concepts = null;
 
 			if (noun.getType() == TypeOfNoun.CHARACTER && !noun.getIsCommon()) {
-				concepts = ConceptNetDAO.getConceptTo("person", "HasProperty");
+				concepts = ConceptNetDAO.getConceptsTo("person", "HasProperty");
 			} else {
-				concepts = ConceptNetDAO.getConceptTo(noun.getId(),
+				concepts = ConceptNetDAO.getConceptsTo(noun.getId(),
 						"HasProperty");
 			}
 
@@ -643,7 +643,7 @@ public class StorySegmentGenerator extends TextGeneration {
 			String characters = SurfaceRealizer.wordsConjunction(doers);
 
 			for (String concept : clause.getConcepts()) {
-				temp.addAll(ConceptNetDAO.getConceptTo(concept, "Causes"));
+				temp.addAll(ConceptNetDAO.getConceptsTo(concept, "Causes"));
 			}
 
 			if (temp.isEmpty()) {
@@ -696,7 +696,7 @@ public class StorySegmentGenerator extends TextGeneration {
 
 					// unsure
 					List<Concept> temp1 = ConceptNetDAO
-							.getConceptFrom(concept.getEnd(), "usedFor");
+							.getConceptsFrom(concept.getEnd(), "usedFor");
 					if (!temp1.isEmpty()) {
 						int rand = Randomizer.random(1, temp1.size());
 						storySegment = storySegment.replace("<object>",

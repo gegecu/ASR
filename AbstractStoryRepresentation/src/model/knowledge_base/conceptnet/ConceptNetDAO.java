@@ -60,7 +60,7 @@ public class ConceptNetDAO {
 
 	}
 
-	public static List<Concept> getConceptFrom(String end, String relation) {
+	public static List<Concept> getConceptsFrom(String end, String relation) {
 
 		String query = "select `concept_relations`.`id`, `conceptsFrom`.`concept`, `conceptsFromPOS`.`partOfSpeech`,  `relations`.`relation`,  `conceptsTo`.`concept`, `conceptsToPOS`.`partOfSpeech` "
 				+ "FROM (SELECT  `id`, `concept`, `posID` FROM `concepts`) AS `conceptsFrom` LEFT JOIN `part_of_speeches` AS `conceptsFromPOS` ON `conceptsFrom`.`posID` = `conceptsFromPOS`.`id`, "
@@ -108,7 +108,7 @@ public class ConceptNetDAO {
 
 	}
 
-	public static List<Concept> getConceptTo(String start, String relation) {
+	public static List<Concept> getConceptsTo(String start, String relation) {
 
 		String query = "select `concept_relations`.`id`, `conceptsFrom`.`concept`, `conceptsFromPOS`.`partOfSpeech`,  `relations`.`relation`,  `conceptsTo`.`concept`, `conceptsToPOS`.`partOfSpeech` "
 				+ "FROM (SELECT  `id`, `concept`, `posID` FROM `concepts`) AS `conceptsFrom` LEFT JOIN `part_of_speeches` AS `conceptsFromPOS` ON `conceptsFrom`.`posID` = `conceptsFromPOS`.`id`, "
@@ -156,7 +156,7 @@ public class ConceptNetDAO {
 
 	}
 	
-	public static boolean resolutionExists(String conflict) {
+	public static boolean checkResolutionExists(String conflict) {
 		String query = "SELECT c1.concept AS lev1, c2.concept as lev2, c3.concept as lev3 "
 				+ "FROM concept_relations AS t1 "
 				+ "LEFT JOIN concepts AS c1 ON c1.id = t1.toID "
@@ -202,7 +202,7 @@ public class ConceptNetDAO {
 		
 	}
 
-	public static boolean getFourHops(String conflict,
+	public static boolean checkFourHops(String conflict,
 			String possibleResolution) {
 
 		// changed to t1.fromID in (Select ...) from ( id = ... limit 1)

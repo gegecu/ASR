@@ -180,7 +180,7 @@ public class StoryDAO {
 	 *            id of story to be retrieved
 	 * @return string (the story text of the story id)
 	 */
-	public static Story getStoryText(int storyId) {
+	public static Story getStory(int storyId) {
 
 		String query = "SELECT `id`, `title`, `text` FROM `stories` WHERE `id` = ?";
 
