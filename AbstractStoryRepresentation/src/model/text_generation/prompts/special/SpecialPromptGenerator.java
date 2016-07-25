@@ -290,7 +290,7 @@ public class SpecialPromptGenerator {
 			p.setFeature(Feature.TENSE, Tense.FUTURE);
 			p.setFeature(Feature.PROGRESSIVE, false);//future tense progressive sounds confusing
 		}
-		if (predicate.getVerb().isNegated()) {
+		if (predicate.isNegated()) {
 			verb.setFeature(Feature.NEGATED, true);
 		}
 

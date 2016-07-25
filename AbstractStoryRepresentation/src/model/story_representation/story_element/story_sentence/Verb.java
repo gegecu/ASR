@@ -25,7 +25,7 @@ public class Verb {
 	private String pos;
 	private String form;
 	private String tense;
-	private Boolean negated;
+//	private Boolean negated;
 	/** details separated into specific types */
 	private Set<String> auxiliary;
 	private Set<String> prepositionalPhrases;
@@ -53,7 +53,7 @@ public class Verb {
 
 	public Verb(String action) {
 		this.action = action;
-		this.negated = false;
+//		this.negated = false;
 		this.form = "base";
 		this.pos = "VB";
 		this.tense = "past";
@@ -85,12 +85,12 @@ public class Verb {
 			return true;
 		return false;
 	}
-	public boolean isNegated(){
-		return this.negated;
-	}
-	public void setNegated(Boolean b){
-		this.negated = b;
-	}
+//	public boolean isNegated(){
+//		return this.negated;
+//	}
+//	public void setNegated(Boolean b){
+//		this.negated = b;
+//	}
 	public String getAction() {
 		return action;
 	}
