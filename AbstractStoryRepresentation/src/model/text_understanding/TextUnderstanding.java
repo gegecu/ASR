@@ -2,6 +2,7 @@ package model.text_understanding;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -95,7 +96,7 @@ public class TextUnderstanding {
 
 		for (Clause clause : clauses) {
 
-			List<String> concepts = clause.getConcepts();
+			Set<String> concepts = clause.getConcepts();
 
 			if (concepts != null) {
 				for (String concept : concepts) {
@@ -145,7 +146,7 @@ public class TextUnderstanding {
 			System.out.println(conflict.getClause());
 
 			if(!conflict.getClause().isNegated()) {
-				List<String> concepts = clause.getConcepts();
+				Set<String> concepts = clause.getConcepts();
 	
 				if (concepts != null) {
 	
@@ -197,7 +198,7 @@ public class TextUnderstanding {
 
 		//if conflict is from negation, resolution should be un-negated statement
 		if (conflict.getClause().isNegated()) {
-			List<String> concepts = resolutionClause.getConcepts();
+			Set<String> concepts = resolutionClause.getConcepts();
 			//if(resolutionClause.isNegated())
 			for (String resolutionConcept : concepts) {
 				for (String conflictConcept : conflict.getClause()
@@ -209,7 +210,7 @@ public class TextUnderstanding {
 				}
 			}
 		} else { //else check for 4 hops in conceptnet
-			List<String> concepts = resolutionClause.getConcepts();
+			Set<String> concepts = resolutionClause.getConcepts();
 			for (String resoConcept : concepts) {
 				//for (String conflict2 : conflict.getClause().getConcepts()) {
 				String confConcept = conflict.getMainConcept();

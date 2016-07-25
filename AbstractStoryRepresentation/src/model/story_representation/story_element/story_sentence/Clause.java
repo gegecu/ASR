@@ -2,19 +2,21 @@ package model.story_representation.story_element.story_sentence;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import model.story_representation.story_element.noun.Noun;
 
 public abstract class Clause {
 
-	protected List<String> concepts;
+	protected Set<String> concepts;
 	protected Map<String, Noun> doers;
 	protected boolean isNegated;
 
 	public Clause() {
-		this.concepts = new ArrayList<String>();
+		this.concepts = new HashSet<String>();
 		this.doers = new HashMap<String, Noun>();
 		isNegated = false;
 	}
@@ -39,7 +41,7 @@ public abstract class Clause {
 		return this.doers.get(nounId);
 	}
 
-	public List<String> getConcepts() {
+	public Set<String> getConcepts() {
 		return this.concepts;
 	}
 

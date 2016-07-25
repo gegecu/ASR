@@ -3,7 +3,6 @@ package model.story_representation.story_element.story_sentence;
 import java.util.HashMap;
 import java.util.Map;
 
-import model.story_representation.story_element.Verb;
 import model.story_representation.story_element.noun.Noun;
 
 public class Event extends Clause {

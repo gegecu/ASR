@@ -80,9 +80,9 @@ public class Checklist {
 	public boolean isBeginningComplete() {
 		boolean ok = this.isCharacterExist && this.isConflictExist
 				&& this.isLocationExist;
-		if(ok) {
-			this.asr.setPartOfStory(asr.middle);
-		}
+//		if(ok) {
+//			this.asr.setPartOfStory(AbstractStoryRepresentation.middle);
+//		}
 		
 		return ok;
 	}
@@ -107,9 +107,9 @@ public class Checklist {
 
 	public boolean isMiddleComplete() {
 		boolean ok = this.isSeriesActionExist;
-		if(ok) {
-			this.asr.setPartOfStory(asr.end);
-		}
+//		if(ok) {
+//			this.asr.setPartOfStory(AbstractStoryRepresentation.end);
+//		}
 		return ok;
 	}
 

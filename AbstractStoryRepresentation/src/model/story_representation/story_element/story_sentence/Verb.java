@@ -1,4 +1,4 @@
-package model.story_representation.story_element;
+package model.story_representation.story_element.story_sentence;
 
 import java.util.ArrayList;
 import java.util.Arrays;
