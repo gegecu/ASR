@@ -78,8 +78,13 @@ public class Checklist {
 	}
 
 	public boolean isBeginningComplete() {
-		return this.isCharacterExist && this.isConflictExist
+		boolean ok = this.isCharacterExist && this.isConflictExist
 				&& this.isLocationExist;
+		if(ok) {
+			this.asr.setPartOfStory(asr.middle);
+		}
+		
+		return ok;
 	}
 
 	private void seriesActionExist() {
@@ -101,7 +106,11 @@ public class Checklist {
 	}
 
 	public boolean isMiddleComplete() {
-		return this.isSeriesActionExist;
+		boolean ok = this.isSeriesActionExist;
+		if(ok) {
+			this.asr.setPartOfStory(asr.end);
+		}
+		return ok;
 	}
 
 	private void resolutionExist() {
