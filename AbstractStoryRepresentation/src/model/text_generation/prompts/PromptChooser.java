@@ -174,9 +174,10 @@ public class PromptChooser extends TextGeneration {
 
 		if(output != null) {
 			history.add(output);
-			if (history.size() >= historySizeThreshold) {
-				history.remove();
-			}
+		}
+		
+		if (history.size() >= historySizeThreshold) {
+			history.remove();
 		}
 
 		return output;
