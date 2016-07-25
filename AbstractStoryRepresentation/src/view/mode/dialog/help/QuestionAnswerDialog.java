@@ -107,7 +107,7 @@ public class QuestionAnswerDialog extends HelpDialog {
 			dispose();
 		});
 
-		otherSuggestionButton.setText("Other Suggestion");
+		otherSuggestionButton.setText("Other Ideas");
 		otherSuggestionButton.setFocusPainted(false);
 		otherSuggestionButton.setBackground(Color.decode("#36B214"));
 		otherSuggestionButton.setForeground(Color.BLACK);
