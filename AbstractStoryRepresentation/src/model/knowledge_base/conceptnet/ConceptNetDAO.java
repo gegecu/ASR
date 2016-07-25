@@ -60,46 +60,6 @@ public class ConceptNetDAO {
 
 	}
 
-	public static List<String> getExpectedResolution(String start) {
-
-		String query = "call four_hops(?)";
-
-		Connection connection = null;
-		PreparedStatement ps = null;
-		ResultSet rs = null;
-		List<String> concepts = null;
-
-		try {
-
-			concepts = new ArrayList<String>();
-			connection = MySQLConnector.getInstance().getConnection();
-			ps = connection.prepareStatement(query);
-			ps.setString(1, start);
-			rs = ps.executeQuery();
-
-			while (rs.next()) {
-				concepts.add(rs.getString(5));
-			}
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				if (ps != null)
-					ps.close();
-				if (connection != null)
-					connection.close();
-				if (rs != null)
-					rs.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
-
-		return concepts;
-
-	}
-
 	public static List<Concept> getConceptFrom(String end, String relation) {
 
 		String query = "select `concept_relations`.`id`, `conceptsFrom`.`concept`, `conceptsFromPOS`.`partOfSpeech`,  `relations`.`relation`,  `conceptsTo`.`concept`, `conceptsToPOS`.`partOfSpeech` "
