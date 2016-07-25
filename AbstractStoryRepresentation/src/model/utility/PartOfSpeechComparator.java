@@ -16,6 +16,7 @@ public class PartOfSpeechComparator implements Comparator<TypedDependency> {
 				return -1;
 			}
 		}
+	
 
 		return 0;
 
