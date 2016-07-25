@@ -29,13 +29,9 @@ public class SpecialPromptAnswerChecker extends PromptAnswerChecker {
 	private static Logger log = Logger
 			.getLogger(SpecialPromptAnswerChecker.class.getName());
 
-	private StanfordCoreNLP pipeline;
-	private Preprocessing preprocess;
 	private SpecialPromptData specialPromptData;
 
 	public SpecialPromptAnswerChecker(SpecialPromptData specialPromptData) {
-		this.pipeline = StanfordCoreNLPInstance.getInstance();
-		this.preprocess = new Preprocessing();
 		this.specialPromptData = specialPromptData;
 	}
 
