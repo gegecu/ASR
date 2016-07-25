@@ -172,9 +172,11 @@ public class PromptChooser extends TextGeneration {
 			currentPromptAnswerChecker = specialPromptAnswerChecker;
 		}
 
-		history.add(output);
-		if (history.size() >= historySizeThreshold) {
-			history.remove();
+		if(output != null) {
+			history.add(output);
+			if (history.size() >= historySizeThreshold) {
+				history.remove();
+			}
 		}
 
 		return output;
