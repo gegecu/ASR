@@ -31,14 +31,6 @@ public class SpecialPromptGenerator {
 	private static Logger log = Logger
 			.getLogger(SpecialPromptGenerator.class.getName());
 
-	//fixed some grammar issues
-
-	//strictly noun + action format
-	private String[] causeEffectDirective = {"Tell me why <noun> <action>.",
-			"Explain why <noun> <action>.",
-			"Write more about why <noun> <action>.",
-			"Write the reason why <noun> <action>."};
-
 	//used to improve grammar across different verb forms
 	private String[] causeEffectDirectivePhraseFormat = {
 			"Tell me why <phrase>.", "Explain why <phrase>.",
@@ -51,7 +43,6 @@ public class SpecialPromptGenerator {
 	private String[] locationVerbs = {"go", "climb", "run", "walk", "swim",
 			"travel"};
 
-	private AbstractStoryRepresentation asr;
 	private Queue<String> history;
 	private NLGFactory nlgFactory;
 	private Realiser realiser;
@@ -61,7 +52,6 @@ public class SpecialPromptGenerator {
 			NLGFactory nlgFactory, Realiser realiser) {
 		this.nlgFactory = nlgFactory;
 		this.realiser = realiser;
-		this.asr = specialPromptData.getASR();
 		this.history = specialPromptData.getHistory();
 		this.specialPromptData = specialPromptData;
 	}
