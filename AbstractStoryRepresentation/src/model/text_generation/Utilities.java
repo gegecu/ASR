@@ -18,34 +18,33 @@ public class Utilities {
 	 * @param storySentence
 	 * @return
 	 */
-	public static List<Noun> getDoers(StorySentence storySentence) {
-		List<Noun> doers = new ArrayList<Noun>();
-		for (Description description : storySentence.getManyDescriptions()
-				.values()) {
-			for (Noun noun : description.getManyDoers().values()) {
-				if (noun.getType() == TypeOfNoun.CHARACTER) {
-					doers.add((Character) noun);
-				}
-			}
-		}
-		return doers;
-	}
+//	public static List<Noun> getDoers(StorySentence storySentence) {
+//		List<Noun> doers = new ArrayList<Noun>();
+//		for (Description description : storySentence.getManyDescriptions()
+//				.values()) {
+//			for (Noun noun : description.getManyDoers().values()) {
+//				if (noun.getType() == TypeOfNoun.CHARACTER) {
+//					doers.add((Character) noun);
+//				}
+//			}
+//		}
+//		return doers;
+//	}
 
 	/**
 	 * @param storySentence
 	 * @return
 	 */
-	public static Location getLocation(StorySentence storySentence,
+	public static List<Location> getLocation(StorySentence storySentence,
 			AbstractStoryRepresentation asr) {
-		Location location = null;
+		List<Location> locations = new ArrayList();
 		for (String i : storySentence.getAllNouns()) {
 			Noun noun = asr.getNoun(i);
 			if (noun.getType() == TypeOfNoun.LOCATION) {
-				location = (Location) noun;
-				return location;
+				locations.add((Location) noun);
 			}
 		}
-		return location;
+		return locations;
 	}
 
 	public static <T> int countLists(Collection<List<T>> collection) {

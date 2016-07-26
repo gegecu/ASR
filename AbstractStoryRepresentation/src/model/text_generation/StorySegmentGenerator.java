@@ -225,17 +225,19 @@ public class StorySegmentGenerator extends TextGeneration {
 
 		if (storySentence != null) {
 
-			Location location = Utilities.getLocation(storySentence, asr);
+			List<Location> locations = Utilities.getLocation(storySentence, asr);
 
-			if (location != null) {
-
+			while(!locations.isEmpty()) {
+				int randomLocation = Randomizer.random(1, locations.size());
+				Location location = locations.remove(randomLocation-1);
+				
 				String[] words = location.getId().split(" ");
 				String word = words[words.length - 1];
 				List<Concept> concepts = ConceptNetDAO.getConceptsFrom(word,
 						"AtLocation");
 
-				List<Noun> doers = Utilities.getDoers(storySentence);
-				String characters = SurfaceRealizer.wordsConjunction(doers);
+//				List<Noun> doers = Utilities.getDoers(storySentence);
+//				String characters = SurfaceRealizer.wordsConjunction(doers);
 
 				if (concepts != null) {
 
@@ -251,11 +253,6 @@ public class StorySegmentGenerator extends TextGeneration {
 
 						int randomSentence = Randomizer.random(1,
 								this.atLocationStorySegmentStart.length);
-						if (characters.isEmpty()) {
-							randomSentence = Randomizer.random(1,
-									this.atLocationStorySegmentStart.length
-											- 1);
-						}
 
 						String storySegment = this.atLocationStorySegmentStart[randomSentence
 								- 1];
@@ -284,8 +281,6 @@ public class StorySegmentGenerator extends TextGeneration {
 						}
 
 						storySegment = storySegment.replace("<start>", start);
-						storySegment = storySegment.replace("<doer>",
-								characters);
 						storySegment = storySegment.replace("<end>", end);
 						storySegment = storySegment.substring(0, 1)
 								.toUpperCase() + storySegment.substring(1);
