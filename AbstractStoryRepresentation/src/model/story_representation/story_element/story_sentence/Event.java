@@ -59,12 +59,5 @@ public class Event extends Clause {
 	public Noun getLocation(String id){
 		return this.locations.get(id);
 	}
-	public Noun removeDirectObject(String id) {
-		return this.directObjects.remove(id);
-	}
-
-	public void removeConcept(String concept) {
-		this.concepts.remove(concept);
-	}
 
 }
