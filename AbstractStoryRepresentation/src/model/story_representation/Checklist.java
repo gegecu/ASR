@@ -31,11 +31,6 @@ public class Checklist {
 	}
 
 	public boolean isCharacterExist() {
-		this.characterExist();
-		return isCharacterExist;
-	}
-
-	private void characterExist() {
 		if (!this.isCharacterExist) {
 			for (Entry<String, Noun> entry : this.asr.getNounMap().entrySet()) {
 				if (entry.getValue() != null
@@ -45,49 +40,38 @@ public class Checklist {
 				}
 			}
 		}
+		return isCharacterExist;
 	}
 
+
 	public boolean isLocationExist() {
-		this.locationExist();
+
+		if(!isLocationExist) {
+			for (Entry<String, Noun> entry : this.asr.getNounMap().entrySet()) {
+				if (entry.getValue() != null
+						&& entry.getValue().getType() == TypeOfNoun.LOCATION) {
+					this.isLocationExist = true;
+					break;
+				}
+			}
+		}
 		return isLocationExist;
 	}
 
-	private void locationExist() {
-
-		this.isLocationExist = false;
-
-		for (Entry<String, Noun> entry : this.asr.getNounMap().entrySet()) {
-			if (entry.getValue() != null
-					&& entry.getValue().getType() == TypeOfNoun.LOCATION) {
-				this.isLocationExist = true;
-				break;
-			}
-		}
-
-	}
 
 	public boolean isConflictExist() {
-		this.conflictExist();
-		return isConflictExist;
-	}
-
-	private void conflictExist() {
 		if (!this.isConflictExist) {
 			this.isConflictExist = (this.asr.getConflict() != null);
 		}
+		return isConflictExist;
 	}
 
 	public boolean isBeginningComplete() {
-		boolean ok = this.isCharacterExist && this.isConflictExist
+		return this.isCharacterExist && this.isConflictExist
 				&& this.isLocationExist;
-//		if(ok) {
-//			this.asr.setPartOfStory(AbstractStoryRepresentation.middle);
-//		}
-		
-		return ok;
 	}
 
-	private void seriesActionExist() {
+	public boolean isSeriesActionExist() {
 		if (!this.isSeriesActionExist) {
 			int nEvents = 0;
 			for (StorySentence ss : this.asr.getStorySentencesBasedOnPart(
@@ -98,29 +82,18 @@ public class Checklist {
 			}
 			this.isSeriesActionExist = nEvents >= 2;
 		}
-	}
-
-	public boolean isSeriesActionExist() {
-		this.seriesActionExist();
 		return this.isSeriesActionExist;
 	}
 
 	public boolean isMiddleComplete() {
-		boolean ok = this.isSeriesActionExist;
-//		if(ok) {
-//			this.asr.setPartOfStory(AbstractStoryRepresentation.end);
-//		}
-		return ok;
-	}
+		return this.isSeriesActionExist;
 
-	private void resolutionExist() {
-		if (!this.isResolutionExist) {
-			this.isResolutionExist = (this.asr.getResolution() != null);
-		}
 	}
 
 	public boolean isResolutionExist() {
-		this.resolutionExist();
+		if (!this.isResolutionExist) {
+			this.isResolutionExist = (this.asr.getResolution() != null);
+		}
 		return this.isResolutionExist;
 	}
 
