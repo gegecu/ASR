@@ -20,9 +20,9 @@ public class AbstractStoryRepresentation {
 	private static Logger log = Logger
 			.getLogger(AbstractStoryRepresentation.class.getName());
 
-	private Map<String, List<StorySentence>> storySentences;
+	private Map<String, List<StorySentence>> storySentencesMap;
 
-	private Map<String, Noun> nouns;
+	private Map<String, Noun> nounsMap;
 
 	//	private Conflict conflict;
 	//
@@ -39,8 +39,8 @@ public class AbstractStoryRepresentation {
 	public static final String end = "end";
 
 	public AbstractStoryRepresentation() {
-		this.storySentences = new LinkedHashMap<String, List<StorySentence>>();
-		this.nouns = new HashMap<String, Noun>();
+		this.storySentencesMap = new LinkedHashMap<String, List<StorySentence>>();
+		this.nounsMap = new HashMap<String, Noun>();
 		this.conflict = null;
 		this.resolution = null;
 		this.partOfStory = start;
@@ -56,12 +56,12 @@ public class AbstractStoryRepresentation {
 
 	public void addStorySentence(StorySentence storySentence) {
 
-		List<StorySentence> storySentences = this.storySentences
+		List<StorySentence> storySentences = this.storySentencesMap
 				.get(partOfStory);
 
 		if (storySentences == null) {
 			storySentences = new ArrayList<StorySentence>();
-			this.storySentences.put(partOfStory, storySentences);
+			this.storySentencesMap.put(partOfStory, storySentences);
 		}
 
 		storySentences.add(storySentence);
@@ -226,7 +226,7 @@ public class AbstractStoryRepresentation {
 
 	public StorySentence getCurrentStorySentence() {
 
-		List<StorySentence> storySentences = this.storySentences
+		List<StorySentence> storySentences = this.storySentencesMap
 				.get(partOfStory);
 
 		if (storySentences == null) {
@@ -234,10 +234,10 @@ public class AbstractStoryRepresentation {
 				case start :
 					return null;
 				case middle :
-					storySentences = this.storySentences.get(start);
+					storySentences = this.storySentencesMap.get(start);
 					break;
 				case end :
-					storySentences = this.storySentences.get(middle);
+					storySentences = this.storySentencesMap.get(middle);
 					break;
 			}
 		}
@@ -247,28 +247,28 @@ public class AbstractStoryRepresentation {
 	}
 
 	public Map<String, List<StorySentence>> getStorySentencesMap() {
-		return this.storySentences;
+		return this.storySentencesMap;
 	}
 
 	public List<StorySentence> getStorySentencesBasedOnPart(
 			String partOfStory) {
-		return this.storySentences.get(partOfStory);
+		return this.storySentencesMap.get(partOfStory);
 	}
 
 	public List<StorySentence> getStorySentencesBasedOnCurrentPart() {
-		return this.storySentences.get(this.partOfStory);
+		return this.storySentencesMap.get(this.partOfStory);
 	}
 
 	public void addNoun(String key, Noun noun) {
-		this.nouns.put(key, noun);
+		this.nounsMap.put(key, noun);
 	}
 
 	public Noun getNoun(String key) {
-		return this.nouns.get(key);
+		return this.nounsMap.get(key);
 	}
 
 	public Map<String, Noun> getNounMap() {
-		return this.nouns;
+		return this.nounsMap;
 	}
 
 	public String getCurrentPartOfStory() {
