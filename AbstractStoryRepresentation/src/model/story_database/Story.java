@@ -26,10 +26,6 @@ public class Story {
 		return storyId;
 	}
 
-	public void setStoryId(int storyId) {
-		this.storyId = storyId;
-	}
-
 	public String getStoryTitle() {
 		return storyTitle;
 	}

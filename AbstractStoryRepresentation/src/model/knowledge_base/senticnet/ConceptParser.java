@@ -55,8 +55,8 @@ public class ConceptParser {
 		return ("not " + role);
 	}
 
-	public String createNegationVerbWithLocation(String verb, String key) {
-		return ("not " + verb + " to " + key);
+	public String createNegationVerbWithLocation(String verb, String location) {
+		return ("not " + verb + " to " + location);
 	}
 
 }
