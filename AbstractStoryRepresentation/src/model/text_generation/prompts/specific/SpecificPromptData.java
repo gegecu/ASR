@@ -33,7 +33,7 @@ public class SpecificPromptData extends PromptData {
 		return currentTopic;
 	}
 
-	public void setWrong(boolean isWrong) {
+	public void setIsWrong(boolean isWrong) {
 		this.isWrong = isWrong;
 	}
 

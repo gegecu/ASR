@@ -227,7 +227,7 @@ public class PromptChooser extends TextGeneration {
 
 					answeredCorrect = true;
 					isLoop = false;
-					specificPromptGenerator.setIsWrongIgnored(false);
+					specificPromptGenerator.setIsWrong(false);
 
 					if (specificPromptGenerator.checkifCompleted()) {
 						restrictedInGeneral.remove(currentId);
@@ -235,7 +235,7 @@ public class PromptChooser extends TextGeneration {
 					}
 
 				} else {
-					specificPromptGenerator.setIsWrongIgnored(true);
+					specificPromptGenerator.setIsWrong(true);
 					isLoop = true;
 				}
 
@@ -258,7 +258,7 @@ public class PromptChooser extends TextGeneration {
 
 	public void ignored() {
 		if (currentPromptType == TypeOfPrompt.SPECIFIC) {
-			specificPromptGenerator.setIsWrongIgnored(false);
+			specificPromptGenerator.setIsWrong(false);
 		}
 	}
 
@@ -320,7 +320,7 @@ public class PromptChooser extends TextGeneration {
 		int i = 1; 
 		
 		if(currentPromptType == TypeOfPrompt.SPECIFIC) {
-			if(specificPromptGenerator.getIsWrong()) {
+			if(specificPromptGenerator.isWrong()) {
 				// 2 sentences because there is additional sentence for example
 				i = 2;
 			}

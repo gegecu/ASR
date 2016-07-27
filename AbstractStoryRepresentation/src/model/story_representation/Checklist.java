@@ -76,7 +76,7 @@ public class Checklist {
 			int nEvents = 0;
 			for (StorySentence ss : this.asr.getStorySentencesBasedOnPart(
 					AbstractStoryRepresentation.middle)) {
-				if (ss.isValidEvent()) {
+				if (ss.hasValidEvent()) {
 					nEvents += ss.getEventsCount();
 				}
 			}

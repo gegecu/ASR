@@ -140,16 +140,16 @@ public class StorySegmentGenerator extends TextGeneration {
 
 		StorySentence storySentence = asr.getCurrentStorySentence();
 
-		List<String> predicateIds = new ArrayList<>(
+		List<String> eventIds = new ArrayList<>(
 				storySentence.getManyEvents().keySet());
 
 		boolean found = false;
 
-		while (storySentence != null && !predicateIds.isEmpty() && !found) {
+		while (storySentence != null && !eventIds.isEmpty() && !found) {
 
-			int randomEvent = Randomizer.random(1, predicateIds.size());
+			int randomEvent = Randomizer.random(1, eventIds.size());
 			Event event = storySentence
-					.getEvent(predicateIds.remove(randomEvent - 1));
+					.getEvent(eventIds.remove(randomEvent - 1));
 
 			List<String> directObjects = new ArrayList<String>(
 					event.getDirectObjects().keySet());

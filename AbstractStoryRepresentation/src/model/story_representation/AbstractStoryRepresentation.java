@@ -91,7 +91,7 @@ public class AbstractStoryRepresentation {
 						log.debug(n.getId() + " ");
 					}
 				}
-				
+
 			}
 
 			log.debug("action: " + p.getVerb().getAction());
@@ -198,16 +198,12 @@ public class AbstractStoryRepresentation {
 
 		}
 
-		for (Event predicate : storySentence.getManyEvents().values()) {
-			log.debug("p_concepts: " + predicate.getConcepts());
-			//			log.debug(
-			//					" polarity: " + predicate.getPolarity());
+		for (Event event : storySentence.getManyEvents().values()) {
+			log.debug("p_concepts: " + event.getConcepts());
 		}
 		for (Description description : storySentence.getManyDescriptions()
 				.values()) {
 			log.debug("n_concepts: " + description.getConcepts());
-			//			log.debug(
-			//					" polarity: " + description.getPolarity());
 		}
 
 		if (this.getConflict() != null) {

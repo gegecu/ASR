@@ -44,11 +44,11 @@ public class SpecificPromptGenerator extends PromptGenerator {
 		}
 	}
 
-	public void setIsWrongIgnored(boolean isWrong) {
-		specificPromptData.setWrong(isWrong);
+	public void setIsWrong(boolean isWrong) {
+		specificPromptData.setIsWrong(isWrong);
 	}
 
-	public boolean getIsWrong() {
+	public boolean isWrong() {
 		return specificPromptData.isWrong();
 	}
 
@@ -57,7 +57,7 @@ public class SpecificPromptGenerator extends PromptGenerator {
 		specificPromptData.setCurrentNoun(noun);
 		specificPromptData.setCurrentPrompt(null);
 		String currentPrompt = null;
-		List<String> availableTopics = availableTopics(noun);
+		List<String> availableTopics = getAvailableTopics(noun);
 
 		while (!availableTopics.isEmpty() && currentPrompt == null) {
 			int random = Randomizer.random(1, availableTopics.size());
@@ -98,7 +98,7 @@ public class SpecificPromptGenerator extends PromptGenerator {
 
 	}
 
-	private List<String> availableTopics(Noun noun) {
+	private List<String> getAvailableTopics(Noun noun) {
 
 		String[] topics = null;
 
@@ -167,7 +167,7 @@ public class SpecificPromptGenerator extends PromptGenerator {
 	}
 
 	public boolean checkifCompleted() {
-		return availableTopics(specificPromptData.getCurrentNoun()).isEmpty();
+		return getAvailableTopics(specificPromptData.getCurrentNoun()).isEmpty();
 	}
 
 	private String generateWrongPrompts() {
@@ -193,7 +193,7 @@ public class SpecificPromptGenerator extends PromptGenerator {
 		
 		if(prompt == null) {
 			//ignore
-			specificPromptData.setWrong(false);
+			specificPromptData.setIsWrong(false);
 		}
 
 		return prompt;

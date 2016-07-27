@@ -16,7 +16,7 @@ import model.story_representation.story_element.story_sentence.StorySentence;
 import model.text_understanding.Extractor;
 
 /**
- * only handles existing verbs(predicates) in asr
+ * only handles existing verbs(events) in asr
  */
 public class LocationExtractor {
 
