@@ -2,6 +2,9 @@ package model.utility;
 
 import java.util.Comparator;
 
+import model.instance.DictionariesInstance;
+import model.text_understanding.extractors.XcompPropertyExtractor;
+import edu.stanford.nlp.dcoref.Dictionaries;
 import edu.stanford.nlp.trees.TypedDependency;
 
 public class TypedDependencyComparator implements Comparator<TypedDependency> {
@@ -10,8 +13,21 @@ public class TypedDependencyComparator implements Comparator<TypedDependency> {
 
 		String td1Reln = td1.reln().toString();
 		String td2Reln = td2.reln().toString();
+		Dictionaries dictionary = DictionariesInstance.getInstance();;
 
-		if (td1Reln.equals("neg")) {
+		if (td1Reln.equals("xcomp")) {
+			if (!dictionary.copulas.contains(td1.gov().lemma())) {
+				return 1;
+			}
+		} else if (td2Reln.equals("xcomp")) {
+			if (!dictionary.copulas.contains(td1.gov().lemma())) {
+				return -1;
+			}
+		} else if (td1Reln.equals("ccomp")) {
+				return 1;
+		} else if (td2Reln.equals("ccomp")) {
+				return -1;
+		} else if (td1Reln.equals("neg")) {
 			return 1;
 		} else if (td2Reln.equals("neg")) {
 			return -1;
