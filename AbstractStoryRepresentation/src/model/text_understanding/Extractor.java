@@ -302,7 +302,8 @@ public class Extractor {
 				if (tdReln.equals("nmod:poss") || tdReln.equals("nmod:of")) {
 					PossesionExtractor.extract(asr, cp, td, storySentence,
 							tdDepId, tdGovId);
-				} else if (tdReln.equals("nmod:tmod")) {
+				} else if (tdReln.equals("nmod:tmod") || tdReln.equals("nmod:for") || tdReln.equals("nmod:with")) {
+					//exclusion purposes
 					//temporal modifier, not sure what to do yet. Just to exclude in location check
 				} else { //all prepositions that suggest location (at, in , to , under...)
 					LocationExtractor.extract(asr, cp, td, storySentence,
