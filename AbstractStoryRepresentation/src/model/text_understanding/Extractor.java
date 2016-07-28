@@ -268,8 +268,7 @@ public class Extractor {
 						tdGovId);
 			}
 			/** get direct object **/
-			else if (tdReln.equals("dobj") || tdReln.equals("nmod:with")
-					|| tdReln.equals("nsubjpass")) {
+			else if (tdReln.equals("dobj") || tdReln.equals("nsubjpass")) {
 				DirectObjectExtractor.extract(asr, cp, td, storySentence,
 						tdDepId, tdGovId, dobjMappingHasHave);
 			}
