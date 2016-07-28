@@ -1,5 +1,7 @@
 package model.text_understanding.extractors;
 
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 
 import edu.stanford.nlp.trees.TypedDependency;
@@ -13,7 +15,7 @@ public class CompoundExtractor {
 			.getLogger(CompoundExtractor.class.getName());
 
 	public static void extract(AbstractStoryRepresentation asr,
-			TypedDependency td, String tdGovId) {
+			TypedDependency td, String tdGovId, Map<String, String> compoundMapping) {
 
 		String tdDepTag = td.dep().tag();
 		String tdDepLemma = td.dep().lemma();
@@ -22,7 +24,9 @@ public class CompoundExtractor {
 
 		boolean properNouns = tdDepTag.equals("NNP") && tdGovTag.equals("NNP");
 		boolean commonNouns = tdDepTag.equals("NN") && tdGovTag.contains("NN");
-		String name = tdDepLemma + " " + tdGovLemma;
+		String name = compoundMapping.get(tdGovId);
+		
+		System.out.println(name);
 
 		Noun noun = asr.getNoun(tdGovId);
 

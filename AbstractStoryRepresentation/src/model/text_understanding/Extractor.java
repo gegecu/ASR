@@ -68,6 +68,7 @@ public class Extractor {
 	private AbstractStoryRepresentation asr;
 
 	private Map<String, Integer> dobjMappingHasHave = new HashMap<>();
+	private Map<String, String> compoundMapping = new HashMap<>();
 	private Set<String> restrictedCapableOf = new HashSet<>();
 
 	private static String[] SRL_ENTITY_LIST = {"person", "place", "object"};
@@ -132,19 +133,46 @@ public class Extractor {
 
 			List<TypedDependency> listDependencies = new ArrayList<TypedDependency>(
 					dependencies.typedDependencies());
+			
 			Collections.sort(listDependencies, new TypedDependencyComparator());
 			Collections.sort(listDependencies, new PartOfSpeechComparator());
 
 			//fail implementation idk how to remedy
+			dobjMappingHasHave.clear();
+			
 			for (TypedDependency temp : listDependencies) {
 				if (temp.reln().toString().equals("dobj")) {
 					String tempId = (temp.gov().sentIndex() + 1) + " "
 							+ temp.gov().index();
+					
+					if (coreference.get(tempId) != null) {
+						tempId = coreference.get(tempId);
+					}
+					
 					if (this.dobjMappingHasHave.get(tempId) == null) {
 						this.dobjMappingHasHave.put(tempId, 1);
 					} else {
 						this.dobjMappingHasHave.put(tempId,
 								this.dobjMappingHasHave.get(tempId) + 1);
+					}
+				}
+			}
+			
+			//fail implementation idk how to remedy
+			compoundMapping.clear();
+			
+			for (TypedDependency temp : listDependencies) {
+				if (temp.reln().toString().equals("compound")) {
+					String tempId = (temp.gov().sentIndex() + 1) + " "
+							+ temp.gov().index();
+					
+					if (coreference.get(tempId) != null) {
+						tempId = coreference.get(tempId);
+					}
+					if (this.compoundMapping.get(tempId) == null) {
+						this.compoundMapping.put(tempId, temp.dep().lemma() + " " + temp.gov().lemma());
+					} else {
+						this.compoundMapping.put(tempId, temp.dep().lemma() + " " + this.compoundMapping.get(tempId));
 					}
 				}
 			}
@@ -222,7 +250,7 @@ public class Extractor {
 
 			/** get compound words ? **/
 			if (tdReln.equals("compound")) {
-				CompoundExtractor.extract(asr, td, tdGovId);
+				CompoundExtractor.extract(asr, td, tdGovId, compoundMapping);
 			}
 			/** get doer or subject **/
 			else if (tdReln.contains("nsubj")) {

@@ -31,6 +31,10 @@ public class TypedDependencyComparator implements Comparator<TypedDependency> {
 			return 1;
 		} else if (td2Reln.equals("neg")) {
 			return -1;
+		} else if (td1Reln.contains("compound")) {
+			return -1;
+		} else if (td2Reln.contains("compound")) {
+			return 1;
 		} else if (td1Reln.contains("nsubj")) {
 			return -1;
 		} else if (td2Reln.contains("nsubj")) {
