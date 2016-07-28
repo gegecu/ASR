@@ -55,7 +55,7 @@ public class TextUnderstanding {
 				}
 			}
 		} else if (asr.getCurrentPartOfStory()
-				.equals(AbstractStoryRepresentation.middle)) {
+				.equals(AbstractStoryRepresentation.end)) {
 			SpecialClause resolution = asr.getResolution();
 			if (resolution == null) {
 				for (StorySentence storySentence : extractedStorySentences) {
