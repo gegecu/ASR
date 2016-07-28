@@ -159,7 +159,7 @@ public class Extractor {
 			}
 			
 			//fail implementation idk how to remedy
-			compoundMapping.clear();
+			//compoundMapping.clear();
 			
 			for (TypedDependency temp : listDependencies) {
 				if (temp.reln().toString().equals("compound")) {
@@ -233,7 +233,7 @@ public class Extractor {
 					+ td.dep().index();
 			String tdGovId = (td.gov().sentIndex() + 1) + " "
 					+ td.gov().index();
-
+			System.out.println(td.reln().toString() + td.dep().lemma() + td.gov().lemma());
 			if (coreference.get(tdDepId) != null) {
 				tdDepId = coreference.get(tdDepId);
 				log.debug("after : " + tdDepId);
@@ -253,23 +253,23 @@ public class Extractor {
 				CompoundExtractor.extract(asr, td, tdGovId, compoundMapping);
 			}
 			/** get doer or subject **/
-			else if (tdReln.contains("nsubj")) {
+			else if (tdReln.equals("nsubj") || tdReln.equals("nmod:agent")) {
 				DoerExtractor.extract(asr, cp, td, storySentence, tdDepId,
 						tdGovId, listDependencies, restrictedCapableOf);
 			}
 			/** get auxpass "HasProperty" (to create get + verb concepts) **/
 			else if (tdReln.equals("auxpass")) {
 				AuxpassPropertyExtractor.extract(asr, cp, td, storySentence,
-						tdGovId);
+						tdGovId, listDependencies);
 			}
 			/** get indirect object or receiver **/
-			else if (tdReln.equals("iobj")) {
+			else if (tdReln.equals("iobj") || tdReln.equals("nmod:for")) {
 				ReceiverExtractor.extract(asr, cp, td, storySentence, tdDepId,
 						tdGovId);
 			}
 			/** get direct object **/
-			else if (tdReln.equals("dobj") || tdReln.equals("nmod:for")
-					|| tdReln.equals("nmod:agent")) {
+			else if (tdReln.equals("dobj") || tdReln.equals("nmod:with")
+					|| tdReln.equals("nsubjpass")) {
 				DirectObjectExtractor.extract(asr, cp, td, storySentence,
 						tdDepId, tdGovId, dobjMappingHasHave);
 			}

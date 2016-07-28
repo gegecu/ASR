@@ -39,7 +39,6 @@ public class ReceiverExtractor {
 							Extractor.getSRL(tdDepLemma), tdDepLemma);
 				}
 			}
-
 			if (noun != null) {
 
 				asr.addNoun(tdDepId, noun);
@@ -48,6 +47,7 @@ public class ReceiverExtractor {
 				if (event == null) {
 					event = new Event(td.gov().lemma());
 				}
+				
 				event.addReceiver(tdDepId, noun);
 				storySentence.addEvent(tdGovId, event);
 
