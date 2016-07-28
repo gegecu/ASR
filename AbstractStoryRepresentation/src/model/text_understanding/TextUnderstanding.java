@@ -13,6 +13,7 @@ import model.story_representation.AbstractStoryRepresentation;
 import model.story_representation.story_element.SpecialClause;
 import model.story_representation.story_element.noun.Noun;
 import model.story_representation.story_element.story_sentence.Clause;
+import model.story_representation.story_element.story_sentence.Event;
 import model.story_representation.story_element.story_sentence.StorySentence;
 
 public class TextUnderstanding {
@@ -203,27 +204,40 @@ public class TextUnderstanding {
 
 		//if conflict is from negation, resolution should be un-negated statement
 		if (conflict.getClause().isNegated()) {
-			Set<String> concepts = resolutionClause.getConcepts();
-			//if(resolutionClause.isNegated())
-			for (String resolutionConcept : concepts) {
-				for (String conflictConcept : conflict.getClause()
-						.getConcepts()) {
+			Set<String> resoConcepts = resolutionClause.getConcepts();
+			if(resolutionClause.isNegated()){ //may change to isNegative instead (e.g. hates fighting or hates lying can be a resolution)
+				return false;
+			}
+			Set<String> conflictConcepts = conflict.getClause().getConcepts();
+			if(conflict.getClause() instanceof Event){
+				//System.out.println("main verb to remove" + ((Event) conflict.getClause()).getVerb().getAction());
+				conflictConcepts.remove(((Event) conflict.getClause()).getVerb().getAction());
+			}
+			//all conflict concepts must be found in the resolution
+			for (String conflictConcept : conflictConcepts) {
+				Boolean hasMatch = false;
+				for (String resolutionConcept : resoConcepts) {
 					String temp = conflictConcept.replace("not ", "");
-					if (resolutionConcept.equals(temp)
-							&& !resolutionClause.isNegated()) {
-						return true;
+					//System.out.println("checking-" + temp);
+					if (resolutionConcept.equals(temp)) {
+						hasMatch = true;
+						break;
 					}
 				}
+				if(!hasMatch){
+					return false;
+				}
 			}
-		} else { //else check for 4 hops in conceptnet
+			//if all concepts in conflict matched
+			return true;
+		} 
+		else { //else check for 4 hops in conceptnet
 			Set<String> concepts = resolutionClause.getConcepts();
 			for (String resoConcept : concepts) {
-				//for (String conflict2 : conflict.getClause().getConcepts()) {
 				String confConcept = conflict.getMainConcept();
 				if (ConceptNetDAO.checkFourHops(confConcept, resoConcept)) {
 					return true;
 				}
-				//}
 			}
 		}
 		return false;

@@ -1,0 +1,37 @@
+gym
+swimming pool
+pool
+comfort room
+dining room
+bedroom
+park
+beach
+school
+house
+home
+backyard
+restaurant
+amusement park
+playground
+mall
+ocean park
+zoo
+road
+farm
+sea
+ocean
+mountain
+castle
+mansion
+palace
+shop
+store
+cafe
+cafeteria
+treehouse
+floor
+desert
+tower
+forest
+frontyard
+
