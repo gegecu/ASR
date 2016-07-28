@@ -46,7 +46,7 @@ public class DirectObjectExtractor {
 		}
 
 		if (noun != null) {
-
+			
 			// we do not store NotHasA anyway
 			if (tdGovLemma.equals("has") || tdGovLemma.equals("have")) {
 
@@ -109,6 +109,17 @@ public class DirectObjectExtractor {
 					storySentence.addEvent(tdGovId, event);
 				}
 
+				//check for negation/positives
+				int emotion = Extractor.emotionIndicator(tdGovLemma);
+				if (emotion != 0) {
+					if (emotion == 1) {//negative
+						//to do polarity modifications
+						event.setNegated(true);
+					} else if (emotion == 2) {//positive
+						//to do polarity modifications
+					}
+				}
+				
 				//create concept
 				event.addDirectObject(tdDepId, noun);
 				storySentence.addEvent(tdGovId, event);

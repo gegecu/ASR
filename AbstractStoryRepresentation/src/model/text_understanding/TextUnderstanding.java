@@ -1,6 +1,8 @@
 package model.text_understanding;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -211,14 +213,21 @@ public class TextUnderstanding {
 			Set<String> conflictConcepts = conflict.getClause().getConcepts();
 			if(conflict.getClause() instanceof Event){
 				//System.out.println("main verb to remove" + ((Event) conflict.getClause()).getVerb().getAction());
-				conflictConcepts.remove(((Event) conflict.getClause()).getVerb().getAction());
+				String emotionVerb = ((Event) conflict.getClause()).getVerb().getAction();
+				Iterator<String> it = conflictConcepts.iterator();
+				while(it.hasNext()){
+					String concept = it.next();
+					if(concept.startsWith(emotionVerb)){
+						it.remove();
+					}
+				}
 			}
 			//all conflict concepts must be found in the resolution
 			for (String conflictConcept : conflictConcepts) {
 				Boolean hasMatch = false;
 				for (String resolutionConcept : resoConcepts) {
 					String temp = conflictConcept.replace("not ", "");
-					//System.out.println("checking-" + temp);
+					System.out.println("checking-" + temp);
 					if (resolutionConcept.equals(temp)) {
 						hasMatch = true;
 						break;
