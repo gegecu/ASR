@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 import org.apache.log4j.Logger;
 
 import edu.stanford.nlp.dcoref.Dictionaries;
-import edu.stanford.nlp.ie.AbstractSequenceClassifier;
+import edu.stanford.nlp.ie.crf.CRFClassifier;
 import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
 import edu.stanford.nlp.ling.IndexedWord;
 import edu.stanford.nlp.pipeline.Annotation;
@@ -61,7 +61,7 @@ public class Extractor {
 	private static Logger log = Logger.getLogger(Extractor.class.getName());
 
 	private static StanfordCoreNLP pipeline;
-	private static AbstractSequenceClassifier classifier;
+	private static CRFClassifier classifier;
 	private static ConceptParser cp;
 	//	private SenticNetParser snp;
 	private static Dictionaries dictionary;
@@ -95,6 +95,9 @@ public class Extractor {
 
 	public Extractor(AbstractStoryRepresentation asr) {
 		this.asr = asr;
+		this.restrictedCapableOf.add("has");
+		this.restrictedCapableOf.add("have");
+		this.restrictedCapableOf.addAll(dictionary.copulas);
 	}
 
 	public List<StorySentence> extract(String text,

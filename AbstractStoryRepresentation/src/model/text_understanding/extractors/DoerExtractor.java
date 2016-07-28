@@ -83,7 +83,7 @@ public class DoerExtractor {
 				//				boolean hasARelation = tdGovLemma.equals("has")
 				//						|| tdGovLemma.equals("have");
 
-				if (restrictedCapableOf.contains(tdGovLemma.toLowerCase())) {
+				if (!restrictedCapableOf.contains(tdGovLemma.toLowerCase())) {
 					noun.addAttribute("CapableOf", tdGovLemma);
 					log.debug(noun.getId() + " capable of " + tdGovLemma);
 				}
