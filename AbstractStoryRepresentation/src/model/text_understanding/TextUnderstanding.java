@@ -189,8 +189,15 @@ public class TextUnderstanding {
 
 			List<Noun> doersInResolution = new ArrayList<>(
 					mainClause.getManyDoers().values());
+			//include direct objects as well, for passive cases
+			if(mainClause instanceof Event){
+				doersInResolution.addAll(((Event) mainClause).getDirectObjects().values());
+			}
 			List<Noun> doersInConflict = new ArrayList<>(
 					conflict.getClause().getManyDoers().values());
+			if(conflict.getClause() instanceof Event){
+				doersInConflict.addAll(((Event) conflict.getClause()).getDirectObjects().values());
+			}
 			doersInResolution.retainAll(doersInConflict);
 
 			if (doersInResolution.size() > 0) {
