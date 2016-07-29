@@ -17,6 +17,7 @@ import org.apache.log4j.Logger;
 import edu.stanford.nlp.dcoref.Dictionaries;
 import edu.stanford.nlp.ie.crf.CRFClassifier;
 import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
+import edu.stanford.nlp.ling.CoreAnnotations.TokensAnnotation;
 import edu.stanford.nlp.ling.IndexedWord;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
@@ -110,7 +111,7 @@ public class Extractor {
 		pipeline.annotate(document);
 
 		List<CoreMap> sentences = document.get(SentencesAnnotation.class);
-
+		
 		int prevSentenceCount = 0;
 
 		for (List<StorySentence> storySentences : asr.getStorySentencesMap()
@@ -176,10 +177,10 @@ public class Extractor {
 					}
 				}
 			}
-
+			int tokens = sentence.get(TokensAnnotation.class).size();
 			for (TypedDependency td : listDependencies) {
 				extractDependency(coreference, td, storySentence,
-						listDependencies);//extract based on dependency
+						listDependencies, tokens);//extract based on dependency
 			}
 
 			removeClausesWithNoDoers(storySentence);
@@ -222,7 +223,7 @@ public class Extractor {
 
 	private void extractDependency(Map<String, String> coreference,
 			TypedDependency td, StorySentence storySentence,
-			List<TypedDependency> listDependencies) {
+			List<TypedDependency> listDependencies, int noOftokens) {
 
 		try {
 
@@ -233,7 +234,7 @@ public class Extractor {
 					+ td.dep().index();
 			String tdGovId = (td.gov().sentIndex() + 1) + " "
 					+ td.gov().index();
-			System.out.println(td.reln().toString() + td.dep().lemma() + td.gov().lemma());
+			//System.out.println(td.reln().toString() + td.dep().lemma() + td.gov().lemma());
 			if (coreference.get(tdDepId) != null) {
 				tdDepId = coreference.get(tdDepId);
 				log.debug("after : " + tdDepId);
@@ -269,8 +270,9 @@ public class Extractor {
 			}
 			/** get direct object **/
 			else if (tdReln.equals("dobj") || tdReln.equals("nsubjpass")) {
+				String wildCardId = (td.gov().sentIndex() + 1) + " " + (noOftokens + 1);
 				DirectObjectExtractor.extract(asr, cp, td, storySentence,
-						tdDepId, tdGovId, dobjMappingHasHave);
+						tdDepId, tdGovId, dobjMappingHasHave, listDependencies, tdReln, wildCardId);
 			}
 			/** extract xcomp "HasProperty" and xcomp action **/
 			else if (tdReln.equals("xcomp")) {

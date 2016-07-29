@@ -1,5 +1,6 @@
 package model.text_understanding.extractors;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -22,7 +23,7 @@ public class DirectObjectExtractor {
 	public static void extract(AbstractStoryRepresentation asr,
 			ConceptParser cp, TypedDependency td, StorySentence storySentence,
 			String tdDepId, String tdGovId,
-			Map<String, Integer> dobjMappingHasHave) {
+			Map<String, Integer> dobjMappingHasHave, List<TypedDependency> list, String tdReln, String wildCardId) {
 
 		String tdDepTag = td.dep().tag();
 		String tdDepLemma = td.dep().lemma();
@@ -100,7 +101,6 @@ public class DirectObjectExtractor {
 				}
 
 			} else {
-
 				//unsure sometimes has no doer
 				Event event = storySentence.getEvent(tdGovId);
 
@@ -108,7 +108,17 @@ public class DirectObjectExtractor {
 					event = new Event(tdGovLemma);
 					storySentence.addEvent(tdGovId, event);
 				}
-
+				//check for passive agent
+				if(tdReln.equals("nsubjpass")){
+					List<TypedDependency> doers = Extractor.findDependencies(td.gov(), "gov", "nmod:agent", list);
+					if(doers.isEmpty()){
+						Noun n = Extractor.extractCategory(Extractor.getSRL("someone"),
+								"someone");
+						//System.out.println("wildcard: " + wildCardId);
+						asr.addNoun(wildCardId, n);
+						event.addDoer(wildCardId, n);
+					}
+				}
 				//check for negation/positives
 				int emotion = Extractor.emotionIndicator(tdGovLemma);
 				if (emotion != 0) {
