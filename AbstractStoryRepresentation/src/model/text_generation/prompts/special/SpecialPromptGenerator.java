@@ -109,7 +109,7 @@ public class SpecialPromptGenerator {
 
 			String relation = relations.remove(randomRelations - 1);
 
-			String doers = SurfaceRealizer.wordsConjunction(
+			String doers = SurfaceRealizer.nounFixer(
 					new ArrayList(description.getManyDoers().values()));
 
 			specialPromptData.setDoers(
@@ -255,7 +255,7 @@ public class SpecialPromptGenerator {
 		//					SurfaceRealizer.wordsConjunction(doers)); //changed to p.setsubj
 
 		SPhraseSpec p = nlgFactory.createClause();
-		p.setSubject(SurfaceRealizer.wordsConjunction(doers));
+		p.setSubject(SurfaceRealizer.nounFixer(doers));
 
 		VPPhraseSpec verb = nlgFactory
 				.createVerbPhrase(event.getVerb().getAction());

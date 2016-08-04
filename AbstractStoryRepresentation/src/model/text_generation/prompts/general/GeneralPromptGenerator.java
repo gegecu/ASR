@@ -8,6 +8,7 @@ import java.util.Map;
 import model.story_representation.story_element.noun.Noun;
 import model.text_generation.prompts.PromptGenerator;
 import model.utility.Randomizer;
+import model.utility.SurfaceRealizer;
 
 public class GeneralPromptGenerator extends PromptGenerator {
 
@@ -42,22 +43,10 @@ public class GeneralPromptGenerator extends PromptGenerator {
 
 			directive = directives.remove(randomNounDirective - 1);
 
-			String toBeReplaced = "";
+			List<Noun> temp = new ArrayList<>();
+			temp.add(noun);
 
-			Map<String, Noun> ownersMap = noun.getReference("IsOwnedBy");
-
-			if (ownersMap != null) {
-				List<Noun> owners = new ArrayList<>(ownersMap.values());
-				if (owners != null) {
-					toBeReplaced = owners.get(owners.size() - 1).getId()
-							+ "'s ";
-				}
-			} else {
-				toBeReplaced = (noun.getIsCommon() ? "the " : "");
-			}
-
-			directive = directive.replace("<noun>",
-					toBeReplaced + noun.getId());
+			directive = directive.replace("<noun>", SurfaceRealizer.nounFixer(temp));
 			
 			if(history.contains(directive)) {
 				directive = null;

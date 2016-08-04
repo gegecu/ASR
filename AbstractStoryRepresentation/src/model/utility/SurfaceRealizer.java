@@ -14,15 +14,10 @@ import model.story_representation.story_element.noun.Noun;
 
 public class SurfaceRealizer {
 
-	public static String wordsConjunction(List<Noun> nouns) {
+	public static String nounFixer(List<Noun> nouns) {
 		
-		Lexicon lexicon = Lexicon.getDefaultLexicon();
-		NLGFactory nlgFactory = new NLGFactory(lexicon);
-		Realiser realiser = new Realiser(lexicon);
-
-		String characters = "";
-		
-		List<NPPhraseSpec> subjects = new ArrayList();
+		List<String> nounsSurfaceText = new ArrayList<>();
+		String text = "";
 		
 		for(Noun noun: nouns) {
 			
@@ -31,9 +26,13 @@ public class SurfaceRealizer {
 			Map<String, Noun> ownersMap = noun.getReference("IsOwnedBy");
 			if(ownersMap != null) {
 				List<Noun> owners = new ArrayList<>(ownersMap.values());
-				if(owners != null) {
-					temp = owners.get(owners.size()-1).getId() + "'s ";
+				List<String> ownersSurfaceText = new ArrayList<>();
+				for(Noun owner: owners) {
+					ownersSurfaceText.add(owner.getIsCommon()? "the " + owner.getId() : owner.getId());
 				}
+				
+				temp = wordConjunction(ownersSurfaceText) + "'s ";
+				
 			}
 			else {
 				temp = (noun.getIsCommon() ? "the " : "");
@@ -41,7 +40,27 @@ public class SurfaceRealizer {
 			
 			temp += noun.getId();
 			
-			NPPhraseSpec subject = nlgFactory.createNounPhrase(temp);
+			nounsSurfaceText.add(temp);
+		}
+		
+		text = wordConjunction(nounsSurfaceText);
+		
+		return text;
+
+	}
+	
+	private static String wordConjunction(List<String> words) {
+		Lexicon lexicon = Lexicon.getDefaultLexicon();
+		NLGFactory nlgFactory = new NLGFactory(lexicon);
+		Realiser realiser = new Realiser(lexicon);
+
+		String text = "";
+		
+		List<NPPhraseSpec> subjects = new ArrayList<>();
+		
+		for(String word: words) {
+			
+			NPPhraseSpec subject = nlgFactory.createNounPhrase(word);
 			subjects.add(subject);
 		}
 		
@@ -52,35 +71,10 @@ public class SurfaceRealizer {
 		
 		subj.setFeature(Feature.CONJUNCTION, "and");
 		
-		characters = realiser.realise(subj).toString();
+		text = realiser.realise(subj).toString();
 		
+		return text;
 		
-		
-
-//		for (int i = 0; i < nouns.size(); i++) {
-//			
-//			Map<String, Noun> ownersMap = nouns.get(i).getReference("IsOwnedBy");
-//			if(ownersMap != null) {
-//				List<Noun> owners = new ArrayList<>(ownersMap.values());
-//				if(owners != null) {
-//					characters = owners.get(owners.size()-1).getId() + "'s ";
-//				}
-//			}
-//			else {
-//				characters = (nouns.get(i).getIsCommon() ? "the " : "");
-//			}
-//
-//			if (i < nouns.size() - 2) {
-//				characters += nouns.get(i).getId() + ", ";
-//			} else if (i < nouns.size() - 1) {
-//				characters += nouns.get(i).getId() + " and ";
-//			} else {
-//				characters += nouns.get(i).getId();
-//			}
-//		}
-
-		return characters;
-
 	}
 
 	static String[] vowels = {"a", "e", "i", "o", "u"};
@@ -96,5 +90,8 @@ public class SurfaceRealizer {
 		return "a " + word;
 
 	}
-
+	
+	public static String properNounFixer(String word) {
+		return word.substring(0, 1).toUpperCase() + word.substring(1);
+	}
 }

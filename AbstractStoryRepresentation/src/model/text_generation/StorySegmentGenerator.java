@@ -109,7 +109,7 @@ public class StorySegmentGenerator extends TextGeneration {
 			int random = Randomizer.random(1, keys.size());
 			history.add(keys.get(random - 1));
 
-			if (history.size() > historySizeThreshold) {
+			if (history.size() >= historySizeThreshold) {
 				history.remove();
 			}
 
@@ -164,7 +164,7 @@ public class StorySegmentGenerator extends TextGeneration {
 
 				List<Noun> doers = new ArrayList<Noun>(
 						event.getManyDoers().values());
-				String characters = SurfaceRealizer.wordsConjunction(doers);
+				String characters = SurfaceRealizer.nounFixer(doers);
 
 				if (concepts != null) {
 
@@ -186,12 +186,12 @@ public class StorySegmentGenerator extends TextGeneration {
 								- 1];
 						String end = concept.getEnd();
 						end = concept.getStartPOS().equals("proper noun")
-								? (end.substring(0, 1).toUpperCase()
-										+ end.substring(1))
+								? SurfaceRealizer.properNounFixer(end)
 								: SurfaceRealizer.determinerFixer(end);
 
 						storySegment = storySegment.replace("<doer>",
 								characters);
+						
 						storySegment = storySegment.replace("<end>", end);
 						storySegment = storySegment.substring(0, 1)
 								.toUpperCase() + storySegment.substring(1);
@@ -256,31 +256,16 @@ public class StorySegmentGenerator extends TextGeneration {
 
 						String storySegment = this.atLocationStorySegmentStart[randomSentence
 								- 1];
+						
 						String start = concept.getStart();
 						start = concept.getStartPOS().equals("proper noun")
-								? (start.substring(0, 1).toUpperCase()
-										+ start.substring(1))
+								? SurfaceRealizer.properNounFixer(start)
 								: SurfaceRealizer.determinerFixer(start);
-
-						// refactor pls
-						String end = "";
-						Map<String, Noun> ownersMap = location
-								.getReference("IsOwnedBy");
-						if (ownersMap != null) {
-							List<Noun> owners = new ArrayList<>(
-									ownersMap.values());
-							if (owners != null) {
-								end = owners.get(owners.size() - 1).getId()
-										+ "'s ";
-								end += location.getId();
-							}
-						} else {
-							end = (location.getIsCommon()
-									? "the " + location.getId()
-									: location.getId());
-						}
-
 						storySegment = storySegment.replace("<start>", start);
+						
+						List<Noun> temp = new ArrayList();
+						temp.add(location);
+						String end = SurfaceRealizer.nounFixer(temp);
 						storySegment = storySegment.replace("<end>", end);
 						storySegment = storySegment.substring(0, 1)
 								.toUpperCase() + storySegment.substring(1);
@@ -327,10 +312,10 @@ public class StorySegmentGenerator extends TextGeneration {
 					int randomConcept = Randomizer.random(1, concepts.size());
 					Concept concept = concepts.remove(randomConcept - 1);
 
+					//discard concepts already stated
 					List<String> hasAAttributes = noun.getAttribute("HasA");
 					Map<String, Noun> hasAReferences = noun
 							.getReference("HasA");
-
 					if (hasAAttributes != null
 							&& hasAAttributes.contains(concept.getEnd())) {
 						continue;
@@ -356,31 +341,14 @@ public class StorySegmentGenerator extends TextGeneration {
 					String storySegment = this.hasAStorySegment[randomSentence
 							- 1];
 
-					//refactor pls
-					String start = "";
-
-					Map<String, Noun> ownersMap = noun
-							.getReference("IsOwnedBy");
-					if (ownersMap != null) {
-						List<Noun> owners = new ArrayList<>(ownersMap.values());
-						if (owners != null) {
-							start = owners.get(owners.size() - 1).getId()
-									+ "'s ";
-							start += noun.getId();
-						}
-					} else {
-						start = noun.getIsCommon()
-								? SurfaceRealizer.determinerFixer(noun.getId())
-								: noun.getId();
-					}
-
 					String end = concept.getEnd();
 					end = concept.getEndPOS().equals("proper noun")
-							? (end.substring(0, 1).toUpperCase()
-									+ end.substring(1))
+							? SurfaceRealizer.properNounFixer(end)
 							: SurfaceRealizer.determinerFixer(end);
 
-					storySegment = storySegment.replace("<start>", start);
+					List<Noun> temp = new ArrayList<>();
+					temp.add(noun);
+					storySegment = storySegment.replace("<start>", SurfaceRealizer.nounFixer(temp));
 					storySegment = storySegment.replace("<end>", end);
 					storySegment = storySegment.substring(0, 1).toUpperCase()
 							+ storySegment.substring(1);
@@ -427,6 +395,7 @@ public class StorySegmentGenerator extends TextGeneration {
 					int randomConcept = Randomizer.random(1, concepts.size());
 					Concept concept = concepts.remove(randomConcept - 1);
 
+					//discard already stated
 					List<String> isAAttributes = noun.getAttribute("IsA");
 					Map<String, Noun> isAReferences = noun.getReference("IsA");
 
@@ -454,34 +423,16 @@ public class StorySegmentGenerator extends TextGeneration {
 							this.isAStorySegment.length);
 					String storySegment = this.isAStorySegment[randomSentence
 							- 1];
-					//					String start = noun.getIsCommon() ? SurfaceRealizer
-					//							.determinerFixer(noun.getId()) : noun.getId();
-
-					//refactor pls
-					String start = "";
-
-					Map<String, Noun> ownersMap = noun
-							.getReference("IsOwnedBy");
-					if (ownersMap != null) {
-						List<Noun> owners = new ArrayList<>(ownersMap.values());
-						if (owners != null) {
-							start = owners.get(owners.size() - 1).getId()
-									+ "'s ";
-							start += noun.getId();
-						}
-					} else {
-						start = noun.getIsCommon()
-								? SurfaceRealizer.determinerFixer(noun.getId())
-								: noun.getId();
-					}
 
 					String end = concept.getEnd();
 					end = concept.getEndPOS().equals("proper noun")
-							? (end.substring(0, 1).toUpperCase()
-									+ end.substring(1))
+							? SurfaceRealizer.properNounFixer(end)
 							: SurfaceRealizer.determinerFixer(end);
+							
+					List<Noun> temp = new ArrayList<>();
+					temp.add(noun);
 
-					storySegment = storySegment.replace("<start>", start);
+					storySegment = storySegment.replace("<start>", SurfaceRealizer.nounFixer(temp));
 					storySegment = storySegment.replace("<end>", end);
 					storySegment = storySegment.substring(0, 1).toUpperCase()
 							+ storySegment.substring(1);
@@ -558,30 +509,12 @@ public class StorySegmentGenerator extends TextGeneration {
 					String storySegment = this.hasPropertyStorySegment[randomSentence
 							- 1];
 
-					//refactor pls
-					String start = "";
-
-					Map<String, Noun> ownersMap = noun
-							.getReference("IsOwnedBy");
-					if (ownersMap != null) {
-						List<Noun> owners = new ArrayList<>(ownersMap.values());
-						if (owners != null) {
-							start = owners.get(owners.size() - 1).getId()
-									+ "'s ";
-							start += noun.getId();
-						}
-					} else {
-						start = noun.getIsCommon()
-								? SurfaceRealizer.determinerFixer(noun.getId())
-								: noun.getId();
-					}
 
 					String end = concept.getEnd();
 
 					switch (concept.getEndPOS()) {
 						case "proper noun" :
-							end = end.substring(0, 1).toUpperCase()
-									+ end.substring(1);
+							end = SurfaceRealizer.determinerFixer(end);
 							break;
 						case "adjective" :
 						case "adjective phrase" :
@@ -591,7 +524,9 @@ public class StorySegmentGenerator extends TextGeneration {
 							break;
 					}
 
-					storySegment = storySegment.replace("<start>", start);
+					List<Noun> temp = new ArrayList<>();
+					temp.add(noun);
+					storySegment = storySegment.replace("<start>", SurfaceRealizer.nounFixer(temp));
 					storySegment = storySegment.replace("<end>", end);
 					storySegment = storySegment.substring(0, 1).toUpperCase()
 							+ storySegment.substring(1);
@@ -635,7 +570,7 @@ public class StorySegmentGenerator extends TextGeneration {
 				doers.add(noun);
 			}
 
-			String characters = SurfaceRealizer.wordsConjunction(doers);
+			String characters = SurfaceRealizer.nounFixer(doers);
 
 			for (String concept : clause.getConcepts()) {
 				temp.addAll(ConceptNetDAO.getConceptsTo(concept, "Causes"));
