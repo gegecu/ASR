@@ -40,7 +40,7 @@ import model.story_representation.story_element.story_sentence.Event;
 import model.story_representation.story_element.story_sentence.StorySentence;
 import model.text_understanding.extractors.AdvmodPropertyExtractor;
 import model.text_understanding.extractors.AmodPropertyExtractor;
-import model.text_understanding.extractors.AndConjuctionExtractorVB;
+import model.text_understanding.extractors.AndConjunctionExtractorVB;
 import model.text_understanding.extractors.AndConjunctionExtractorNNJJRB;
 import model.text_understanding.extractors.AuxpassPropertyExtractor;
 import model.text_understanding.extractors.CompActionExtractor;
@@ -323,7 +323,7 @@ public class Extractor {
 						AndConjunctionExtractorNNJJRB.extract(asr, cp, td,
 								storySentence, tdDepId, tdGovId);
 					} else if (tdDepTag.contains("VB")) {
-						AndConjuctionExtractorVB.extract(asr, cp, td,
+						AndConjunctionExtractorVB.extract(asr, cp, td,
 								storySentence, tdDepId, tdGovId,
 								listDependencies, restrictedCapableOf);
 					}
