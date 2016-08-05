@@ -11,3 +11,31 @@ CREATE TABLE IF NOT EXISTS `alice`.`templates` (
 	foreign key (`group_id`) references `template_group`(`id`),
 	primary key(`id`)
 );
+
+CREATE TABLE IF NOT EXISTS `alice`.`specific_topic_group` (
+	`id` int unsigned auto_increment not null,
+	`name` varchar(30) not null,
+	primary key(`id`)
+);
+
+CREATE TABLE IF NOT EXISTS `alice`.`specific_topics` (
+	`id` int unsigned auto_increment not null,
+	`group_id` int unsigned not null,
+	`topic` varchar(100) not null,
+	foreign key (`group_id`) references `specific_topic_group`(`id`),
+	primary key(`id`)
+);
+
+CREATE TABLE IF NOT EXISTS `alice`.`data_group` (
+	`id` int unsigned auto_increment not null,
+	`name` varchar(30) not null,
+	primary key(`id`)
+);
+
+CREATE TABLE IF NOT EXISTS `alice`.`data` (
+	`id` int unsigned auto_increment not null,
+	`group_id` int unsigned not null,
+	`data` varchar(100) not null,
+	foreign key (`group_id`) references `data_group`(`id`),
+	primary key(`id`)
+);
