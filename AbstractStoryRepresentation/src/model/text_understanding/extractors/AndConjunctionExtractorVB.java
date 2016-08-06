@@ -15,10 +15,10 @@ import model.story_representation.story_element.story_sentence.Event;
 import model.story_representation.story_element.story_sentence.StorySentence;
 import model.text_understanding.Extractor;
 
-public class AndConjuctionExtractorVB {
+public class AndConjunctionExtractorVB {
 
 	private static Logger log = Logger
-			.getLogger(AndConjuctionExtractorVB.class.getName());
+			.getLogger(AndConjunctionExtractorVB.class.getName());
 
 	public static void extract(AbstractStoryRepresentation asr,
 			ConceptParser cp, TypedDependency td, StorySentence storySentence,
