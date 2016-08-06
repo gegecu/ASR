@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import model.knowledge_base.template.TemplateDAO;
 import model.story_representation.story_element.noun.Noun;
 import model.text_generation.prompts.PromptGenerator;
 import model.utility.Randomizer;
@@ -19,10 +20,7 @@ public class GeneralPromptGenerator extends PromptGenerator {
 		this.generalPromptData = generalPromptData;
 	}
 
-	private String[] nounStartDirective = {"Describe <noun>.",
-			"Tell me more about <noun>.", "Write more about <noun>.",
-			"I want to hear more about <noun>.",
-			"Tell something more about <noun>."};
+	private String[] nounStartDirective = TemplateDAO.getTemplates("nounStartDirective");
 
 	@Override
 	public String generateText(Noun noun) {

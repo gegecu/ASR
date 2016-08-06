@@ -29,6 +29,7 @@ import model.instance.CRFClassifierInstance;
 import model.instance.DictionariesInstance;
 import model.instance.StanfordCoreNLPInstance;
 import model.knowledge_base.conceptnet.ConceptNetDAO;
+import model.knowledge_base.data.DataDAO;
 import model.knowledge_base.senticnet.ConceptParser;
 import model.story_representation.AbstractStoryRepresentation;
 import model.story_representation.story_element.noun.Character;
@@ -78,9 +79,9 @@ public class Extractor {
 	private static Pattern[] NER_ENTITY_LIST_COMPILED = new Pattern[NER_ENTITY_LIST.length];
 
 	private static List<String> negatives = Arrays
-			.asList(new String[]{"hate", "hates", "dislike", "dislikes"});
+			.asList(DataDAO.getData("negatives"));
 	private static List<String> positives = Arrays
-			.asList(new String[]{"like", "likes", "love", "loves"});
+			.asList(DataDAO.getData("positives"));
 
 	static {
 		for (int i = 0, j = NER_ENTITY_LIST.length; i < j; i++) {

@@ -6,13 +6,27 @@ import java.util.Map;
 
 import simplenlg.features.Feature;
 import simplenlg.framework.CoordinatedPhraseElement;
+import simplenlg.framework.InflectedWordElement;
+import simplenlg.framework.LexicalCategory;
 import simplenlg.framework.NLGFactory;
+import simplenlg.framework.WordElement;
 import simplenlg.lexicon.Lexicon;
+import simplenlg.lexicon.XMLLexicon;
 import simplenlg.phrasespec.NPPhraseSpec;
 import simplenlg.realiser.english.Realiser;
 import model.story_representation.story_element.noun.Noun;
 
 public class SurfaceRealizer {
+	
+	public static String pluralNoun(Noun noun) {
+		XMLLexicon xmlLexicon = new XMLLexicon();
+		WordElement word = xmlLexicon.getWord(noun.getId(), LexicalCategory.NOUN);
+		InflectedWordElement pluralWord = new InflectedWordElement(word);
+		pluralWord.setPlural(true);
+		Realiser realiser = new Realiser(xmlLexicon);
+		return realiser.realise(pluralWord).toString();
+		
+	}
 
 	public static String nounFixer(List<Noun> nouns) {
 		

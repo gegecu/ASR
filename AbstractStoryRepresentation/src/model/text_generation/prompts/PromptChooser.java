@@ -152,7 +152,7 @@ public class PromptChooser extends TextGeneration {
 			}
 
 		} else {
-			
+			// fix code prioritize event over description
 			List<Clause> clauses = new ArrayList();
 			clauses.addAll(asr.getCurrentStorySentence().getManyDescriptions().values());
 			clauses.addAll(asr.getCurrentStorySentence().getManyEvents().values());

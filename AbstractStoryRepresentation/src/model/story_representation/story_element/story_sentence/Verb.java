@@ -5,22 +5,21 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import model.knowledge_base.data.DataDAO;
+
 import org.apache.log4j.Logger;
 
 public class Verb {
 
 	private static Logger log = Logger.getLogger(Verb.class.getName());
 
-	private static final String[] futureTenseAuxs = {"will", "must", "shall",
-			"should", "would", "can", "could", "need", "ought", "may", "might"};
+	private static final String[] futureTenseAuxs = DataDAO.getData("futureTenseAuxs");
 
 	//includes progressive
-	private static final String[] presentTenseAuxs = {"am", "are", "is", "do",
-			"does"};
+	private static final String[] presentTenseAuxs = DataDAO.getData("presentTenseAuxs");
 
 	//past participle considered as past
-	private static final String[] pastTenseAuxs = {"was", "were", "did", "had",
-			"have", "has", "having", "been"};
+	private static final String[] pastTenseAuxs = DataDAO.getData("pastTenseAuxs");
 
 	private String action;
 	private String pos;

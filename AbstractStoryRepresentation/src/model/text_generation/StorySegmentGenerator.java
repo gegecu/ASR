@@ -11,6 +11,7 @@ import java.util.Set;
 
 import model.knowledge_base.conceptnet.Concept;
 import model.knowledge_base.conceptnet.ConceptNetDAO;
+import model.knowledge_base.template.TemplateDAO;
 import model.story_representation.AbstractStoryRepresentation;
 import model.story_representation.story_element.noun.Character;
 import model.story_representation.story_element.noun.Location;
@@ -27,23 +28,21 @@ import simplenlg.phrasespec.VPPhraseSpec;
 
 public class StorySegmentGenerator extends TextGeneration {
 
-	private String[] atLocationStorySegmentStart = {
-			"There is <start> in <end>.", "<end> has <start>."};
+	private String[] atLocationStorySegmentStart = TemplateDAO.getTemplates("atLocationStorySegmentStart");
 
-	private String[] atLocationStorySegmentDirectObject = {
-			"<doer> is in <end>."};
+	private String[] atLocationStorySegmentDirectObject = TemplateDAO.getTemplates("atLocationStorySegmentDirectObject");
 
-	private String[] hasAStorySegment = {"<start> has <end>."};
+	private String[] hasAStorySegment = TemplateDAO.getTemplates("hasAStorySegment");
 
-	private String[] isAStorySegment = {"<start> is <end>."};
+	private String[] isAStorySegment = TemplateDAO.getTemplates("isAStorySegment");
 
-	private String[] hasPropertyStorySegment = {"<start> can be <end>."};
+	private String[] hasPropertyStorySegment = TemplateDAO.getTemplates("hasPropertyStorySegment");
 
-	private String[] causesNoun = {"<start> produces <end>."};
+	private String[] causesNoun = TemplateDAO.getTemplates("causesNoun");
 
-	private String[] causesVerb = {"<doer> <end> <object>."};
+	private String[] causesVerb = TemplateDAO.getTemplates("causesVerb");
 
-	private String[] causesAdjective = {"<doer> became <end>."};
+	private String[] causesAdjective = TemplateDAO.getTemplates("causesAdjective");
 
 	private Queue<Integer> history;
 
