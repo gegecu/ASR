@@ -14,7 +14,16 @@ insert into `alice`.`template_group` (`id`, `name`) values
 (7, 'causesVerb'),
 (8, 'causesAdjective'),
 (9, 'nounStartDirective'),
-(10, 'causeEffectDirectivePhraseFormat');
+(10, 'causeEffectDirectivePhraseFormat'),
+(11, 'hasPropertyMiddleDirective'),
+(12, 'isAMiddleDirective'),
+(13, 'hasAMiddleDirective'),
+(14, 'atLocationMiddleDirective'),
+(15, 'notHasPropertyMiddleDirective'),
+(16, 'notIsAMiddleDirective'),
+(17, 'notHasAMiddleDirective'),
+(18, 'notAtLocationMiddleDirective');
+
 
 CREATE TABLE IF NOT EXISTS `alice`.`templates` (
 	`id` int unsigned auto_increment not null,
@@ -35,6 +44,34 @@ insert into `alice`.`templates` (`group_id`, `template`) values (7, '<doer> <end
 insert into `alice`.`templates` (`group_id`, `template`) values (8, '<doer> became <end>.');
 insert into `alice`.`templates` (`group_id`, `template`) values (9, 'Describe <noun>.'), (9, 'Tell me more about <noun>.'), (9, 'Write more about <noun>.'), (9, 'I want to hear more about <noun>.'), (9, 'Tell something more about <noun>.');
 insert into `alice`.`templates` (`group_id`, `template`) values (10, 'Tell me why <phrase>.'), (10, 'Explain why <phrase>.'), (10, 'Write more about why <phrase>.'), (10, 'Write the reason why <phrase>.');
+INSERT INTO `templates` (`id`,`group_id`,`template`) VALUES (22,11,'How come <noun> <mainverb> <property> for you?');
+INSERT INTO `templates` (`id`,`group_id`,`template`) VALUES (19,11,'Why <mainverb> <noun> <property>?');
+INSERT INTO `templates` (`id`,`group_id`,`template`) VALUES (20,11,'Why did you say that <noun> <mainverb> <property>?');
+INSERT INTO `templates` (`id`,`group_id`,`template`) VALUES (21,11,'Why do you think that <noun> <mainverb> <property>?');
+INSERT INTO `templates` (`id`,`group_id`,`template`) VALUES (26,12,'How come <noun> <mainverb> <role>?');
+INSERT INTO `templates` (`id`,`group_id`,`template`) VALUES (23,12,'Why <mainverb> <noun> <role>?');
+INSERT INTO `templates` (`id`,`group_id`,`template`) VALUES (24,12,'Why did you say that <noun> <mainverb> <role>?');
+INSERT INTO `templates` (`id`,`group_id`,`template`) VALUES (25,12,'Why do you think that <noun> <mainverb> <role>?');
+INSERT INTO `templates` (`id`,`group_id`,`template`) VALUES (28,13,'How come <noun> <minorverb> <object>?');
+INSERT INTO `templates` (`id`,`group_id`,`template`) VALUES (29,13,'How did <noun> get <object>?');
+INSERT INTO `templates` (`id`,`group_id`,`template`) VALUES (27,13,'Why <mainverb> <noun> have <object>?');
+INSERT INTO `templates` (`id`,`group_id`,`template`) VALUES (32,14,'How come <noun> went to <location>?');
+INSERT INTO `templates` (`id`,`group_id`,`template`) VALUES (30,14,'Why <noun> <mainverb> in <location>?');
+INSERT INTO `templates` (`id`,`group_id`,`template`) VALUES (31,14,'Why did <noun> go to <location>?');
+INSERT INTO `templates` (`id`,`group_id`,`template`) VALUES (36,15,'How come <noun> <mainverb> not <property> for you?');
+INSERT INTO `templates` (`id`,`group_id`,`template`) VALUES (33,15,'Why <mainverb> <noun> not <property>?');
+INSERT INTO `templates` (`id`,`group_id`,`template`) VALUES (34,15,'Why did you say that <noun> <mainverb> not <property>?');
+INSERT INTO `templates` (`id`,`group_id`,`template`) VALUES (35,15,'Why do you think that <noun> <mainverb> not <property>?');
+INSERT INTO `templates` (`id`,`group_id`,`template`) VALUES (40,16,'How come <noun> <mainverb> <role> for you?');
+INSERT INTO `templates` (`id`,`group_id`,`template`) VALUES (37,16,'Why <mainverb> <noun> <role>?');
+INSERT INTO `templates` (`id`,`group_id`,`template`) VALUES (38,16,'Why did you say that <noun> <mainverb> not <role>?');
+INSERT INTO `templates` (`id`,`group_id`,`template`) VALUES (39,16,'Why do you think that <noun> <mainverb> not <role>?');
+INSERT INTO `templates` (`id`,`group_id`,`template`) VALUES (44,17,'How can <noun> get <object>?');
+INSERT INTO `templates` (`id`,`group_id`,`template`) VALUES (41,17,'Why <mainverb> <noun> have <object>?');
+INSERT INTO `templates` (`id`,`group_id`,`template`) VALUES (43,17,'Why <majorverb> <noun> getting <object>?');
+INSERT INTO `templates` (`id`,`group_id`,`template`) VALUES (42,17,'Why <minorverb> <noun> have <object>?');
+INSERT INTO `templates` (`id`,`group_id`,`template`) VALUES (46,18,'How come <noun> did not go to <location>?');
+INSERT INTO `templates` (`id`,`group_id`,`template`) VALUES (45,18,'Why <noun> <mainverb> not go to <location>?');
 
 CREATE TABLE IF NOT EXISTS `alice`.`specific_topic_group` (
 	`id` int unsigned auto_increment not null,

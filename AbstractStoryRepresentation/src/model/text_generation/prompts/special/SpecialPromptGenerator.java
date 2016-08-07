@@ -39,14 +39,14 @@ public class SpecialPromptGenerator {
 	//			"Then what happened?"};
 	//Why doesn't she have a ball? Why isn't she getting a ball? How can she get a ball?
 	//
-	private String[] hasPropertyMiddleDirective = {"Why <mainverb> <noun> <property>?", "Why did you say that <noun> <mainverb> <property>?", "Why do you think that <noun> <mainverb> <property>?", "How come <noun> <mainverb> <property> for you?"};
-	private String[] isAMiddleDirective = {"Why <mainverb> <noun> <role>?", "Why did you say that <noun> <mainverb> <role>?", "Why do you think that <noun> <mainverb> <role>?", "How come <noun> <mainverb> <role>?"};
-	private String[] hasAMiddleDirective = {"Why <mainverb> <noun> have <object>", "How come <noun> <minorverb> <object>?", "How did <noun> get <object>?"};
-	private String[] atLocationMiddleDirective = {"Why <noun> <mainverb> in <location>", "Why did <noun> go to <location>?", "How come <noun> went to <location>?"};
-	private String[] notHasPropertyMiddleDirective = {"Why <mainverb> <noun> not <property>?", "Why did you say that <noun> <mainverb> not <property>?", "Why do you think that <noun> <mainverb> not <property>?", "How come <noun> <mainverb> not <property> for you?"};
-	private String[] notIsAMiddleDirective = {"Why <mainverb> <noun> <role>?", "Why did you say that <noun> <mainverb> not <role>?", "Why do you think that <noun> <mainverb> not <role>?", "How come <noun> <mainverb> <role> for you?"};
-	private String[] notHasAMiddleDirective = {"Why <mainverb> <noun> have <object>?", "Why <minorverb> <noun> have <object>?", "Why <majorverb> <noun> getting <object>?", "How can <noun> get <object>?"};
-	private String[] notAtLocationMiddleDirective = {"Why <noun> <mainverb> not go to <location>?", "How come <noun> did not go to <location>?"};
+	private String[] hasPropertyMiddleDirective = TemplateDAO.getTemplates("hasPropertyMiddleDirective");
+	private String[] isAMiddleDirective = TemplateDAO.getTemplates("isAMiddleDirective");
+	private String[] hasAMiddleDirective = TemplateDAO.getTemplates("hasAMiddleDirective");
+	private String[] atLocationMiddleDirective = TemplateDAO.getTemplates("atLocationMiddleDirective");
+	private String[] notHasPropertyMiddleDirective = TemplateDAO.getTemplates("notHasPropertyMiddleDirective");
+	private String[] notIsAMiddleDirective = TemplateDAO.getTemplates("notIsAMiddleDirective");
+	private String[] notHasAMiddleDirective = TemplateDAO.getTemplates("notHasAMiddleDirective");
+	private String[] notAtLocationMiddleDirective = TemplateDAO.getTemplates("notAtLocationMiddleDirective");
 
 	private String[] locationVerbs = DataDAO.getData("locationVerbs");
 
