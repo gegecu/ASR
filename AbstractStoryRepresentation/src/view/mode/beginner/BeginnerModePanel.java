@@ -105,6 +105,8 @@ public class BeginnerModePanel extends ModePanel {
 		addSaveButtonActionListener(saveController);
 		addCancelButtonActionListener(cancelController);
 
+		checklistController.updateChecklist();
+
 	}
 
 	@Override

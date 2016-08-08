@@ -4,12 +4,13 @@ import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 
-import model.story_representation.story_element.noun.Location;
 import model.story_representation.story_element.noun.Noun;
 import model.story_representation.story_element.noun.Noun.TypeOfNoun;
 import model.story_representation.story_element.story_sentence.StorySentence;
 
 public class Checklist {
+
+	private static final int requiredActionsMiddle = 2;
 
 	private static Logger log = Logger.getLogger(Checklist.class.getName());
 
@@ -43,10 +44,8 @@ public class Checklist {
 		return isCharacterExist;
 	}
 
-
 	public boolean isLocationExist() {
-
-		if(!isLocationExist) {
+		if (!isLocationExist) {
 			for (Entry<String, Noun> entry : this.asr.getNounMap().entrySet()) {
 				if (entry.getValue() != null
 						&& entry.getValue().getType() == TypeOfNoun.LOCATION) {
@@ -57,7 +56,6 @@ public class Checklist {
 		}
 		return isLocationExist;
 	}
-
 
 	public boolean isConflictExist() {
 		if (!this.isConflictExist) {
@@ -71,8 +69,27 @@ public class Checklist {
 				&& this.isLocationExist;
 	}
 
+	public int getRequiredActionsMiddle() {
+		return requiredActionsMiddle;
+	}
+
+	public int getSeriesActionCount() {
+		int nEvents = 0;
+		if (asr.getCurrentPartOfStory()
+				.equals(AbstractStoryRepresentation.middle)) {
+			for (StorySentence ss : this.asr.getStorySentencesBasedOnPart(
+					AbstractStoryRepresentation.middle)) {
+				if (ss.hasValidEvent()) {
+					nEvents += ss.getEventsCount();
+				}
+			}
+		}
+		return nEvents;
+	}
+
 	public boolean isSeriesActionExist() {
-		if (!this.isSeriesActionExist) {
+		if (!this.isSeriesActionExist && asr.getCurrentPartOfStory()
+				.equals(AbstractStoryRepresentation.middle)) {
 			int nEvents = 0;
 			for (StorySentence ss : this.asr.getStorySentencesBasedOnPart(
 					AbstractStoryRepresentation.middle)) {
@@ -80,18 +97,18 @@ public class Checklist {
 					nEvents += ss.getEventsCount();
 				}
 			}
-			this.isSeriesActionExist = nEvents >= 2;
+			this.isSeriesActionExist = nEvents >= requiredActionsMiddle;
 		}
 		return this.isSeriesActionExist;
 	}
 
 	public boolean isMiddleComplete() {
 		return this.isSeriesActionExist;
-
 	}
 
 	public boolean isResolutionExist() {
-		if (!this.isResolutionExist) {
+		if (!this.isResolutionExist && asr.getCurrentPartOfStory()
+				.equals(AbstractStoryRepresentation.end)) {
 			this.isResolutionExist = (this.asr.getResolution() != null);
 		}
 		return this.isResolutionExist;
