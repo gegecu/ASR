@@ -161,6 +161,7 @@ public class PromptChooser extends TextGeneration {
 				int randomClause = Randomizer.random(1, clauses.size());
 				
 				output = specialPromptGenerator.generateText(clauses.remove(randomClause - 1));
+				System.out.println(output);
 			}
 //			
 //			if(predicates.isEmpty()) {

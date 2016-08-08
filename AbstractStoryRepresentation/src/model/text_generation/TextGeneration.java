@@ -2,6 +2,7 @@ package model.text_generation;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import model.story_representation.AbstractStoryRepresentation;
@@ -47,20 +48,30 @@ public abstract class TextGeneration {
 					String id = nounId.remove(0);
 					Noun noun = asr.getNoun(id);
 					int count = Utilities
-							.countLists(noun.getAttributes().values())
-							+ noun.getReferences().size();
-					if (count < currThreshold)
+							.countLists(noun.getAttributes().values());
+					
+					for(Map.Entry<String, Map<String, Noun>> entry: noun.getReferences().entrySet()) {
+						count += entry.getValue().size();
+					}
+					
+					if (count < currThreshold) {
+						System.out.println(id);
 						//result.add(noun.getId());
 						result.add(id);
+					}
 				}
 
 				if (result.isEmpty()) {
 					Set<String> ids = asr.getNounMap().keySet();
 					for (String id : ids) {
+						Noun noun = asr.getNoun(id);
 						int count = Utilities
-								.countLists(asr.getNoun(id).getAttributes()
-										.values())
-								+ asr.getNoun(id).getReferences().size();
+								.countLists(noun.getAttributes()
+										.values());
+						for(Map.Entry<String, Map<String, Noun>> entry: noun.getReferences().entrySet()) {
+							count += entry.getValue().size();
+						}
+						
 						if (count < currThreshold)
 							//result.add(noun.getId());
 							result.add(id);

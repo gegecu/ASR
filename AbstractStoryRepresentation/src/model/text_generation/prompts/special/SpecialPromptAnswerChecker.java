@@ -35,122 +35,26 @@ public class SpecialPromptAnswerChecker extends PromptAnswerChecker {
 		this.specialPromptData = specialPromptData;
 	}
 
-	public boolean checkAnswer(String answer) {
-
-		List<Noun> doers = specialPromptData.getDoers();
-		String currentPrompt = specialPromptData.getCurrentPrompt();
-
-		int counter = 0;
-		int counter2 = 0;
+	@Override
+	public boolean postChecking(String answer) {
 		
-		Map<String, Boolean> xcompChecker = new HashMap();
-		Map<String, String> doerChecker = new HashMap();
+		// TODO Auto-generated method stub
+		this.preprocess.preprocess(specialPromptData.getCurrentPrompt() + " " + answer);
+		Map<String, String> corefMapping = preprocess.getCoref();
 		
-		Set<String> currentDoerNames = new HashSet<>();
-		Map<String, String> coref;
-
-		for (Noun doer : doers) {
-			currentDoerNames.add(doer.getId());
+		int countDuplicate = 0;
+		
+		for(Map.Entry<String, String> coref: corefMapping.entrySet()) {
+			if(coref.getKey().equals(coref.getValue())) {
+				countDuplicate++;
+			}
 		}
-
-		preprocess.preprocess(currentPrompt + " " + answer);
-		String updatedText = preprocess.getUpdatedString();
-		coref = preprocess.getCoref();
-
-		Annotation document = new Annotation(updatedText);
-		pipeline.annotate(document);
-
-		boolean skipped = false;
-		boolean containsXComp = false;
-
-		List<CoreMap> sentences = document.get(SentencesAnnotation.class);
-		for (CoreMap sentence : sentences) {
-
-			//skip first sentence
-			if (!skipped) {
-				skipped = true;
-				continue;
-			}
-			
-			int countSame = 0;
-			for (Map.Entry<String, String> entry : coref.entrySet()) {
-				if (entry.getKey().equals(entry.getValue())) {
-					countSame++;
-				}
-			}
-
-			SemanticGraph dependencies = sentence
-					.get(CollapsedCCProcessedDependenciesAnnotation.class);
-
-			List<TypedDependency> listDependencies = new ArrayList<TypedDependency>(
-					dependencies.typedDependencies());
-			Collections.sort(listDependencies, new TypedDependencyComparator());
-			
-			if (coref.size() - countSame >= 1) {
-
-				for (TypedDependency td : listDependencies) {
-	
-					//What is the color of the ball? It is red. cannot be He is red.
-					//What is the nationality of John Roberts. He is Chinese or John Roberts is Chinese.
-					
-					if (td.reln().toString().contains("nsubj")) {
-						doerChecker.put(Integer.toString(td.dep().index()), td.dep().lemma());
-
-						if (DictionariesInstance.getInstance().copulas
-								.contains(td.gov().lemma())) {
-							xcompChecker.put(Integer.toString(td.gov().index()), true);
-							containsXComp = true;
-						}
-						
-					}
-	
-					else if (td.reln().toString().equals("compound")) {
-						
-						doerChecker.put(Integer.toString(td.gov().index()), td.dep().lemma() + " " + td.gov().lemma());
-
-					}
-					
-					else if (td.reln().toString().equals("xcomp")) {
-						if(DictionariesInstance.getInstance().copulas
-								.contains(td.gov().lemma()) && xcompChecker.get(Integer.toString(td.gov().index()))) {
-							counter2++;
-						}
-					}
-				}
-
-			}
-			
-			for(String doerName: doerChecker.values()) {
-				
-				if(currentDoerNames.contains(doerName)) {
-					System.out.println("in");
-					counter++;
-				}
-			}
-
-			if (counter == doers.size()) {
-				
-				System.out.println(counter);
-				
-				if(containsXComp) {
-					if(counter2 == xcompChecker.size()) {
-						return true;
-					}
-					else {
-						return false;
-					}
-				}
-				else {
-					return true;
-				}
-			}
-
-			break;
-
+		
+		if(corefMapping.size() - countDuplicate == this.specialPromptData.getDoers().size()) {
+			return true;
 		}
-
+		
 		return false;
-
 	}
 
 }

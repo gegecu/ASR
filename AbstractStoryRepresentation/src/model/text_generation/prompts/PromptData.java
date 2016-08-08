@@ -4,6 +4,7 @@ import java.util.Queue;
 
 import model.story_representation.AbstractStoryRepresentation;
 import model.story_representation.story_element.noun.Noun;
+import model.text_understanding.Preprocessing;
 
 public abstract class PromptData {
 
