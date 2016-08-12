@@ -3,10 +3,13 @@ package view.viewstory;
 import java.awt.Color;
 import java.awt.Font;
 
+import javax.swing.ButtonModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import controller.ViewStoryController;
 import model.story_database.Story;
@@ -96,6 +99,40 @@ public class ViewStoryPanel extends TemplatePanel {
 
 	@Override
 	protected void addUIEffects() {
+
+		deleteButton.getModel().addChangeListener(new ChangeListener() {
+
+			private RoundedBorder border = (RoundedBorder) deleteButton
+					.getBorder();
+
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				ButtonModel model = (ButtonModel) e.getSource();
+				if (true == model.isRollover()) {
+					border.setThickness(5);
+				} else if (false == model.isRollover()) {
+					border.setThickness(3);
+				}
+			}
+
+		});
+		
+		backButton.getModel().addChangeListener(new ChangeListener() {
+
+			private RoundedBorder border = (RoundedBorder) backButton
+					.getBorder();
+
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				ButtonModel model = (ButtonModel) e.getSource();
+				if (true == model.isRollover()) {
+					border.setThickness(5);
+				} else if (false == model.isRollover()) {
+					border.setThickness(3);
+				}
+			}
+
+		});
 
 	}
 
