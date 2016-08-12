@@ -41,7 +41,7 @@ public class ProgressBarAddOn extends JPanel {
 			}
 		});
 
-		this.add(component, "h 100%, w 100%, wrap");
+		this.add(component, "w 100%, wrap");
 		this.add(progressBar, "w 100%");
 
 	}
