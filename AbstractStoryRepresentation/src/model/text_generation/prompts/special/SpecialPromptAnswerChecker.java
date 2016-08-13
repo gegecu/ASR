@@ -41,16 +41,21 @@ public class SpecialPromptAnswerChecker extends PromptAnswerChecker {
 		// TODO Auto-generated method stub
 		this.preprocess.preprocess(specialPromptData.getCurrentPrompt() + " " + answer);
 		Map<String, String> corefMapping = preprocess.getCoref();
+		Map<String, String> corefMappingTemp = new HashMap();
+		
+		for(Map.Entry<String, String> coref : corefMapping.entrySet()) {
+			corefMappingTemp.put(coref.getValue(), coref.getKey());
+		}
 		
 		int countDuplicate = 0;
 		
-		for(Map.Entry<String, String> coref: corefMapping.entrySet()) {
-			if(coref.getKey().equals(coref.getValue())) {
+		for(Map.Entry<String, String> corefTemp: corefMappingTemp.entrySet()) {
+			if(corefTemp.getKey().equals(corefTemp.getValue())) {
 				countDuplicate++;
 			}
 		}
 		
-		if(corefMapping.size() - countDuplicate == this.specialPromptData.getDoers().size()) {
+		if(corefMappingTemp.size() - countDuplicate == this.specialPromptData.getDoers().size()) {
 			return true;
 		}
 		

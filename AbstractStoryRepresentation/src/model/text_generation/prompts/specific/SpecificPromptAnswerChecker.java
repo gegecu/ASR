@@ -2,6 +2,7 @@ package model.text_generation.prompts.specific;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -38,16 +39,21 @@ public class SpecificPromptAnswerChecker extends PromptAnswerChecker {
 		this.preprocess.preprocess(currentPrompt + " " + answer);
 		
 		Map<String, String> corefMapping = preprocess.getCoref();
+		Map<String, String> corefMappingTemp = new HashMap();
+		
+		for(Map.Entry<String, String> coref: corefMapping.entrySet()) {
+			corefMappingTemp.put(coref.getValue(), coref.getKey());
+		}
 		
 		int countDuplicate = 0;
 		
-		for(Map.Entry<String, String> coref: corefMapping.entrySet()) {
-			if(coref.getKey().equals(coref.getValue())) {
+		for(Map.Entry<String, String> corefTemp: corefMappingTemp.entrySet()) {
+			if(corefTemp.getKey().equals(corefTemp.getValue())) {
 				countDuplicate++;
 			}
 		}
 		
-		if(corefMapping.size() - countDuplicate == 1) {
+		if(corefMappingTemp.size() - countDuplicate == 1) {
 			String noun = "";
 			String topicAnswer = "";
 
