@@ -45,8 +45,13 @@ public class SurfaceRealizer {
 					ownersSurfaceText.add(owner.getIsCommon()? "the " + owner.getId() : owner.getId());
 				}
 				
-				temp = wordConjunction(ownersSurfaceText) + "'s ";
-				
+				if(ownersSurfaceText.get(ownersSurfaceText.size()-1).endsWith("s")) {
+					temp = wordConjunction(ownersSurfaceText) + "' ";
+				}
+				else {
+					temp = wordConjunction(ownersSurfaceText) + "'s ";
+				}
+	
 			}
 			else {
 				temp = (noun.getIsCommon() ? "the " : "");
@@ -105,7 +110,7 @@ public class SurfaceRealizer {
 
 	}
 	
-	public static String properNounFixer(String word) {
+	public static String capitalizeFirstLetter(String word) {
 		return word.substring(0, 1).toUpperCase() + word.substring(1);
 	}
 }

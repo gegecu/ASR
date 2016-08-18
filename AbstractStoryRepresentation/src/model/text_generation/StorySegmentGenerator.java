@@ -185,15 +185,14 @@ public class StorySegmentGenerator extends TextGeneration {
 								- 1];
 						String end = concept.getEnd();
 						end = concept.getStartPOS().equals("proper noun")
-								? SurfaceRealizer.properNounFixer(end)
+								? SurfaceRealizer.capitalizeFirstLetter(end)
 								: SurfaceRealizer.determinerFixer(end);
 
 						storySegment = storySegment.replace("<doer>",
 								characters);
 						
 						storySegment = storySegment.replace("<end>", end);
-						storySegment = storySegment.substring(0, 1)
-								.toUpperCase() + storySegment.substring(1);
+						storySegment = SurfaceRealizer.capitalizeFirstLetter(storySegment);
 
 						// this.history.add(concept.getId());
 
@@ -258,7 +257,7 @@ public class StorySegmentGenerator extends TextGeneration {
 						
 						String start = concept.getStart();
 						start = concept.getStartPOS().equals("proper noun")
-								? SurfaceRealizer.properNounFixer(start)
+								? SurfaceRealizer.capitalizeFirstLetter(start)
 								: SurfaceRealizer.determinerFixer(start);
 						storySegment = storySegment.replace("<start>", start);
 						
@@ -266,8 +265,7 @@ public class StorySegmentGenerator extends TextGeneration {
 						temp.add(location);
 						String end = SurfaceRealizer.nounFixer(temp);
 						storySegment = storySegment.replace("<end>", end);
-						storySegment = storySegment.substring(0, 1)
-								.toUpperCase() + storySegment.substring(1);
+						storySegment = SurfaceRealizer.capitalizeFirstLetter(storySegment);
 
 						// this.history.add(concept.getId());
 						if (this.used.contains(storySegment)) {
@@ -342,15 +340,14 @@ public class StorySegmentGenerator extends TextGeneration {
 
 					String end = concept.getEnd();
 					end = concept.getEndPOS().equals("proper noun")
-							? SurfaceRealizer.properNounFixer(end)
+							? SurfaceRealizer.capitalizeFirstLetter(end)
 							: SurfaceRealizer.determinerFixer(end);
 
 					List<Noun> temp = new ArrayList<>();
 					temp.add(noun);
 					storySegment = storySegment.replace("<start>", SurfaceRealizer.nounFixer(temp));
 					storySegment = storySegment.replace("<end>", end);
-					storySegment = storySegment.substring(0, 1).toUpperCase()
-							+ storySegment.substring(1);
+					storySegment = SurfaceRealizer.capitalizeFirstLetter(storySegment);
 
 					// this.history.add(concept.getId());
 					if (this.used.contains(storySegment)) {
@@ -425,7 +422,7 @@ public class StorySegmentGenerator extends TextGeneration {
 
 					String end = concept.getEnd();
 					end = concept.getEndPOS().equals("proper noun")
-							? SurfaceRealizer.properNounFixer(end)
+							? SurfaceRealizer.capitalizeFirstLetter(end)
 							: SurfaceRealizer.determinerFixer(end);
 							
 					List<Noun> temp = new ArrayList<>();
@@ -433,8 +430,7 @@ public class StorySegmentGenerator extends TextGeneration {
 
 					storySegment = storySegment.replace("<start>", SurfaceRealizer.nounFixer(temp));
 					storySegment = storySegment.replace("<end>", end);
-					storySegment = storySegment.substring(0, 1).toUpperCase()
-							+ storySegment.substring(1);
+					storySegment = SurfaceRealizer.capitalizeFirstLetter(storySegment);
 
 					// this.history.add(concept.getId());
 					if (this.used.contains(storySegment)) {
@@ -513,7 +509,7 @@ public class StorySegmentGenerator extends TextGeneration {
 
 					switch (concept.getEndPOS()) {
 						case "proper noun" :
-							end = SurfaceRealizer.determinerFixer(end);
+							end = SurfaceRealizer.capitalizeFirstLetter(end);
 							break;
 						case "adjective" :
 						case "adjective phrase" :
@@ -527,8 +523,7 @@ public class StorySegmentGenerator extends TextGeneration {
 					temp.add(noun);
 					storySegment = storySegment.replace("<start>", SurfaceRealizer.nounFixer(temp));
 					storySegment = storySegment.replace("<end>", end);
-					storySegment = storySegment.substring(0, 1).toUpperCase()
-							+ storySegment.substring(1);
+					storySegment = SurfaceRealizer.capitalizeFirstLetter(storySegment);
 
 					// this.history.add(concept.getId());
 					if (this.used.contains(storySegment)) {
@@ -648,8 +643,7 @@ public class StorySegmentGenerator extends TextGeneration {
 					continue;
 				}
 
-				storySegment = storySegment.substring(0, 1).toUpperCase()
-						+ storySegment.substring(1);
+				storySegment = SurfaceRealizer.capitalizeFirstLetter(storySegment);
 
 				// this.history.add(concept.getId());
 				found = true;

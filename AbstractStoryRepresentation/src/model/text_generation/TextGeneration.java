@@ -55,7 +55,7 @@ public abstract class TextGeneration {
 					}
 					
 					if (count < currThreshold) {
-						System.out.println(id);
+						//System.out.println(id);
 						//result.add(noun.getId());
 						result.add(id);
 					}
