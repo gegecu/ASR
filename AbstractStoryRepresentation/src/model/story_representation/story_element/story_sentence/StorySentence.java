@@ -9,11 +9,23 @@ import java.util.Set;
 
 import model.story_representation.story_element.noun.Noun;
 
+/**
+ * Used to store extracted story sentence information
+ */
 public class StorySentence {
 
+	/**
+	 * stores the events extracted
+	 */
 	private Map<String, Event> events;
+	/**
+	 * stores the descriptions extracted
+	 */
 	private Map<String, Description> description;
 
+	/**
+	 * initialize the variables
+	 */
 	public StorySentence() {
 		this.events = new HashMap<String, Event>();
 		this.description = new HashMap<String, Description>();
@@ -54,7 +66,11 @@ public class StorySentence {
 		return this.events.size();
 	}
 
-	//unsure
+	/**
+	 * 
+	 * 
+	 * @return list of surface texts of nouns
+	 */
 	public List<String> getAllNouns() {
 
 		Set<String> nounId = new HashSet<String>();
@@ -67,14 +83,9 @@ public class StorySentence {
 
 		for (Description d : this.description.values()) {
 			nounId.addAll(d.getManyDoers().keySet());
-			for(Map<String, Noun> temp : d.getReferences().values()) {
+			for (Map<String, Noun> temp : d.getReferences().values()) {
 				nounId.addAll(temp.keySet());
 			}
-//			for (List<Noun> referred : d.getReferences().values()) {
-//				for (Noun n : referred) {
-//					nounId.add(n.getId());
-//				}
-//			}
 		}
 
 		return new ArrayList<String>(nounId);
