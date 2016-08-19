@@ -30,7 +30,7 @@ public class StoryDAO {
 			connection = MySQLConnector.getInstance().getConnection();
 			ps = connection.prepareStatement(query);
 			ps.setString(1, story.getStoryTitle());
-			ps.setString(2, story.getStoryText());
+			ps.setString(2, story.getStoryBody());
 
 			ps.executeUpdate();
 
@@ -72,7 +72,7 @@ public class StoryDAO {
 			connection = MySQLConnector.getInstance().getConnection();
 			ps = connection.prepareStatement(query);
 			ps.setString(1, story.getStoryTitle());
-			ps.setString(2, story.getStoryText());
+			ps.setString(2, story.getStoryBody());
 
 			ps.executeUpdate();
 

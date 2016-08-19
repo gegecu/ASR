@@ -15,29 +15,53 @@ import model.story_representation.story_element.story_sentence.Description;
 import model.story_representation.story_element.story_sentence.Event;
 import model.story_representation.story_element.story_sentence.StorySentence;
 
+/**
+ * Used to store the extracted story elements
+ */
 public class AbstractStoryRepresentation {
 
 	private static Logger log = Logger
 			.getLogger(AbstractStoryRepresentation.class.getName());
 
+	/**
+	 * List of story sentences mapped by the part of story
+	 */
 	private Map<String, List<StorySentence>> storySentencesMap;
-
+	/**
+	 * Map of nouns, having the noun’s position id as the key. <br>
+	 * <br>
+	 * Position id is from Stanford’s CoreNLP coreference tool.
+	 */
 	private Map<String, Noun> nounsMap;
-
-	//	private Conflict conflict;
-	//
-	//	private Resolution resolution;
-
+	/**
+	 * Stores the probable conflict of the story
+	 */
 	private SpecialClause conflict;
-
+	/**
+	 * Stores the resolution of the story for the conflict
+	 */
 	private SpecialClause resolution;
-
+	/**
+	 * Stores the current part of the story
+	 */
 	private String partOfStory;
 
+	/**
+	 * "start" string constant
+	 */
 	public static final String start = "start";
+	/**
+	 * "middle" string constant
+	 */
 	public static final String middle = "middle";
+	/**
+	 * "end" string constant
+	 */
 	public static final String end = "end";
 
+	/**
+	 * intializes the variables
+	 */
 	public AbstractStoryRepresentation() {
 		this.storySentencesMap = new LinkedHashMap<String, List<StorySentence>>();
 		this.nounsMap = new HashMap<String, Noun>();
@@ -46,14 +70,27 @@ public class AbstractStoryRepresentation {
 		this.partOfStory = start;
 	}
 
+	/**
+	 * @return the conflict
+	 */
 	public SpecialClause getConflict() {
 		return this.conflict;
 	}
 
+	/**
+	 * @return the resolution
+	 */
 	public SpecialClause getResolution() {
 		return this.resolution;
 	}
 
+	/**
+	 * Adds the story sentence to the list of story sentences mapped by the part
+	 * of story, using the current part of story.
+	 * 
+	 * @param storySentence
+	 *            story sentence to add
+	 */
 	public void addStorySentence(StorySentence storySentence) {
 
 		List<StorySentence> storySentences = this.storySentencesMap
@@ -220,6 +257,9 @@ public class AbstractStoryRepresentation {
 
 	}
 
+	/**
+	 * @return latest story sentence added
+	 */
 	public StorySentence getCurrentStorySentence() {
 
 		List<StorySentence> storySentences = this.storySentencesMap
@@ -242,43 +282,91 @@ public class AbstractStoryRepresentation {
 
 	}
 
+	/**
+	 * @return the storySentencesMap
+	 */
 	public Map<String, List<StorySentence>> getStorySentencesMap() {
 		return this.storySentencesMap;
 	}
 
+	/**
+	 * Returns list of story sentences filtered by part of story paramm
+	 * 
+	 * @param partOfStory
+	 *            the partOfStory filter
+	 * @return list of story sentences
+	 */
 	public List<StorySentence> getStorySentencesBasedOnPart(
 			String partOfStory) {
 		return this.storySentencesMap.get(partOfStory);
 	}
 
+	/**
+	 * Returns list of story sentences filtered by the current part of story
+	 * 
+	 * @return list of story sentences
+	 */
 	public List<StorySentence> getStorySentencesBasedOnCurrentPart() {
 		return this.storySentencesMap.get(this.partOfStory);
 	}
 
+	/**
+	 * Sets the noun to the nounsMap using the key param as key
+	 * 
+	 * @param key
+	 *            the key to set
+	 * @param noun
+	 *            the noun to set
+	 */
 	public void addNoun(String key, Noun noun) {
 		this.nounsMap.put(key, noun);
 	}
 
+	/**
+	 * Returns the noun from the nounsMap having the key param as the key
+	 * 
+	 * @param key
+	 *            the key
+	 * @return the noun
+	 */
 	public Noun getNoun(String key) {
 		return this.nounsMap.get(key);
 	}
 
-	public Map<String, Noun> getNounMap() {
+	/**
+	 * @return the nounsMap
+	 */
+	public Map<String, Noun> getNounsMap() {
 		return this.nounsMap;
 	}
 
+	/**
+	 * @return the partOfStory
+	 */
 	public String getCurrentPartOfStory() {
 		return partOfStory;
 	}
 
+	/**
+	 * @param partOfStory
+	 *            the partOfStory to set
+	 */
 	public void setPartOfStory(String partOfStory) {
 		this.partOfStory = partOfStory;
 	}
 
+	/**
+	 * @param conflict
+	 *            the conflict to set
+	 */
 	public void setConflict(SpecialClause conflict) {
 		this.conflict = conflict;
 	}
 
+	/**
+	 * @param resolution
+	 *            the resolution to set
+	 */
 	public void setResolution(SpecialClause resolution) {
 		this.resolution = resolution;
 	}

@@ -143,7 +143,7 @@ public class ViewStoryPanel extends TemplatePanel {
 
 	public void setStory(Story story) {
 		titleField.setText(story.getStoryTitle());
-		storyViewPanel.setStoryText(story.getStoryText());
+		storyViewPanel.setStoryText(story.getStoryBody());
 		deleteButton.setActionCommand(String.valueOf(story.getStoryId()));
 	}
 

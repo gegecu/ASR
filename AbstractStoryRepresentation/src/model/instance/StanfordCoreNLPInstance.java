@@ -4,8 +4,14 @@ import java.util.Properties;
 
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 
+/**
+ * Singleton implementation of Stanford CoreNLP Pipeline
+ */
 public class StanfordCoreNLPInstance {
 
+	/**
+	 * The Singleton Stanford CoreNLP Pipeline
+	 */
 	private static StanfordCoreNLP pipeline;
 
 	static {
@@ -15,6 +21,11 @@ public class StanfordCoreNLPInstance {
 		pipeline = new StanfordCoreNLP(props);
 	}
 
+	/**
+	 * Returns the Singleton Stanford CoreNLP Pipeline
+	 * 
+	 * @return Stanford CoreNLP Pipeline
+	 */
 	public static synchronized StanfordCoreNLP getInstance() {
 		return pipeline;
 	}

@@ -1,49 +1,94 @@
 package model.story_database;
 
+/**
+ * Used to store story data
+ */
 public class Story {
 
+	/**
+	 * the id of the story
+	 */
 	private int storyId;
+	/**
+	 * the title of the story
+	 */
 	private String storyTitle;
-	private String storyText;
+	/**
+	 * the body of the story
+	 */
+	private String storyBody;
 
+	/**
+	 * @param storyId
+	 *            the story id to set
+	 * @param storyTitle
+	 *            the story title to set
+	 */
 	public Story(int storyId, String storyTitle) {
 		this.storyId = storyId;
 		this.storyTitle = storyTitle;
 	}
 
-	public Story(int storyId, String storyTitle, String storyText) {
+	/**
+	 * @param storyId
+	 *            the story id to set
+	 * @param storyTitle
+	 *            the story title to set
+	 * @param storyBody
+	 *            the story body to set
+	 */
+	public Story(int storyId, String storyTitle, String storyBody) {
 		this.storyId = storyId;
 		this.storyTitle = storyTitle;
-		this.storyText = storyText;
+		this.storyBody = storyBody;
 	}
 
-	public Story(String storyTitle, String storyText) {
+	/**
+	 * @param storyTitle
+	 *            the story title to set
+	 * @param storyBody
+	 *            the story body to set
+	 */
+	public Story(String storyTitle, String storyBody) {
 		this.storyTitle = storyTitle;
-		this.storyText = storyText;
+		this.storyBody = storyBody;
 	}
 
-	public int getStoryId() {
-		return storyId;
-	}
-
-	public void setStoryId(int storyId) {
-		this.storyId = storyId;
-	}
-
+	/**
+	 * @return the storyTitle
+	 */
 	public String getStoryTitle() {
 		return storyTitle;
 	}
 
+	/**
+	 * @param storyTitle
+	 *            the storyTitle to set
+	 */
 	public void setStoryTitle(String storyTitle) {
 		this.storyTitle = storyTitle;
 	}
 
-	public String getStoryText() {
-		return storyText;
+	/**
+	 * @return the storyBody
+	 */
+	public String getStoryBody() {
+		return storyBody;
 	}
 
-	public void setStoryText(String storyText) {
-		this.storyText = storyText;
+	/**
+	 * @param storyBody
+	 *            the storyBody to set
+	 */
+	public void setStoryBody(String storyBody) {
+		this.storyBody = storyBody;
+	}
+
+	/**
+	 * @return the storyId
+	 */
+	public int getStoryId() {
+		return storyId;
 	}
 
 }

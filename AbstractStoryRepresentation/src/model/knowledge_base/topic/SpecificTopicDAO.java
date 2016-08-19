@@ -10,8 +10,19 @@ import com.mysql.jdbc.Connection;
 
 import model.knowledge_base.MySQLConnector;
 
+/**
+ * Database accessor for specific topic data related queries
+ */
 public class SpecificTopicDAO {
 
+	/**
+	 * Returns list of strings from the `specifictopis` table filtered by
+	 * groupName
+	 * 
+	 * @param groupName
+	 *            the name of group
+	 * @return list of specific topic data strings
+	 */
 	public static String[] getTopics(String groupName) {
 
 		String query = "SELECT `topic` "

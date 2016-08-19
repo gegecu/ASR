@@ -85,7 +85,7 @@ public class SpecificPromptAnswerChecker extends PromptAnswerChecker {
 				}
 			}
 			
-			if (ConceptNetDAO.checkSRL(topicAnswer, "IsA", currentTopic)
+			if (ConceptNetDAO.conceptExists(topicAnswer, "IsA", currentTopic)
 					&& noun.equals(currentNoun.getId())) {
 
 				List<String> topics = answered.get(currentNoun);

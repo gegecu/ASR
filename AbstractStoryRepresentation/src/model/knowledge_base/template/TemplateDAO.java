@@ -10,8 +10,18 @@ import com.mysql.jdbc.Connection;
 
 import model.knowledge_base.MySQLConnector;
 
+/**
+ * Database accessor for template related queries
+ */
 public class TemplateDAO {
 
+	/**
+	 * Returns list of strings from the `templates` table filtered by groupName
+	 * 
+	 * @param groupName
+	 *            the name of group
+	 * @return list of template strings
+	 */
 	public static String[] getTemplates(String groupName) {
 
 		String query = "SELECT `template` "

@@ -9,13 +9,34 @@ import java.util.Properties;
 
 import com.mysql.jdbc.Connection;
 
+/**
+ * MySQL connection creator
+ */
 public class MySQLConnector {
 
+	/**
+	 * Used to store MySQL Driver Class Path
+	 */
 	private static String driver = "com.mysql.jdbc.Driver";
+	/**
+	 * Used to store MySQL connection database url
+	 */
 	private static String url;
+	/**
+	 * Used to store MySQL connection database name
+	 */
 	private static String dbName;
+	/**
+	 * Used to store MySQL connection username
+	 */
 	private static String userName;
+	/**
+	 * Used to store MySQL connection password
+	 */
 	private static String password;
+	/**
+	 * Singleton MySQLConnector instance
+	 */
 	private static MySQLConnector db;
 
 	private MySQLConnector() {
@@ -51,10 +72,21 @@ public class MySQLConnector {
 
 	}
 
+	/**
+	 * Returns the singleton MySQLConnector instance
+	 * 
+	 * @return singleton MySQLConnector instance
+	 */
 	public static MySQLConnector getInstance() {
 		return db;
 	}
 
+	/**
+	 * Returns A new MySQL Connection instance everytime
+	 * 
+	 * @return MySQL Connection instance
+	 * @throws SQLException
+	 */
 	public Connection getConnection() throws SQLException {
 		return (Connection) DriverManager.getConnection(url + dbName, userName,
 				password);

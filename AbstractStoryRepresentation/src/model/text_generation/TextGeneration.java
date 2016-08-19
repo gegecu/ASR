@@ -37,7 +37,7 @@ public abstract class TextGeneration {
 		List<String> result = new ArrayList<>();
 		int currThreshold = defaultThreshold;
 
-		if (asr.getNounMap().values().size() > 0) {
+		if (asr.getNounsMap().values().size() > 0) {
 
 			while (result.isEmpty()) {
 
@@ -62,7 +62,7 @@ public abstract class TextGeneration {
 				}
 
 				if (result.isEmpty()) {
-					Set<String> ids = asr.getNounMap().keySet();
+					Set<String> ids = asr.getNounsMap().keySet();
 					for (String id : ids) {
 						Noun noun = asr.getNoun(id);
 						int count = Utilities

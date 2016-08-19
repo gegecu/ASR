@@ -127,7 +127,7 @@ public class SpecificPromptGenerator extends PromptGenerator {
 		for (List<String> attributes : noun.getAttributes().values()) {
 			for (String attribute : attributes) {
 				for (String topic : topics) {
-					if (ConceptNetDAO.checkSRL(attribute, "IsA", topic)) {
+					if (ConceptNetDAO.conceptExists(attribute, "IsA", topic)) {
 						answeredTopics.add(topic);
 					}
 				}
@@ -139,7 +139,7 @@ public class SpecificPromptGenerator extends PromptGenerator {
 				.entrySet()) {
 			for (Map.Entry<String, Noun> entry2 : entry.getValue().entrySet()) {
 				for (String topic : topics) {
-					if (ConceptNetDAO.checkSRL(entry2.getValue().getId(), "IsA",
+					if (ConceptNetDAO.conceptExists(entry2.getValue().getId(), "IsA",
 							topic)) {
 						answeredTopics.add(topic);
 					}

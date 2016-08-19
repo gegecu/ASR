@@ -64,10 +64,10 @@ public class SaveController implements ActionListener {
 				log.debug("Child Saved The Story : " + story);
 				log.debug("\nWHOLE STORY OF CHILD: \n\tTitle: "
 						+ story.getStoryTitle() + "\nStory: "
-						+ story.getStoryText());
+						+ story.getStoryBody());
 				EvaluationLog.log("\nWHOLE STORY OF CHILD: \n\tTitle: "
 						+ story.getStoryTitle() + "\n\tStory: "
-						+ story.getStoryText() + "\n");
+						+ story.getStoryBody() + "\n");
 
 				mainFrame.showMainMenu();
 

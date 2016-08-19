@@ -10,13 +10,29 @@ import com.mysql.jdbc.Connection;
 
 import model.knowledge_base.MySQLConnector;
 
+/**
+ * Database accessor for concept related queries
+ */
 public class ConceptNetDAO {
 
 	public ConceptNetDAO() {
 		super();
 	}
 
-	public static boolean checkSRL(String start, String relation, String end) {
+	/**
+	 * Checks if the concept relation exists with the start word, relation, and
+	 * end word in the knowledge database
+	 * 
+	 * @param start
+	 *            the start word of the concept relation
+	 * @param relation
+	 *            the relation of the concept relation
+	 * @param end
+	 *            the end word of the concept relation
+	 * @return returns true if the concept relation exists
+	 */
+	public static boolean conceptExists(String start, String relation,
+			String end) {
 
 		String query = "select `conceptsFrom`.`concept`, `relations`.`relation`, `conceptsTo`.`concept` "
 				+ "from (select `id`, `concept` from `concepts`) as `conceptsFrom`,`relations` as `relations`, `concept_relations` as `concept_relations` "
@@ -60,6 +76,17 @@ public class ConceptNetDAO {
 
 	}
 
+	/**
+	 * Returns list of concept relations having the end param as the end word
+	 * and the relation param as the relation
+	 * 
+	 * @param end
+	 *            the end word of the concept relation
+	 * @param relation
+	 *            the relation of the concept relation
+	 * @return list of concept relations having the end param as the end word
+	 *         and the relation param as the relation
+	 */
 	public static List<Concept> getConceptsFrom(String end, String relation) {
 
 		String query = "select `concept_relations`.`id`, `conceptsFrom`.`concept`, `conceptsFromPOS`.`partOfSpeech`,  `relations`.`relation`,  `conceptsTo`.`concept`, `conceptsToPOS`.`partOfSpeech` "
@@ -108,6 +135,17 @@ public class ConceptNetDAO {
 
 	}
 
+	/**
+	 * Returns list of concept relations having the start param as the start
+	 * word and the relation param as the relation
+	 * 
+	 * @param start
+	 *            the start word of the concept relation
+	 * @param relation
+	 *            the relation of the concept relation
+	 * @return list of concept relations having the start param as the start
+	 *         word and the relation param as the relation
+	 */
 	public static List<Concept> getConceptsTo(String start, String relation) {
 
 		String query = "select `concept_relations`.`id`, `conceptsFrom`.`concept`, `conceptsFromPOS`.`partOfSpeech`,  `relations`.`relation`,  `conceptsTo`.`concept`, `conceptsToPOS`.`partOfSpeech` "
@@ -155,7 +193,14 @@ public class ConceptNetDAO {
 		return concepts;
 
 	}
-	
+
+	/**
+	 * Checks if the conflict word has relations in the knowledge database
+	 * 
+	 * @param conflict
+	 *            the word to be checked
+	 * @return returns true if the word has relations in the knowledge database
+	 */
 	public static boolean checkResolutionExists(String conflict) {
 		String query = "SELECT c1.concept AS lev1, c2.concept as lev2, c3.concept as lev3 "
 				+ "FROM concept_relations AS t1 "
@@ -165,12 +210,12 @@ public class ConceptNetDAO {
 				+ "LEFT JOIN concept_relations AS t3 ON t3.fromID = t2.toID "
 				+ "LEFT JOIN concepts AS c3 ON c3.id = t3.toID "
 				+ "WHERE t1.fromID in (SELECT id FROM CONCEPTS WHERE concept = ?)";
-		
+
 		Connection connection = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		boolean resolutionExist = false;
-		
+
 		try {
 
 			connection = MySQLConnector.getInstance().getConnection();
@@ -178,7 +223,7 @@ public class ConceptNetDAO {
 			ps.setString(1, conflict);
 			rs = ps.executeQuery();
 
-			if(rs.next()) {
+			if (rs.next()) {
 				resolutionExist = true;
 			}
 
@@ -198,10 +243,20 @@ public class ConceptNetDAO {
 		}
 
 		return resolutionExist;
-		
-		
+
 	}
 
+	/**
+	 * Checks if the conflict word has related to the resolution word within 4
+	 * hops
+	 * 
+	 * @param conflict
+	 *            the word to be checked
+	 * @param possibleResolution
+	 *            the resolution to be checked
+	 * @return returns true if the conflict word has related to the resolution
+	 *         word within 4 hops
+	 */
 	public static boolean checkFourHops(String conflict,
 			String possibleResolution) {
 

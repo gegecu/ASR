@@ -397,7 +397,7 @@ public class Extractor {
 
 	public static String getSRL(String text) {
 		for (String entityValue : SRL_ENTITY_LIST) {
-			if (ConceptNetDAO.checkSRL(text, "isA", entityValue)) {
+			if (ConceptNetDAO.conceptExists(text, "isA", entityValue)) {
 				return entityValue.toUpperCase();
 			}
 		}

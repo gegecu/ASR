@@ -10,8 +10,18 @@ import com.mysql.jdbc.Connection;
 
 import model.knowledge_base.MySQLConnector;
 
+/**
+ * Database accessor for data related queries
+ */
 public class DataDAO {
 
+	/**
+	 * Returns list of strings from the `data` table filtered by groupName
+	 * 
+	 * @param groupName
+	 *            the name of group
+	 * @return list of data strings
+	 */
 	public static String[] getData(String groupName) {
 
 		String query = "SELECT `data` "
