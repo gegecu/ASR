@@ -34,19 +34,14 @@ public class GeneralPromptAnswerChecker extends PromptAnswerChecker {
 
 		Map<String, String> corefMappingTemp = new HashMap();
 		
-		for(Map.Entry<String, String> coref: corefMapping.entrySet()) {
-			corefMappingTemp.put(coref.getValue(), coref.getKey());
-		}
-		
-		int countDuplicate = 0;
-
-		for (Map.Entry<String, String> corefTemp : corefMappingTemp.entrySet()) {
-			if (corefTemp.getKey().equals(corefTemp.getValue())) {
-				countDuplicate++;
+		for(Map.Entry<String, String> coref : corefMapping.entrySet()) {
+			if(!coref.getKey().equals(coref.getValue())) {
+				corefMappingTemp.put(coref.getValue(), coref.getKey());
 			}
 		}
+		
 
-		if (corefMappingTemp.size() - countDuplicate == 1) {
+		if (corefMappingTemp.size() == 1) {
 			return true;
 		}
 

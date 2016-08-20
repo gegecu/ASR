@@ -44,18 +44,16 @@ public class SpecialPromptAnswerChecker extends PromptAnswerChecker {
 		Map<String, String> corefMappingTemp = new HashMap();
 		
 		for(Map.Entry<String, String> coref : corefMapping.entrySet()) {
-			corefMappingTemp.put(coref.getValue(), coref.getKey());
-		}
-		
-		int countDuplicate = 0;
-		
-		for(Map.Entry<String, String> corefTemp: corefMappingTemp.entrySet()) {
-			if(corefTemp.getKey().equals(corefTemp.getValue())) {
-				countDuplicate++;
+			if(!coref.getKey().equals(coref.getValue())) {
+				corefMappingTemp.put(coref.getValue(), coref.getKey());
 			}
 		}
 		
-		if(corefMappingTemp.size() - countDuplicate == this.specialPromptData.getDoers().size()) {
+
+		
+		System.out.println(this.specialPromptData.getDoers().size());
+		
+		if(corefMappingTemp.size() == this.specialPromptData.getDoers().size()) {
 			return true;
 		}
 		
