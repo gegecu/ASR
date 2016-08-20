@@ -114,7 +114,7 @@ public class SpecialPromptGenerator {
 				directive = (doers.size() > 1) ? directive.replace("<mainverb>", "are") : directive.replace("<mainverb>", "is");
 				directive = directive.replace("<noun>", SurfaceRealizer.nounFixer(doers));
 				directive = directive.replace("<property>", property);
-				
+				this.specialPromptData.setDoers(doers);
 				if(history.contains(directive)) {
 					directive = null;
 				}
@@ -138,7 +138,7 @@ public class SpecialPromptGenerator {
 				directive = (doers.size() > 1) ? directive.replace("<mainverb>", "are") : directive.replace("<mainverb>", "is");
 				directive = directive.replace("<noun>", SurfaceRealizer.nounFixer(doers));
 				directive = directive.replace("<property>", property);
-				
+				this.specialPromptData.setDoers(doers);
 				if(history.contains(directive)) {
 					directive = null;
 				}
@@ -165,7 +165,7 @@ public class SpecialPromptGenerator {
 				directive = (doers.size() > 1) ? directive.replace("<mainverb>", "are") : directive.replace("<mainverb>", "is");
 				directive = directive.replace("<noun>", SurfaceRealizer.nounFixer(doers));
 				directive = (doers.size() == 1) ? directive.replace("<role>", SurfaceRealizer.determinerFixer(role.getId())) : directive.replace("<role>", SurfaceRealizer.pluralNoun(role));
-				
+				this.specialPromptData.setDoers(doers);
 				if(history.contains(directive)) {
 					directive = null;
 				}
@@ -191,7 +191,7 @@ public class SpecialPromptGenerator {
 				directive = (doers.size() > 1) ? directive.replace("<mainverb>", "are") : directive.replace("<mainverb>", "is");
 				directive = directive.replace("<noun>", SurfaceRealizer.nounFixer(doers));
 				directive = (doers.size() == 1) ? directive.replace("<role>", SurfaceRealizer.determinerFixer(role.getId())) : directive.replace("<role>", SurfaceRealizer.pluralNoun(role));
-				
+				this.specialPromptData.setDoers(doers);
 				if(history.contains(directive)) {
 					directive = null;
 				}
@@ -220,7 +220,7 @@ public class SpecialPromptGenerator {
 				directive = (doers.size() > 1) ? directive.replace("<minorverb>", "have") : directive.replace("<minorverb>", "has");
 				directive = directive.replace("<noun>", SurfaceRealizer.nounFixer(doers));
 				directive = directive.replace("<object>", SurfaceRealizer.determinerFixer(object.getId()));
-				
+				this.specialPromptData.setDoers(doers);
 				
 				if(history.contains(directive)) {
 					directive = null;
@@ -248,7 +248,7 @@ public class SpecialPromptGenerator {
 				directive = (doers.size() > 1) ? directive.replace("<minorverb>", "have") : directive.replace("<minorverb>", "has");
 				directive = directive.replace("<noun>", SurfaceRealizer.nounFixer(doers));
 				directive = directive.replace("<object>", SurfaceRealizer.determinerFixer(object.getId()));
-				
+				this.specialPromptData.setDoers(doers);
 				
 				if(history.contains(directive)) {
 					directive = null;
@@ -275,7 +275,7 @@ public class SpecialPromptGenerator {
 				directive = (doers.size() > 1) ? directive.replace("<mainverb>", "are") : directive.replace("<mainverb>", "is");
 				directive = directive.replace("<noun>", SurfaceRealizer.nounFixer(doers));
 				directive = (location.getIsCommon()) ? directive.replace("<location>", SurfaceRealizer.determinerFixer(location.getId())) : directive.replace("<location>", location.getId());
-				
+				this.specialPromptData.setDoers(doers);
 				
 				if(history.contains(directive)) {
 					directive = null;
@@ -302,7 +302,7 @@ public class SpecialPromptGenerator {
 				directive = (doers.size() > 1) ? directive.replace("<mainverb>", "are") : directive.replace("<mainverb>", "is");
 				directive = directive.replace("<noun>", SurfaceRealizer.nounFixer(doers));
 				directive = (location.getIsCommon()) ? directive.replace("<location>", SurfaceRealizer.determinerFixer(location.getId())) : directive.replace("<location>", location.getId());
-				
+				this.specialPromptData.setDoers(doers);
 				
 				if(history.contains(directive)) {
 					directive = null;
