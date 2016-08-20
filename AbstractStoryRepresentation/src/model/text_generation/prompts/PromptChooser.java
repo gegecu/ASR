@@ -21,8 +21,6 @@ import model.story_representation.AbstractStoryRepresentation;
 import model.story_representation.story_element.noun.Noun;
 import model.story_representation.story_element.noun.Noun.TypeOfNoun;
 import model.story_representation.story_element.story_sentence.Clause;
-import model.story_representation.story_element.story_sentence.Description;
-import model.story_representation.story_element.story_sentence.Event;
 import model.text_generation.TextGeneration;
 import model.text_generation.prompts.general.GeneralPromptAnswerChecker;
 import model.text_generation.prompts.general.GeneralPromptData;
@@ -36,41 +34,113 @@ import model.text_generation.prompts.specific.SpecificPromptGenerator;
 import model.text_understanding.Preprocessing;
 import model.utility.Randomizer;
 
+/**
+ * Used for choosing prompt to generate
+ */
 public class PromptChooser extends TextGeneration {
 
+	/**
+	 * Used to identify type of prompt
+	 */
 	public enum TypeOfPrompt {
 		GENERAL, SPECIFIC, SPECIAL;
 	}
 
 	private static Logger log = Logger.getLogger(PromptChooser.class.getName());
 
+	/**
+	 * Restricted nouns in general prompts
+	 */
 	private Set<String> restrictedInGeneral;
+	/**
+	 * Restricted nouns in specific prompts
+	 */
 	private Set<String> restrictedInSpecific;
+	/**
+	 * Current noun used in generation
+	 */
 	private String currentId;
+	/**
+	 * To track history of generated prompts
+	 */
 	private Queue<String> history;
+	/**
+	 * Set to true if answer to prompt is correct
+	 */
 	private boolean answeredCorrect;
+	/**
+	 * Stanford CoreNLP Pipeline
+	 */
 	private StanfordCoreNLP pipeline;
+	/**
+	 * Used to preprocess the story input
+	 */
 	private Preprocessing preprocess;
 	private boolean isLoop;
 
+	/**
+	 * Current prompt data
+	 */
 	private TypeOfPrompt currentPromptType;
+	/**
+	 * Current prompt generator
+	 */
 	private PromptGenerator currentPromptGenerator;
+	/**
+	 * Current prompt answer checker
+	 */
 	private PromptAnswerChecker currentPromptAnswerChecker;
 
+	/**
+	 * General prompt data
+	 */
 	private GeneralPromptData generalPromptData;
+	/**
+	 * General prompt answer checker
+	 */
 	private GeneralPromptAnswerChecker generalPromptAnswerChecker;
+	/**
+	 * General prompt generator
+	 */
 	private GeneralPromptGenerator generalPromptGenerator;
 
+	/**
+	 * Specific prompt data
+	 */
 	private SpecificPromptData specificPromptData;
-	private SpecificPromptGenerator specificPromptGenerator;
+	/**
+	 * Specific prompt answer checker
+	 */
 	private SpecificPromptAnswerChecker specificPromptAnswerChecker;
+	/**
+	 * Specific prompt generator
+	 */
+	private SpecificPromptGenerator specificPromptGenerator;
 
+	/**
+	 * Special prompt data
+	 */
 	private SpecialPromptData specialPromptData;
+	/**
+	 * Special prompt answer checker
+	 */
 	private SpecialPromptAnswerChecker specialPromptAnswerChecker;
+	/**
+	 * Special prompt generator
+	 */
 	private SpecialPromptGenerator specialPromptGenerator;
 
+	/**
+	 * History threshold size before deleting
+	 */
 	private int historySizeThreshold = 2;
 
+	/**
+	 * initializes the variables
+	 * 
+	 * @param asr
+	 *            the asr to set
+	 */
 	public PromptChooser(AbstractStoryRepresentation asr) {
 
 		super(asr);
@@ -103,6 +173,11 @@ public class PromptChooser extends TextGeneration {
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see model.text_generation.TextGeneration#generateText()
+	 */
 	@Override
 	public String generateText() {
 
@@ -153,30 +228,33 @@ public class PromptChooser extends TextGeneration {
 
 		} else {
 			// fix code prioritize event over description
-			List<Clause> clauses = new ArrayList();
-			clauses.addAll(asr.getCurrentStorySentence().getManyDescriptions().values());
-			clauses.addAll(asr.getCurrentStorySentence().getManyEvents().values());
-			
-			while(output == null && !clauses.isEmpty()) {
+			List<Clause> clauses = new ArrayList<>();
+			clauses.addAll(asr.getCurrentStorySentence().getManyDescriptions()
+					.values());
+			clauses.addAll(
+					asr.getCurrentStorySentence().getManyEvents().values());
+
+			while (output == null && !clauses.isEmpty()) {
 				int randomClause = Randomizer.random(1, clauses.size());
-				
-				output = specialPromptGenerator.generateText(clauses.remove(randomClause - 1));
+
+				output = specialPromptGenerator
+						.generateText(clauses.remove(randomClause - 1));
 				System.out.println(output);
 			}
-//			
-//			if(predicates.isEmpty()) {
-//				output = null;
-//			}
-//			
+			//			
+			//			if(predicates.isEmpty()) {
+			//				output = null;
+			//			}
+			//			
 			currentPromptType = TypeOfPrompt.SPECIAL;
-			
+
 			currentPromptAnswerChecker = specialPromptAnswerChecker;
 		}
 
-		if(output != null) {
+		if (output != null) {
 			history.add(output);
 		}
-		
+
 		if (history.size() >= historySizeThreshold) {
 			history.remove();
 		}
@@ -185,9 +263,14 @@ public class PromptChooser extends TextGeneration {
 
 	}
 
+	/**
+	 * @param input
+	 *            the story input / answer to the prompt
+	 * @return returns true if answer to prompt is correct
+	 */
 	public boolean checkAnswer(String input) {
 
-//		String temp = incompleteAnswer(input);
+		//		String temp = incompleteAnswer(input);
 		Noun noun = asr.getNoun(currentId);
 
 		answeredCorrect = false;
@@ -214,7 +297,7 @@ public class PromptChooser extends TextGeneration {
 						}
 						//isLoop = true;
 					}
-					
+
 					isLoop = true;
 
 				} else {
@@ -244,11 +327,10 @@ public class PromptChooser extends TextGeneration {
 
 		} else {
 			answeredCorrect = currentPromptAnswerChecker.checkAnswer(input);
-			
-			if(!answeredCorrect) {
+
+			if (!answeredCorrect) {
 				isLoop = true;
-			}
-			else {
+			} else {
 				isLoop = false;
 			}
 		}
@@ -257,91 +339,105 @@ public class PromptChooser extends TextGeneration {
 
 	}
 
+	/**
+	 * Tell prompt generator prompt was ignored to generate new prompt
+	 */
 	public void ignored() {
 		if (currentPromptType == TypeOfPrompt.SPECIFIC) {
 			specificPromptGenerator.setIsWrong(false);
 		}
 	}
 
+	/**
+	 * Tell chooser to stop loop
+	 */
 	public void stopLoop() {
 		this.isLoop = false;
 	}
 
+	/**
+	 * @return the isLoop
+	 */
 	public boolean getIsLoop() {
 		return this.isLoop;
 	}
 
+	/**
+	 * @param input
+	 *            the incomplete answer
+	 * @return completed answer
+	 */
 	public String incompleteAnswer(String input) {
-		
+
 		Annotation document;
 		List<CoreMap> sentences;
 
 		//annotate to check if one word answer
-		
-		if(currentPromptType == TypeOfPrompt.SPECIFIC) {
+
+		if (currentPromptType == TypeOfPrompt.SPECIFIC) {
 			document = new Annotation(input);
 			pipeline.annotate(document);
 			sentences = document.get(SentencesAnnotation.class);
 			for (CoreMap sentence : sentences) {
 				SemanticGraph dependencies = sentence
 						.get(CollapsedCCProcessedDependenciesAnnotation.class);
-	
+
 				List<TypedDependency> listDependencies = new ArrayList<TypedDependency>(
 						dependencies.typedDependencies());
-	
-				if (listDependencies.size() == 1 && listDependencies.get(0).equals("root")) {
-					
+
+				if (listDependencies.size() == 1
+						&& listDependencies.get(0).equals("root")) {
+
 					Noun noun = asr.getNoun(currentId);
-					
+
 					input = "";
-				
-					if(noun.getIsCommon()) {
+
+					if (noun.getIsCommon()) {
 						input += "The ";
 					}
-					
-					input += noun.getId() + " is "
-							+ listDependencies.get(0).dep().lemma().toLowerCase()
-							+ ".";
+
+					input += noun.getId() + " is " + listDependencies.get(0)
+							.dep().lemma().toLowerCase() + ".";
 				}
-	
+
 			}
 		}
-		
+
 		preprocess.preprocess(history.peek() + " " + input);
 		String temp = preprocess.getUpdatedString();
-		
+
 		String output = "";
-		
+
 		//annotate again to get updated string after correcting the one word answer
 		document = new Annotation(temp);
 		pipeline.annotate(document);
 		sentences = document.get(SentencesAnnotation.class);
 		//skip first sentence because it is the prompt
-		
-		int i = 1; 
-		
-		if(currentPromptType == TypeOfPrompt.SPECIFIC) {
-			if(specificPromptGenerator.isWrong()) {
+
+		int i = 1;
+
+		if (currentPromptType == TypeOfPrompt.SPECIFIC) {
+			if (specificPromptGenerator.isWrong()) {
 				// 2 sentences because there is additional sentence for example
 				i = 2;
 			}
 		}
-		
-		
-		
-		for(int counter = i ; counter < sentences.size(); counter++) {
+
+		for (int counter = i; counter < sentences.size(); counter++) {
 			String sentence = sentences.get(counter).toString();
-			
-			if(sentence.substring(sentence.length()-1).equals(".")) {
-				output += sentence.substring(0, 1).toUpperCase() + sentence.substring(1, sentence.length()-2) + sentence.substring(sentence.length()-1) + " "; 
-			}
-			else {
-				output += sentence.substring(0, 1).toUpperCase() + sentence.substring(1, sentence.length()) + " "; 
+
+			if (sentence.substring(sentence.length() - 1).equals(".")) {
+				output += sentence.substring(0, 1).toUpperCase()
+						+ sentence.substring(1, sentence.length() - 2)
+						+ sentence.substring(sentence.length() - 1) + " ";
+			} else {
+				output += sentence.substring(0, 1).toUpperCase()
+						+ sentence.substring(1, sentence.length()) + " ";
 			}
 		}
 
 		System.out.println(output);
-		
+
 		return output;
 
 	}
