@@ -49,14 +49,10 @@ public abstract class TextGeneration {
 					Noun noun = asr.getNoun(id);
 					int count = Utilities
 							.countLists(noun.getAttributes().values());
-					
 					for(Map.Entry<String, Map<String, Noun>> entry: noun.getReferences().entrySet()) {
 						count += entry.getValue().size();
 					}
-					
 					if (count < currThreshold) {
-						//System.out.println(id);
-						//result.add(noun.getId());
 						result.add(id);
 					}
 				}
@@ -71,10 +67,10 @@ public abstract class TextGeneration {
 						for(Map.Entry<String, Map<String, Noun>> entry: noun.getReferences().entrySet()) {
 							count += entry.getValue().size();
 						}
-						
-						if (count < currThreshold)
-							//result.add(noun.getId());
+						System.out.println(count);
+						if (count < currThreshold) {
 							result.add(id);
+						}
 					}
 				}
 
