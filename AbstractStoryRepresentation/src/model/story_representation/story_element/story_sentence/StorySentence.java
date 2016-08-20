@@ -31,30 +31,65 @@ public class StorySentence {
 		this.description = new HashMap<String, Description>();
 	}
 
+	/**
+	 * Adds the attributeId, description to description
+	 * 
+	 * @param attributeId
+	 *            the key to use
+	 * @param description
+	 *            the description to add
+	 */
 	public void addDescription(String attributeId, Description description) {
 		this.description.put(attributeId, description);
 	}
 
+	/**
+	 * @param attributeId
+	 *            the key to use
+	 * @return Description from description using attributeId as the key
+	 */
 	public Description getDescription(String attributeId) {
 		return this.description.get(attributeId);
 	}
 
+	/**
+	 * @return the description
+	 */
 	public Map<String, Description> getManyDescriptions() {
 		return this.description;
 	}
 
+	/**
+	 * Adds the id, event to events
+	 * 
+	 * @param id
+	 *            the key to use
+	 * @param event
+	 *            the event to add
+	 */
 	public void addEvent(String id, Event event) {
 		this.events.put(id, event);
 	}
 
+	/**
+	 * @param id
+	 *            the key to use
+	 * @return Event from events using id as the key
+	 */
 	public Event getEvent(String id) {
 		return this.events.get(id);
 	}
 
+	/**
+	 * @return the events
+	 */
 	public Map<String, Event> getManyEvents() {
 		return this.events;
 	}
 
+	/**
+	 * @return returns true if events size > 0
+	 */
 	public boolean hasValidEvent() {
 		if (this.events.size() >= 1) {
 			return true;
@@ -62,14 +97,17 @@ public class StorySentence {
 		return false;
 	}
 
+	/**
+	 * @return the events size
+	 */
 	public int getEventsCount() {
 		return this.events.size();
 	}
 
 	/**
+	 * Returns list of position ids of nouns in the story sentence
 	 * 
-	 * 
-	 * @return list of surface texts of nouns
+	 * @return list of position ids of nouns
 	 */
 	public List<String> getAllNouns() {
 
