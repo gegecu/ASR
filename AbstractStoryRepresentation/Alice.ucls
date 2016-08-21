@@ -1,0 +1,1473 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<class-diagram version="1.1.10" icons="true" always-add-relationships="false" generalizations="true" realizations="true" 
+  associations="true" dependencies="true" nesting-relationships="true" router="FAN">  
+  <class id="1" language="java" name="model.text_understanding.extractors.AuxpassPropertyExtractor" 
+    project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/text_understanding/extractors/AuxpassPropertyExtractor.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="6904" y="1238"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="2" language="java" name="model.text_understanding.extractors.AndConjunctionExtractorVB" 
+    project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/text_understanding/extractors/AndConjunctionExtractorVB.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="6932" y="428"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="3" language="java" name="model.text_understanding.extractors.negation.NegationExtractorNN" 
+    project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/text_understanding/extractors/negation/NegationExtractorNN.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="7921" y="2618"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="4" language="java" name="model.text_understanding.extractors.XcompPropertyExtractor" 
+    project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/text_understanding/extractors/XcompPropertyExtractor.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="6871" y="1648"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="5" language="java" name="model.text_understanding.extractors.AdvmodPropertyExtractor" 
+    project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/text_understanding/extractors/AdvmodPropertyExtractor.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="6853" y="1027"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="6" language="java" name="model.text_understanding.extractors.negation.NegationExtractorVB" 
+    project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/text_understanding/extractors/negation/NegationExtractorVB.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="7938" y="2967"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="7" language="java" name="model.text_understanding.extractors.AmodPropertyExtractor" 
+    project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/text_understanding/extractors/AmodPropertyExtractor.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="6848" y="808"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="8" language="java" name="model.text_understanding.extractors.DirectObjectExtractor" 
+    project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/text_understanding/extractors/DirectObjectExtractor.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="7023" y="2078"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="9" language="java" name="model.text_understanding.extractors.AndConjunctionExtractorNNJJRB" 
+    project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/text_understanding/extractors/AndConjunctionExtractorNNJJRB.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="6889" y="2318"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="10" language="java" name="model.text_understanding.extractors.DoerExtractor" 
+    project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/text_understanding/extractors/DoerExtractor.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="6985" y="2518"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="11" language="java" name="model.text_understanding.extractors.NegationExtractor" 
+    project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/text_understanding/extractors/NegationExtractor.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="6961" y="2738"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="12" language="java" name="model.text_understanding.extractors.CompoundExtractor" 
+    project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/text_understanding/extractors/CompoundExtractor.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="6874" y="2938"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="13" language="java" name="model.text_understanding.extractors.LocationExtractor" 
+    project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/text_understanding/extractors/LocationExtractor.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="6898" y="198"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="14" language="java" name="model.text_understanding.extractors.ReceiverExtractor" 
+    project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/text_understanding/extractors/ReceiverExtractor.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="6856" y="628"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="15" language="java" name="model.text_understanding.extractors.CompActionExtractor" 
+    project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/text_understanding/extractors/CompActionExtractor.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="6925" y="1428"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="16" language="java" name="model.text_understanding.extractors.PossesionExtractor" 
+    project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/text_understanding/extractors/PossesionExtractor.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="6876" y="1868"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="17" language="java" name="model.text_understanding.extractors.negation.NegationExtractorJJRB" 
+    project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/text_understanding/extractors/negation/NegationExtractorJJRB.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="7944" y="2768"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="18" language="java" name="model.text_understanding.Extractor" project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/text_understanding/Extractor.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="5798" y="1181"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="19" language="java" name="model.story_representation.AbstractStoryRepresentation" 
+    project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/story_representation/AbstractStoryRepresentation.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="4804" y="1179"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="20" language="java" name="model.story_representation.Checklist" project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/story_representation/Checklist.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="4803" y="679"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="21" language="java" name="model.text_understanding.Preprocessing" project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/text_understanding/Preprocessing.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="5200" y="1519"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="22" language="java" name="model.text_understanding.TextUnderstanding" project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/text_understanding/TextUnderstanding.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="5242" y="1173"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="23" language="java" name="model.text_generation.TextGeneration" project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/text_generation/TextGeneration.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="4346" y="1183"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="24" language="java" name="model.text_generation.StorySegmentGenerator" 
+    project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/text_generation/StorySegmentGenerator.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="3902" y="925"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <enumeration id="25" language="java" name="model.text_generation.prompts.PromptChooser.TypeOfPrompt" 
+    project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/text_generation/prompts/PromptChooser.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="3596" y="1262"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </enumeration>  
+  <class id="26" language="java" name="model.text_generation.prompts.PromptChooser" 
+    project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/text_generation/prompts/PromptChooser.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="3886" y="1504"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="27" language="java" name="model.knowledge_base.template.TemplateDAO" project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/knowledge_base/template/TemplateDAO.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="3238" y="1154"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="28" language="java" name="model.knowledge_base.data.DataDAO" project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/knowledge_base/data/DataDAO.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="5943" y="817"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="29" language="java" name="model.text_generation.prompts.general.GeneralPromptGenerator" 
+    project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/text_generation/prompts/general/GeneralPromptGenerator.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="2633" y="1343"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="30" language="java" name="model.text_generation.prompts.special.SpecialPromptGenerator" 
+    project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/text_generation/prompts/special/SpecialPromptGenerator.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="2514" y="946"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="31" language="java" name="model.text_generation.prompts.specific.SpecificPromptGenerator" 
+    project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/text_generation/prompts/specific/SpecificPromptGenerator.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="2529" y="1626"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="32" language="java" name="model.text_generation.prompts.general.GeneralPromptAnswerChecker" 
+    project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/text_generation/prompts/general/GeneralPromptAnswerChecker.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="2656" y="1894"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="33" language="java" name="model.text_generation.prompts.specific.SpecificPromptAnswerChecker" 
+    project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/text_generation/prompts/specific/SpecificPromptAnswerChecker.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="2661" y="2045"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="34" language="java" name="model.text_generation.prompts.special.SpecialPromptAnswerChecker" 
+    project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/text_generation/prompts/special/SpecialPromptAnswerChecker.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="2588" y="2210"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="35" language="java" name="model.text_generation.prompts.PromptAnswerChecker" 
+    project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/text_generation/prompts/PromptAnswerChecker.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="3174" y="1984"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="36" language="java" name="model.text_generation.prompts.PromptGenerator" 
+    project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/text_generation/prompts/PromptGenerator.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="3244" y="1480"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="37" language="java" name="model.knowledge_base.topic.SpecificTopicDAO" 
+    project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/knowledge_base/topic/SpecificTopicDAO.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="2930" y="1686"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="38" language="java" name="model.story_representation.story_element.noun.Noun" 
+    project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/story_representation/story_element/noun/Noun.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="4322" y="1968"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <enumeration id="39" language="java" name="model.story_representation.story_element.noun.Noun.TypeOfNoun" 
+    project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/story_representation/story_element/noun/Noun.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="3965" y="2015"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </enumeration>  
+  <class id="40" language="java" name="model.story_representation.story_element.noun.Object" 
+    project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/story_representation/story_element/noun/Object.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="3945" y="2296"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="41" language="java" name="model.story_representation.story_element.noun.Unknown" 
+    project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/story_representation/story_element/noun/Unknown.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="4195" y="2296"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="42" language="java" name="model.story_representation.story_element.noun.Character" 
+    project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/story_representation/story_element/noun/Character.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="4445" y="2296"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="43" language="java" name="model.story_representation.story_element.noun.Location" 
+    project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/story_representation/story_element/noun/Location.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="4695" y="2296"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="44" language="java" name="model.story_representation.story_element.story_sentence.Clause" 
+    project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/story_representation/story_element/story_sentence/Clause.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="5336" y="2334"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="45" language="java" name="model.story_representation.story_element.story_sentence.Description" 
+    project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/story_representation/story_element/story_sentence/Description.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="5311" y="2700"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="46" language="java" name="model.story_representation.story_element.story_sentence.StorySentence" 
+    project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/story_representation/story_element/story_sentence/StorySentence.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="4821" y="1966"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="47" language="java" name="model.story_representation.story_element.story_sentence.Verb" 
+    project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/story_representation/story_element/story_sentence/Verb.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="4431" y="2724"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="48" language="java" name="model.story_representation.story_element.story_sentence.Event" 
+    project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/story_representation/story_element/story_sentence/Event.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="4920" y="2724"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="49" language="java" name="model.text_generation.prompts.PromptData" project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/text_generation/prompts/PromptData.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1310" y="1643"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="50" language="java" name="model.text_generation.prompts.specific.SpecificPromptData" 
+    project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/text_generation/prompts/specific/SpecificPromptData.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1800" y="1954"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="51" language="java" name="model.text_generation.prompts.special.SpecialPromptData" 
+    project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/text_generation/prompts/special/SpecialPromptData.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1801" y="1733"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="52" language="java" name="model.text_generation.prompts.general.GeneralPromptData" 
+    project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/text_generation/prompts/general/GeneralPromptData.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1794" y="1575"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="53" language="java" name="model.utility.Randomizer" project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/utility/Randomizer.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="3210" y="1300"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="54" language="java" name="model.utility.PartOfSpeechComparator" project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/utility/PartOfSpeechComparator.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="5842" y="1636"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="55" language="java" name="model.utility.TypedDependencyComparator" project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/utility/TypedDependencyComparator.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="5546" y="1632"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="56" language="java" name="model.utility.SurfaceRealizer" project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/utility/SurfaceRealizer.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="3262" y="1692"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="57" language="java" name="model.story_representation.story_element.SpecialClause" 
+    project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/story_representation/story_element/SpecialClause.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="5130" y="1954"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="58" language="java" name="model.knowledge_base.senticnet.SenticNetParser" 
+    project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/knowledge_base/senticnet/SenticNetParser.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="5204" y="604"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="59" language="java" name="model.instance.CRFClassifierInstance" project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/instance/CRFClassifierInstance.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="5490" y="382"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="60" language="java" name="model.instance.StanfordCoreNLPInstance" project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/instance/StanfordCoreNLPInstance.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="5703" y="384"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="61" language="java" name="model.instance.DictionariesInstance" project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/instance/DictionariesInstance.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="5898" y="378"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="62" language="java" name="model.instance.SenticNetParserInstance" project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/instance/SenticNetParserInstance.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="5222" y="381"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="63" language="java" name="edu.stanford.nlp.pipeline.StanfordCoreNLP" project="AbstractStoryRepresentation" 
+    file="C:/Users/Hans/.m2/repository/edu/stanford/nlp/stanford-corenlp/3.5.2/stanford-corenlp-3.5.2.jar" binary="true" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="5696" y="576"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="true"/>    
+    </display>  
+  </class>  
+  <class id="64" language="java" name="edu.stanford.nlp.dcoref.Dictionaries" project="AbstractStoryRepresentation" 
+    file="C:/Users/Hans/.m2/repository/edu/stanford/nlp/stanford-corenlp/3.5.2/stanford-corenlp-3.5.2.jar" binary="true" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="5884" y="580"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="true"/>    
+    </display>  
+  </class>  
+  <class id="65" language="java" name="edu.stanford.nlp.ie.crf.CRFClassifier" project="AbstractStoryRepresentation" 
+    file="C:/Users/Hans/.m2/repository/edu/stanford/nlp/stanford-corenlp/3.5.2/stanford-corenlp-3.5.2.jar" binary="true" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="5490" y="574"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="true"/>    
+    </display>  
+  </class>  
+  <class id="66" language="java" name="model.knowledge_base.conceptnet.Concept" project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/knowledge_base/conceptnet/Concept.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="3140" y="758"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="67" language="java" name="model.knowledge_base.conceptnet.ConceptNetDAO" 
+    project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/knowledge_base/conceptnet/ConceptNetDAO.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="3464" y="860"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="68" language="java" name="model.knowledge_base.MySQLConnector" project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/knowledge_base/MySQLConnector.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="4351" y="733"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="69" language="java" name="model.story_database.StoryDAO" project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/story_database/StoryDAO.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="4006" y="480"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="70" language="java" name="model.story_database.Story" project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/story_database/Story.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="3726" y="484"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="71" language="java" name="model.text_generation.Utilities" project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/text_generation/Utilities.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="4346" y="1582"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="72" language="java" name="model.knowledge_base.senticnet.ConceptParser" 
+    project="AbstractStoryRepresentation" 
+    file="/AbstractStoryRepresentation/src/model/knowledge_base/senticnet/ConceptParser.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="6226" y="1624"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <dependency id="73">    
+    <end type="SOURCE" refId="24"/>    
+    <end type="TARGET" refId="27"/>  
+  </dependency>  
+  <generalization id="74">    
+    <end type="SOURCE" refId="33"/>    
+    <end type="TARGET" refId="35"/>  
+  </generalization>  
+  <association id="75">    
+    <end type="SOURCE" refId="22" navigable="false">      
+      <attribute id="76" name="preprocessingModule"/>      
+      <multiplicity id="77" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="21" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <generalization id="78">    
+    <end type="SOURCE" refId="41"/>    
+    <end type="TARGET" refId="38"/>  
+  </generalization>  
+  <dependency id="79">    
+    <end type="SOURCE" refId="29"/>    
+    <end type="TARGET" refId="27"/>  
+  </dependency>  
+  <dependency id="80">    
+    <end type="SOURCE" refId="18"/>    
+    <end type="TARGET" refId="54"/>  
+  </dependency>  
+  <dependency id="81">    
+    <end type="SOURCE" refId="11"/>    
+    <end type="TARGET" refId="17"/>  
+  </dependency>  
+  <association id="82">    
+    <end type="SOURCE" refId="36" navigable="false">      
+      <attribute id="83" name="pipeline"/>      
+      <multiplicity id="84" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="63" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="85">    
+    <end type="SOURCE" refId="62" navigable="false">      
+      <attribute id="86" name="senticNetParser"/>      
+      <multiplicity id="87" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="58" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="88">    
+    <end type="SOURCE" refId="19" navigable="false">      
+      <attribute id="89" name="resolution"/>      
+      <multiplicity id="90" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="57" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <dependency id="91">    
+    <end type="SOURCE" refId="18"/>    
+    <end type="TARGET" refId="16"/>  
+  </dependency>  
+  <dependency id="92">    
+    <end type="SOURCE" refId="71"/>    
+    <end type="TARGET" refId="19"/>  
+  </dependency>  
+  <association id="93">    
+    <end type="SOURCE" refId="29" navigable="false">      
+      <attribute id="94" name="generalPromptData"/>      
+      <multiplicity id="95" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="52" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <generalization id="96">    
+    <end type="SOURCE" refId="42"/>    
+    <end type="TARGET" refId="38"/>  
+  </generalization>  
+  <association id="97">    
+    <end type="SOURCE" refId="18" navigable="false">      
+      <attribute id="98" name="dictionary"/>      
+      <multiplicity id="99" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="64" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <dependency id="100">    
+    <end type="SOURCE" refId="18"/>    
+    <end type="TARGET" refId="5"/>  
+  </dependency>  
+  <dependency id="101">    
+    <end type="SOURCE" refId="35"/>    
+    <end type="TARGET" refId="55"/>  
+  </dependency>  
+  <dependency id="102">    
+    <end type="SOURCE" refId="18"/>    
+    <end type="TARGET" refId="55"/>  
+  </dependency>  
+  <generalization id="103">    
+    <end type="SOURCE" refId="51"/>    
+    <end type="TARGET" refId="49"/>  
+  </generalization>  
+  <association id="104">    
+    <end type="SOURCE" refId="18" navigable="false">      
+      <attribute id="105" name="cp"/>      
+      <multiplicity id="106" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="72" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="107">    
+    <end type="SOURCE" refId="20" navigable="false">      
+      <attribute id="108" name="asr"/>      
+      <multiplicity id="109" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="19" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <dependency id="110">    
+    <end type="SOURCE" refId="18"/>    
+    <end type="TARGET" refId="1"/>  
+  </dependency>  
+  <association id="111">    
+    <end type="SOURCE" refId="26" navigable="false">      
+      <attribute id="112" name="currentPromptType"/>      
+      <multiplicity id="113" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="25" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <dependency id="114">    
+    <end type="SOURCE" refId="30"/>    
+    <end type="TARGET" refId="53"/>  
+  </dependency>  
+  <dependency id="115">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="72"/>  
+  </dependency>  
+  <dependency id="116">    
+    <end type="SOURCE" refId="13"/>    
+    <end type="TARGET" refId="72"/>  
+  </dependency>  
+  <dependency id="117">    
+    <end type="SOURCE" refId="11"/>    
+    <end type="TARGET" refId="72"/>  
+  </dependency>  
+  <association id="118">    
+    <end type="SOURCE" refId="35" navigable="false">      
+      <attribute id="119" name="pipeline"/>      
+      <multiplicity id="120" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="63" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <dependency id="121">    
+    <end type="SOURCE" refId="33"/>    
+    <end type="TARGET" refId="67"/>  
+  </dependency>  
+  <dependency id="122">    
+    <end type="SOURCE" refId="18"/>    
+    <end type="TARGET" refId="7"/>  
+  </dependency>  
+  <association id="123">    
+    <end type="SOURCE" refId="46" navigable="false">      
+      <attribute id="124" name="events"/>      
+      <multiplicity id="125" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="48" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="126">    
+    <end type="SOURCE" refId="26" navigable="false">      
+      <attribute id="127" name="pipeline"/>      
+      <multiplicity id="128" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="63" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <dependency id="129">    
+    <end type="SOURCE" refId="17"/>    
+    <end type="TARGET" refId="72"/>  
+  </dependency>  
+  <dependency id="130">    
+    <end type="SOURCE" refId="18"/>    
+    <end type="TARGET" refId="10"/>  
+  </dependency>  
+  <dependency id="131">    
+    <end type="SOURCE" refId="5"/>    
+    <end type="TARGET" refId="72"/>  
+  </dependency>  
+  <association id="132">    
+    <end type="SOURCE" refId="61" navigable="false">      
+      <attribute id="133" name="dictionaries"/>      
+      <multiplicity id="134" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="64" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="135">    
+    <end type="SOURCE" refId="5" navigable="false">      
+      <attribute id="136" name="dictionary"/>      
+      <multiplicity id="137" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="64" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="138">    
+    <bendpoint x="2268" y="1888"/>    
+    <end type="SOURCE" refId="34" navigable="false">      
+      <attribute id="139" name="specialPromptData"/>      
+      <multiplicity id="140" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="51" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <generalization id="141">    
+    <end type="SOURCE" refId="52"/>    
+    <end type="TARGET" refId="49"/>  
+  </generalization>  
+  <association id="142">    
+    <end type="SOURCE" refId="18" navigable="false">      
+      <attribute id="143" name="classifier"/>      
+      <multiplicity id="144" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="65" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="145">    
+    <end type="SOURCE" refId="18" navigable="false">      
+      <attribute id="146" name="pipeline"/>      
+      <multiplicity id="147" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="63" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <dependency id="148">    
+    <end type="SOURCE" refId="23"/>    
+    <end type="TARGET" refId="71"/>  
+  </dependency>  
+  <dependency id="149">    
+    <end type="SOURCE" refId="24"/>    
+    <end type="TARGET" refId="56"/>  
+  </dependency>  
+  <dependency id="150">    
+    <end type="SOURCE" refId="1"/>    
+    <end type="TARGET" refId="72"/>  
+  </dependency>  
+  <dependency id="151">    
+    <end type="SOURCE" refId="24"/>    
+    <end type="TARGET" refId="67"/>  
+  </dependency>  
+  <dependency id="152">    
+    <end type="SOURCE" refId="71"/>    
+    <end type="TARGET" refId="38"/>  
+  </dependency>  
+  <dependency id="153">    
+    <end type="SOURCE" refId="18"/>    
+    <end type="TARGET" refId="67"/>  
+  </dependency>  
+  <association id="154">    
+    <end type="SOURCE" refId="68" navigable="false">      
+      <attribute id="155" name="db"/>      
+      <multiplicity id="156" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="68" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="157">    
+    <end type="SOURCE" refId="38" navigable="false">      
+      <attribute id="158" name="type"/>      
+      <multiplicity id="159" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="39" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="160">    
+    <end type="SOURCE" refId="32" navigable="false">      
+      <attribute id="161" name="generalPromptData"/>      
+      <multiplicity id="162" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="52" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="163">    
+    <end type="SOURCE" refId="26" navigable="false">      
+      <attribute id="164" name="currentPromptGenerator"/>      
+      <multiplicity id="165" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="36" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <dependency id="166">    
+    <end type="SOURCE" refId="69"/>    
+    <end type="TARGET" refId="70"/>  
+  </dependency>  
+  <dependency id="167">    
+    <end type="SOURCE" refId="26"/>    
+    <end type="TARGET" refId="19"/>  
+  </dependency>  
+  <dependency id="168">    
+    <end type="SOURCE" refId="30"/>    
+    <end type="TARGET" refId="56"/>  
+  </dependency>  
+  <dependency id="169">    
+    <end type="SOURCE" refId="24"/>    
+    <end type="TARGET" refId="71"/>  
+  </dependency>  
+  <dependency id="170">    
+    <end type="SOURCE" refId="16"/>    
+    <end type="TARGET" refId="72"/>  
+  </dependency>  
+  <dependency id="171">    
+    <end type="SOURCE" refId="11"/>    
+    <end type="TARGET" refId="6"/>  
+  </dependency>  
+  <dependency id="172">    
+    <end type="SOURCE" refId="24"/>    
+    <end type="TARGET" refId="53"/>  
+  </dependency>  
+  <association id="173">    
+    <end type="SOURCE" refId="48" navigable="false">      
+      <attribute id="174" name="verb"/>      
+      <multiplicity id="175" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="47" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="176">    
+    <end type="SOURCE" refId="35" navigable="false">      
+      <attribute id="177" name="preprocess"/>      
+      <multiplicity id="178" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="21" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <dependency id="179">    
+    <end type="SOURCE" refId="56"/>    
+    <end type="TARGET" refId="38"/>  
+  </dependency>  
+  <dependency id="180">    
+    <end type="SOURCE" refId="19"/>    
+    <end type="TARGET" refId="46"/>  
+  </dependency>  
+  <generalization id="181">    
+    <end type="SOURCE" refId="29"/>    
+    <end type="TARGET" refId="36"/>  
+  </generalization>  
+  <dependency id="182">    
+    <end type="SOURCE" refId="31"/>    
+    <end type="TARGET" refId="37"/>  
+  </dependency>  
+  <association id="183">    
+    <end type="SOURCE" refId="48" navigable="false">      
+      <attribute id="184" name="receivers"/>      
+      <multiplicity id="185" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="38" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <dependency id="186">    
+    <end type="SOURCE" refId="18"/>    
+    <end type="TARGET" refId="8"/>  
+  </dependency>  
+  <dependency id="187">    
+    <end type="SOURCE" refId="37"/>    
+    <end type="TARGET" refId="68"/>  
+  </dependency>  
+  <association id="188">    
+    <end type="SOURCE" refId="57" navigable="false">      
+      <attribute id="189" name="clause"/>      
+      <multiplicity id="190" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="44" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <dependency id="191">    
+    <end type="SOURCE" refId="22"/>    
+    <end type="TARGET" refId="67"/>  
+  </dependency>  
+  <dependency id="192">    
+    <end type="SOURCE" refId="18"/>    
+    <end type="TARGET" refId="14"/>  
+  </dependency>  
+  <dependency id="193">    
+    <end type="SOURCE" refId="67"/>    
+    <end type="TARGET" refId="66"/>  
+  </dependency>  
+  <dependency id="194">    
+    <end type="SOURCE" refId="7"/>    
+    <end type="TARGET" refId="72"/>  
+  </dependency>  
+  <association id="195">    
+    <end type="SOURCE" refId="59" navigable="false">      
+      <attribute id="196" name="crfClassifier"/>      
+      <multiplicity id="197" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="65" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <dependency id="198">    
+    <end type="SOURCE" refId="6"/>    
+    <end type="TARGET" refId="72"/>  
+  </dependency>  
+  <association id="199">    
+    <end type="SOURCE" refId="19" navigable="false">      
+      <attribute id="200" name="nounsMap"/>      
+      <multiplicity id="201" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="38" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <generalization id="202">    
+    <end type="SOURCE" refId="45"/>    
+    <end type="TARGET" refId="44"/>  
+  </generalization>  
+  <dependency id="203">    
+    <end type="SOURCE" refId="18"/>    
+    <end type="TARGET" refId="11"/>  
+  </dependency>  
+  <dependency id="204">    
+    <end type="SOURCE" refId="18"/>    
+    <end type="TARGET" refId="28"/>  
+  </dependency>  
+  <dependency id="205">    
+    <end type="SOURCE" refId="29"/>    
+    <end type="TARGET" refId="53"/>  
+  </dependency>  
+  <association id="206">    
+    <end type="SOURCE" refId="22" navigable="false">      
+      <attribute id="207" name="snp"/>      
+      <multiplicity id="208" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="58" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <dependency id="209">    
+    <end type="SOURCE" refId="11"/>    
+    <end type="TARGET" refId="3"/>  
+  </dependency>  
+  <generalization id="210">    
+    <end type="SOURCE" refId="31"/>    
+    <end type="TARGET" refId="36"/>  
+  </generalization>  
+  <dependency id="211">    
+    <end type="SOURCE" refId="28"/>    
+    <end type="TARGET" refId="68"/>  
+  </dependency>  
+  <dependency id="212">    
+    <end type="SOURCE" refId="71"/>    
+    <end type="TARGET" refId="39"/>  
+  </dependency>  
+  <dependency id="213">    
+    <end type="SOURCE" refId="14"/>    
+    <end type="TARGET" refId="72"/>  
+  </dependency>  
+  <association id="214">    
+    <end type="SOURCE" refId="19" navigable="false">      
+      <attribute id="215" name="conflict"/>      
+      <multiplicity id="216" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="57" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <dependency id="217">    
+    <end type="SOURCE" refId="8"/>    
+    <end type="TARGET" refId="72"/>  
+  </dependency>  
+  <dependency id="218">    
+    <end type="SOURCE" refId="29"/>    
+    <end type="TARGET" refId="56"/>  
+  </dependency>  
+  <dependency id="219">    
+    <end type="SOURCE" refId="18"/>    
+    <end type="TARGET" refId="2"/>  
+  </dependency>  
+  <association id="220">    
+    <end type="SOURCE" refId="60" navigable="false">      
+      <attribute id="221" name="pipeline"/>      
+      <multiplicity id="222" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="63" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="223">    
+    <end type="SOURCE" refId="21" navigable="false">      
+      <attribute id="224" name="pipeline"/>      
+      <multiplicity id="225" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="63" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="226">    
+    <end type="SOURCE" refId="48" navigable="false">      
+      <attribute id="227" name="directObjects"/>      
+      <multiplicity id="228" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="38" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <dependency id="229">    
+    <end type="SOURCE" refId="30"/>    
+    <end type="TARGET" refId="27"/>  
+  </dependency>  
+  <association id="230">    
+    <end type="SOURCE" refId="22" navigable="false">      
+      <attribute id="231" name="asr"/>      
+      <multiplicity id="232" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="19" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="233">    
+    <end type="SOURCE" refId="33" navigable="false">      
+      <attribute id="234" name="specificPromptData"/>      
+      <multiplicity id="235" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="50" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <generalization id="236">    
+    <end type="SOURCE" refId="43"/>    
+    <end type="TARGET" refId="38"/>  
+  </generalization>  
+  <dependency id="237">    
+    <end type="SOURCE" refId="69"/>    
+    <end type="TARGET" refId="68"/>  
+  </dependency>  
+  <dependency id="238">    
+    <end type="SOURCE" refId="31"/>    
+    <end type="TARGET" refId="67"/>  
+  </dependency>  
+  <dependency id="239">    
+    <end type="SOURCE" refId="18"/>    
+    <end type="TARGET" refId="13"/>  
+  </dependency>  
+  <dependency id="240">    
+    <end type="SOURCE" refId="26"/>    
+    <end type="TARGET" refId="53"/>  
+  </dependency>  
+  <dependency id="241">    
+    <end type="SOURCE" refId="27"/>    
+    <end type="TARGET" refId="68"/>  
+  </dependency>  
+  <generalization id="242">    
+    <end type="SOURCE" refId="40"/>    
+    <end type="TARGET" refId="38"/>  
+  </generalization>  
+  <association id="243">    
+    <end type="SOURCE" refId="26" navigable="false">      
+      <attribute id="244" name="currentPromptAnswerChecker"/>      
+      <multiplicity id="245" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="35" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <dependency id="246">    
+    <end type="SOURCE" refId="10"/>    
+    <end type="TARGET" refId="72"/>  
+  </dependency>  
+  <generalization id="247">    
+    <end type="SOURCE" refId="32"/>    
+    <end type="TARGET" refId="35"/>  
+  </generalization>  
+  <dependency id="248">    
+    <end type="SOURCE" refId="71"/>    
+    <end type="TARGET" refId="43"/>  
+  </dependency>  
+  <association id="249">    
+    <bendpoint x="1988" y="1720"/>    
+    <end type="SOURCE" refId="30" navigable="false">      
+      <attribute id="250" name="specialPromptData"/>      
+      <multiplicity id="251" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="51" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="252">    
+    <end type="SOURCE" refId="23" navigable="false">      
+      <attribute id="253" name="asr"/>      
+      <multiplicity id="254" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="19" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="255">    
+    <end type="SOURCE" refId="22" navigable="false">      
+      <attribute id="256" name="extractionModule"/>      
+      <multiplicity id="257" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="18" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <dependency id="258">    
+    <end type="SOURCE" refId="67"/>    
+    <end type="TARGET" refId="68"/>  
+  </dependency>  
+  <dependency id="259">    
+    <end type="SOURCE" refId="18"/>    
+    <end type="TARGET" refId="4"/>  
+  </dependency>  
+  <dependency id="260">    
+    <end type="SOURCE" refId="15"/>    
+    <end type="TARGET" refId="72"/>  
+  </dependency>  
+  <association id="261">    
+    <end type="SOURCE" refId="48" navigable="false">      
+      <attribute id="262" name="locations"/>      
+      <multiplicity id="263" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="38" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="264">    
+    <end type="SOURCE" refId="31" navigable="false">      
+      <attribute id="265" name="specificPromptData"/>      
+      <multiplicity id="266" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="50" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <dependency id="267">    
+    <end type="SOURCE" refId="9"/>    
+    <end type="TARGET" refId="72"/>  
+  </dependency>  
+  <dependency id="268">    
+    <end type="SOURCE" refId="18"/>    
+    <end type="TARGET" refId="12"/>  
+  </dependency>  
+  <association id="269">    
+    <end type="SOURCE" refId="26" navigable="false">      
+      <attribute id="270" name="preprocess"/>      
+      <multiplicity id="271" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="21" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <generalization id="272">    
+    <end type="SOURCE" refId="26"/>    
+    <end type="TARGET" refId="23"/>  
+  </generalization>  
+  <dependency id="273">    
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="72"/>  
+  </dependency>  
+  <dependency id="274">    
+    <end type="SOURCE" refId="31"/>    
+    <end type="TARGET" refId="66"/>  
+  </dependency>  
+  <dependency id="275">    
+    <end type="SOURCE" refId="71"/>    
+    <end type="TARGET" refId="46"/>  
+  </dependency>  
+  <generalization id="276">    
+    <end type="SOURCE" refId="48"/>    
+    <end type="TARGET" refId="44"/>  
+  </generalization>  
+  <association id="277">    
+    <end type="SOURCE" refId="46" navigable="false">      
+      <attribute id="278" name="description"/>      
+      <multiplicity id="279" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="45" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <dependency id="280">    
+    <end type="SOURCE" refId="24"/>    
+    <end type="TARGET" refId="66"/>  
+  </dependency>  
+  <generalization id="281">    
+    <end type="SOURCE" refId="50"/>    
+    <end type="TARGET" refId="49"/>  
+  </generalization>  
+  <dependency id="282">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="72"/>  
+  </dependency>  
+  <dependency id="283">    
+    <end type="SOURCE" refId="18"/>    
+    <end type="TARGET" refId="15"/>  
+  </dependency>  
+  <generalization id="284">    
+    <end type="SOURCE" refId="34"/>    
+    <end type="TARGET" refId="35"/>  
+  </generalization>  
+  <dependency id="285">    
+    <end type="SOURCE" refId="18"/>    
+    <end type="TARGET" refId="9"/>  
+  </dependency>  
+  <generalization id="286">    
+    <end type="SOURCE" refId="24"/>    
+    <end type="TARGET" refId="23"/>  
+  </generalization>  
+  <dependency id="287">    
+    <end type="SOURCE" refId="31"/>    
+    <end type="TARGET" refId="53"/>  
+  </dependency>  
+  <association id="288">    
+    <end type="SOURCE" refId="26" navigable="false">      
+      <attribute id="289" name="specialPromptGenerator"/>      
+      <multiplicity id="290" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="30" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <classifier-display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
+    sort-features="false" accessors="true" visibility="true">    
+    <attributes public="true" package="true" protected="true" private="true" static="true"/>    
+    <operations public="true" package="true" protected="true" private="true" static="true"/>  
+  </classifier-display>  
+  <association-display labels="true" multiplicity="true"/>
+</class-diagram>

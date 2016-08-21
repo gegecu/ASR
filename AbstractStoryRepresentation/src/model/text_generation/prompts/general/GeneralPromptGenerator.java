@@ -10,10 +10,13 @@ import model.text_generation.prompts.PromptGenerator;
 import model.utility.Randomizer;
 import model.utility.SurfaceRealizer;
 
+/**
+ * Prompt generator for general prompts
+ */
 public class GeneralPromptGenerator extends PromptGenerator {
 
 	/**
-	 * Prompt data to use
+	 * The data that is used for generating prompts and answer checking
 	 */
 	private GeneralPromptData generalPromptData;
 

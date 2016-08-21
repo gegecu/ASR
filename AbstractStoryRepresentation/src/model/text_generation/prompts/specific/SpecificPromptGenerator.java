@@ -11,30 +11,59 @@ import org.apache.log4j.Logger;
 
 import model.knowledge_base.conceptnet.Concept;
 import model.knowledge_base.conceptnet.ConceptNetDAO;
+import model.knowledge_base.topic.SpecificTopicDAO;
 import model.story_representation.story_element.noun.Noun;
 import model.story_representation.story_element.noun.Noun.TypeOfNoun;
 import model.text_generation.prompts.PromptGenerator;
 import model.utility.Randomizer;
 
+/**
+ * Prompt generator for specific prompts
+ */
 public class SpecificPromptGenerator extends PromptGenerator {
 
 	private static Logger log = Logger
 			.getLogger(SpecificPromptGenerator.class.getName());
 
+	/**
+	 * List of supportext topics for generating specific topics
+	 */
 	public static final List<TypeOfNoun> availableTopics = Arrays
 			.asList(new TypeOfNoun[]{TypeOfNoun.CHARACTER, TypeOfNoun.OBJECT});
 
-	private String[] objectTopics = {"color", "shape", "size", "texture"};
-	private String[] personTopics = {"attitude", "nationality", "talent"};
+	/**
+	 * List of available topics for object nouns
+	 */
+	private String[] objectTopics = SpecificTopicDAO.getTopics("object");
+	/**
+	 * List of available topics for character nouns.
+	 */
+	private String[] personTopics = SpecificTopicDAO.getTopics("person");
+	/**
+	 * Map of correctly answered topics for each noun.
+	 */
 	private Map<Noun, List<String>> answered;
+	/**
+	 * The data that is used for generating prompts and answer checking
+	 */
 	private SpecificPromptData specificPromptData;
 
+	/**
+	 * @param specificPromptData
+	 *            the specificPromptData to set
+	 */
 	public SpecificPromptGenerator(SpecificPromptData specificPromptData) {
 		super(specificPromptData.getHistory());
 		this.answered = specificPromptData.getAnswered();
 		this.specificPromptData = specificPromptData;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see model.text_generation.prompts.PromptGenerator#generateText(model.
+	 * story_representation.story_element.noun.Noun)
+	 */
 	@Override
 	public String generateText(Noun noun) {
 		if (!specificPromptData.isWrong()) {
@@ -44,14 +73,30 @@ public class SpecificPromptGenerator extends PromptGenerator {
 		}
 	}
 
+	/**
+	 * @param isWrong
+	 *            the isWrong to set
+	 */
 	public void setIsWrong(boolean isWrong) {
 		specificPromptData.setIsWrong(isWrong);
 	}
 
+	/**
+	 * @return the isWrong
+	 */
 	public boolean isWrong() {
 		return specificPromptData.isWrong();
 	}
 
+	/**
+	 * Returns a random topic from all the available topics for the noun, that
+	 * are answered yet.
+	 * 
+	 * @param noun
+	 *            the noun to use
+	 * @return Returns a random topic from all the available topics for the
+	 *         noun, that are answered yet.
+	 */
 	private String checkAvailableTopics(Noun noun) {
 
 		specificPromptData.setCurrentNoun(noun);
@@ -98,6 +143,14 @@ public class SpecificPromptGenerator extends PromptGenerator {
 
 	}
 
+	/**
+	 * Returns all the available topics for the noun, that are not answered yet.
+	 * 
+	 * @param noun
+	 *            the noun to use
+	 * @return Returns all the available topics for the noun, that are not
+	 *         answered yet.
+	 */
 	private List<String> getAvailableTopics(Noun noun) {
 
 		String[] topics = null;
@@ -112,10 +165,10 @@ public class SpecificPromptGenerator extends PromptGenerator {
 			default :
 				break;
 		}
-		
+
 		Set<String> answeredTopics = null;
-		
-		if(answered.get(noun) != null) {
+
+		if (answered.get(noun) != null) {
 			answeredTopics = new HashSet<>(answered.get(noun));
 		}
 
@@ -139,8 +192,8 @@ public class SpecificPromptGenerator extends PromptGenerator {
 				.entrySet()) {
 			for (Map.Entry<String, Noun> entry2 : entry.getValue().entrySet()) {
 				for (String topic : topics) {
-					if (ConceptNetDAO.conceptExists(entry2.getValue().getId(), "IsA",
-							topic)) {
+					if (ConceptNetDAO.conceptExists(entry2.getValue().getId(),
+							"IsA", topic)) {
 						answeredTopics.add(topic);
 					}
 				}
@@ -161,15 +214,26 @@ public class SpecificPromptGenerator extends PromptGenerator {
 		}
 
 		availableTopics.removeAll(answeredTopics);
-		
+
 		return availableTopics;
 
 	}
 
+	/**
+	 * @return Returns true if there are no more available topics for the
+	 *         current noun set in the SpecificPromptData.
+	 */
 	public boolean checkifCompleted() {
-		return getAvailableTopics(specificPromptData.getCurrentNoun()).isEmpty();
+		return getAvailableTopics(specificPromptData.getCurrentNoun())
+				.isEmpty();
 	}
 
+	/**
+	 * @return Generates an example of the expected answer for the current
+	 *         prompt using the current noun in the SpecificPromptData <br>
+	 *         <br>
+	 *         Result : example + current prompt
+	 */
 	private String generateWrongPrompts() {
 
 		String prompt = null;
@@ -181,17 +245,18 @@ public class SpecificPromptGenerator extends PromptGenerator {
 		while (concepts != null && !concepts.isEmpty()) {
 			int randomConcept = Randomizer.random(1, concepts.size());
 			prompt = "An example of " + currentTopic + " is "
-					+ concepts.remove(randomConcept-1).getStart() + ". " + "What is the " + currentTopic + " of "
+					+ concepts.remove(randomConcept - 1).getStart() + ". "
+					+ "What is the " + currentTopic + " of "
 					+ specificPromptData.getCurrentNoun().getId() + "?";
-			
-			if(history.contains(prompt)) {
+
+			if (history.contains(prompt)) {
 				prompt = null;
 				continue;
 			}
-			
-		} 
-		
-		if(prompt == null) {
+
+		}
+
+		if (prompt == null) {
 			//ignore
 			specificPromptData.setIsWrong(false);
 		}

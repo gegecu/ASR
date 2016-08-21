@@ -3,12 +3,20 @@ package model.text_generation.prompts.special;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import model.text_generation.prompts.PromptAnswerChecker;
 
+/**
+ * Prompt answer checker for special prompts
+ */
 public class SpecialPromptAnswerChecker extends PromptAnswerChecker {
 
+	private static Logger log = Logger
+			.getLogger(SpecialPromptAnswerChecker.class.getName());
+
 	/**
-	 * Prompt data to use
+	 * The data that is used for generating prompts and answer checking
 	 */
 	private SpecialPromptData specialPromptData;
 
@@ -30,31 +38,26 @@ public class SpecialPromptAnswerChecker extends PromptAnswerChecker {
 	@Override
 	public boolean postChecking(String answer) {
 
+		// TODO Auto-generated method stub
 		this.preprocess.preprocess(
 				specialPromptData.getCurrentPrompt() + " " + answer);
 		Map<String, String> corefMapping = preprocess.getCoref();
-		Map<String, String> corefMappingTemp = new HashMap<>();
+		Map<String, String> corefMappingTemp = new HashMap();
 
 		for (Map.Entry<String, String> coref : corefMapping.entrySet()) {
-			corefMappingTemp.put(coref.getValue(), coref.getKey());
-		}
-
-		int countDuplicate = 0;
-
-		for (Map.Entry<String, String> corefTemp : corefMappingTemp
-				.entrySet()) {
-			if (corefTemp.getKey().equals(corefTemp.getValue())) {
-				countDuplicate++;
+			if (!coref.getKey().equals(coref.getValue())) {
+				corefMappingTemp.put(coref.getValue(), coref.getKey());
 			}
 		}
 
-		if (corefMappingTemp.size() - countDuplicate == this.specialPromptData
-				.getDoers().size()) {
+		System.out.println(this.specialPromptData.getDoers().size());
+
+		if (corefMappingTemp.size() == this.specialPromptData.getDoers()
+				.size()) {
 			return true;
 		}
 
 		return false;
-
 	}
 
 }

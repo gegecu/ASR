@@ -62,24 +62,70 @@ public class Extractor {
 
 	private static Logger log = Logger.getLogger(Extractor.class.getName());
 
+	/**
+	 * Stanford CoreNLP pipeline
+	 */
 	private static StanfordCoreNLP pipeline;
+	/**
+	 * Conditional Random Field (CRF) model named entity recognition tool
+	 */
 	private static CRFClassifier classifier;
+	/**
+	 * Used to construct strings to be used as concepts.
+	 */
 	private static ConceptParser cp;
 	//	private SenticNetParser snp;
+	/**
+	 * Provides accessors for various grammatical, semantic, and world knowledge
+	 * lexicons and word lists primarily used by the Sieve coreference system
+	 * <br>
+	 * <br>
+	 * Primarily used for checking copulas (linking verb)
+	 */
 	private static Dictionaries dictionary;
+	/**
+	 * Used to retrieve and store information
+	 */
 	private AbstractStoryRepresentation asr;
 
+	/**
+	 * Stores the number of dobj dependency relation for each doer noun, having
+	 * the position id as the key.
+	 */
 	private Map<String, Integer> dobjMappingHasHave = new HashMap<>();
+	/**
+	 * Used for concatenating words with compound dependency relations, having
+	 * the compound position id as the key and the compound words as the value.
+	 */
 	private Map<String, String> compoundMapping = new HashMap<>();
+	/**
+	 * List of words that are invalid to be CapableOf assertion (e.g. has, have)
+	 * and copulas.
+	 */
 	private Set<String> restrictedCapableOf = new HashSet<>();
 
+	/**
+	 * List of valid roles (e.g. person, place, object)
+	 */
 	private static String[] SRL_ENTITY_LIST = {"person", "place", "object"};
+	/**
+	 * List of valid named entity (e.g. person, location, date)
+	 */
 	private static String[] NER_ENTITY_LIST = {"person", "location", "date",
 			"organization", "time", "money", "percentage"};
+	/**
+	 * Compiled Regex pattern of the NER_ENTITY_LIST.
+	 */
 	private static Pattern[] NER_ENTITY_LIST_COMPILED = new Pattern[NER_ENTITY_LIST.length];
 
+	/**
+	 * List of negative connotations (e.g. hate, hates, dislike)
+	 */
 	private static List<String> negatives = Arrays
 			.asList(DataDAO.getData("negatives"));
+	/**
+	 * List of positive connotations (e.g. love, loves, like)
+	 */
 	private static List<String> positives = Arrays
 			.asList(DataDAO.getData("positives"));
 
@@ -96,6 +142,10 @@ public class Extractor {
 		dictionary = DictionariesInstance.getInstance();
 	}
 
+	/**
+	 * @param asr
+	 *            the asr to set
+	 */
 	public Extractor(AbstractStoryRepresentation asr) {
 		this.asr = asr;
 		this.restrictedCapableOf.add("has");
@@ -103,6 +153,17 @@ public class Extractor {
 		this.restrictedCapableOf.addAll(dictionary.copulas);
 	}
 
+	/**
+	 * Extracts info from sentence to story sentences using dependency
+	 * relations, based on the rules for extracting dependency relations.
+	 * 
+	 * @param text
+	 *            The sentence(s) to be processed
+	 * @param coreference
+	 *            the coreference map of the sentence, from the preprocessing
+	 *            process.
+	 * @return list of story sentence object with extracted information
+	 */
 	public List<StorySentence> extract(String text,
 			Map<String, String> coreference) {
 
@@ -112,7 +173,7 @@ public class Extractor {
 		pipeline.annotate(document);
 
 		List<CoreMap> sentences = document.get(SentencesAnnotation.class);
-		
+
 		int prevSentenceCount = 0;
 
 		for (List<StorySentence> storySentences : asr.getStorySentencesMap()
@@ -135,22 +196,22 @@ public class Extractor {
 
 			List<TypedDependency> listDependencies = new ArrayList<TypedDependency>(
 					dependencies.typedDependencies());
-			
+
 			Collections.sort(listDependencies, new TypedDependencyComparator());
 			Collections.sort(listDependencies, new PartOfSpeechComparator());
 
 			//fail implementation idk how to remedy
 			dobjMappingHasHave.clear();
-			
+
 			for (TypedDependency temp : listDependencies) {
 				if (temp.reln().toString().equals("dobj")) {
 					String tempId = (temp.gov().sentIndex() + 1) + " "
 							+ temp.gov().index();
-					
+
 					if (coreference.get(tempId) != null) {
 						tempId = coreference.get(tempId);
 					}
-					
+
 					if (this.dobjMappingHasHave.get(tempId) == null) {
 						this.dobjMappingHasHave.put(tempId, 1);
 					} else {
@@ -159,22 +220,24 @@ public class Extractor {
 					}
 				}
 			}
-			
+
 			//fail implementation idk how to remedy
 			//compoundMapping.clear();
-			
+
 			for (TypedDependency temp : listDependencies) {
 				if (temp.reln().toString().equals("compound")) {
 					String tempId = (temp.gov().sentIndex() + 1) + " "
 							+ temp.gov().index();
-					
+
 					if (coreference.get(tempId) != null) {
 						tempId = coreference.get(tempId);
 					}
 					if (this.compoundMapping.get(tempId) == null) {
-						this.compoundMapping.put(tempId, temp.dep().lemma() + " " + temp.gov().lemma());
+						this.compoundMapping.put(tempId,
+								temp.dep().lemma() + " " + temp.gov().lemma());
 					} else {
-						this.compoundMapping.put(tempId, temp.dep().lemma() + " " + this.compoundMapping.get(tempId));
+						this.compoundMapping.put(tempId, temp.dep().lemma()
+								+ " " + this.compoundMapping.get(tempId));
 					}
 				}
 			}
@@ -193,6 +256,12 @@ public class Extractor {
 
 	}
 
+	/**
+	 * Removes the clauses with no noun doers
+	 * 
+	 * @param storySentence
+	 *            the story sentence
+	 */
 	private void removeClausesWithNoDoers(StorySentence storySentence) {
 
 		List<String> forRemoval = new ArrayList<>();
@@ -222,6 +291,22 @@ public class Extractor {
 
 	}
 
+	/**
+	 * This processes the dependecies extracted by the CoreNLP tool.
+	 * 
+	 * @param coreference
+	 *            the coreference map of the sentence, from the preprocessing
+	 *            process.
+	 * @param td
+	 *            the dependency relation from the CoreNLP tool dependency
+	 *            parsing
+	 * @param storySentence
+	 *            the story sentence object to store the extracted relations
+	 * @param listDependencies
+	 *            the list of dependencies parsed by the CoreNLP tool.
+	 * @param noOftokens
+	 *            the sentence number
+	 */
 	private void extractDependency(Map<String, String> coreference,
 			TypedDependency td, StorySentence storySentence,
 			List<TypedDependency> listDependencies, int noOftokens) {
@@ -271,9 +356,11 @@ public class Extractor {
 			}
 			/** get direct object **/
 			else if (tdReln.equals("dobj") || tdReln.equals("nsubjpass")) {
-				String wildCardId = (td.gov().sentIndex() + 1) + " " + (noOftokens + 1);
+				String wildCardId = (td.gov().sentIndex() + 1) + " "
+						+ (noOftokens + 1);
 				DirectObjectExtractor.extract(asr, cp, td, storySentence,
-						tdDepId, tdGovId, dobjMappingHasHave, listDependencies, tdReln, wildCardId);
+						tdDepId, tdGovId, dobjMappingHasHave, listDependencies,
+						tdReln, wildCardId);
 			}
 			/** extract xcomp "HasProperty" and xcomp action **/
 			else if (tdReln.equals("xcomp")) {
@@ -304,7 +391,9 @@ public class Extractor {
 				if (tdReln.equals("nmod:poss") || tdReln.equals("nmod:of")) {
 					PossesionExtractor.extract(asr, cp, td, storySentence,
 							tdDepId, tdGovId);
-				} else if (tdReln.equals("nmod:tmod") || tdReln.equals("nmod:for") || tdReln.equals("nmod:with")) {
+				} else if (tdReln.equals("nmod:tmod")
+						|| tdReln.equals("nmod:for")
+						|| tdReln.equals("nmod:with")) {
 					//exclusion purposes
 					//temporal modifier, not sure what to do yet. Just to exclude in location check
 				} else { //all prepositions that suggest location (at, in , to , under...)
@@ -342,6 +431,13 @@ public class Extractor {
 	/**
 	 * create prepositional phrase from nmod dependency. provides surface type
 	 * and concept type using boolean
+	 * 
+	 * @param td
+	 *            Dependency relation from the CoreNLP tool dependency parsing
+	 * @param listDependencies
+	 *            List of dependencies parsed by the CoreNLP tool.
+	 * @param surface
+	 * @return prepositional phrase from nmod dependency.
 	 */
 	public static String createPrepositionalPhrase(TypedDependency td,
 			List<TypedDependency> listDependencies, Boolean surface) {
@@ -366,7 +462,14 @@ public class Extractor {
 
 	}
 
-	/** if verb indicates emotion */
+	/**
+	 * if verb indicates emotion
+	 * 
+	 * @param word
+	 *            the word to use
+	 * @return Returns 1 if the word is found in the negatives list and 2 if the
+	 *         word is found in the positives list.
+	 */
 	public static int emotionIndicator(String word) {
 		if (negatives.contains(word))
 			return 1;
@@ -376,6 +479,17 @@ public class Extractor {
 		return 0;
 	}
 
+	/**
+	 * Returns a noun object instantiated with the subclass which depends on the
+	 * category parameter.
+	 * 
+	 * @param category
+	 *            The category of the Word
+	 * @param word
+	 *            The surface text of the noun
+	 * @return Returns a noun object instantiated with the subclass which
+	 *         depends on the category parameter.
+	 */
 	public static Noun extractCategory(String category, String word) {
 		switch (category) {
 			case "PERSON" :
@@ -395,6 +509,16 @@ public class Extractor {
 		}
 	}
 
+	/**
+	 * Tries to identify the role of the input text from the SRL_ENTITY_LIST
+	 * using the Concepts Database, if role was not identified this returns
+	 * “UNKNOWN”
+	 * 
+	 * @param text
+	 *            Word to be identified
+	 * @return the role of the input text from the SRL_ENTITY_LIST, if role was
+	 *         not identified this returns “UNKNOWN”
+	 */
 	public static String getSRL(String text) {
 		for (String entityValue : SRL_ENTITY_LIST) {
 			if (ConceptNetDAO.conceptExists(text, "isA", entityValue)) {
@@ -404,6 +528,16 @@ public class Extractor {
 		return "UNKNOWN";
 	}
 
+	/**
+	 * Tries to classify the NER of the input text from the NER_ENTITY_LIST
+	 * using the CRFClassifier, if classification is not possible this returns
+	 * “UNKNOWN”
+	 * 
+	 * @param text
+	 *            Word to be classified.
+	 * @return the NER of the input text from the NER_ENTITY_LIST, if
+	 *         classification is not possible this returns “UNKNOWN”
+	 */
 	public static String getNER(String text) {
 		// http://blog.thedigitalgroup.com/sagarg/2015/06/26/named-entity-recognition/
 		String output = classifier.classifyToString(text);
@@ -430,6 +564,25 @@ public class Extractor {
 
 	}
 
+	/**
+	 * Returns a list of TypeDependency where the IndexedWord matches the end of
+	 * the TypeDependency (gov or dep) and have the same dependency relation
+	 * based on the Rel parameter.
+	 * 
+	 * @param iw
+	 *            The word being searched from the Type Dependencies.
+	 * @param inputType
+	 *            Determines which end of the dependency relation is being
+	 *            searched “dep” or “gov”(dependency or governor).
+	 * @param rel
+	 *            The dependency relation to be searched from the list of
+	 *            dependencies.
+	 * @param list
+	 *            List of dependencies parsed by the CoreNLP tool.
+	 * @return a list of TypeDependency where the IndexedWord matches the end of
+	 *         the TypeDependency (gov or dep) and have the same dependency
+	 *         relation based on the Rel parameter.
+	 */
 	public static List<TypedDependency> findDependencies(IndexedWord iw,
 			String inputType, String rel, List<TypedDependency> list) {
 		List<TypedDependency> returnList = new ArrayList<>();
@@ -451,7 +604,17 @@ public class Extractor {
 		return returnList;
 	}
 
-	/** checks if indexed words are equal */
+	/**
+	 * Returns true if the position id and the surface text of the indexed words
+	 * are equal.
+	 * 
+	 * @param arg1
+	 *            the first object to be compared.
+	 * @param arg2
+	 *            the second object to be compared.
+	 * @return Returns true if the position id and the surface text of the
+	 *         indexed words are equal.
+	 */
 	public static boolean compareIndexedWord(IndexedWord arg1,
 			IndexedWord arg2) {
 		if (arg1.lemma() != null) {//sometimes when reln = ROOT

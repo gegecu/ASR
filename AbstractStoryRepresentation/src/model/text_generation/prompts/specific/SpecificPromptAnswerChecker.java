@@ -15,45 +15,55 @@ import edu.stanford.nlp.util.CoreMap;
 import model.knowledge_base.conceptnet.ConceptNetDAO;
 import model.story_representation.story_element.noun.Noun;
 import model.text_generation.prompts.PromptAnswerChecker;
-import model.text_understanding.Preprocessing;
 import model.utility.TypedDependencyComparator;
 
+/**
+ * Prompt answer checker for specific prompts
+ */
 public class SpecificPromptAnswerChecker extends PromptAnswerChecker {
 
+	/**
+	 * The data that is used for generating prompts and answer checking
+	 */
 	private SpecificPromptData specificPromptData;
 
+	/**
+	 * @param specificPromptData
+	 *            the specificPromptData to set
+	 */
 	public SpecificPromptAnswerChecker(SpecificPromptData specificPromptData) {
 		this.specificPromptData = specificPromptData;
 	}
 
 	// need to fix or think of another way because possible compound compound.
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * model.text_generation.prompts.PromptAnswerChecker#postChecking(java.lang.
+	 * String)
+	 */
 	@Override
 	public boolean postChecking(String answer) {
-		// TODO Auto-generated method stub
+
 		String currentPrompt = specificPromptData.getCurrentPrompt();
 		Noun currentNoun = specificPromptData.getCurrentNoun();
 		String currentTopic = specificPromptData.getCurrentTopic();
 		Map<Noun, List<String>> answered = specificPromptData.getAnswered();
-		
+
 		this.preprocess.preprocess(currentPrompt + " " + answer);
-		
+
 		Map<String, String> corefMapping = preprocess.getCoref();
-		Map<String, String> corefMappingTemp = new HashMap();
-		
-		for(Map.Entry<String, String> coref: corefMapping.entrySet()) {
-			corefMappingTemp.put(coref.getValue(), coref.getKey());
-		}
-		
-		int countDuplicate = 0;
-		
-		for(Map.Entry<String, String> corefTemp: corefMappingTemp.entrySet()) {
-			if(corefTemp.getKey().equals(corefTemp.getValue())) {
-				countDuplicate++;
+		Map<String, String> corefMappingTemp = new HashMap<>();
+
+		for (Map.Entry<String, String> coref : corefMapping.entrySet()) {
+			if (!coref.getKey().equals(coref.getValue())) {
+				corefMappingTemp.put(coref.getValue(), coref.getKey());
 			}
 		}
-		
-		if(corefMappingTemp.size() - countDuplicate == 1) {
+
+		if (corefMappingTemp.size() == 1) {
 			String noun = "";
 			String topicAnswer = "";
 
@@ -67,8 +77,9 @@ public class SpecificPromptAnswerChecker extends PromptAnswerChecker {
 
 				List<TypedDependency> listDependencies = new ArrayList<TypedDependency>(
 						dependencies.typedDependencies());
-				Collections.sort(listDependencies, new TypedDependencyComparator());
-				
+				Collections.sort(listDependencies,
+						new TypedDependencyComparator());
+
 				for (TypedDependency td : listDependencies) {
 					noun = currentNoun.getId();
 
@@ -84,7 +95,7 @@ public class SpecificPromptAnswerChecker extends PromptAnswerChecker {
 					}
 				}
 			}
-			
+
 			if (ConceptNetDAO.conceptExists(topicAnswer, "IsA", currentTopic)
 					&& noun.equals(currentNoun.getId())) {
 
@@ -100,7 +111,7 @@ public class SpecificPromptAnswerChecker extends PromptAnswerChecker {
 
 		}
 		return false;
-		
+
 	}
 
 }

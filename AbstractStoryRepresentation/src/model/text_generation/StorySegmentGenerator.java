@@ -13,7 +13,6 @@ import model.knowledge_base.conceptnet.Concept;
 import model.knowledge_base.conceptnet.ConceptNetDAO;
 import model.knowledge_base.template.TemplateDAO;
 import model.story_representation.AbstractStoryRepresentation;
-import model.story_representation.story_element.noun.Character;
 import model.story_representation.story_element.noun.Location;
 import model.story_representation.story_element.noun.Noun;
 import model.story_representation.story_element.noun.Noun.TypeOfNoun;
@@ -26,40 +25,109 @@ import simplenlg.features.Feature;
 import simplenlg.features.Tense;
 import simplenlg.phrasespec.VPPhraseSpec;
 
+/**
+ * The story segment generator
+ */
 public class StorySegmentGenerator extends TextGeneration {
 
-	private String[] atLocationStorySegmentStart = TemplateDAO.getTemplates("atLocationStorySegmentStart");
+	/**
+	 * List of template sentences for AtLocation assertions for the start part
+	 * of the story.
+	 */
+	private String[] atLocationStorySegmentStart = TemplateDAO
+			.getTemplates("atLocationStorySegmentStart");
 
-	private String[] atLocationStorySegmentDirectObject = TemplateDAO.getTemplates("atLocationStorySegmentDirectObject");
+	/**
+	 * List of template sentences for AtLocationsDobj assertions with doer for
+	 * the start part of the story
+	 */
+	private String[] atLocationStorySegmentDirectObject = TemplateDAO
+			.getTemplates("atLocationStorySegmentDirectObject");
 
-	private String[] hasAStorySegment = TemplateDAO.getTemplates("hasAStorySegment");
+	/**
+	 * List of template sentences for HasA assertions for the start part of the
+	 * story
+	 */
+	private String[] hasAStorySegment = TemplateDAO
+			.getTemplates("hasAStorySegment");
 
-	private String[] isAStorySegment = TemplateDAO.getTemplates("isAStorySegment");
+	/**
+	 * List of template sentences for IsA assertions for the start part of the
+	 * story
+	 */
+	private String[] isAStorySegment = TemplateDAO
+			.getTemplates("isAStorySegment");
 
-	private String[] hasPropertyStorySegment = TemplateDAO.getTemplates("hasPropertyStorySegment");
+	/**
+	 * List of template sentences for HasProperty assertions for the start part
+	 * of the story
+	 */
+	private String[] hasPropertyStorySegment = TemplateDAO
+			.getTemplates("hasPropertyStorySegment");
 
+	/**
+	 * List of template sentences for causes noun assertions for the middle part
+	 * of the story
+	 */
 	private String[] causesNoun = TemplateDAO.getTemplates("causesNoun");
 
+	/**
+	 * List of template sentences for causes verb assertions for the middle part
+	 * of the story
+	 */
 	private String[] causesVerb = TemplateDAO.getTemplates("causesVerb");
 
-	private String[] causesAdjective = TemplateDAO.getTemplates("causesAdjective");
+	/**
+	 * List of template sentences for causes adjective assertions for the middle
+	 * part of the story
+	 */
+	private String[] causesAdjective = TemplateDAO
+			.getTemplates("causesAdjective");
 
+	/**
+	 * List of previously used concepts, storing only the concept id (id in the
+	 * database)
+	 */
 	private Queue<Integer> history;
 
+	/**
+	 * List of generated sentences that were used / accepted by the user
+	 */
 	private Set<String> used;
 
+	/**
+	 * The threshold size limit of history before deleting entries from the
+	 * history queue
+	 */
 	private int historySizeThreshold = 2;
 
+	/**
+	 * initialize the variables
+	 * 
+	 * @param asr
+	 *            the asr to set
+	 */
 	public StorySegmentGenerator(AbstractStoryRepresentation asr) {
 		super(asr);
 		this.history = new LinkedList<Integer>();
 		this.used = new HashSet<>();
 	}
 
+	/**
+	 * Adds the storySegment to used
+	 * 
+	 * @param storySegment
+	 *            the storySegment to add
+	 */
 	public void addUsed(String storySegment) {
 		this.used.add(storySegment);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see model.text_generation.TextGeneration#generateText()
+	 */
 	@Override
 	public String generateText() {
 		// TODO Auto-generated method stub
@@ -133,6 +201,14 @@ public class StorySegmentGenerator extends TextGeneration {
 	//		return temp;
 	//	}
 
+	/**
+	 * Generate text using the dobj from the selected noun and using the
+	 * atLocation assertion in database related to the selected noun (there’s
+	 * rule for selecting a noun)
+	 * 
+	 * @return map having concept id as key, the generated story segment as
+	 *         value
+	 */
 	private Map<Integer, String> atLocationDobj() {
 
 		Map<Integer, String> output = new HashMap<>();
@@ -190,9 +266,10 @@ public class StorySegmentGenerator extends TextGeneration {
 
 						storySegment = storySegment.replace("<doer>",
 								characters);
-						
+
 						storySegment = storySegment.replace("<end>", end);
-						storySegment = SurfaceRealizer.capitalizeFirstLetter(storySegment);
+						storySegment = SurfaceRealizer
+								.capitalizeFirstLetter(storySegment);
 
 						// this.history.add(concept.getId());
 
@@ -212,9 +289,16 @@ public class StorySegmentGenerator extends TextGeneration {
 	}
 
 	/**
-	 * The room has a chair. possible storySegment There is a chair in room.
-	 ***/
-
+	 * Generate text using the atLocation assertion in database related to the
+	 * selected noun (there’s a rule for selecting a noun) <br>
+	 * <br>
+	 * 
+	 * Example: The room has a chair. possible storySegment There is a chair in
+	 * room.
+	 * 
+	 * @return map having concept id as key, the generated story segment as
+	 *         value
+	 */
 	private Map<Integer, String> atLocation() {
 
 		Map<Integer, String> output = new HashMap<>();
@@ -223,19 +307,20 @@ public class StorySegmentGenerator extends TextGeneration {
 
 		if (storySentence != null) {
 
-			List<Location> locations = Utilities.getLocation(storySentence, asr);
+			List<Location> locations = Utilities.getLocation(storySentence,
+					asr);
 
-			while(!locations.isEmpty()) {
+			while (!locations.isEmpty()) {
 				int randomLocation = Randomizer.random(1, locations.size());
-				Location location = locations.remove(randomLocation-1);
-				
+				Location location = locations.remove(randomLocation - 1);
+
 				String[] words = location.getId().split(" ");
 				String word = words[words.length - 1];
 				List<Concept> concepts = ConceptNetDAO.getConceptsFrom(word,
 						"AtLocation");
 
-//				List<Noun> doers = Utilities.getDoers(storySentence);
-//				String characters = SurfaceRealizer.wordsConjunction(doers);
+				//				List<Noun> doers = Utilities.getDoers(storySentence);
+				//				String characters = SurfaceRealizer.wordsConjunction(doers);
 
 				if (concepts != null) {
 
@@ -254,18 +339,19 @@ public class StorySegmentGenerator extends TextGeneration {
 
 						String storySegment = this.atLocationStorySegmentStart[randomSentence
 								- 1];
-						
+
 						String start = concept.getStart();
 						start = concept.getStartPOS().equals("proper noun")
 								? SurfaceRealizer.capitalizeFirstLetter(start)
 								: SurfaceRealizer.determinerFixer(start);
 						storySegment = storySegment.replace("<start>", start);
-						
-						List<Noun> temp = new ArrayList();
+
+						List<Noun> temp = new ArrayList<>();
 						temp.add(location);
 						String end = SurfaceRealizer.nounFixer(temp);
 						storySegment = storySegment.replace("<end>", end);
-						storySegment = SurfaceRealizer.capitalizeFirstLetter(storySegment);
+						storySegment = SurfaceRealizer
+								.capitalizeFirstLetter(storySegment);
 
 						// this.history.add(concept.getId());
 						if (this.used.contains(storySegment)) {
@@ -284,6 +370,13 @@ public class StorySegmentGenerator extends TextGeneration {
 
 	}
 
+	/**
+	 * Generate text using the hasA assertion in database related to the
+	 * selected noun (there’s a rule for selecting a noun)
+	 * 
+	 * @return map having concept id as key, the generated story segment as
+	 *         value
+	 */
 	private Map<Integer, String> hasA() {
 
 		Map<Integer, String> output = new HashMap<>();
@@ -345,9 +438,11 @@ public class StorySegmentGenerator extends TextGeneration {
 
 					List<Noun> temp = new ArrayList<>();
 					temp.add(noun);
-					storySegment = storySegment.replace("<start>", SurfaceRealizer.nounFixer(temp));
+					storySegment = storySegment.replace("<start>",
+							SurfaceRealizer.nounFixer(temp));
 					storySegment = storySegment.replace("<end>", end);
-					storySegment = SurfaceRealizer.capitalizeFirstLetter(storySegment);
+					storySegment = SurfaceRealizer
+							.capitalizeFirstLetter(storySegment);
 
 					// this.history.add(concept.getId());
 					if (this.used.contains(storySegment)) {
@@ -366,6 +461,13 @@ public class StorySegmentGenerator extends TextGeneration {
 
 	}
 
+	/**
+	 * Generate text using the IsA assertion in database related to the selected
+	 * noun (there’s a rule for selecting a noun)
+	 * 
+	 * @return map having concept id as key, the generated story segment as
+	 *         value
+	 */
 	private Map<Integer, String> isA() {
 
 		Map<Integer, String> output = new HashMap<>();
@@ -424,13 +526,15 @@ public class StorySegmentGenerator extends TextGeneration {
 					end = concept.getEndPOS().equals("proper noun")
 							? SurfaceRealizer.capitalizeFirstLetter(end)
 							: SurfaceRealizer.determinerFixer(end);
-							
+
 					List<Noun> temp = new ArrayList<>();
 					temp.add(noun);
 
-					storySegment = storySegment.replace("<start>", SurfaceRealizer.nounFixer(temp));
+					storySegment = storySegment.replace("<start>",
+							SurfaceRealizer.nounFixer(temp));
 					storySegment = storySegment.replace("<end>", end);
-					storySegment = SurfaceRealizer.capitalizeFirstLetter(storySegment);
+					storySegment = SurfaceRealizer
+							.capitalizeFirstLetter(storySegment);
 
 					// this.history.add(concept.getId());
 					if (this.used.contains(storySegment)) {
@@ -448,6 +552,13 @@ public class StorySegmentGenerator extends TextGeneration {
 
 	}
 
+	/**
+	 * Generate text using the hasProperty assertion in database related to the
+	 * selected noun (there’s a rule for selecting a noun)
+	 * 
+	 * @return map having concept id as key, the generated story segment as
+	 *         value
+	 */
 	private Map<Integer, String> hasProperty() {
 
 		Map<Integer, String> output = new HashMap<>();
@@ -504,7 +615,6 @@ public class StorySegmentGenerator extends TextGeneration {
 					String storySegment = this.hasPropertyStorySegment[randomSentence
 							- 1];
 
-
 					String end = concept.getEnd();
 
 					switch (concept.getEndPOS()) {
@@ -521,9 +631,11 @@ public class StorySegmentGenerator extends TextGeneration {
 
 					List<Noun> temp = new ArrayList<>();
 					temp.add(noun);
-					storySegment = storySegment.replace("<start>", SurfaceRealizer.nounFixer(temp));
+					storySegment = storySegment.replace("<start>",
+							SurfaceRealizer.nounFixer(temp));
 					storySegment = storySegment.replace("<end>", end);
-					storySegment = SurfaceRealizer.capitalizeFirstLetter(storySegment);
+					storySegment = SurfaceRealizer
+							.capitalizeFirstLetter(storySegment);
 
 					// this.history.add(concept.getId());
 					if (this.used.contains(storySegment)) {
@@ -543,6 +655,13 @@ public class StorySegmentGenerator extends TextGeneration {
 
 	}
 
+	/**
+	 * Generate text using the causes assertion in database related to the
+	 * selected noun (there’s a rule for selecting a noun)
+	 * 
+	 * @return map having concept id as key, the generated story segment as
+	 *         value
+	 */
 	private Map<Integer, String> causes() {
 
 		Map<Integer, String> output = new HashMap<>();
@@ -643,7 +762,8 @@ public class StorySegmentGenerator extends TextGeneration {
 					continue;
 				}
 
-				storySegment = SurfaceRealizer.capitalizeFirstLetter(storySegment);
+				storySegment = SurfaceRealizer
+						.capitalizeFirstLetter(storySegment);
 
 				// this.history.add(concept.getId());
 				found = true;

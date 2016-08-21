@@ -5,10 +5,13 @@ import java.util.Map;
 
 import model.text_generation.prompts.PromptAnswerChecker;
 
+/**
+ * Prompt answer checker for general prompts
+ */
 public class GeneralPromptAnswerChecker extends PromptAnswerChecker {
 
 	/**
-	 * Prompt data to use
+	 * The data that is used for generating prompts and answer checking
 	 */
 	private GeneralPromptData generalPromptData;
 
@@ -20,6 +23,13 @@ public class GeneralPromptAnswerChecker extends PromptAnswerChecker {
 		this.generalPromptData = generalPromptData;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * model.text_generation.prompts.PromptAnswerChecker#postChecking(java.lang.
+	 * String)
+	 */
 	public boolean postChecking(String answer) {
 
 		// TODO Auto-generated method stub
@@ -30,19 +40,12 @@ public class GeneralPromptAnswerChecker extends PromptAnswerChecker {
 		Map<String, String> corefMappingTemp = new HashMap();
 
 		for (Map.Entry<String, String> coref : corefMapping.entrySet()) {
-			corefMappingTemp.put(coref.getValue(), coref.getKey());
-		}
-
-		int countDuplicate = 0;
-
-		for (Map.Entry<String, String> corefTemp : corefMappingTemp
-				.entrySet()) {
-			if (corefTemp.getKey().equals(corefTemp.getValue())) {
-				countDuplicate++;
+			if (!coref.getKey().equals(coref.getValue())) {
+				corefMappingTemp.put(coref.getValue(), coref.getKey());
 			}
 		}
 
-		if (corefMappingTemp.size() - countDuplicate == 1) {
+		if (corefMappingTemp.size() == 1) {
 			return true;
 		}
 
