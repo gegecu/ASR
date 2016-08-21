@@ -352,8 +352,8 @@ public class SpecialPromptGenerator {
 				int randomTemplate = Randomizer.random(1, directives.size());
 				directive = directives.remove(randomTemplate - 1);
 				directive = (doers.size() > 1)
-						? directive.replace("<mainverb>", "are")
-						: directive.replace("<mainverb>", "is");
+						? directive.replace("<mainverb>", "do")
+						: directive.replace("<mainverb>", "does");
 				directive = (doers.size() > 1)
 						? directive.replace("<minorverb>", "have")
 						: directive.replace("<minorverb>", "has");
@@ -397,8 +397,8 @@ public class SpecialPromptGenerator {
 						? directive.replace("<mainverb>", "are")
 						: directive.replace("<mainverb>", "is");
 				directive = (doers.size() > 1)
-						? directive.replace("<minorverb>", "have")
-						: directive.replace("<minorverb>", "has");
+						? directive.replace("<minorverb>", "do")
+						: directive.replace("<minorverb>", "does");
 				directive = directive.replace("<noun>",
 						SurfaceRealizer.nounFixer(doers));
 				directive = directive.replace("<object>",
