@@ -11,6 +11,25 @@ import model.story_representation.story_element.story_sentence.StorySentence;
 
 public class NegationExtractorJJRB {
 
+	/**
+	 * Processes the “neg” TypedDependency relation for adjectives and adverbs.
+	 * 
+	 * @param asr
+	 *            Used to retrieve and store information.
+	 * @param cp
+	 *            Used to construct strings to be used as concepts.
+	 * @param td
+	 *            Dependency relation from the CoreNLP tool dependency parsing
+	 * @param storySentence
+	 *            Story sentence object to store or retrieve the extracted
+	 *            relations
+	 * @param tdDepId
+	 *            Position id of the dependency
+	 * @param tdGovId
+	 *            Position id of the governor
+	 * @param listDependencies
+	 *            List of dependencies parsed by the CoreNLP tool.
+	 */
 	public static void extract(AbstractStoryRepresentation asr,
 			ConceptParser cp, TypedDependency td, StorySentence storySentence,
 			String tdDepId, String tdGovId,

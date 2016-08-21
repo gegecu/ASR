@@ -14,6 +14,24 @@ public class PossesionExtractor {
 	private static Logger log = Logger
 			.getLogger(PossesionExtractor.class.getName());
 
+	/**
+	 * Processes the “nmod:poss” or “nmod:of” TypedDependency relation, for
+	 * “HasA” and “IsOwnedBy” assertion of nouns.
+	 * 
+	 * @param asr
+	 *            Used to retrieve and store information.
+	 * @param cp
+	 *            Used to construct strings to be used as concepts.
+	 * @param td
+	 *            Dependency relation from the CoreNLP tool dependency parsing
+	 * @param storySentence
+	 *            Story sentence object to store or retrieve the extracted
+	 *            relations
+	 * @param tdDepId
+	 *            Position id of the dependency
+	 * @param tdGovId
+	 *            Position id of the governor
+	 */
 	public static void extract(AbstractStoryRepresentation asr,
 			ConceptParser cp, TypedDependency td, StorySentence storySentence,
 			String tdDepId, String tdGovId) {

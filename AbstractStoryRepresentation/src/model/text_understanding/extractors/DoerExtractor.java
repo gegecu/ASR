@@ -18,6 +18,29 @@ public class DoerExtractor {
 
 	private static Logger log = Logger.getLogger(DoerExtractor.class.getName());
 
+	/**
+	 * Processes the “nsubj” or “nmod:agent” TypedDependency relation, for
+	 * “HasProperty” assertion of nouns.
+	 * 
+	 * @param asr
+	 *            Used to retrieve and store information.
+	 * @param cp
+	 *            Used to construct strings to be used as concepts.
+	 * @param td
+	 *            Dependency relation from the CoreNLP tool dependency parsing
+	 * @param storySentence
+	 *            Story sentence object to store or retrieve the extracted
+	 *            relations
+	 * @param tdDepId
+	 *            Position id of the dependency
+	 * @param tdGovId
+	 *            Position id of the governor
+	 * @param listDependencies
+	 *            List of dependencies parsed by the CoreNLP tool.
+	 * @param restrictedCapableOf
+	 *            List of words that are invalid to be CapableOf assertion (e.g.
+	 *            has, have).
+	 */
 	public static void extract(AbstractStoryRepresentation asr,
 			ConceptParser cp, TypedDependency td, StorySentence storySentence,
 			String tdDepId, String tdGovId,

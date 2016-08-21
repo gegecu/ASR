@@ -17,6 +17,24 @@ public class AuxpassPropertyExtractor {
 	private static Logger log = Logger
 			.getLogger(AuxpassPropertyExtractor.class.getName());
 
+	/**
+	 * Processes the “auxpass” TypedDependency relation, for “HasProperty”
+	 * assertion of nouns.
+	 * 
+	 * @param asr
+	 *            Used to retrieve and store information.
+	 * @param cp
+	 *            Used to construct strings to be used as concepts.
+	 * @param td
+	 *            Dependency relation from the CoreNLP tool dependency parsing
+	 * @param storySentence
+	 *            Story sentence object to store or retrieve the extracted
+	 *            relations
+	 * @param tdGovId
+	 *            Position id of the governor
+	 * @param list
+	 *            List of dependencies parsed by the CoreNLP tool.
+	 */
 	public static void extract(AbstractStoryRepresentation asr,
 			ConceptParser cp, TypedDependency td, StorySentence storySentence,
 			String tdGovId, List<TypedDependency> list) {
@@ -25,7 +43,7 @@ public class AuxpassPropertyExtractor {
 		String tdGovLemma = td.gov().lemma();
 
 		Event event = storySentence.getEvent(tdGovId);
-		
+
 		if (event == null) {
 			event = new Event(tdGovLemma);
 			storySentence.addEvent(tdGovId, event);
@@ -33,18 +51,17 @@ public class AuxpassPropertyExtractor {
 		event.addConcept(tdDepLemma + " " + tdGovLemma);
 
 		event.addConcept(cp.createConceptAsVerb(tdGovLemma));
-		List<TypedDependency> subj = Extractor.findDependencies(td.gov(), "gov", "nsubjpass", list);
-		for(TypedDependency t: subj){
-			if(t.dep().tag().equals("NNP")){
-				event.addConcept(
-						cp.createConceptWithDirectObject(tdGovLemma, "someone"));
-			}
-			else{
-				event.addConcept(
-						cp.createConceptWithDirectObject(tdGovLemma, "something"));
+		List<TypedDependency> subj = Extractor.findDependencies(td.gov(), "gov",
+				"nsubjpass", list);
+		for (TypedDependency t : subj) {
+			if (t.dep().tag().equals("NNP")) {
+				event.addConcept(cp.createConceptWithDirectObject(tdGovLemma,
+						"someone"));
+			} else {
+				event.addConcept(cp.createConceptWithDirectObject(tdGovLemma,
+						"something"));
 			}
 		}
-		
 
 	}
 

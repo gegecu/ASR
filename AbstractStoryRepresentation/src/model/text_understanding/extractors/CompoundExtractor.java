@@ -14,8 +14,22 @@ public class CompoundExtractor {
 	private static Logger log = Logger
 			.getLogger(CompoundExtractor.class.getName());
 
+	/**
+	 * Processes the “compound” TypedDependency relation, concatenates words
+	 * that are identified as compound
+	 * 
+	 * @param asr
+	 *            Used to retrieve and store information
+	 * @param td
+	 *            Dependency relation from the CoreNLP tool dependency parsing
+	 * @param tdGovId
+	 *            Position id of the governor
+	 * @param compoundMapping
+	 *            Map of compound words
+	 */
 	public static void extract(AbstractStoryRepresentation asr,
-			TypedDependency td, String tdGovId, Map<String, String> compoundMapping) {
+			TypedDependency td, String tdGovId,
+			Map<String, String> compoundMapping) {
 
 		String tdDepTag = td.dep().tag();
 		String tdDepLemma = td.dep().lemma();
@@ -25,7 +39,7 @@ public class CompoundExtractor {
 		boolean properNouns = tdDepTag.equals("NNP") && tdGovTag.equals("NNP");
 		boolean commonNouns = tdDepTag.equals("NN") && tdGovTag.contains("NN");
 		String name = compoundMapping.get(tdGovId);
-		
+
 		System.out.println(name);
 
 		Noun noun = asr.getNoun(tdGovId);

@@ -23,13 +23,34 @@ public class TextUnderstanding {
 	private static Logger log = Logger
 			.getLogger(TextUnderstanding.class.getName());
 
+	/**
+	 * Minimum polarity before considering it as a conflict.
+	 */
 	private static final double conflictMinimumPolarity = -0.2;
 
+	/**
+	 * Used for coreferencing.
+	 */
 	private Preprocessing preprocessingModule;
+	/**
+	 * Extracts information from texts
+	 */
 	private Extractor extractionModule;
+	/**
+	 * Used to retrieve and store information.
+	 */
 	private AbstractStoryRepresentation asr;
+	/**
+	 * Used for retrieving polarity of concepts
+	 */
 	private SenticNetParser snp;
 
+	/**
+	 * initialize the variables
+	 * 
+	 * @param asr
+	 *            the asr to set
+	 */
 	public TextUnderstanding(AbstractStoryRepresentation asr) {
 		this.asr = asr;
 		preprocessingModule = new Preprocessing();
@@ -37,6 +58,13 @@ public class TextUnderstanding {
 		snp = SenticNetParserInstance.getInstance();
 	}
 
+	/**
+	 * Extracts information from the input text and puts it in the Abstract
+	 * Story Representation
+	 * 
+	 * @param text
+	 *            the text input to use
+	 */
 	public void processInput(String text) {
 
 		preprocessingModule.preprocess(text);
@@ -82,6 +110,17 @@ public class TextUnderstanding {
 
 	}
 
+	/**
+	 * Returns a SpecialClause object if a concept is identified as a conflict
+	 * within the StorySentence that is below or equal to the minimum conflict
+	 * polarity requirement and has less polarity than the previous conflict
+	 * identified, if possible.
+	 * 
+	 * @param storySentence
+	 *            Story sentence to check conflict from
+	 * @return SpecialClause object if a concept is identified as a conflict,
+	 *         else null
+	 */
 	private SpecialClause checkForConflict(StorySentence storySentence) {
 
 		List<Clause> clauses = new ArrayList<>();
@@ -137,6 +176,15 @@ public class TextUnderstanding {
 		}
 	}
 
+	/**
+	 * Returns a SpecialClause object if a concept within the story sentence is
+	 * the resolution for the identified conflict concept.
+	 * 
+	 * @param storySentence
+	 *            Story sentence to check resolution from
+	 * @return a SpecialClause object if a concept within the story sentence is
+	 *         the resolution for the identified conflict concept, else null
+	 */
 	private SpecialClause checkForResolution(StorySentence storySentence) {
 
 		List<Clause> clauses = new ArrayList<>();
@@ -190,17 +238,19 @@ public class TextUnderstanding {
 			List<Noun> doersInResolution = new ArrayList<>(
 					mainClause.getManyDoers().values());
 			//include direct objects as well, for passive cases
-			if(mainClause instanceof Event){
-				doersInResolution.addAll(((Event) mainClause).getDirectObjects().values());
+			if (mainClause instanceof Event) {
+				doersInResolution.addAll(
+						((Event) mainClause).getDirectObjects().values());
 			}
-			
+
 			List<Noun> doersInConflict = new ArrayList<>(
 					conflict.getClause().getManyDoers().values());
-			if(conflict.getClause() instanceof Event){
-				doersInConflict.addAll(((Event) conflict.getClause()).getDirectObjects().values());
+			if (conflict.getClause() instanceof Event) {
+				doersInConflict.addAll(((Event) conflict.getClause())
+						.getDirectObjects().values());
 			}
 			doersInResolution.retainAll(doersInConflict);
-			
+
 			if (doersInResolution.size() > 0) {
 				return new SpecialClause(mainClause, mainConcept, bestPolarity);
 			}
@@ -209,23 +259,35 @@ public class TextUnderstanding {
 
 	}
 
+	/**
+	 * Returns true if the resolutionClause is passes the rule to be a
+	 * resolution for the conflict.
+	 * 
+	 * @param conflict
+	 *            The Conflict clause to use
+	 * @param resolutionClause
+	 *            Probable resolution clause to check from
+	 * @return Returns true if the resolutionClause is passes the rule to be a
+	 *         resolution for the conflict.
+	 */
 	private boolean hasValidResolutionConcept(SpecialClause conflict,
 			Clause resolutionClause) {
 
 		//if conflict is from negation, resolution should be un-negated statement
 		if (conflict.getClause().isNegated()) {
 			Set<String> resoConcepts = resolutionClause.getConcepts();
-			if(resolutionClause.isNegated()){ //may change to isNegative instead (e.g. hates fighting or hates lying can be a resolution)
+			if (resolutionClause.isNegated()) { //may change to isNegative instead (e.g. hates fighting or hates lying can be a resolution)
 				return false;
 			}
 			Set<String> conflictConcepts = conflict.getClause().getConcepts();
-			if(conflict.getClause() instanceof Event){
+			if (conflict.getClause() instanceof Event) {
 				//System.out.println("main verb to remove" + ((Event) conflict.getClause()).getVerb().getAction());
-				String emotionVerb = ((Event) conflict.getClause()).getVerb().getAction();
+				String emotionVerb = ((Event) conflict.getClause()).getVerb()
+						.getAction();
 				Iterator<String> it = conflictConcepts.iterator();
-				while(it.hasNext()){
+				while (it.hasNext()) {
 					String concept = it.next();
-					if(concept.startsWith(emotionVerb)){
+					if (concept.startsWith(emotionVerb)) {
 						it.remove();
 					}
 				}
@@ -241,14 +303,13 @@ public class TextUnderstanding {
 						break;
 					}
 				}
-				if(!hasMatch){
+				if (!hasMatch) {
 					return false;
 				}
 			}
 			//if all concepts in conflict matched
 			return true;
-		} 
-		else { //else check for 4 hops in conceptnet
+		} else { //else check for 4 hops in conceptnet
 			Set<String> concepts = resolutionClause.getConcepts();
 			for (String resoConcept : concepts) {
 				String confConcept = conflict.getMainConcept();

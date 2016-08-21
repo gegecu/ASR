@@ -20,10 +20,37 @@ public class DirectObjectExtractor {
 	private static Logger log = Logger
 			.getLogger(DirectObjectExtractor.class.getName());
 
+	/**
+	 * Processes the “dobj” or “nmod:with” or “nsubjpass” TypedDependency
+	 * relation, for “HasA” assertion of nouns.
+	 * 
+	 * @param asr
+	 *            Used to retrieve and store information.
+	 * @param cp
+	 *            Used to construct strings to be used as concepts.
+	 * @param td
+	 *            Dependency relation from the CoreNLP tool dependency parsing
+	 * @param storySentence
+	 *            Story sentence object to store or retrieve the extracted
+	 *            relations
+	 * @param tdDepId
+	 *            Position id of the dependency
+	 * @param tdGovId
+	 *            Position id of the governor
+	 * @param dobjMappingHasHave
+	 *            Stores the number of dobj dependency relation for each doer
+	 *            noun, having the position id as the key.
+	 * @param list
+	 *            List of dependencies parsed by the CoreNLP tool.
+	 * @param tdReln
+	 *            the relation of the dependency and governor
+	 * @param wildCardId
+	 */
 	public static void extract(AbstractStoryRepresentation asr,
 			ConceptParser cp, TypedDependency td, StorySentence storySentence,
 			String tdDepId, String tdGovId,
-			Map<String, Integer> dobjMappingHasHave, List<TypedDependency> list, String tdReln, String wildCardId) {
+			Map<String, Integer> dobjMappingHasHave, List<TypedDependency> list,
+			String tdReln, String wildCardId) {
 
 		String tdDepTag = td.dep().tag();
 		String tdDepLemma = td.dep().lemma();
@@ -47,7 +74,7 @@ public class DirectObjectExtractor {
 		}
 
 		if (noun != null) {
-			
+
 			// we do not store NotHasA anyway
 			if (tdGovLemma.equals("has") || tdGovLemma.equals("have")) {
 
@@ -109,11 +136,12 @@ public class DirectObjectExtractor {
 					storySentence.addEvent(tdGovId, event);
 				}
 				//check for passive agent
-				if(tdReln.equals("nsubjpass")){
-					List<TypedDependency> doers = Extractor.findDependencies(td.gov(), "gov", "nmod:agent", list);
-					if(doers.isEmpty()){
-						Noun n = Extractor.extractCategory(Extractor.getSRL("someone"),
-								"someone");
+				if (tdReln.equals("nsubjpass")) {
+					List<TypedDependency> doers = Extractor.findDependencies(
+							td.gov(), "gov", "nmod:agent", list);
+					if (doers.isEmpty()) {
+						Noun n = Extractor.extractCategory(
+								Extractor.getSRL("someone"), "someone");
 						//System.out.println("wildcard: " + wildCardId);
 						asr.addNoun(wildCardId, n);
 						event.addDoer(wildCardId, n);
@@ -129,7 +157,7 @@ public class DirectObjectExtractor {
 						//to do polarity modifications
 					}
 				}
-				
+
 				//create concept
 				event.addDirectObject(tdDepId, noun);
 				storySentence.addEvent(tdGovId, event);

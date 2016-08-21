@@ -4,6 +4,12 @@ import java.util.Comparator;
 
 import edu.stanford.nlp.trees.TypedDependency;
 
+/**
+ * For sorting part of speech of type dependencies. <br>
+ * <br>
+ * Only if relation of the type dependencies are equal, PRP (personal pronoun)
+ * tags are sorted to last.
+ */
 public class PartOfSpeechComparator implements Comparator<TypedDependency> {
 
 	@Override
@@ -16,7 +22,6 @@ public class PartOfSpeechComparator implements Comparator<TypedDependency> {
 				return -1;
 			}
 		}
-	
 
 		return 0;
 

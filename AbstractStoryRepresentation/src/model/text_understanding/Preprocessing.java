@@ -19,14 +19,26 @@ import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.util.CoreMap;
 import model.instance.StanfordCoreNLPInstance;
 
+/**
+ * Used to preprocess the text input
+ */
 public class Preprocessing {
 
 	private static Logger log = Logger.getLogger(Preprocessing.class.getName());
 
+	/**
+	 * Stanford CoreNLP pipeline
+	 */
 	private StanfordCoreNLP pipeline;
 
+	/**
+	 * Stores the coreference output
+	 */
 	private Map<String, String> coref;
 
+	/**
+	 * Stores the coreference replacement text resulted from preprocessing
+	 */
 	private String updatedText;
 
 	public static void main(String[] args) {
@@ -40,6 +52,12 @@ public class Preprocessing {
 		this.updatedText = "";
 	}
 
+	/**
+	 * Does coreferencing using the Coreference option of the CoreNLP tool.
+	 * 
+	 * @param text
+	 *            the text input to use
+	 */
 	public void preprocess(String text) {
 		//result = normalize(result);
 		updatedText = doTest(text);
@@ -47,14 +65,35 @@ public class Preprocessing {
 		//result = normalize(result);
 	}
 
+	/**
+	 * Returns the coreference map <br>
+	 * <br>
+	 * preprocessing needs to be done for this to have data
+	 * 
+	 * @return the coref
+	 */
 	public Map<String, String> getCoref() {
 		return this.coref;
 	}
 
+	/**
+	 * Returns the coreference replacement text resulted from preprocessing <br>
+	 * <br>
+	 * preprocessing needs to be done for this to have data
+	 * 
+	 * @return the updated text
+	 */
 	public String getUpdatedString() {
 		return this.updatedText;
 	}
 
+	/**
+	 * Does coreferencing using the Coreference option of the CoreNLP tool.
+	 * 
+	 * @param text
+	 *            the text input to use
+	 * @return Returns the coreference map resulted from coreferencing
+	 */
 	private Map<String, String> coreference(String text) {
 
 		Map<String, String> coreference = new HashMap<>();
@@ -152,6 +191,17 @@ public class Preprocessing {
 
 	}
 
+	/**
+	 * Replaces the common noun (e.g. he, she) with coreferenced the proper noun
+	 * (e.g. John, Joy), if the CoreNLP tool identifies the coreference. <br>
+	 * <br>
+	 * (e.g. “John went to the park, he ate an apple.” -> “John went to the
+	 * park, John ate an apple.”)
+	 * 
+	 * @param text
+	 *            Text to do coreference replacement on.
+	 * @return coreference replacement text resulted from preprocessing
+	 */
 	private String doTest(String text) {
 		Annotation doc = new Annotation(text);
 		pipeline.annotate(doc);
