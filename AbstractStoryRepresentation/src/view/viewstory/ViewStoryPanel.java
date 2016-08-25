@@ -65,7 +65,8 @@ public class ViewStoryPanel extends TemplatePanel {
 		titleField.setEditable(false);
 		titleField.setHorizontalAlignment(SwingConstants.CENTER);
 
-		deleteButton.setIcon(new ImageIcon("res/delete.png"));
+		deleteButton.setIcon(
+				new ImageIcon(ViewStoryPanel.class.getResource("/delete.png")));
 		deleteButton.setFocusPainted(false);
 		deleteButton.setBackground(Color.RED);
 		deleteButton.setForeground(Color.BLACK);
@@ -116,7 +117,7 @@ public class ViewStoryPanel extends TemplatePanel {
 			}
 
 		});
-		
+
 		backButton.getModel().addChangeListener(new ChangeListener() {
 
 			private RoundedBorder border = (RoundedBorder) backButton

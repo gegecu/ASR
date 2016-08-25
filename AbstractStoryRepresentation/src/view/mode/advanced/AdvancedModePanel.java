@@ -124,7 +124,7 @@ public class AdvancedModePanel extends ModePanel {
 		helpButton.setFont(new Font("Arial", Font.BOLD, 40));
 		helpButton.setBorder(new RoundedBorder(Color.BLACK, 3, 12));
 
-		saveButton.setIcon(new ImageIcon("res/save.png"));
+		saveButton.setIcon(new ImageIcon(AdvancedModePanel.class.getResource("/save.png")));
 		saveButton.setFocusPainted(false);
 		saveButton.setBackground(Color.decode("#36B214"));
 		saveButton.setForeground(Color.BLACK);

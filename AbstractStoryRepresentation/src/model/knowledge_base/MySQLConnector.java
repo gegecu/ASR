@@ -1,13 +1,18 @@
 package model.knowledge_base;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
 import com.mysql.jdbc.Connection;
+
+import view.mode.dialog.OkDialog;
 
 /**
  * MySQL connection creator
@@ -39,6 +44,8 @@ public class MySQLConnector {
 	 */
 	private static MySQLConnector db;
 
+	private static String dir = "mysql.properties";
+
 	private MySQLConnector() {
 
 	}
@@ -49,7 +56,28 @@ public class MySQLConnector {
 			Class.forName(driver).newInstance();
 
 			Properties props = new Properties();
-			FileInputStream in = new FileInputStream("files/mysql.properties");
+
+			if (!new File(dir).exists()) {
+
+				OutputStream output = new FileOutputStream(dir);
+
+				props.setProperty("mysql.url", "jdbc:mysql://localhost:3306/");
+				props.setProperty("mysql.database_name",
+						"alice?autoReconnect=true&useSSL=false");
+				props.setProperty("mysql.username", "root");
+				props.setProperty("mysql.password", "1234");
+
+				props.store(output, null);
+
+				new OkDialog("MySQL Properties Not Found",
+						"Edit the mysql.properties file to the settings of the MySQL Server")
+								.setVisible(true);
+
+				System.exit(0);
+
+			}
+
+			FileInputStream in = new FileInputStream(dir);
 			props.load(in);
 			in.close();
 
