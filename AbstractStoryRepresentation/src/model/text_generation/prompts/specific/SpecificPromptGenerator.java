@@ -242,7 +242,7 @@ public class SpecificPromptGenerator extends PromptGenerator {
 		List<Concept> concepts = ConceptNetDAO.getConceptsFrom(currentTopic,
 				"IsA");
 
-		while (concepts != null && !concepts.isEmpty()) {
+		while (concepts != null && !concepts.isEmpty() && prompt == null) {
 			int randomConcept = Randomizer.random(1, concepts.size());
 			prompt = "An example of " + currentTopic + " is "
 					+ concepts.remove(randomConcept - 1).getStart() + ". "
